@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
@@ -97,7 +98,7 @@ public class Parser {
 					String stfpValue = coeffSTFP.stringValue("arr");
 					// END
 					// Here, we create a list of all the data, and uses DataTree to attach this data to a given RF gap
-					List<String> currentValueList = new ArrayList<>(Arrays.asList(primSeqID, secSeqID, ttfValue, ttfpValue, stfValue, stfpValue, frequency, betaMin, betaMax));
+					List<String> currentValueList = new ArrayList<>(Arrays.asList(primSeqID, secSeqID, ttfValue, ttfpValue, stfValue, stfpValue, frequency, betaMin, betaMax, null, null, null, null));
 
 					dataTree.addListToTree(gapName, currentValueList);
 					iii++;
@@ -142,19 +143,22 @@ public class Parser {
 		ArrayList<String> cavities = new ArrayList<String>();
 		ArrayList<String> gaps = new ArrayList<String>();
 		
+		Tools tools = new Tools();
+		
 		int ii = 0;
 		
 		// go through all the keys and values in the datatree
-		for (Entry<String, List<String>> entry : DataTree.map.entrySet()) {
+		Set<Entry<String, List<String>>> entrySet = dataTree.getEntrySet();
+		for (Entry<String, List<String>> entry : entrySet) {
 			
 			// get the current value from the datatree
 			List<String> value = entry.getValue();
 			// get the primary sequence that this key belongs too
 			String localPrimary = value.get(0);
 			// get the cavity that this key belongs too, and convert it into a form readable by the accelerator
-			String localSecondary = getSecondaryName(localPrimary,value.get(1));
+			String localSecondary = tools.getSecondaryName(localPrimary,value.get(1));
 			// get the name of the current gap and convert it into a form readable by the accelerator
-			String localGapName = getFullName(localSecondary, entry.getKey());
+			String localGapName = tools.getFullName(localSecondary, entry.getKey());
 			// get the ttf, stf, ttfp, and stfp of the current gap
 			String localTTF = value.get(2);
 			String localTTFP = value.get(3);
@@ -269,48 +273,6 @@ public class Parser {
 	}
 	
 	/**
-	 * This method converts the name of the secondary sequence into a usable form for the accelerator.
-	 *
-	 * @param primSeq the primary sequence name
-	 * @param preSeq the original secondary sequence name
-	 * @return the secondary sequence name readable by the accelerator
-	 */
-	public String getSecondaryName(String primSeq,String preSeq) {
-		String postSeq = null;
-		String cavNum = null; // For DTL, MEBT, and CCL, the cavity number is the last character of the string. For example: DTL4 translates to DTL:Cav04
-		
-		cavNum = preSeq.substring(preSeq.length() - 1);
-		if (primSeq.startsWith("MEBT")) {
-			postSeq = "MEBT_RF:Bnch0" + cavNum;
-		}
-		else if (primSeq.startsWith("DTL")) {
-			postSeq = "DTL_RF:Cav0" + cavNum;
-		}
-		else if (primSeq.startsWith("CCL")) {
-			postSeq = "CCL_RF:Cav0" + cavNum;
-		}
-		else if ((primSeq.startsWith("SCLHigh")) || (primSeq.startsWith("SCLMed"))){
-			postSeq = preSeq.replace(":", "_RF:");
-		}
-		return postSeq;
-	}
-	
-	/**
-	 * This method uses the secondary sequence name and the original name to create the full name of the gap that is consistent with the accelerator's naming scheme.
-	 *
-	 * @param secName the secondary sequence name
-	 * @param origName the original gap name
-	 * @return the full new name readable by the accelerator
-	 */
-	public String getFullName(String secName, String origName) {
-		String gapNum = origName.substring(origName.lastIndexOf("g") + 1);
-		if (gapNum.length() == 1) {
-			gapNum = "0" + gapNum;
-		}
-		return secName + ":Rg" + gapNum;
-	}
-	
-	/**
 	 * Gets the data tree.
 	 *
 	 * @return the data tree
@@ -333,16 +295,19 @@ public class Parser {
 		primary.setValue("system","sns");
 		primary.setValue("ver","2.0.0");
 		
-		for (Entry<String, List<String>> entry : DataTree.map.entrySet()) {
+		Tools tools = new Tools();
+		
+		Set<Entry<String, List<String>>> entrySet = dataTree.getEntrySet();
+		for (Entry<String, List<String>> entry : entrySet) {
 			
 			// get the current value from the datatree
 			List<String> value = entry.getValue();
 			// get the primary sequence that this key belongs too
 			String localPrimary = value.get(0);
 			// get the cavity that this key belongs too, and convert it into a form readable by the accelerator
-			String localSecondary = getSecondaryName(localPrimary,value.get(1));
+			String localSecondary = tools.getSecondaryName(localPrimary,value.get(1));
 			// get the name of the current gap and convert it into a form readable by the accelerator
-			String localGapName = getFullName(localSecondary, entry.getKey());
+			String localGapName = tools.getFullName(localSecondary, entry.getKey());
 			// get the frequency, betaMin, and betaMax of the local gap
 			String localFrequency = value.get(6);
 			String localBetaMin = value.get(7);
@@ -385,7 +350,7 @@ public class Parser {
 			String betaMin = datDapt.stringValue("beta_min");
 			String betaMax = datDapt.stringValue("beta_max");
 			
-			List<String> currentValueList = new ArrayList<>(Arrays.asList(null,null,null,null,null,null,frequency, betaMin, betaMax));
+			List<String> currentValueList = new ArrayList<>(Arrays.asList(null,null,null,null,null,null,frequency, betaMin, betaMax,null,null,null,null));
 
 			dataTree.addListToTree(gapName, currentValueList);
 		}

@@ -125,4 +125,51 @@ public class Tools {
 		return postMat;
 	}
 	
+	public String getPrimaryName(String preSeq) {
+		String primaryName = null;
+		
+		if (preSeq.startsWith("MEBT"))            {primaryName = "MEBT";} 
+		else if (preSeq.startsWith("DTL"))        {primaryName = "DTL";}
+		else if (preSeq.startsWith("CCL"))        {primaryName = "CCL";}
+		else if (preSeq.startsWith("SCLHigh"))    {primaryName = "SCLHigh";}
+		else if (preSeq.startsWith("SCLMed"))     {primaryName = "SCLMed";}
+		
+		return primaryName;
+	}
+	
+	/**
+	 * This method converts the name of the secondary sequence into a usable form for the accelerator.
+	 *
+	 * @param primSeq the primary sequence name
+	 * @param preSeq the original secondary sequence name
+	 * @return the secondary sequence name readable by the accelerator
+	 */
+	public String getSecondaryName(String primSeq,String preSeq) {
+		String postSeq = null;
+		String cavNum = null; // For DTL, MEBT, and CCL, the cavity number is the last character of the string. For example: DTL4 translates to DTL_RF:Cav04
+		
+		cavNum = preSeq.substring(preSeq.length() - 1);
+		if (primSeq.startsWith("MEBT"))                                                {postSeq = "MEBT_RF:Bnch0" + cavNum;}
+		else if (primSeq.startsWith("DTL"))                                            {postSeq = "DTL_RF:Cav0" + cavNum;}
+		else if (primSeq.startsWith("CCL"))                                            {postSeq = "CCL_RF:Cav0" + cavNum;}
+		else if ((primSeq.startsWith("SCLHigh")) || (primSeq.startsWith("SCLMed")))    {postSeq = preSeq.replace(":", "_RF:");}
+		
+		return postSeq;
+	}
+	
+	/**
+	 * This method uses the secondary sequence name and the original name to create the full name of the gap that is consistent with the accelerator's naming scheme.
+	 *
+	 * @param secName the secondary sequence name
+	 * @param origName the original gap name
+	 * @return the full new name readable by the accelerator
+	 */
+	public String getFullName(String secName, String origName) {
+		String gapNum = origName.substring(origName.lastIndexOf("g") + 1);
+		
+		if (gapNum.length() == 1) {gapNum = "0" + gapNum;}
+		
+		return secName + ":Rg" + gapNum;
+	}
+	
 }

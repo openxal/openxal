@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * The Class DataTree.
@@ -23,7 +24,7 @@ import java.util.Set;
 public class DataTree {
 	
 	/** Create a new map */
-	static Map<String,List<String>> map = new HashMap<String, List<String>>();
+	final Map<String,List<String>> map = new HashMap<String, List<String>>();
 	
 	/**
 	 * This method adds a field to the current map, which matches the gap_id key to the values pertaining to that key
@@ -68,6 +69,14 @@ public class DataTree {
 				break;
 			case "beta_max": index = 8;
 				break;
+			case "ttf_string": index = 9;
+				break;
+			case "stf_string": index = 10;
+				break;
+			case "ttfp_string": index = 11;
+				break;
+			case "stfp_string": index = 12;
+				break;
 			default: index = -10;
 				break;
 		}
@@ -95,6 +104,28 @@ public class DataTree {
 		}
 		return keyList;
 				
+	}
+	
+	/**
+	 * Get the size of the DataTree
+	 *
+	 * @return the number of entries in the DataTree
+	 */
+	public int size() {
+		return map.size();
+	}
+	
+	/**
+	 * Gets the map.
+	 *
+	 * @return the map
+	 */
+	public Map<String, List<String>> getMap() {
+		return this.map;
+	}
+	
+	public Set<Entry<String,List<String>>> getEntrySet() {
+		return map.entrySet();
 	}
 	
 }

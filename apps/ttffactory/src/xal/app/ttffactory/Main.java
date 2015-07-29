@@ -77,23 +77,12 @@ public class Main extends JFrame {
         
         final JButton gapTTFButton =                new JButton("Gap");
         
-        final JButton acceleratorCompareButton =    new JButton("Accelerator");
+        final JButton generateXDXFButton =          new JButton("Generate XDXF File");
         
-        final JButton sequenceCompareButton =       new JButton("Sequence");
-        
-        final JButton gapCompareButton =            new JButton("Gap");
-        
-        final JButton acceleratorGenButton =        new JButton("Accelerator");
-        
-        final JButton sequenceGenButton =           new JButton("Sequence");
-        
-        final JButton gapGenButton =                new JButton("Gap");
+        final JButton compareTTFButton =            new JButton("Compare to Andrei's TTF");
         
         final JLabel calcLabel =                    new JLabel("Calculate TTF:      ");
-        
-        final JLabel compLabel =                    new JLabel("Compare TTF:       ");
-        
-        final JLabel genLabel =                     new JLabel("Generate TTF File: ");
+
         
         // When hovering cursor over the buttons, display the selected button's purpose
         fileSelectorButton.setToolTipText("Select File from Directory Browser");  
@@ -102,14 +91,13 @@ public class Main extends JFrame {
         acceleratorTTFButton.setToolTipText("Generate TTFs for all gaps in a chosen accelerator");
         sequenceTTFButton.setToolTipText("Generate TTFs for all gaps in a chosen sequence");
         gapTTFButton.setToolTipText("Generate TTF for a single chosen gap.");
-        acceleratorCompareButton.setToolTipText("Compare integral-calculated TTFs for all gaps in a chosen accelerator to Andrei's TTFs.");
-        sequenceCompareButton.setToolTipText("Compare integral-calculated TTFs for all gaps in a chosen sequence to Andrei's TTFs.");
-        gapCompareButton.setToolTipText("Compare integral-calculated TTF for a single chosen gap to Andrei's TTFs.");
-        acceleratorGenButton.setToolTipText("Generate TTF files for all gaps in a chosen accelerator");
-        sequenceGenButton.setToolTipText("Generate TTF filesfor all gaps in a chosen sequence");
-        gapGenButton.setToolTipText("Generate TTF files for a single chosen gap.");
+        compareTTFButton.setToolTipText("Compare integral-calculated TTFs to Andrei's TTFs.");
+        generateXDXFButton.setToolTipText("Generate xdxf file as an optics extra input into the accelerator");
+        
         runButton.setEnabled(false);
         analyzeButton.setEnabled(false);
+        compareTTFButton.setEnabled(false);
+        generateXDXFButton.setEnabled(false);
         
         //create a text field with a default file name
         final JTextField fileLabel = new JTextField("name of file to save to.xdxf");
@@ -127,9 +115,9 @@ public class Main extends JFrame {
         infoBox.setLineWrap(true);
 
         //create a text area with instructions for how to use the program on the T(Beta) tab
-        final JTextArea infoBox2 = new JTextArea("- To calculate transit time factors at points or to generate polynomials, use the buttons on the 'Calculate TTF' row.\n" +
-        										 "- To compare calculated transit time factors to Andrei's, use the buttons on the 'Compare TTF' row.\n"+
-        										 "- To generate an xdxf file of integral-calculated TTF polynomials, use the buttons on the 'Generate TTF File' row.\n");
+        final JTextArea infoBox2 = new JTextArea("- To calculate transit time factors, use the buttons on the 'Calculate TTF' row.\n" +
+        										 "- To compare calculated transit time factors to Andrei's, choose 'Compare to Andrei's TTF'\n"+
+        										 "- To generate an xdxf file of integral-calculated TTF polynomials, choose 'Generate XDXF File'\n");
         infoBox2.setEditable(false);
         infoBox2.setWrapStyleWord(true);
         infoBox2.setLineWrap(true);
@@ -261,8 +249,12 @@ public class Main extends JFrame {
                 	// grab the selected file using java's io File class
                 	File file = gapSelector.getSelectedFile();
                 	try {
-						String polyString = gapTTF(file);
-						JOptionPane.showMessageDialog(getContentPane(), "Polynomial: " + polyString, "Gap TTF Polynomial", JOptionPane.INFORMATION_MESSAGE);
+						DataTree gapTree = gapTTF(file);
+						System.out.println("Size: " + gapTree.size());
+						String gapName = gapTree.getGaps().get(0);
+						System.out.println(gapName);
+						JOptionPane.showMessageDialog(getContentPane(), "TTF Polynomial: " + gapTree.getValue(gapName,"ttf_string") + "\nSTF Polynomial: " + 
+													  gapTree.getValue(gapName, "stf_string"), "Gap Polynomials\n", JOptionPane.INFORMATION_MESSAGE);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 					}
@@ -325,8 +317,8 @@ public class Main extends JFrame {
     	
         // This line calls the createLayout method, which formats how items are displayed on the GUI
         GroupLayout gl = createLayout(true, panes, fileSelectorButton, runButton, fileLabel, gapLabel, gapChooser, valueLabel, analyzeButton, resultLabel, resultText, infoBox);
-        //                                                  0                     1            2                   3                      4                   5               6                     7               8         9         10       11       12
-        GroupLayout gl2 = createLayout(false,pane2,acceleratorTTFButton,sequenceTTFButton,gapTTFButton,acceleratorCompareButton,sequenceCompareButton,gapCompareButton,acceleratorGenButton,sequenceGenButton,gapGenButton,calcLabel,compLabel,genLabel,infoBox2);
+        //                                                  0                     1            2           3        4             5                 6  
+        GroupLayout gl2 = createLayout(false,pane2,acceleratorTTFButton,sequenceTTFButton,gapTTFButton,calcLabel,infoBox2,generateXDXFButton,compareTTFButton);
         
         panes.setLayout(gl);
         pane2.setLayout(gl2);
@@ -388,46 +380,30 @@ public class Main extends JFrame {
 	        
 	        gl.setHorizontalGroup(
 	        		gl.createParallelGroup()
-	        		.addComponent(arg[12],GroupLayout.PREFERRED_SIZE, 750,GroupLayout.PREFERRED_SIZE)
+	        		.addComponent(arg[4],GroupLayout.PREFERRED_SIZE, 750,GroupLayout.PREFERRED_SIZE) // info box
 	        		.addGroup(gl.createSequentialGroup()
-	        				.addComponent(arg[9])
-	        				.addComponent(arg[0])
-	        				.addComponent(arg[1])
-	        				.addComponent(arg[2])
+	        				.addComponent(arg[3]) // calc label
+	        				.addComponent(arg[0]) // accelerate TTF button
+	        				.addComponent(arg[1]) // sequence TTF button
+	        				.addComponent(arg[2]) // gap TTF Button
 	        				)
 	        		.addGroup(gl.createSequentialGroup()
-	        				.addComponent(arg[10])
-	        				.addComponent(arg[3])
-	        				.addComponent(arg[4])
-	        				.addComponent(arg[5])
-	        				)
-	        		.addGroup(gl.createSequentialGroup()
-	        				.addComponent(arg[11])
-	        				.addComponent(arg[6])
-	        				.addComponent(arg[7])
-	        				.addComponent(arg[8])
+	        				.addComponent(arg[5]) // generate button
+	        				.addComponent(arg[6]) // compare button
 	        				)
 	        		);
 	        gl.setVerticalGroup(
 	        		gl.createSequentialGroup()
-	        		.addComponent(arg[12],GroupLayout.PREFERRED_SIZE, 70,GroupLayout.PREFERRED_SIZE)
+	        		.addComponent(arg[4],GroupLayout.PREFERRED_SIZE, 70,GroupLayout.PREFERRED_SIZE) // info box
 	        		.addGroup(gl.createParallelGroup()
-	        				.addComponent(arg[9])
-	        				.addComponent(arg[0])
-	        				.addComponent(arg[1])
-	        				.addComponent(arg[2])
+	        				.addComponent(arg[3]) // calc label
+	        				.addComponent(arg[0]) // accelerate TTF button
+	        				.addComponent(arg[1]) // sequence TTF button
+	        				.addComponent(arg[2]) // gap TTF Button
 	        				)
 	        		.addGroup(gl.createParallelGroup()
-	        				.addComponent(arg[10])
-	        				.addComponent(arg[3])
-	        				.addComponent(arg[4])
-	        				.addComponent(arg[5])
-	        				)
-	        		.addGroup(gl.createParallelGroup()
-	        				.addComponent(arg[11])
-	        				.addComponent(arg[6])
-	        				.addComponent(arg[7])
-	        				.addComponent(arg[8])
+	        				.addComponent(arg[5]) // generate button
+	        				.addComponent(arg[6]) // compare button
 	        				)
 	        		);
     	}
@@ -441,7 +417,7 @@ public class Main extends JFrame {
      *
      * @param comp the component containing all of the GUI features to be added to the frame
      */
-    public void paint(JComponent comp) {
+    private void paint(JComponent comp) {
     	JFrame frame = new JFrame();
         frame.add(comp, BorderLayout.CENTER);
         frame.setTitle("TTF Parser");
@@ -452,49 +428,79 @@ public class Main extends JFrame {
         frame.setVisible(true);
     }
     
-    public String gapTTF(File file) throws IOException {
+    private DataTree gapTTF(File file) throws IOException {
 	    String filePath = file.getAbsolutePath();
 	    
-		Parser betaParser = new Parser();
+		Parser betaParser = new Parser();                                                        // Next three lines: grab the beta mins/maxes for each gap
 		betaParser.readBetaConfigFile();
 		DataTree betaTree = betaParser.getDataTree();
 		
 		ElectricFileReader eFR = new ElectricFileReader(filePath);
-		List<Double> ZData = eFR.getDblZpoints();
-		List<Double> EFdata = eFR.getDblEField();
-		//for SCL only
+		List<Double> ZData = eFR.getDblZpoints();                                                // get the list of doubles containing the Z position Data
+		List<Double> EFdata = eFR.getDblEField();                                                // get the list of doubles containing the Electric Field Data
+		
+		//for SCL Only
 		int i = 0;
 		for(Double dbl:EFdata) {
 			EFdata.set(i, -1.0*dbl);
 			i++;
 		}
-		//END SCL Only	
+		//END SCL Only
+		
 		TTFTools ttfT = new TTFTools();
 		Tools tools = new Tools();
 		
-		String parsedName = tools.transformName(file.getName());
+		String parsedName = tools.transformName(file.getName());                                  // Change the filename to the name needed for OpenXAL
 		
 		System.out.println("\nStarting..." + parsedName + "\n");
 		
-		double betaMin = Double.parseDouble(betaTree.getValue(parsedName, "beta_min"));
-		double betaMax = Double.parseDouble(betaTree.getValue(parsedName, "beta_max"));
-		double frequency = Double.parseDouble(betaTree.getValue(parsedName, "frequency"));
+		String bMinStr = betaTree.getValue(parsedName, "beta_min");                               // grab the beta_min from the DataTree
+		String freqStr = betaTree.getValue(parsedName, "frequency");                              // grab the frequency from the DataTree
+		String bMaxStr = betaTree.getValue(parsedName, "beta_max");                               // grab the beta_max from the DataTree
 		
-		double[] betaList = ttfT.linspace(betaMin, betaMax , 100); //x
-		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList); 
-
-		PolynomialFit polyFit = new PolynomialFit(betaList,ttfList);
+		double betaMin = Double.parseDouble(bMinStr);
+		double betaMax = Double.parseDouble(bMaxStr);
+		double frequency = Double.parseDouble(freqStr);
 		
-		double[] consts = polyFit.getPolyConstants();
+		double[] betaList = ttfT.linspace(betaMin, betaMax , 100);                                // this makes a 100 length array of evenly spaced number
+		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
 		
-		String polyString = polyFit.toString(consts);
+		double[] stfList = ttfT.getTTFForBetaRange(ZData, EFdata, false, frequency, betaList);    // evaluates the STF integral at all betas in betaList
+		
+		//For TTF
+		PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
+		double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
+		String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
+		
+		//For STF
+		double[] constsSTF = {0.0,0.0,0.0,0.0,0.0};
+		String polyStringSTF = "(0.0)+(0.0)x+(0.0)x^2+(0.0)x^3+(0.0)x^4";
+		String constsStringSTF = "0.0,0.0,0.0,0.0,0.0";
+		
+		if(tools.isEndGap(parsedName)) {
+			PolynomialFit polyFitSTF = new PolynomialFit(betaList,stfList);                           // do the same for STF as above
+			constsSTF = polyFitSTF.getPolyConstants();
+			polyStringSTF = polyFitSTF.toStringPolynomialRep(constsSTF);
+			constsStringSTF = polyFitSTF.toStringConsts(constsSTF);
+		}
+		
+		String primName = tools.getPrimaryName(parsedName);                                       // Next four lines: get data for input into the DataTree
+		String secName = tools.getSecondaryName(primName, parsedName);
+		String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);
+		
+		
+		DataTree gapDatTree = new DataTree();
+		// BELOW: create a list of all values needed for input into the DataTree
+		List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,null,constsStringSTF,null,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,null,null));
+		
+		gapDatTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
 		
 		System.out.println("\nFinished...\n");
-
-		return polyString;
+		
+		return gapDatTree;
     }
     
-    public void directoryTTF(File file) throws IOException {
+    private DataTree directoryTTF(File file) throws IOException {
     	String filePathString = file.getAbsolutePath();
     	
     	Path begin = Paths.get(filePathString);
@@ -503,6 +509,7 @@ public class Main extends JFrame {
 		Parser betaParser = new Parser();
 		betaParser.readBetaConfigFile();
 		DataTree betaTree = betaParser.getDataTree();
+		DataTree accDatTree = new DataTree();
 		
 		Tools tools = new Tools();
 
@@ -526,18 +533,43 @@ public class Main extends JFrame {
 						
 						TTFTools ttfT = new TTFTools();
 						
-						double betaMin = Double.parseDouble(betaTree.getValue(parsedName, "beta_min"));
-						double betaMax = Double.parseDouble(betaTree.getValue(parsedName, "beta_max"));
-						double frequency = Double.parseDouble(betaTree.getValue(parsedName, "frequency"));
+						String bMinStr = betaTree.getValue(parsedName, "beta_min");                               // grab the beta_min from the DataTree
+						String freqStr = betaTree.getValue(parsedName, "frequency");                              // grab the frequency from the DataTree
+						String bMaxStr = betaTree.getValue(parsedName, "beta_max");                               // grab the beta_max from the DataTree
+						
+						double betaMin = Double.parseDouble(bMinStr);
+						double betaMax = Double.parseDouble(bMaxStr);
+						double frequency = Double.parseDouble(freqStr);
 						
 						//Calculate the transit time factor at the beta range
 						double[] betaList = ttfT.linspace(betaMin, betaMax, 100); 
-						double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList); 
+						double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
+						double[] stfList = ttfT.getTTFForBetaRange(ZData, EFdata, false, frequency, betaList);    // evaluates the STF integral at all betas in betaList
+						
+						//For TTF
+						PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
+						double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
+						String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
+						
+						//For STF
+						PolynomialFit polyFitSTF = new PolynomialFit(betaList,stfList);                           // do the same for STF as above
+						double[] constsSTF = polyFitSTF.getPolyConstants();
+						String polyStringSTF = polyFitSTF.toStringPolynomialRep(constsSTF);
+						
+						String primName = tools.getPrimaryName(parsedName);                                       // Next four lines: get data for input into the DataTree
+						String secName = tools.getSecondaryName(primName, parsedName);
+						String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);
+						String constsStringSTF = polyFitSTF.toStringConsts(constsSTF);
+						
+						// BELOW: create a list of all values needed for input into the DataTree
+						List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,null,constsStringSTF,null,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,null,null));
+						
+						accDatTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
 						
 						System.out.println("TTF Calculated...");
 		    		}
 		    		else if(tools.isEndGap(fileName)) {
-		    			System.out.println("Skipped END Gap...");
+		    			System.out.println("Skipped END Gap for now...");
 		    		}
 		    		else if(fileName.contains("SCL")){
 		    			System.out.println("Skipped SCL for now...");
@@ -548,6 +580,7 @@ public class Main extends JFrame {
 		    }
 		    	
 		});
+		return accDatTree;
     }
     
     /**

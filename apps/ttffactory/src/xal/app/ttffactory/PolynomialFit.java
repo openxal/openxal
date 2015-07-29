@@ -98,15 +98,26 @@ public class PolynomialFit{
     }
     
     /**
-     * To string.
+     * A string representing the polynomial
      *
      * @param c the double array of polynomial constants
      * @return the string representing the polynomial
      */
-    public String toString(double[] c) {
+    public String toStringPolynomialRep(double[] c) {
     	return sign(c[0]) + "(" + Math.abs(c[0]) + ")" + sign(c[1]) + "(" + Math.abs(c[1]) + ")x" + sign(c[2])
     			+ "(" + Math.abs(c[2]) + ")x^2" + sign(c[3]) + "(" + Math.abs(c[3]) + ")x^3" + sign(c[4]) + "(" + Math.abs(c[4]) + ")x^4";
     }
+    
+    /**
+     * A string representing the constants of the polynomial
+     *
+     * @param c the double array of polynomial constants
+     * @return the string representing the polynomial
+     */
+    public String toStringConsts(double[] c) {
+    	return Arrays.toString(c);
+    }
+    
     
     /**
      * Checks if the given double is positive.
