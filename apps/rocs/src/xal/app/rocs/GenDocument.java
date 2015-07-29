@@ -363,9 +363,9 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 	System.out.println("SV05=" + sext_k[2] + " T/m^2");
 	System.out.println("SH06=" + sext_k[3] + " T/m^2");
 	//For now, convert to Amps
-	sext_k[0] = -sext_k[0]/0.0434*0.317;
+	sext_k[0] = sext_k[0]/0.0434*0.317;
 	sext_k[1] = sext_k[1]/0.0261*0.33;
-	sext_k[2] = -sext_k[2]/0.0434*0.317;
+	sext_k[2] = sext_k[2]/0.0434*0.317;
 	sext_k[3] = sext_k[3]/0.0261*0.33;
 	opticsProxy.updateSextK(this, sext_k);
 		
