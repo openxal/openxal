@@ -261,9 +261,10 @@ public class Main extends JFrame {
                 	// grab the selected file using java's io File class
                 	File file = gapSelector.getSelectedFile();
                 	try {
-						gapTTF(file);
+						String polyString = gapTTF(file);
+						JOptionPane.showMessageDialog(getContentPane(), "Polynomial: " + polyString, "Gap TTF Polynomial", JOptionPane.INFORMATION_MESSAGE);
 					} catch (IOException e) {
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 					}
 
                 } else {
@@ -286,7 +287,7 @@ public class Main extends JFrame {
 	        		try {
 						directoryTTF(file);
 					} catch (IOException e) {
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 					}
         		
         		} else {
@@ -309,7 +310,7 @@ public class Main extends JFrame {
                 	try {
 						directoryTTF(file);
 					} catch (IOException e) {
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 					}
                 } else {
                 	System.out.println("File Selection Aborted by User");
@@ -451,7 +452,7 @@ public class Main extends JFrame {
         frame.setVisible(true);
     }
     
-    public void gapTTF(File file) throws IOException {
+    public String gapTTF(File file) throws IOException {
 	    String filePath = file.getAbsolutePath();
 	    
 		Parser betaParser = new Parser();
@@ -472,24 +473,25 @@ public class Main extends JFrame {
 		Tools tools = new Tools();
 		
 		String parsedName = tools.transformName(file.getName());
-		System.out.println(parsedName);
+		
+		System.out.println("\nStarting..." + parsedName + "\n");
+		
 		double betaMin = Double.parseDouble(betaTree.getValue(parsedName, "beta_min"));
 		double betaMax = Double.parseDouble(betaTree.getValue(parsedName, "beta_max"));
 		double frequency = Double.parseDouble(betaTree.getValue(parsedName, "frequency"));
 		
 		double[] betaList = ttfT.linspace(betaMin, betaMax , 100); //x
 		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList); 
-		
-		System.out.println("ZData: " + ZData.toString());
-		//System.out.println("EFData: " + EFdata.toString() + "\n");
-		System.out.println("\nBetas: " + Arrays.toString(betaList) + "\n");
-		System.out.println("TTFs: " + Arrays.toString(ttfList)+ "\n");
 
 		PolynomialFit polyFit = new PolynomialFit(betaList,ttfList);
+		
 		double[] consts = polyFit.getPolyConstants();
-		System.out.println(polyFit.toString(consts));
+		
+		String polyString = polyFit.toString(consts);
+		
+		System.out.println("\nFinished...\n");
 
-
+		return polyString;
     }
     
     public void directoryTTF(File file) throws IOException {

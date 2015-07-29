@@ -55,27 +55,24 @@ public class PolynomialFit{
     	
     	Rmxn xMat = new Rmxn(x2D.clone());               //K
     	
-    	System.out.println("\n" + xMat.toStringMatrix() + "\n");
-    	
     	Rmxn yMat = new Rmxn(y.length,1);                //T
     	
     	i = 0;
     	for(double dbl:y) {
     		yMat.setElem(i, 0, dbl);
+    		i++;
     	}
     	
-    	System.out.println("\nCondition Number for X: " + xMat.conditionNumber());
-    	
     	Rmxn xT = xMat.transpose();                  //KT
-    	
+
     	Rmxn xTx = xT.times(xMat);                   //KT K
 
     	Rmxn xTy = xT.times(yMat);                   //KT T
-    
+
     	Rmxn xTxI = xTx.inverse();                   //(KT K)^-1
 
     	Rmxn c = xTxI.times(xTy);                    //polynomial coefficients
-    	
+
     	double[] polyConstants = new double[5];
     	
     	for(int rowIndex = 0;rowIndex<c.getRowCnt();rowIndex++) {
