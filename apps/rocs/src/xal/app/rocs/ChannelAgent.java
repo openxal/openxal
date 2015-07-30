@@ -71,7 +71,7 @@ public class ChannelAgent implements IEventSinkValue, ConnectionListener{
 
 	/* test whether the specified value is within the channel's limits */
 	public boolean isWithinLimits( final double value ) {
-		return value > getMagLowLimit() && value < getMagUpLimit();
+		return value >= getMagLowLimit() && value <= getMagUpLimit();
 	}
 
 

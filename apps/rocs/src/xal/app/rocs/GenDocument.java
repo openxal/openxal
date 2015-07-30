@@ -426,7 +426,7 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 			final ChannelAgent channelAgent = sextCurrentChannel[index];
 			if ( !channelAgent.isWithinLimits( current ) ) {
 				proposedCurrentsValid = false;
-				System.out.println( "Proposed magnet current, " + current + " for channel, " + channelAgent.getChannel().channelName() + " is out of range: " + channelAgent.getLimitsDescription() );
+				System.err.println( "Proposed magnet current, " + current + " for channel, " + channelAgent.getChannel().channelName() + " is out of range: " + channelAgent.getLimitsDescription() );
 			}
 		}
 
