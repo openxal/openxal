@@ -72,15 +72,16 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	 * @param connection the database connection
 	 * @return a new instance of a Blob appropriate for this adaptor.
 	 */
-	@SuppressWarnings( "rawtypes" )		// arrays are not compatible with Generics
 	public Blob newBlob( final Connection connection ) {
-		System.out.println( "Creating Oracle SQL Blob..." );
+		//System.out.println( "Creating Oracle SQL Blob..." );
 		try {
 			// reflection for:
 			// return BLOB.createTemporary( connection, true, BLOB.DURATION_SESSION );
 			final Class<?> blobClass = Class.forName( "oracle.sql.BLOB" );
 			final Field durationSessionField = blobClass.getDeclaredField( "DURATION_SESSION" );
 			final int durationSession = durationSessionField.getInt( null );	// get the value of the static field
+
+			@SuppressWarnings( "rawtypes" )		// arrays (used here as argument) not compatible with Generics
 			final Method createMethod = blobClass.getMethod( "createTemporary", new Class[] { Connection.class, Boolean.TYPE, Integer.TYPE } );
 
 			return (Blob)createMethod.invoke( null, connection, true, durationSession );
@@ -104,15 +105,16 @@ public class OracleDatabaseAdaptor extends DatabaseAdaptor {
 	 * @return the SQL array which wraps the primitive array
 	 * @throws xal.tools.database.DatabaseException if a database exception is thrown
 	 */
-	@SuppressWarnings( "rawtypes" )		// arrays are not compatible with Generics
 	public Array getArray( final String type, final Connection connection, final Object array ) throws DatabaseException {
-		System.out.println( "Creating Oracle SQL Array..." );
+		//System.out.println( "Creating Oracle SQL Array..." );
 		try {
 			final Object descriptor = getArrayDescriptor( type, connection );
 			// reflection for:
 			// return new ARRAY( descriptor, connection, array );
 			final Class<?> arrayDescriptorClass = Class.forName( "oracle.sql.ArrayDescriptor" );
 			final Class<?> arrayClass = Class.forName( "oracle.sql.ARRAY" );
+			
+			@SuppressWarnings( "rawtypes" )		// arrays (used here as argument) not compatible with Generics
 			final Constructor<?> arrayConstructor = arrayClass.getConstructor( new Class[] { arrayDescriptorClass, Connection.class, Object.class } );
 			return (Array)arrayConstructor.newInstance( descriptor, connection, array );
 		}

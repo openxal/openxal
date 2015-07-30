@@ -242,47 +242,53 @@ public class ChromFace extends JPanel implements OpticsListener{
 	yChrom.clear();
 
 	energyfield = new DecimalField(1.0, 6, numFor);
+
 	//Declare the decimal fields, but also check for channel connection 
 	//and set listener for enabling and disabling the fields. 
 	for(i=0; i<=3; i++){
-	    decOut[i] = new DecimalField(0,6,numFor);
-	    if(doc.sext_ch[i].isConnected()==true){
-		activateFieldSet(i, decOut[i], doc.sext_ch[i]);
-	    }
-	    if(doc.sext_ch[i].isConnected()==false){
-		decOut[i].setEnabled(false);
-	    }
-	    doc.sext_ch[i].addChannelConnectionListener(new ConnectionListener(){
-		final int j=i;
-		public void connectionMade(Channel aChannel) {
-		    activateFieldSet(j, decOut[j], doc.sext_ch[j]);
+		decOut[i] = new DecimalField(0,6,numFor);
+
+		// if the current and field channels are connected then activate the current text field and setup magnet field the limits
+		if( doc.sextCurrentChannel[i].isConnected() && doc.sext_ch[i].isConnected() ){
+			setupFieldLimits( i, doc.sext_ch[i] );
+			activateCurrentSet(i, decOut[i], doc.sextCurrentChannel[i]);
 		}
-		public void connectionDropped(Channel aChannel) {
-		    decOut[j].setEnabled(false);
-		    pvcounter--;
-		    refreshSubmitStatus();
+		else {
+			decOut[i].setEnabled(false);
 		}
-	    });
-	}  
+		
+		doc.sextCurrentChannel[i].addChannelConnectionListener(new ConnectionListener(){
+			final int j=i;
+			public void connectionMade(Channel aChannel) {
+				activateCurrentSet(j, decOut[j], doc.sextCurrentChannel[j]);
+			}
+			public void connectionDropped(Channel aChannel) {
+				decOut[j].setEnabled(false);
+				pvcounter--;
+				refreshSubmitStatus();
+			}
+		});
+	}
+
 	//Declare readback decimal fields, and make a readback listener for each field.
 	for(i=0; i<=3; i++){
 		decRead[i] = new DecimalField(0,6,numFor);
-		if(doc.sext_ch[i].isConnected()==true){
+		if(doc.sextCurrentChannel[i].isConnected()==true){
 		    decRead[i].setEnabled(true);
 		    if(mademonitor[i]!=1){
-			makeFieldMonitor(decRead[i], doc.sext_ch[i]);
+			makeCurrentMonitor(decRead[i], doc.sextCurrentChannel[i]);
 			mademonitor[i]=1;
 		    }
 		}
-		if(doc.sext_ch[i].isConnected()==false){
+		if(doc.sextCurrentChannel[i].isConnected()==false){
 		    decRead[i].setEnabled(false);
 		}
-		doc.sext_ch[i].addChannelConnectionListener(new ConnectionListener(){
+		doc.sextCurrentChannel[i].addChannelConnectionListener(new ConnectionListener(){
 		    final int j=i;
 		    public void connectionMade(Channel aChannel) {
 			decRead[j].setEnabled(true);
 			if(mademonitor[j]!=1){
-			   makeFieldMonitor(decRead[j], doc.sext_ch[j]);
+			   makeCurrentMonitor(decRead[j], doc.sextCurrentChannel[j]);
 			   mademonitor[j]=1;
 			}
 		    }
@@ -292,29 +298,44 @@ public class ChromFace extends JPanel implements OpticsListener{
 		});
 	}
     }
-    
-    public void activateFieldSet(int i, final DecimalField dField, ChannelAgent sext_ch){
-	dField.setEnabled(true);
-	doc.sext_k_llimit[i]=sext_ch.getMagLowLimit();
-	doc.sext_k_ulimit[i]=sext_ch.getMagUpLimit();
-	System.out.println("Sextupole " + sext_ch.theChannel.channelName() + " control limits are = " + doc.sext_k_llimit[i] + " to " + doc.sext_k_ulimit[i]);
-	pvcounter++;
-	refreshSubmitStatus();
-    }
-    
+
+	/********** this is all messed up since we are mixing field and current ************/
+	public void activateCurrentSet(int i, final DecimalField dField, ChannelAgent sextCurrentChannel){
+		dField.setEnabled(true);
+		pvcounter++;
+		refreshSubmitStatus();
+	}
+
+
+	public void setupFieldLimits(int i, ChannelAgent sext_ch){
+		doc.sext_k_llimit[i]=sext_ch.getMagLowLimit();
+		doc.sext_k_ulimit[i]=sext_ch.getMagUpLimit();
+		System.out.println("Sextupole " + sext_ch.theChannel.channelName() + " control limits are = " + doc.sext_k_llimit[i] + " to " + doc.sext_k_ulimit[i]);
+	}
+
+	/********** this is all messed up since we are mixing field and current ************/
+//    public void activateFieldSet(int i, final DecimalField dField, ChannelAgent sextCurrentChannel){
+//		dField.setEnabled(true);
+//		doc.sext_k_llimit[i]=sext_ch.getMagLowLimit();
+//		doc.sext_k_ulimit[i]=sext_ch.getMagUpLimit();
+//		System.out.println("Sextupole " + sext_ch.theChannel.channelName() + " control limits are = " + doc.sext_k_llimit[i] + " to " + doc.sext_k_ulimit[i]);
+//		pvcounter++;
+//		refreshSubmitStatus();
+//    }
+
     public void refreshSubmitStatus(){
 		submitbutton.setEnabled( pvcounter >= 4 );
     }
 	
-    public void makeFieldMonitor(final DecimalField dField, ChannelAgent sext_ch){
-	sext_ch.addReadbackListener( new ReadbackListener(){ 
-	    public void updateReadback(Object sender, String name, double value){
-		    dField.setValue(value);
-	    }
-	});
-    }
-    	
-    
+	public void makeCurrentMonitor(final DecimalField dField, ChannelAgent currentChannel){
+		currentChannel.addReadbackListener( new ReadbackListener(){
+			public void updateReadback(Object sender, String name, double value){
+				dField.setValue(value);
+			}
+		});
+	}
+
+
     public void setAction(){
 	//Add all of the action listeners.
 

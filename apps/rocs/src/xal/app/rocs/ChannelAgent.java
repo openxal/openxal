@@ -25,6 +25,12 @@ public class ChannelAgent implements IEventSinkValue, ConnectionListener{
 		
 		theChannel.requestConnection();
     }
+
+
+	/* get the wrapped channel */
+	public Channel getChannel() {
+		return theChannel;
+	}
 	
 	
 	public void addReadbackListener(ReadbackListener listener) {
@@ -61,6 +67,18 @@ public class ChannelAgent implements IEventSinkValue, ConnectionListener{
 		}
 		return;
     }
+
+
+	/* test whether the specified value is within the channel's limits */
+	public boolean isWithinLimits( final double value ) {
+		return value >= getMagLowLimit() && value <= getMagUpLimit();
+	}
+
+
+	/* get a text description of the limits range suitable for output to user */
+	public String getLimitsDescription() {
+		return "(" + getMagLowLimit() + " to " + getMagUpLimit() + ")";
+	}
     
 	
     public double getMagLowLimit(){
