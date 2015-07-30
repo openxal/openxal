@@ -419,13 +419,30 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 
 	/* Submit the sextupole magnet currents to the machine */
 	public void setSextChannelAccess(){
+		boolean proposedCurrentsValid = true;
+
 		for( int index = 0; index < sext_k.length; index++ ) {
 			final double current = sext_k[index];
 			final ChannelAgent channelAgent = sextCurrentChannel[index];
-			System.out.println( "Setting " + channelAgent.theChannel.channelName() + " to " + current + " Amps" );
-			channelAgent.setValue( current );
+			if ( !channelAgent.isWithinLimits( current ) ) {
+				proposedCurrentsValid = false;
+				System.out.println( "Proposed magnet current, " + current + " for channel, " + channelAgent.getChannel().channelName() + " is out of range: " + channelAgent.getLimitsDescription() );
+			}
 		}
-		this.setMessage("Sextupole strengths submitted to machine.");
+
+		// if proposed currents are valid submit the currents otherwise display an error message
+		if ( proposedCurrentsValid ) {
+			for( int index = 0; index < sext_k.length; index++ ) {
+				final double current = sext_k[index];
+				final ChannelAgent channelAgent = sextCurrentChannel[index];
+				System.out.println( "Setting " + channelAgent.theChannel.channelName() + " to " + current + " Amps" );
+				channelAgent.setValue( current );
+			}
+			this.setMessage("Sextupole strengths submitted to machine.");
+		} else {
+			this.setMessage("One or more magnet current settings out of range. No assignment made. View console log for details.");
+		}
+
 	}
 
 	/********** This method is confused since sext_k is in Amps and the comparison is to field limits ********/
