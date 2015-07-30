@@ -248,7 +248,7 @@ public class GenDocument extends AcceleratorDocument implements SettingListener,
 
     public ChannelAgent[] quad_ch = new ChannelAgent[6];
     public ChannelAgent[] sext_ch = new ChannelAgent[4];
-	private ChannelAgent[] sextCurrentChannel = new ChannelAgent[4];
+	public ChannelAgent[] sextCurrentChannel = new ChannelAgent[4];
    
     public int i;
     public int nQuads = 6;
