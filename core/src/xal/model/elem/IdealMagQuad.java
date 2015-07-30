@@ -263,9 +263,7 @@ public class IdealMagQuad extends ThickElectromagnet {
 		}
 		
 	//sako, Apply align error
-
-	   PhaseMatrix Phidx = applyAlignError(matPhi);	
-	   matPhi = Phidx;
+	   matPhi = applyAlignError(matPhi);
 	
 	   return new PhaseMap( matPhi );
    }

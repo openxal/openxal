@@ -16,12 +16,10 @@ import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.ChargeExchangeFoil;
-import xal.model.elem.IdealMagQuad;
 import xal.model.elem.IdealRfGap;
 import xal.model.elem.IdealRfGapUpgraded;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
@@ -317,7 +315,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
 
             probe.setPosition(pos);
             probe.setCovariance(covTau1);
-            
+            // TODO update energy of the probe
             
             // space charge transfer matrix
             PhaseMatrix matPhiSc = this.compScheffMatrix(dblLen, probe, ifcElem);   
@@ -346,16 +344,6 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
             double      dphi     = this.effPhaseSpread(probe, elemRfGap);
             
             matPhi = this.modTransferMatrixForEmitGrowth(dphi, matPhi);
-        }
-        
-        if (ifcElem instanceof IdealMagQuad) {   // sako  put alignment error in sigma matrix
-            IdealMagQuad    elemQuad = (IdealMagQuad)ifcElem;
-            
-            double delx = elemQuad.getAlignX();
-            double dely = elemQuad.getAlignY();
-            double delz = elemQuad.getAlignZ();
-            
-            matPhi = this.modTransferMatrixForDisplError(delx, dely, delz, matPhi);
         }
         
         return matPhi;
