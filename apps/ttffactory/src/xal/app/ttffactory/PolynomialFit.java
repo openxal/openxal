@@ -115,7 +115,7 @@ public class PolynomialFit{
      * @return the string representing the polynomial
      */
     public String toStringConsts(double[] c) {
-    	return Arrays.toString(c);
+    	return Arrays.toString(c).replace("[", "").replace("]", "").trim().replaceAll(" ", "");
     }
     
     

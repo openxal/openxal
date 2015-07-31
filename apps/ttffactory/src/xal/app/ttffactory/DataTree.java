@@ -124,8 +124,14 @@ public class DataTree {
 		return this.map;
 	}
 	
+	/**
+	 * Gets the entry set.
+	 *
+	 * @return the entry set
+	 */
 	public Set<Entry<String,List<String>>> getEntrySet() {
 		return map.entrySet();
 	}
+
 	
 }

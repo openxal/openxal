@@ -107,7 +107,7 @@ public class Parser {
 				}
 			}
 		}
-		System.out.println(iii);
+		//System.out.println(iii);
 		
 	}
 	
@@ -119,7 +119,7 @@ public class Parser {
 	 */
 	public URL fileURL(String aFileName){
 		URL aFileURL = ResourceManager.getResourceURL(this.getClass(), aFileName); //Something like this
-		System.out.println(aFileURL);
+		//System.out.println(aFileURL);
 		// if the given file is not found by the resource manager, then print a warning (FUTURE: add GUI warning dialog
 		if (aFileURL == null) {
 			System.out.println("FAILED");
@@ -241,7 +241,120 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * This method is used to create a new xdxf configuration file and pack it with the transit time factor polynomials that were parsed from file.parse()
+	 *
+	 * @param aFileToCreate the name of the file to create
+	 */
+	public void pack(File aFileToCreate, DataTree thisDatTree, Boolean TB) {
+		XmlDataAdaptor daptWrite = XmlDataAdaptor.newEmptyDocumentAdaptor();
+		DataAdaptor primary = daptWrite.createChild("xdxf");
+		primary.setValue("date","02.04.2014");
+		primary.setValue("system","sns");
+		primary.setValue("ver","2.0.0");
+		
+		ArrayList<String> sequences = new ArrayList<String>();
+		ArrayList<String> cavities = new ArrayList<String>();
+		ArrayList<String> gaps = new ArrayList<String>();
+		
+		Tools tools = new Tools();
+		
+		int ii = 0;
+		
+		// go through all the keys and values in the datatree
+		Set<Entry<String, List<String>>> entrySet = thisDatTree.getEntrySet();
+		for (Entry<String, List<String>> entry : entrySet) {
+			
+			// get the current value from the datatree
+			List<String> value = entry.getValue();
+			// get the primary sequence that this key belongs too
+			String localPrimary = value.get(0);
+			// get the cavity that this key belongs too, and convert it into a form readable by the accelerator
+			String localSecondary = tools.getSecondaryName(localPrimary,value.get(1));
+			// get the name of the current gap and convert it into a form readable by the accelerator
+			String localGapName = tools.getFullName(localSecondary, entry.getKey());
+			if (TB) {
+				localGapName = entry.getKey();
+			}
+			// get the ttf, stf, ttfp, and stfp of the current gap
+			String localTTF = value.get(2);
+			String localTTFP = value.get(3);
+			String localSTF = value.get(4);
+			String localSTFP = value.get(5);
+			
+			DataAdaptor filePrimary = null;
+			DataAdaptor fileCavity = null;
+			DataAdaptor fileGap = null;
+			
+			Boolean done = false;
+			
+			// while the program is not done (done = false), continue looping
+			while (!done){
+				//System.out.println("Currently Analyzing: "+localGapName);
+				if (sequences.contains(localPrimary)){ //check if this primary sequence has already been made
+					filePrimary = memoryMap.get(localPrimary);
+					if (cavities.contains(localSecondary)){ //check if this cavity has already been made
+						fileCavity = memoryMap.get(localSecondary);
+						
+						if (gaps.contains(localGapName)){ //check if this gap has already been made, if it has, there is a problem
+							
+						}
+						else { //create a new gap, special handling is required for MEBT and SCL
+							if (!localPrimary.startsWith("SCL") || !localPrimary.startsWith("MEBT")){
+								fileGap = filePrimary.createChild("node");
+							}
+							else{
+								fileGap = fileCavity.createChild("node");
+							}
+							fileGap.setValue("id", localGapName);
+							gaps.add(localGapName);
+							
+							DataAdaptor att = fileGap.createChild("attributes");
+							DataAdaptor dataPlace = att.createChild("rfgap");
+							
+							// set the values of the information, trim off the leading and trailing whitespace and replace all of the remaining whitespace with commas
+							dataPlace.setValue("ttfCoeffs",localTTF.trim().replaceAll("\\s+", ","));
+							dataPlace.setValue("ttfpCoeffs",localTTFP.trim().replaceAll("\\s+", ","));
+							dataPlace.setValue("stfCoeffs",localSTF.trim().replaceAll("\\s+", ","));
+							dataPlace.setValue("stfpCoeffs",localSTFP.trim().replaceAll("\\s+", ","));
 
+							addKeyToMap(localGapName, fileGap);
+							done = true;
+							ii++;
+							
+						}
+					}
+					else{ //create a new cavity sequence
+						if (!localPrimary.startsWith("SCL") || !localPrimary.startsWith("MEBT")){
+							cavities.add(localSecondary);
+						}
+						else{
+							fileCavity = filePrimary.createChild("sequence");
+							fileCavity.setValue("id", localSecondary);
+							cavities.add(localSecondary);
+							addKeyToMap(localSecondary, fileCavity);
+						}
+						
+					}
+					
+				}
+				else { //create a new primary sequence
+					filePrimary = primary.createChild("sequence");
+					filePrimary.setValue("id", localPrimary);
+					sequences.add(localPrimary);
+					addKeyToMap(localPrimary, filePrimary);
+					
+				}
+			}
+			
+		}
+		
+		try {
+			daptWrite.writeTo(aFileToCreate);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * This method returns the list of gaps.
 	 *
@@ -345,16 +458,38 @@ public class Parser {
 		DataAdaptor daptMain = daptDoc.childAdaptor("xdxf");
 		
 		for(DataAdaptor datDapt:daptMain.childAdaptors()) {
-			String gapName = datDapt.name();
+			String gapName   = datDapt.name();
 			String frequency = datDapt.stringValue("frequency");
-			String betaMin = datDapt.stringValue("beta_min");
-			String betaMax = datDapt.stringValue("beta_max");
+			String betaMin   = datDapt.stringValue("beta_min");
+			String betaMax   = datDapt.stringValue("beta_max");
 			
 			List<String> currentValueList = new ArrayList<>(Arrays.asList(null,null,null,null,null,null,frequency, betaMin, betaMax,null,null,null,null));
 
 			dataTree.addListToTree(gapName, currentValueList);
 		}
 		
+	}
+	
+	/**
+	 * Fix Andrei's Polynomial Names. Returns a data tree with the parsed data from Andrei's file in proper OpenXal format
+	 *
+	 * @param priorName the prior name
+	 */
+	public DataTree getFixedAndreiPolyNames() {
+		DataTree fixedNameTree                    = new DataTree();
+		Set<Entry<String, List<String>>> entrySet = dataTree.getEntrySet();
+		
+		Tools tools = new Tools();
+		
+		for (Entry<String, List<String>> entry : entrySet) {
+			String oldName    = entry.getKey();
+			List<String> data = entry.getValue();
+			String newName = tools.transformAndreiName(oldName);
+			
+			fixedNameTree.addListToTree(newName, data);
+		}
+		
+		return fixedNameTree;
 	}
 	
 }

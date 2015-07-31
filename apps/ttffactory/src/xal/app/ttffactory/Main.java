@@ -18,24 +18,25 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import com.sun.glass.events.KeyEvent;
-
+import xal.tools.math.poly.UnivariateRealPolynomial;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.FileVisitResult;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.DosFileAttributes;
 
 
 /**
@@ -45,8 +46,15 @@ import java.nio.file.attribute.DosFileAttributes;
  * @version   0.1  15 June 2015
  */
 public class Main extends JFrame {
-
-	private static final long serialVersionUID = 1L;
+	
+	//establish some global constants
+	private static final long serialVersionUID   = 1L;
+	private static final PrintStream PRINTER     = System.out;
+	private DataTree lastDataTree                = null;
+	private DataTree lastBetaTree                = null;
+	private static final Tools generalTools      = new Tools();
+	private static final int OUTSPACE            = 100;
+	private static DataTree andreiFixed    = null;
 
 	/**
 	 * Instantiates a new main.
@@ -148,6 +156,11 @@ public class Main extends JFrame {
         final JFileChooser sequenceSelector = new JFileChooser();
         sequenceSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         
+        final JFileChooser generateSelector = new JFileChooser();
+        generateSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        
+        final JFileChooser compareSelector = new JFileChooser();
+        
         gapChooser.setToolTipText("Choose a Gap From the Drop-down Menu to Analyze");
         valueLabel.setToolTipText("Type the Tag of the Value You Want to Get From the Selected Gap; options: ttf, stf, ttfp, stfp");
         
@@ -167,11 +180,11 @@ public class Main extends JFrame {
                 	// grab the selected file using java's io File class
                 	File file = fileSelector.getSelectedFile();
                 	// print the name of the file we are opening
-                	System.out.println("Opening File: " + file.getName());
+                	PRINTER.println("Opening File: " + file.getName());
                 	runButton.setEnabled(true);
                 } else {
                 	// If the user closes the file chooser before selecting a file, print the following line
-                	System.out.println("File Selection Aborted by User\n");
+                	PRINTER.println("File Selection Aborted by User\n");
                 }
                 getContentPane().revalidate();
             }
@@ -185,7 +198,7 @@ public class Main extends JFrame {
             	//Parser parser = new Parser();
         		try {
 					parser.parse(fileSelector.getSelectedFile());
-	        		System.out.println("File Parsed");
+	        		PRINTER.println("File Parsed");
 	        		ArrayList<String> gapList = parser.getGapList();
 	        		// This adds the gaps to the gap chooser
 	        		for (String str : gapList) {
@@ -205,12 +218,12 @@ public class Main extends JFrame {
 	                    	// grab the selected file using java's io File class
 	                    	File file = saveSelector.getSelectedFile();
 	                    	// print the name of the file we are opening
-	                    	System.out.println("Saving to File: " + file.getName());
+	                    	PRINTER.println("Saving to File: " + file.getName());
 	                    	String filename = fileLabel.getText();
-	                    	parser.pack(new File(file,filename));
+	                    	parser.pack(new File(file,filename), parser.getDataTree(),false);
 	                    } else {
 	                    	// If the user closes the file chooser before selecting a file, print the following line
-	                    	System.out.println("File Selection Aborted by User");
+	                    	PRINTER.println("File Selection Aborted by User");
 	                    }
 	                    
 	        		}
@@ -250,17 +263,26 @@ public class Main extends JFrame {
                 	File file = gapSelector.getSelectedFile();
                 	try {
 						DataTree gapTree = gapTTF(file);
-						System.out.println("Size: " + gapTree.size());
+
 						String gapName = gapTree.getGaps().get(0);
-						System.out.println(gapName);
-						JOptionPane.showMessageDialog(getContentPane(), "TTF Polynomial: " + gapTree.getValue(gapName,"ttf_string") + "\nSTF Polynomial: " + 
-													  gapTree.getValue(gapName, "stf_string"), "Gap Polynomials\n", JOptionPane.INFORMATION_MESSAGE);
-					} catch (IOException e) {
+
+						JOptionPane.showMessageDialog(getContentPane(), 
+													"TTF Polynomial: "   + gapTree.getValue(gapName,"ttf_string")     + 
+													"\nSTF Polynomial: " + gapTree.getValue(gapName, "stf_string")    +
+													"\nTTFP Polynomial"  + gapTree.getValue(gapName, "ttfp_string")   +
+													"\nSTFP Polynomial"  + gapTree.getValue(gapName, "stfp_string")   ,
+													"Gap Polynomials\n", JOptionPane.INFORMATION_MESSAGE        );
+						
+						setLastTree(gapTree);
+						generateXDXFButton.setEnabled(true);
+						compareTTFButton.setEnabled(true);
+					} catch (IOException | InvalidGapException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
-					}
+						e.printStackTrace();
+					} 
 
                 } else {
-                	System.out.println("File Selection Aborted by User");
+                	PRINTER.println("File Selection Aborted by User");
                 }
         		
         	}
@@ -277,20 +299,30 @@ public class Main extends JFrame {
         			File file = sequenceSelector.getSelectedFile();
         			
 	        		try {
-						directoryTTF(file);
+						DataTree seqTree = directoryTTF(file);
+
+						setLastTree(seqTree);
+						
+						generateXDXFButton.setEnabled(true);
+						compareTTFButton.setEnabled(true);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
         		
         		} else {
-        			System.out.println("File Selection Aborted by User");
+        			PRINTER.println("File Selection Aborted by User");
         		}
         	}
         });
         
         //TODO: Handle SCL and END gaps
         acceleratorTTFButton.addActionListener(new ActionListener() {
-        	@Override
+        	
+	        /* (non-Javadoc)
+	         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	         */
+	        @Override
         	public void actionPerformed(ActionEvent event) {
 
         		int choice = acceleratorSelector.showOpenDialog(Main.this);
@@ -301,11 +333,116 @@ public class Main extends JFrame {
                 	
                 	try {
 						directoryTTF(file);
+						DataTree gapTree = directoryTTF(file);
+						
+						setLastTree(gapTree);
+						
+						generateXDXFButton.setEnabled(true);
+						compareTTFButton.setEnabled(true);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
                 } else {
-                	System.out.println("File Selection Aborted by User");
+                	PRINTER.println("File Selection Aborted by User");
+                }
+        	}
+        });
+        
+        generateXDXFButton.addActionListener(new ActionListener() {
+        	
+	        /* (non-Javadoc)
+	         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	         */
+	        @Override
+        	public void actionPerformed(ActionEvent event) {
+
+        		int choice = generateSelector.showOpenDialog(Main.this);
+            	
+                if (choice == JFileChooser.APPROVE_OPTION) {
+                	// grab the selected file using java's io File class
+                	File file = generateSelector.getSelectedFile();
+                	// print the name of the file we are opening
+                	PRINTER.println("\nSaving to File: " + file.getName() + "\n");
+                	
+                	String filename = JOptionPane.showInputDialog(getContentPane(), "Type the name of the file to save to.", "Save to XDXF", JOptionPane.INFORMATION_MESSAGE);
+
+                	parser.pack(new File(file,filename),getLastTree(),true);
+                	PRINTER.println("Finished Saving to File\n");
+                } else {
+                	PRINTER.println("\nFile Selection Aborted by User\n");
+                }
+        	}
+        });
+        
+        compareTTFButton.addActionListener(new ActionListener() {
+        	
+	        /* (non-Javadoc)
+	         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	         */
+	        @Override
+        	public void actionPerformed(ActionEvent event) {
+	        	JOptionPane.showMessageDialog(getContentPane(), "To Compare to Andrei's data, his file will have to be parsed, press OK and select his file from the chooser.");
+        		int choice = compareSelector.showOpenDialog(Main.this);
+            	
+                if (choice == JFileChooser.APPROVE_OPTION) {
+                	TTFTools ttfTools = new TTFTools();                      //for linspace
+                	Parser parser = new Parser();
+                	// grab the selected file using java's io File class
+                	File file = compareSelector.getSelectedFile();
+                	// print the name of the file we are opening
+                	PRINTER.println("\nComparing...\n");
+                	try {
+						parser.parse(file);
+					} catch (ParseException | ResourceNotFoundException
+							| MalformedURLException e) {
+						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+					}
+                	
+                	DataTree andreiDatTree = null;
+                	
+                	if(getAndreiTree()==null){
+                		andreiDatTree = parser.getFixedAndreiPolyNames();
+                		setAndreiTree(andreiDatTree);
+                	} else { andreiDatTree = getAndreiTree(); }
+                	
+                	DataTree thisDataTree = getLastTree();
+                	
+                	DataTree thisBetaTree = getLastBetaTree();
+                	
+                	Set<Entry<String, List<String>>> entrySet = thisDataTree.getEntrySet();
+            		
+            		for (Entry<String, List<String>> entry : entrySet) {
+            			String thisName            = entry.getKey();                     //returns the current gap name
+            			List<String> thisData      = entry.getValue();                   //returns the current data
+            			
+            			double maxBeta             = Double.parseDouble(thisBetaTree.getValue(thisName, "beta_max"));
+            			double minBeta             = Double.parseDouble(thisBetaTree.getValue(thisName, "beta_min"));
+            			double frequency           = Double.parseDouble(thisBetaTree.getValue(thisName, "frequency"));
+            			double[] betaList          = ttfTools.linspace(minBeta, maxBeta, OUTSPACE);
+            			
+            			double[] thisTTF           = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "ttf").split(","));
+            			double[] thisSTF           = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "stf").split(","));
+            			double[] thisTTFP          = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "ttfp").split(","));
+            			double[] thisSTFP          = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "stfp").split(","));
+            		    
+            			double[] andTTF            = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "ttf").trim().split("\\s+"));
+            			double[] andSTF            = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "stf").trim().split("\\s+"));
+            			double[] andTTFP           = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "ttfp").trim().split("\\s+"));
+            			double[] andSTFP           = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "stfp").trim().split("\\s+"));
+            			
+            			double errorTTF            = comparePolys(thisTTF,andTTF,betaList,frequency);
+            			double errorSTF            = comparePolys(thisSTF,andSTF,betaList,frequency);
+            			double errorTTFP           = comparePolys(thisTTFP,andTTFP,betaList,frequency);
+            			double errorSTFP           = comparePolys(thisTTFP,andTTFP,betaList,frequency);
+            			
+            			PRINTER.println("\nName: " + thisName + "\nTTF ERROR: " + Double.toString(errorTTF) + "\nSTF ERROR: " + Double.toString(errorSTF)
+            					       +"\nTTFP ERROR: " + Double.toString(errorTTFP) + "\nSTFP ERROR: " + Double.toString(errorSTFP));
+            		}
+                	PRINTER.println("\nFinished Comparing TTF(s)\n");
+                } else {
+                	PRINTER.println("File Selection Aborted by User");
                 }
         	}
         });
@@ -323,8 +460,8 @@ public class Main extends JFrame {
         panes.setLayout(gl);
         pane2.setLayout(gl2);
         
-        tabPane.addTab("T(k)",panes);
         tabPane.addTab("T(Beta)",pane2);
+        tabPane.addTab("T(k)",panes);
         
         paint(tabPane);
         
@@ -428,152 +565,132 @@ public class Main extends JFrame {
         frame.setVisible(true);
     }
     
-    private DataTree gapTTF(File file) throws IOException {
+    /**
+     * Gap ttf. Handles the gapTTF button
+     *
+     * @param file the file to calculate the TTF/etc.
+     * @return the data tree containing data for the gap
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws InvalidGapException the invalid gap exception
+     */
+    private DataTree gapTTF(File file) throws IOException, InvalidGapException {
 	    String filePath = file.getAbsolutePath();
+	    Path filePathPath = file.toPath();
+	    String fileName = file.getName();
+	    
+	    Boolean inner = false;
+	    Boolean end = false;
 	    
 		Parser betaParser = new Parser();                                                        // Next three lines: grab the beta mins/maxes for each gap
 		betaParser.readBetaConfigFile();
 		DataTree betaTree = betaParser.getDataTree();
 		
-		ElectricFileReader eFR = new ElectricFileReader(filePath);
-		List<Double> ZData = eFR.getDblZpoints();                                                // get the list of doubles containing the Z position Data
-		List<Double> EFdata = eFR.getDblEField();                                                // get the list of doubles containing the Electric Field Data
-		
-		//for SCL Only
-		int i = 0;
-		for(Double dbl:EFdata) {
-			EFdata.set(i, -1.0*dbl);
-			i++;
-		}
-		//END SCL Only
-		
-		TTFTools ttfT = new TTFTools();
-		Tools tools = new Tools();
-		
-		String parsedName = tools.transformName(file.getName());                                  // Change the filename to the name needed for OpenXAL
-		
-		System.out.println("\nStarting..." + parsedName + "\n");
-		
-		String bMinStr = betaTree.getValue(parsedName, "beta_min");                               // grab the beta_min from the DataTree
-		String freqStr = betaTree.getValue(parsedName, "frequency");                              // grab the frequency from the DataTree
-		String bMaxStr = betaTree.getValue(parsedName, "beta_max");                               // grab the beta_max from the DataTree
-		
-		double betaMin = Double.parseDouble(bMinStr);
-		double betaMax = Double.parseDouble(bMaxStr);
-		double frequency = Double.parseDouble(freqStr);
-		
-		double[] betaList = ttfT.linspace(betaMin, betaMax , 100);                                // this makes a 100 length array of evenly spaced number
-		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
-		
-		double[] stfList = ttfT.getTTFForBetaRange(ZData, EFdata, false, frequency, betaList);    // evaluates the STF integral at all betas in betaList
-		
-		//For TTF
-		PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
-		double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
-		String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
-		
-		//For STF
-		double[] constsSTF = {0.0,0.0,0.0,0.0,0.0};
-		String polyStringSTF = "(0.0)+(0.0)x+(0.0)x^2+(0.0)x^3+(0.0)x^4";
-		String constsStringSTF = "0.0,0.0,0.0,0.0,0.0";
-		
-		if(tools.isEndGap(parsedName)) {
-			PolynomialFit polyFitSTF = new PolynomialFit(betaList,stfList);                           // do the same for STF as above
-			constsSTF = polyFitSTF.getPolyConstants();
-			polyStringSTF = polyFitSTF.toStringPolynomialRep(constsSTF);
-			constsStringSTF = polyFitSTF.toStringConsts(constsSTF);
+		setLastBetaTree(betaTree);
+	    
+	    DataTree gapDatTree = new DataTree();
+	    
+	    if (generalTools.isInnerGap(fileName))    { inner = true; }
+	    else if (generalTools.isEndGap(fileName)) { end = true;   }
+	    
+	    if (!inner && !end) {
+	    	
+	    	gapDatTree = normalGapTTF(filePath,fileName,betaTree);
+			PRINTER.println("\nFinished...\n");
+			
+	    } else if(inner) {
+	    	String fileNameOuter = fileName.substring(0, fileName.lastIndexOf("IN")) + "END.DAT";
+	    	String strPathOuter = "/" + filePathPath.subpath(0, filePathPath.getNameCount()-1).toString() + "/" + fileNameOuter;
+	    	PRINTER.println(filePath);
+	    	DataTree thisDatTree = endGapTTF(filePath,fileName,strPathOuter,fileNameOuter,betaTree);
+    	    
+			String gapName = thisDatTree.getGaps().get(0);
+			
+			Set<Entry<String,List<String>>> curEntSet = thisDatTree.getEntrySet();
+			
+			for (Entry<String,List<String>> entry:curEntSet) {
+				gapDatTree.addListToTree(entry.getKey(), entry.getValue());
 		}
 		
-		String primName = tools.getPrimaryName(parsedName);                                       // Next four lines: get data for input into the DataTree
-		String secName = tools.getSecondaryName(primName, parsedName);
-		String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);
-		
-		
-		DataTree gapDatTree = new DataTree();
-		// BELOW: create a list of all values needed for input into the DataTree
-		List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,null,constsStringSTF,null,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,null,null));
-		
-		gapDatTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
-		
-		System.out.println("\nFinished...\n");
-		
+		PRINTER.println("\nFinished...\n");
+			
+	    } else if(end)   {
+	    	throw new InvalidGapException("The chosen gap is an END gap, thus it cannot be analyzed. Choose 'INNER' version of same gap.");
+	    }
 		return gapDatTree;
     }
     
+    /**
+     * Directory ttf. This iterates through all files in the chosen directory and calculates the TTF/etc. for every EField gap file in the directory
+     *
+     * @param file the chosen directory
+     * @return the data tree containing all data for every gap in the directory (accelerator or sequence)
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private DataTree directoryTTF(File file) throws IOException {
     	String filePathString = file.getAbsolutePath();
     	
     	Path begin = Paths.get(filePathString);
     	
-    	// we want to walk through all subdirectories of the chosen directory and calculate the TTFs of the RF Gap files
-		Parser betaParser = new Parser();
-		betaParser.readBetaConfigFile();
-		DataTree betaTree = betaParser.getDataTree();
 		DataTree accDatTree = new DataTree();
 		
-		Tools tools = new Tools();
-
+		// we want to walk through all subdirectories of the chosen directory and calculate the TTFs of the RF Gap files
 		Files.walkFileTree(begin, new SimpleFileVisitor<Path>() { 
 		    @Override
 		    public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
 		    	File file = filePath.toFile();
 		    	//Skip all of the .DS_Store files
 		    	if(!file.isHidden()){
+		    		String stringLocalFilePath = file.getAbsolutePath();
 		    		String fileName = file.getName();
+		    		
 		    		//This converts the filename to the name required for OpenXAL
-		    		String parsedName = tools.transformName(fileName);
+		    		String parsedName = generalTools.transformName(fileName);
+
+		    		Boolean inner = false;
+		    	    Boolean end = false;
+		    	    
+
+		    		Parser betaParser = new Parser();                                                        // Next three lines: grab the beta mins/maxes for each gap
+		    		betaParser.readBetaConfigFile();
+		    		DataTree betaTree = betaParser.getDataTree();
 		    		
-		    		System.out.println("Analyzing: " + filePath.getFileName());
-		    		
-		    		if(!tools.isEndGap(fileName)) {
-		    			//Instantiate a new electric file reader for the file path and grab the Z and EF data
-			    		ElectricFileReader eFR = new ElectricFileReader(file.getAbsolutePath());
-		    			List<Double> ZData = eFR.getDblZpoints();
-						List<Double> EFdata = eFR.getDblEField();
+		    		setLastBetaTree(betaTree);
+		    	    
+		    	    Tools tools = new Tools();
+		    	    
+		    	    if (tools.isInnerGap(fileName))    { inner = true; }
+		    	    else if (tools.isEndGap(fileName)) { end = true;   }
+		    	    
+		    	    if (!inner && !end) {
+		    	    	DataTree gapDatTree = normalGapTTF(stringLocalFilePath,fileName, betaTree);
+		    	    
+						String gapName = gapDatTree.getGaps().get(0);   //get the entry
 						
-						TTFTools ttfT = new TTFTools();
+						Set<Entry<String,List<String>>> curEntSet = gapDatTree.getEntrySet(); // get the set from the entry
 						
-						String bMinStr = betaTree.getValue(parsedName, "beta_min");                               // grab the beta_min from the DataTree
-						String freqStr = betaTree.getValue(parsedName, "frequency");                              // grab the frequency from the DataTree
-						String bMaxStr = betaTree.getValue(parsedName, "beta_max");                               // grab the beta_max from the DataTree
+						for (Entry<String,List<String>> entry:curEntSet) {                    // add entry to accelerator data tree
+							accDatTree.addListToTree(entry.getKey(), entry.getValue());
+						}
+					
+		    			PRINTER.println("\nFinished...\n");
+		    			
+		    	    } else if(inner) {
+		    	    	String fileNameOuter = fileName.substring(0, fileName.lastIndexOf("IN")) + "END.DAT";
+		    	    	String strPathOuter = "/" + filePath.subpath(0, filePath.getNameCount()-1).toString() + "/" + fileNameOuter;
+		    	    	
+		    	    	DataTree gapDatTree = endGapTTF(stringLocalFilePath,fileName,strPathOuter,fileNameOuter,betaTree);
+			    	    
+						String gapName = gapDatTree.getGaps().get(0);
 						
-						double betaMin = Double.parseDouble(bMinStr);
-						double betaMax = Double.parseDouble(bMaxStr);
-						double frequency = Double.parseDouble(freqStr);
+						Set<Entry<String,List<String>>> curEntSet = gapDatTree.getEntrySet();
 						
-						//Calculate the transit time factor at the beta range
-						double[] betaList = ttfT.linspace(betaMin, betaMax, 100); 
-						double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, true, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
-						double[] stfList = ttfT.getTTFForBetaRange(ZData, EFdata, false, frequency, betaList);    // evaluates the STF integral at all betas in betaList
-						
-						//For TTF
-						PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
-						double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
-						String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
-						
-						//For STF
-						PolynomialFit polyFitSTF = new PolynomialFit(betaList,stfList);                           // do the same for STF as above
-						double[] constsSTF = polyFitSTF.getPolyConstants();
-						String polyStringSTF = polyFitSTF.toStringPolynomialRep(constsSTF);
-						
-						String primName = tools.getPrimaryName(parsedName);                                       // Next four lines: get data for input into the DataTree
-						String secName = tools.getSecondaryName(primName, parsedName);
-						String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);
-						String constsStringSTF = polyFitSTF.toStringConsts(constsSTF);
-						
-						// BELOW: create a list of all values needed for input into the DataTree
-						List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,null,constsStringSTF,null,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,null,null));
-						
-						accDatTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
-						
-						System.out.println("TTF Calculated...");
-		    		}
-		    		else if(tools.isEndGap(fileName)) {
-		    			System.out.println("Skipped END Gap for now...");
-		    		}
-		    		else if(fileName.contains("SCL")){
-		    			System.out.println("Skipped SCL for now...");
-		    		}
+						for (Entry<String,List<String>> entry:curEntSet) {
+							accDatTree.addListToTree(entry.getKey(), entry.getValue());
+						}
+					
+		    			PRINTER.println("\nFinished...\n");
+		    			
+		    	    } else if(end)   { }
 					
 		    	}
 		    	return FileVisitResult.CONTINUE;
@@ -584,6 +701,255 @@ public class Main extends JFrame {
     }
     
     /**
+     * Normal gap ttf. This method calculates the TTF/STF/etc. of the given non-end gap
+     *
+     * @param filePath the string path to the file
+     * @param fileName the string name of the file
+     * @return the data tree containing all data for the gap
+     * @throws ParseException Signaled when a file cannot be parsed
+     * @throws ResourceNotFoundException Signaled if a particular resource is not found
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private DataTree normalGapTTF(String filePath,String fileName,DataTree betaTree) throws ParseException, ResourceNotFoundException, IOException {
+    	DataTree datTree = new DataTree();
+    	
+		
+		ElectricFileReader eFR = new ElectricFileReader(filePath);
+		List<Double> ZData = eFR.getDblZpoints();                                                // get the list of doubles containing the Z position Data
+		List<Double> EFdata = eFR.getDblEField();                                                // get the list of doubles containing the Electric Field Data
+
+		TTFTools ttfT = new TTFTools();
+		
+		String parsedName = generalTools.transformName(fileName);                                  // Change the filename to the name needed for OpenXAL
+		
+		PRINTER.println("\nAnalyzing..." + parsedName + "\n");
+		
+		String bMinStr = betaTree.getValue(parsedName, "beta_min");                               // grab the beta_min from the DataTree
+		String freqStr = betaTree.getValue(parsedName, "frequency");                              // grab the frequency from the DataTree
+		String bMaxStr = betaTree.getValue(parsedName, "beta_max");                               // grab the beta_max from the DataTree
+		
+		double betaMin = Double.parseDouble(bMinStr);
+		double betaMax = Double.parseDouble(bMaxStr);
+		double frequency = Double.parseDouble(freqStr);
+		
+		double[] betaList = ttfT.linspace(betaMin, betaMax , OUTSPACE);                                // this makes a 100 length array of evenly spaced number
+		double[] ttfList = ttfT.getTTFForBetaRange(ZData, EFdata, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
+		double[] ttfpList = ttfT.getTTFPForBetaRange(ZData, EFdata, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
+		
+		//For TTF
+		PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
+		double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
+		String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
+		String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);
+		
+		//For TTFP
+		PolynomialFit polyFitTTFP = new PolynomialFit(betaList,ttfpList);                           // fits a polynomial to the TTFs as a function of beta
+		double[] constsTTFP = polyFitTTFP.getPolyConstants();                                       // return the constants of said polynomial
+		String polyStringTTFP = polyFitTTFP.toStringPolynomialRep(constsTTFP);                       // get a polynomial representation of the polynomial
+		String constsStringTTFP = polyFitTTFP.toStringConsts(constsTTFP);
+				
+		//For STF: If not an end gap, these values are zero
+		String polyStringSTF = "(0.0)+(0.0)x+(0.0)x^2+(0.0)x^3+(0.0)x^4";
+		String constsStringSTF = "0.0,0.0,0.0,0.0,0.0";
+		
+		//For STFP: If not an end gap, these values are zero
+		String polyStringSTFP = "(0.0)+(0.0)x+(0.0)x^2+(0.0)x^3+(0.0)x^4";
+		String constsStringSTFP = "0.0,0.0,0.0,0.0,0.0";
+		
+		String primName = generalTools.getPrimaryName(parsedName);     
+		String secName = generalTools.getSecondaryName(primName, parsedName);
+
+		// BELOW: create a list of all values needed for input into the DataTree
+		List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,constsStringTTFP,constsStringSTF,constsStringSTFP,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,polyStringTTFP,polyStringSTFP));
+		
+		datTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
+		
+		return datTree;
+    }
+    
+    /**
+     * End gap ttf. This is for calculating the TTF/STF/etc. of an end gap. It matches the end gap to the corresponding half-gap
+     *
+     * @param filePath the string path to the file
+     * @param fileName the string name of the file
+     * @return the data tree holding the information for the end gap
+     * @throws ParseException Signals that there is a problem parsing either the beta or E-Field file
+     * @throws ResourceNotFoundException Signals that a specific resource was not found
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private DataTree endGapTTF(String filePathInner,String fileNameInner, String filePathOuter, String fileNameOuter, DataTree betaTree) throws ParseException, ResourceNotFoundException, IOException {
+    	DataTree datTree = new DataTree();														 // DataTree that will hold the final data
+		
+		ElectricFileReader eFRInner = new ElectricFileReader(filePathInner);                     // The electric file reader for the inner gap
+		List<Double> ZDataInner = eFRInner.getDblZpoints();                                      // The z-point data for the inner gap
+		List<Double> EFdataInner = eFRInner.getDblEField();                                      // The electric field data for the inner gap
+		
+		ElectricFileReader eFROuter = new ElectricFileReader(filePathOuter);                     // The electric file reader for the outer gap
+		List<Double> ZDataOuter = eFROuter.getDblZpoints();                                      // The z-point data for the outer gap
+		List<Double> EFdataOuter = eFROuter.getDblEField();                                      // The electric field data for the outer gap
+		
+		TTFTools ttfT = new TTFTools();
+		
+		String parsedNameInner = generalTools.transformName(fileNameInner);                             // Change the filename to the name needed for OpenXAL
+		
+		PRINTER.println("\nAnalyzing..." + parsedNameInner + " END GAP\n");
+		
+		String bMinStr = betaTree.getValue(parsedNameInner, "beta_min");                               // grab the beta_min from the DataTree
+		String freqStr = betaTree.getValue(parsedNameInner, "frequency");                              // grab the frequency from the DataTree
+		String bMaxStr = betaTree.getValue(parsedNameInner, "beta_max");                               // grab the beta_max from the DataTree
+		
+		double betaMin   = Double.parseDouble(bMinStr);
+		double betaMax   = Double.parseDouble(bMaxStr);
+		double frequency = Double.parseDouble(freqStr);
+		
+		//this makes a 100 length array of evenly spaced betas
+		double[] betaList = ttfT.linspace(betaMin, betaMax , OUTSPACE); 
+		//                                                                                                   INNER GAPS
+		double[] ttfListInner  =  ttfT.getTTFForBetaRange(ZDataInner, EFdataInner, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
+		double[] stfListInner  =  ttfT.getSTFForBetaRange(ZDataInner, EFdataInner, frequency, betaList);     // evaluates the STF integral at all betas in betaList
+		double[] ttfpListInner =  ttfT.getTTFPForBetaRange(ZDataInner, EFdataInner, frequency, betaList);    // evaluates the TTFP integral at all betas in betaList
+		double[] stfpListInner =  ttfT.getSTFPForBetaRange(ZDataInner, EFdataInner, frequency, betaList);    // evaluates the STFP integral at all betas in betaList
+		
+		//																								     OUTER GAPS
+		double[] ttfListOuter  =  ttfT.getTTFForBetaRange(ZDataOuter, EFdataOuter, frequency, betaList);     // evaluates the TTF integral at all betas in betaList
+		double[] stfListOuter  =  ttfT.getSTFForBetaRange(ZDataOuter, EFdataOuter, frequency, betaList);     // evaluates the STF integral at all betas in betaList
+		double[] ttfpListOuter =  ttfT.getTTFPForBetaRange(ZDataOuter, EFdataOuter, frequency, betaList);    // evaluates the TTFP integral at all betas in betaList
+		double[] stfpListOuter =  ttfT.getSTFPForBetaRange(ZDataOuter, EFdataOuter, frequency, betaList);    // evaluates the STFP integral at all betas in betaList
+		
+		double[] ttfList  		=  		new double[ttfListInner.length];
+		double[] stfList  		=  		new double[stfListInner.length];
+		double[] ttfpList 		= 		new double[ttfpListInner.length];
+		double[] stfpList 		= 		new double[stfpListInner.length];
+		
+		for (int i = 0;i<ttfListInner.length;i++) {
+			ttfList[i] =  (ttfListInner[i] + ttfListOuter[i])/2.0;
+			stfList[i] =  (stfListInner[i] - stfListOuter[i])/2.0;
+			
+			ttfpList[i] = (ttfpListInner[i] + ttfpListOuter[i])/2.0;
+			stfpList[i] = (stfpListInner[i] - stfpListOuter[i])/2.0;
+		}
+		
+		//TTF
+		PolynomialFit polyFitTTF = new PolynomialFit(betaList,ttfList);                           // fits a polynomial to the TTFs as a function of beta
+		double[] constsTTF = polyFitTTF.getPolyConstants();                                       // return the constants of said polynomial
+		String polyStringTTF = polyFitTTF.toStringPolynomialRep(constsTTF);                       // get a polynomial representation of the polynomial
+		String constsStringTTF = polyFitTTF.toStringConsts(constsTTF);							  // get a string representation of the constants
+		
+		//STF
+		PolynomialFit polyFitSTF = new PolynomialFit(betaList,stfList);                           // fits a polynomial to the TTFs as a function of beta
+		double[] constsSTF = polyFitSTF.getPolyConstants();                                       // return the constants of said polynomial
+		String polyStringSTF = polyFitSTF.toStringPolynomialRep(constsSTF);                       // get a polynomial representation of the polynomial
+		String constsStringSTF = polyFitSTF.toStringConsts(constsSTF);							  // get a string representation of the constants
+		
+		//TTFP
+		PolynomialFit polyFitTTFP = new PolynomialFit(betaList,ttfpList);                         // fits a polynomial to the TTFs as a function of beta
+		double[] constsTTFP = polyFitTTFP.getPolyConstants();                                     // return the constants of said polynomial
+		String polyStringTTFP = polyFitTTFP.toStringPolynomialRep(constsTTFP);                    // get a polynomial representation of the polynomial
+		String constsStringTTFP = polyFitTTFP.toStringConsts(constsTTFP);						  // get a string representation of the constants
+		
+		//STFP
+		PolynomialFit polyFitSTFP = new PolynomialFit(betaList,stfpList);                         // fits a polynomial to the TTFs as a function of beta
+		double[] constsSTFP = polyFitSTFP.getPolyConstants();                                     // return the constants of said polynomial
+		String polyStringSTFP = polyFitSTFP.toStringPolynomialRep(constsSTFP);                    // get a polynomial representation of the polynomial
+		String constsStringSTFP = polyFitSTFP.toStringConsts(constsSTFP);						  // get a string representation of the constants
+		
+		String primName = generalTools.getPrimaryName(parsedNameInner);     
+		String secName = generalTools.getSecondaryName(primName, parsedNameInner);
+
+		// BELOW: create a list of all values needed for input into the DataTree
+		List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,constsStringTTFP,constsStringSTF,constsStringSTFP,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,polyStringTTFP,polyStringSTFP));
+			
+		datTree.addListToTree(parsedNameInner, currentValueList);                                   // add the list of data to the DataTree
+		
+		return datTree;
+    }
+    
+    /**
+     * Compare two lists of doubles by calculating the L2 Norm error between them
+     *
+     * @param dblPoly1 the double array containing the coefficients of the first polynomial (Our polys)
+     * @param dblPoly2 the double array containing the coefficients of the second polynomial (andrei's polys)
+     * @param evalMat  the double array containing the values to evaluate the polynomials at
+     * @return the double L2 Norm error between the two polynomials
+     */
+    private double comparePolys(double[] dblPoly1, double[] dblPoly2, double[] evalMat, double frequency) {
+           
+    	TTFTools ttfTools = new TTFTools();
+    	double[] evalMat2 = ttfTools.kCalcArray(evalMat, frequency);               //generate an array containing k rather than beta
+    	
+    	UnivariateRealPolynomial poly1 = new UnivariateRealPolynomial(dblPoly1);   //the first polynomial
+    	UnivariateRealPolynomial poly2 = new UnivariateRealPolynomial(dblPoly2);   //the second polynomial
+    	
+    	double firstX = evalMat[0];                                                //the first x in evalMat 
+    	double lastX  = evalMat[evalMat.length-1];                                 //the last x in evalMat
+    	double delta = Math.abs(lastX-firstX)/evalMat.length;                      //the change in x needed for calculating the L2NormError
+    	
+    	double[] yList1 = new double[evalMat.length];                              //instantiate the double array to hold the evaluations of poly1 at each x in evalMat
+    	double[] yList2 = new double[evalMat.length];                              //instantiate the double array to hold the evaluations of poly2 at each x in evalMat
+    	
+    	for(int i=0;i<evalMat.length;i++) {                                        //populate the y lists
+    		yList1[i] = poly1.evaluateAt(evalMat[i]);
+    		yList2[i] = poly2.evaluateAt(evalMat2[i]);                             //we must evaluate Andrei's polynomials at k not Beta
+    	}
+    	
+    	return generalTools.l2NormError(yList1, yList2, delta);                    //evaluate the L2 Norm error for yList1 and yList2
+    }
+    
+    /**
+     * Sets the last data tree to the last data that was calculated
+     *
+     * @param lastDatTree the new last tree
+     */
+    private void setLastTree(DataTree lastDatTree) {
+    	this.lastDataTree = lastDatTree;
+    }
+    
+    /**
+     * gets the last data tree to the last data that was calculated
+     *
+     * @param lastDatTree the new last tree
+     */
+    private DataTree getLastTree() {
+    	return this.lastDataTree;
+    }
+    
+    /**
+     * Sets the last beta tree.
+     *
+     * @param lastBetTree the new last beta tree
+     */
+    private void setLastBetaTree(DataTree lastBetTree) {
+    	this.lastBetaTree= lastBetTree;
+    }
+    
+    /**
+     * Gets the last beta tree.
+     *
+     * @return the last beta tree
+     */
+    private DataTree getLastBetaTree() {
+    	return this.lastBetaTree;
+    }
+    
+    /**
+     * Sets andreis data tree with fixed name
+     *
+     * @param andreiTree the datatree to set as andreiFixed
+     */
+    private void setAndreiTree(DataTree andreiTree) {
+    	this.andreiFixed = andreiTree;
+    }
+    
+    /**
+     * Gets andreis data tree with fixed name
+     *
+     * @return the last beta tree
+     */
+    private DataTree getAndreiTree() {
+    	return this.andreiFixed;
+    }
+
+    /**
      * The main method. Sets up the GUI
      *
      * @param args There are no arguments
@@ -591,7 +957,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
     	
     	try {
-    		System.out.println("Launching Application ttfParser...");
+    		PRINTER.println("Launching Application ttfParser...");
     		// This line prevents the application from having UI update concurrency issues
 	        EventQueue.invokeLater(new Runnable() {               
 	        
@@ -601,7 +967,7 @@ public class Main extends JFrame {
 					Main ex = new Main(); // instantiate the main class
 	            }
 	        });
-	        System.out.println("Application Launched");
+	        PRINTER.println("Application Launched");
     	}
     	// prints an exception and ends the program if there are errors while starting up the application
     	catch (Exception exception){
@@ -613,4 +979,13 @@ public class Main extends JFrame {
     }
 }
 
+class InvalidGapException extends Exception {
+
+	private static final long serialVersionUID = 1L;
+
+	public InvalidGapException(String message){
+	     super(message);
+	  }
+
+}
 

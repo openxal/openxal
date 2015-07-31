@@ -24,10 +24,9 @@ public class Tools {
 		String newName = "";
 		
 		String[] splitName = priorName.split("_|\\.");      // split the string using "-" and "." as the delimiters
-		System.out.println(Arrays.toString(splitName));
+		//System.out.println(Arrays.toString(splitName));
 		String priorToken1 = splitName[0];
 		String priorToken2 = splitName[1];
-		//String priorToken3 = splitName[2];
 		
 		// this is the cavity number of the gap
 		String cavNum = String.format("%02d", Integer.parseInt(priorToken1.replaceAll("\\D+","")));
@@ -80,10 +79,21 @@ public class Tools {
 	public Boolean isEndGap(String name) {
 		Boolean isEndGap = false;
 		
-		if(name.contains("END")) {
-			isEndGap = true;
-		}
+		if (name.contains("END")) { isEndGap = true; }
+
 		return isEndGap;
+	}
+	
+	/**
+	 * Checks if given gap name is an inner gap.
+	 *
+	 * @param name the name of the gap
+	 * @return true if is inner gap, false if outer
+	 */
+	public Boolean isInnerGap(String name) {
+		Boolean inner = false;
+		if (name.contains("INNER")) {  inner = true; }
+		return inner;
 	}
 	
 	/**
@@ -128,11 +138,10 @@ public class Tools {
 	public String getPrimaryName(String preSeq) {
 		String primaryName = null;
 		
-		if (preSeq.startsWith("MEBT"))            {primaryName = "MEBT";} 
-		else if (preSeq.startsWith("DTL"))        {primaryName = "DTL";}
-		else if (preSeq.startsWith("CCL"))        {primaryName = "CCL";}
-		else if (preSeq.startsWith("SCLHigh"))    {primaryName = "SCLHigh";}
-		else if (preSeq.startsWith("SCLMed"))     {primaryName = "SCLMed";}
+		if      (preSeq.startsWith("MEBT"))            {primaryName = "MEBT";} 
+		else if (preSeq.startsWith("DTL"))             {primaryName = "DTL";}
+		else if (preSeq.startsWith("CCL"))             {primaryName = "CCL";}
+		else if (preSeq.startsWith("SCL"))             {primaryName = "SCL";}
 		
 		return primaryName;
 	}
@@ -152,11 +161,11 @@ public class Tools {
 		if (primSeq.startsWith("MEBT"))                                                {postSeq = "MEBT_RF:Bnch0" + cavNum;}
 		else if (primSeq.startsWith("DTL"))                                            {postSeq = "DTL_RF:Cav0" + cavNum;}
 		else if (primSeq.startsWith("CCL"))                                            {postSeq = "CCL_RF:Cav0" + cavNum;}
-		else if ((primSeq.startsWith("SCLHigh")) || (primSeq.startsWith("SCLMed")))    {postSeq = preSeq.replace(":", "_RF:");}
+		else if (primSeq.startsWith("SCL"))                                            {postSeq = preSeq.replace(":", "_RF:");}
 		
 		return postSeq;
 	}
-	
+
 	/**
 	 * This method uses the secondary sequence name and the original name to create the full name of the gap that is consistent with the accelerator's naming scheme.
 	 *
@@ -170,6 +179,53 @@ public class Tools {
 		if (gapNum.length() == 1) {gapNum = "0" + gapNum;}
 		
 		return secName + ":Rg" + gapNum;
+	}
+	
+	/**
+	 * Transform andrei name to that needed for OpenXAL. Can be used for direct conversion
+	 *
+	 * @param preSeq the original name
+	 * @return the new name
+	 */
+	public String transformAndreiName(String preSeq) {
+		String primName = getPrimaryName(preSeq);
+		String secoName = getSecondaryName(primName,preSeq);
+		String wholName = getFullName(secoName,preSeq);
+		
+		return wholName;
+	}
+	
+		
+	/**
+	 * L2 norm error. Calculate the L2 Norm error of two equally length double arrays
+	 *
+	 * @param vals1 the first double array
+	 * @param vals2 the second double array
+	 * @param delta the delta term
+	 * @return the double L2 Norm error
+	 */
+	public double l2NormError(double[] vals1, double[] vals2, double delta) {
+		double totalError = 0.0;
+		for(int i = 0;i<vals1.length;i++) {
+			double incrementError = Math.pow(Math.abs(vals2[i]-vals1[i]),2.0);
+			totalError+=incrementError;
+		}
+		return Math.sqrt(totalError)*delta;
+	}
+	/**
+	 * String array to double array.
+	 *
+	 * @param stringArray the string array
+	 * @return the double array
+	 */
+	public double[] stringArrayToDoubleArray(String[] stringArray) {
+		double[] doubleArray = new double[stringArray.length];
+		
+		for(int i=0;i<stringArray.length;i++) {
+			doubleArray[i] = Double.parseDouble(stringArray[i]);
+		}
+		
+		return doubleArray;
 	}
 	
 }
