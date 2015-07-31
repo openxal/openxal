@@ -26,6 +26,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.math.r3.R3;
+import xal.tools.math.r3.R3x3;
 
 
 
@@ -94,6 +95,10 @@ public abstract class Element implements IElement {
     private double aligny = 0.0;
     private double alignz = 0.0;
     
+    private double phix = 0.0;
+    private double phiy = 0.0;
+    private double phiz = 0.0;
+    
 
     /*
      * Initialization
@@ -123,7 +128,6 @@ public abstract class Element implements IElement {
         this.cpsParent = null;
     };
     
-
     /**
      *  Set the string identifier for the element.
      *
@@ -251,6 +255,31 @@ public abstract class Element implements IElement {
     public double getAlignZ() {
         return alignz;
     }
+        
+	public double getPhiX() {
+		return phix;
+	}
+
+	public double getPhiY() {
+		return phiy;
+	}
+
+	public double getPhiZ() {
+		return phiz;
+	}
+
+	public void setPhiX(double phix) {
+		this.phix = phix;
+	}
+
+	public void setPhiY(double phiy) {
+		this.phiy = phiy;
+	}
+
+	public void setPhiZ(double phiz) {
+		this.phiz = phiz;
+	};
+
     
     
     /*
@@ -328,6 +357,58 @@ public abstract class Element implements IElement {
         return matPhi;
 	}
      
+
+    /**
+     * <h2>Add Rotation Error to Transfer Matrix</h2>
+     * <p>
+     * Method to add the effects of a spatial rotation to the
+     * beamline element represented by the given 
+     * transfer matrix.  The returned matrix is the
+     * original transfer matrix conjugated by the rotation
+     * matrix.
+     * 
+     * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
+     * 
+     * @return  transfer matrix <b>&Phi;</b> after applying rotations
+     * 
+     * @author  Ivo List
+     * 
+     * @see PhaseMatrix
+     * @see PhaseMatrix#translation(PhaseVector)
+     * 
+     * @since Feb 20, 2009, version 2
+     */
+    protected PhaseMatrix applyRotationError(PhaseMatrix matPhi) {
+    	double px = getPhiX();
+        double py = getPhiY();
+        double pz = getPhiZ();
+         //distCenter = - distCenter;
+        if ((px != 0)||(py != 0)||(pz !=0)) {
+        	
+        	// Only roll implementation
+        	R3x3 R = R3x3.newRotationZ(-pz);        	
+        	PhaseMatrix Tr  = PhaseMatrix.rotationProduct(R);
+        	PhaseMatrix Tri  = Tr.transpose();
+        	
+        	//shift in momentum space
+        	/*Tr.setElem(IND.Xp,IND.HOM, -px);            
+            Tr.setElem(IND.Yp,IND.HOM, -py);
+            
+            Tri.setElem(IND.Xp,IND.HOM, px);            
+            Tri.setElem(IND.Yp,IND.HOM, py);
+            */
+        	
+        	
+        	PhaseMatrix matPhiRot = Tri.times(matPhi).times(Tr);
+            
+        	return matPhiRot;
+             
+        } 
+
+        return matPhi;
+	}
+    
+
     /**
      * <p>This method is intended to return the location of the probe within
      * the current element.  Actually, we compute and return the distance of 
@@ -450,6 +531,10 @@ public abstract class Element implements IElement {
         setAlignX(alignmentBucket.getX());
         setAlignY(alignmentBucket.getY());
         setAlignZ(alignmentBucket.getZ());
+        
+        setPhiX(alignmentBucket.getPitch());
+        setPhiY(alignmentBucket.getYaw());
+        setPhiZ(alignmentBucket.getRoll());
         
 //        // CKA: Added to include hardware ID attribute for the new element.
 //        //   This is bound to ScenarioGenerator#collectElements(). 

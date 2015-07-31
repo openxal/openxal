@@ -262,6 +262,7 @@ public class IdealMagQuad extends ThickElectromagnet {
 			matPhi.setSubMatrix( 2, 3, 2, 3, arrF );			
 		}
 		
+	   matPhi = applyRotationError(matPhi);
 	//sako, Apply align error
 	   matPhi = applyAlignError(matPhi);
 	
