@@ -83,6 +83,7 @@ class LINAC_Wizard_Document:
 		self.accl = accl
 		self.accSeq = null
 		self.linac_wizard_window = null
+		self.scl_wizard_document = null
 		self.linac_setup_controller = LINAC_SetUp_Controller(self)
 		self.ws_lw_controller = WS_LW_Acquisition_Controller(self)
 		self.io_controller = WS_Wizard_IO_Controller(self)
@@ -99,7 +100,11 @@ class LINAC_Wizard_Document:
 		
 	def setLINAC_Wizard_Window(self,linac_wizard_window):
 		self.linac_wizard_window = linac_wizard_window
-		self.linac_wizard_window.getMainPanel().add(self.tabbedPane,BorderLayout.CENTER)		
+		self.linac_wizard_window.getMainPanel().add(self.tabbedPane,BorderLayout.CENTER)	
+		
+	def setSCL_Wizard_Document(self,scl_wizard_document):
+		self.scl_wizard_document = scl_wizard_document
+		
 		
 	def getMessageTextField(self):
 		if(self.linac_wizard_window != null):
@@ -143,6 +148,7 @@ class SCL_Wizard_Document(AcceleratorDocument):
 			
 		self.linac_wizard_document = LINAC_Wizard_Document(self.getAccelerator())
 		self.linac_wizard_window = LINAC_Wizard_Window(self.linac_wizard_document)
+		self.linac_wizard_document.setSCL_Wizard_Document(self)
 		
 		if(url != null):
 			self.setSource(url)
@@ -156,8 +162,13 @@ class SCL_Wizard_Document(AcceleratorDocument):
 		#----- set up path for the data		
 		lib.constants_lib.const_path_dict["XAL_XML_ACC_FILES_DIRS_PATH"] = self.getAcceleratorFilePath()
 		lib.constants_lib.const_path_dict["OPENXAL_XML_ACC_FILES_DIRS_PATH"] = self.getAcceleratorFilePath()
-		lib.constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"] = self.getDisplayFilePath()
-				
+		lib.constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"] = ""
+		default_url = self.getDefaultFolderURL()
+		if(default_url != None):
+			path = self.getDefaultFolderURL().getPath()
+			path = path.replace("%20"," ")
+			lib.constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"] = path
+		
 	def makeMainWindow(self):
 		self.mainWindow = SCL_Wizard_Window(self)
 		self.mainWindow.getContentPane().setLayout(BorderLayout())
@@ -165,6 +176,7 @@ class SCL_Wizard_Document(AcceleratorDocument):
 		self.linac_wizard_window.setFrame(self.mainWindow,self.mainPanel)
 		self.linac_wizard_document.setLINAC_Wizard_Window(self.linac_wizard_window)
 		self.mainWindow.setSize(Dimension(800, 600))
+ 		
 
 	def saveDocumentAs(	self,url):
 		io_controller = self.linac_wizard_document.getIO_Controller()

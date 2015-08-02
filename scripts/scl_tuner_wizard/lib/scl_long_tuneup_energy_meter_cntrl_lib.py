@@ -550,7 +550,7 @@ class Read_From_ASCII_Button_Listener(ActionListener):
 		self.scl_long_tuneup_controller = scl_long_tuneup_controller
 
 	def actionPerformed(self,actionEvent):	
-		self.scl_long_tuneup_controller.getMessageTextField().setText("")			
+		self.scl_long_tuneup_controller.getMessageTextField().setText("")
 		fc = JFileChooser(constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"])
 		fc.setDialogTitle("Read BPM Offsets from ASCII file")
 		fc.setApproveButtonText("Read")

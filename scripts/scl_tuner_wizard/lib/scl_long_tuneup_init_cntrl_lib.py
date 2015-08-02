@@ -258,11 +258,6 @@ class Init_BPMs_and_Cavities_Button_Listener(ActionListener):
 		for cav_wrapper_ind in range(len(cav_wrappers)):	
 			pos_advance = sclBPM_PairDistance(cav_wrapper_ind,min_bpm_dist,max_bpm_dist)
 			cav_wrapper = cav_wrappers[cav_wrapper_ind]		
-			#-----------define blanking PV 
-			if(cav_wrapper.blank_channel == null and (not fake_scan)):
-				ch_name = "SCL_LLRF:"+cav_wrapper.alias.replace("Cav","FCM")+":BlnkBeam"
-				cav_wrapper.blank_channel = ChannelFactory.defaultFactory().getChannel(ch_name)
-				cav_wrapper.blank_channel.connectAndWait()	
 			#-----------------------------------------------------------
 			cav_wrapper.initDesignAmp = cav_wrapper.cav.getDfltCavAmp()
 			cav_wrapper.initDesignPhase = 	cav_wrapper.cav.getDfltCavPhase()		
