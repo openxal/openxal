@@ -81,6 +81,9 @@ public abstract class Element implements IElement {
     //position in s (m)
     /** This is the center position of the element with the lattice - CKA */
     private double      dblPos;
+
+    private double      dblLatPivotPos;
+
     
     //sako closeElements (for fringe field calculations)
     /** 
@@ -359,53 +362,62 @@ public abstract class Element implements IElement {
      
 
     /**
-     * <h2>Add Rotation Error to Transfer Matrix</h2>
-     * <p>
-     * Method to add the effects of a spatial rotation to the
-     * beamline element represented by the given 
-     * transfer matrix.  The returned matrix is the
-     * original transfer matrix conjugated by the rotation
-     * matrix.
-     * 
-     * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
-     * 
-     * @return  transfer matrix <b>&Phi;</b> after applying rotations
-     * 
-     * @author  Ivo List
-     * 
-     * @see PhaseMatrix
-     * @see PhaseMatrix#translation(PhaseVector)
-     * 
-     * @since Feb 20, 2009, version 2
-     */
-    protected PhaseMatrix applyRotationError(PhaseMatrix matPhi) {
-    	double px = getPhiX();
-        double py = getPhiY();
-        double pz = getPhiZ();
-         //distCenter = - distCenter;
-        if ((px != 0)||(py != 0)||(pz !=0)) {
-        	
-        	// Only roll implementation
-        	R3x3 R = R3x3.newRotationZ(-pz);        	
-        	PhaseMatrix Tr  = PhaseMatrix.rotationProduct(R);
-        	PhaseMatrix Tri  = Tr.transpose();
-        	
-        	//shift in momentum space
-        	/*Tr.setElem(IND.Xp,IND.HOM, -px);            
-            Tr.setElem(IND.Yp,IND.HOM, -py);
-            
-            Tri.setElem(IND.Xp,IND.HOM, px);            
-            Tri.setElem(IND.Yp,IND.HOM, py);
-            */
-        	
-        	
-        	PhaseMatrix matPhiRot = Tri.times(matPhi).times(Tr);
-            
-        	return matPhiRot;
-             
-        } 
+	 * <h2>Add Rotation Error to Transfer Matrix</h2>
+	 * <p>
+	 * Method to add the effects of a spatial rotation to the
+	 * beamline element represented by the given 
+	 * transfer matrix.  The returned matrix is the
+	 * original transfer matrix conjugated by the rotation
+	 * matrix.
+	 * 
+	 * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
+	 * 
+	 * @return  transfer matrix <b>&Phi;</b> after applying rotations
+	 * 
+	 * @author  Ivo List
+	 */
+	protected PhaseMatrix applyRotationError(PhaseMatrix matPhi, double start, double len) {
+		double px = getPhiX();
+	    double py = getPhiY();
+	    double pz = getPhiZ();
+	    PhaseMatrix T = null, Ti = null;
+	    
+	    if (pz != 0.) {	    	     
+	    	T  = PhaseMatrix.rotationProduct(R3x3.newRotationZ(-pz));
+	    	Ti  = T.transpose();	    	
+	    }
+	    
+	    if (px != 0. || py != 0.) {
+	    	if (T == null || Ti == null) {
+	    		T = PhaseMatrix.identity();
+	    		Ti = PhaseMatrix.identity();
+	    	}
+	    	if (len > 0.) {
+	    		T = thickPitchAndYaw(T, px, py, start - dblLatPivotPos);
+	    		Ti = thickPitchAndYaw(Ti, -px, -py, start - dblLatPivotPos + len);
+	    	}
+	    	
+	    	T = thinPitchAndYaw(T, px, py);
+	    	Ti = thinPitchAndYaw(Ti, -px, -py);
+	    }
+	    
+	    if (T != null) matPhi = Ti.times(matPhi).times(T);
+	    return matPhi;
+	}
 
-        return matPhi;
+	// Pitch and yaw of thick elements
+	protected PhaseMatrix thickPitchAndYaw(PhaseMatrix T, double px, double py, double dist) {	 	
+    	T.setElem(IND.X,IND.HOM, -px * dist);	    	
+    	T.setElem(IND.Y,IND.HOM, -py * dist);
+    	return T;
+	}
+
+	// Shift in momentum space for pitch and yaw
+	protected PhaseMatrix thinPitchAndYaw(PhaseMatrix T, double px, double py) {
+    	T.setElem(IND.Xp,IND.HOM, -px);	    	
+    	T.setElem(IND.Yp,IND.HOM, -py);	    	
+    	
+	    return T;
 	}
     
 
@@ -526,7 +538,8 @@ public abstract class Element implements IElement {
         setId( strElemId != null ? strElemId : strSmfId);
         setHardwareNodeId(strSmfId);
         setPosition(latticeElement.getCenterPosition());
-        
+        dblLatPivotPos = latticeElement.getNode().getPosition();
+
         AlignmentBucket alignmentBucket = latticeElement.getNode().getAlign(); 
         setAlignX(alignmentBucket.getX());
         setAlignY(alignmentBucket.getY());
