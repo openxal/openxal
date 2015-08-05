@@ -132,6 +132,22 @@ public class DataTree {
 	public Set<Entry<String,List<String>>> getEntrySet() {
 		return map.entrySet();
 	}
+	
+	public Entry<String,List<String>> getFirstEntry() {
+		
+		Set<Entry<String,List<String>>> curEntSet = getEntrySet();
+		Entry<String,List<String>> curEnt = null;
+		int i = 0;
+		for (Entry<String,List<String>> entry:curEntSet) {
+			if(i>0) {
+				break;
+			}
+			curEnt = entry;
+			i++;
+		}
+		
+		return curEnt;
+	}
 
 	
 }

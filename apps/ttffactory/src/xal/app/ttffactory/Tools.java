@@ -9,8 +9,21 @@
 
 package xal.app.ttffactory;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 
+import xal.model.ModelException;
+import xal.model.alg.EnvTrackerAdapt;
+import xal.model.probe.EnvelopeProbe;
+import xal.model.probe.traj.EnvelopeProbeState;
+import xal.model.probe.traj.Trajectory;
+import xal.sim.scenario.AlgorithmFactory;
+import xal.sim.scenario.ProbeFactory;
+import xal.sim.scenario.Scenario;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
+import xal.smf.data.XMLDataManager;
+import xal.tools.beam.CovarianceMatrix;
 import xal.tools.math.rn.Rmxn;
 import xal.tools.math.rn.Rn;
 
@@ -19,7 +32,241 @@ import xal.tools.math.rn.Rn;
  * The Class ElectricFileReader.
  */
 public class Tools {
+
 	
+	/** The ostr typeout. */
+	private static PrintStream        OSTR_TYPEOUT;
+	
+	/** The accl test. */
+	private static Accelerator		  ACCL_TEST;
+	
+	/** The seq test. */
+	private static AcceleratorSeq	  SEQ_TEST;
+	
+	/** The algorithm. */
+	private static EnvTrackerAdapt    ALGORITHM;
+	
+	/**
+	 * Returns the list of names attriuted to given electric field map
+	 *
+	 * @param priorName the name of the field's gap
+	 * @return the list of names
+	 */
+	public String[] getCCLNameList(String priorName) {
+		
+		// I am sure there is a much prettier way to do this, but I was in a hurry, so this works, but is not pretty.
+		
+		String[] splitName = priorName.split(":");      // split the string using "-" and "." as the delimiters
+		//System.out.println(Arrays.toString(splitName));
+		String priorToken1 = splitName[0];
+		String priorToken2 = splitName[1];
+		String priorToken3 = splitName[2];
+		
+		// this is the cavity number of the gap
+		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
+		String gapNum = String.format("%02d", Integer.parseInt(priorToken3.replaceAll("\\D+","")));
+		
+		String baseName = "";
+		String[] nameList = new String[8];
+		
+		switch(gapNum) {
+		case "01": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "01";
+			nameList[1] = baseName + "02";
+			nameList[2] = baseName + "03";
+			nameList[3] = baseName + "04";
+			nameList[4] = baseName + "05";
+			nameList[5] = baseName + "06";
+			nameList[6] = baseName + "07";
+			nameList[7] = baseName + "08";
+			break;
+		case "02": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "09";
+			nameList[1] = baseName + "10";
+			nameList[2] = baseName + "11";
+			nameList[3] = baseName + "12";
+			nameList[4] = baseName + "13";
+			nameList[5] = baseName + "14";
+			nameList[6] = baseName + "15";
+			nameList[7] = baseName + "16";
+		break;
+		case "03":
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "17";
+			nameList[1] = baseName + "18";
+			nameList[2] = baseName + "19";
+			nameList[3] = baseName + "20";
+			nameList[4] = baseName + "21";
+			nameList[5] = baseName + "22";
+			nameList[6] = baseName + "23";
+			nameList[7] = baseName + "24";
+		 	break;
+		case "04": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "25";
+			nameList[1] = baseName + "26";
+			nameList[2] = baseName + "27";
+			nameList[3] = baseName + "28";
+			nameList[4] = baseName + "29";
+			nameList[5] = baseName + "30";
+			nameList[6] = baseName + "31";
+			nameList[7] = baseName + "32";
+			break;
+		case "05": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "33";
+			nameList[1] = baseName + "34";
+			nameList[2] = baseName + "35";
+			nameList[3] = baseName + "36";
+			nameList[4] = baseName + "37";
+			nameList[5] = baseName + "38";
+			nameList[6] = baseName + "39";
+			nameList[7] = baseName + "40";
+			break;
+		case "06": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "41";
+			nameList[1] = baseName + "42";
+			nameList[2] = baseName + "43";
+			nameList[3] = baseName + "44";
+			nameList[4] = baseName + "45";
+			nameList[5] = baseName + "46";
+			nameList[6] = baseName + "47";
+			nameList[7] = baseName + "48";
+	 		break;
+		case "07": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "49";
+			nameList[1] = baseName + "50";
+			nameList[2] = baseName + "51";
+			nameList[3] = baseName + "52";
+			nameList[4] = baseName + "53";
+			nameList[5] = baseName + "54";
+			nameList[6] = baseName + "55";
+			nameList[7] = baseName + "56";
+			break;
+		case "08": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "57";
+			nameList[1] = baseName + "58";
+			nameList[2] = baseName + "59";
+			nameList[3] = baseName + "60";
+			nameList[4] = baseName + "61";
+			nameList[5] = baseName + "62";
+			nameList[6] = baseName + "63";
+			nameList[7] = baseName + "64";
+			break;
+		case "09": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "65";
+			nameList[1] = baseName + "66";
+			nameList[2] = baseName + "67";
+			nameList[3] = baseName + "68";
+			nameList[4] = baseName + "69";
+			nameList[5] = baseName + "70";
+			nameList[6] = baseName + "71";
+			nameList[7] = baseName + "72";
+	 		break;
+		case "10": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "73";
+			nameList[1] = baseName + "74";
+			nameList[2] = baseName + "75";
+			nameList[3] = baseName + "76";
+			nameList[4] = baseName + "77";
+			nameList[5] = baseName + "78";
+			nameList[6] = baseName + "79";
+			nameList[7] = baseName + "80";
+			break;
+		case "11": 
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "81";
+			nameList[1] = baseName + "82";
+			nameList[2] = baseName + "83";
+			nameList[3] = baseName + "84";
+			nameList[4] = baseName + "85";
+			nameList[5] = baseName + "86";
+			nameList[6] = baseName + "87";
+			nameList[7] = baseName + "88";
+			break;
+		case "12": ;
+			baseName = priorToken1 + ":" + priorToken2 + ":" + "Rg";
+			nameList[0] = baseName + "89";
+			nameList[1] = baseName + "90";
+			nameList[2] = baseName + "91";
+			nameList[3] = baseName + "92";
+			nameList[4] = baseName + "93";
+			nameList[5] = baseName + "94";
+			nameList[6] = baseName + "95";
+			nameList[7] = baseName + "96";
+	 		break;
+		}
+		
+		return nameList;
+		
+	}
+	
+	/**
+	 * Returns the list of names attriuted to given electric field map
+	 *
+	 * @param priorName the name of the field's gap
+	 * @return the list of names
+	 */
+	public String[] getSCLNameList(String priorName) {
+		
+		// I am sure there is a much prettier way to do this, but I was in a hurry, so this works, but is not pretty.
+		
+		String[] splitName = priorName.split(":");      // split the string using "-" and "." as the delimiters
+		//System.out.println(Arrays.toString(splitName));
+		String priorToken1 = splitName[0];
+		String priorToken2 = splitName[1].substring(0, splitName[1].length()-1);
+		String priorToken3 = splitName[2];
+		
+		// this is the cavity number of the gap
+		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
+		String gapNum = String.format("%02d", Integer.parseInt(priorToken3.replaceAll("\\D+","")));
+		
+		String baseName = "";
+		String[] nameList = new String[4];
+		
+		if (getHighOrMed(cavNum) == "High") {
+			nameList[0] = priorToken1 + ":" + priorToken2 + "a:" + priorToken3;
+			nameList[1] = priorToken1 + ":" + priorToken2 + "b:" + priorToken3;
+			nameList[2] = priorToken1 + ":" + priorToken2 + "c:" + priorToken3;
+			nameList[3] = priorToken1 + ":" + priorToken2 + "d:" + priorToken3;
+			
+		} else {
+			nameList[0] = priorToken1 + ":" + priorToken2 + "a:" + priorToken3;
+			nameList[1] = priorToken1 + ":" + priorToken2 + "b:" + priorToken3;
+			nameList[2] = priorToken1 + ":" + priorToken2 + "c:" + priorToken3;
+			nameList[3] = null;
+		}
+		
+		return nameList;
+	}
+		
+		
+	
+	public String getCavityNumber(String priorName) {
+		
+		String[] splitName = priorName.split(":");      // split the string using "-" and "." as the delimiters
+		//System.out.println(Arrays.toString(splitName));
+		String priorToken2 = splitName[1];
+		
+		// this is the cavity number of the gap
+		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
+		
+		return cavNum;
+	}
+	
+	/**
+	 * Transform filename into OpenXAL readable name.
+	 *
+	 * @param priorName the prior name
+	 * @return the string
+	 */
 	public String transformName(String priorName) {
 		String newName = "";
 		
@@ -59,7 +306,7 @@ public class Tools {
 		case "CCL_RF": cavityIdentifier = "Cav";
 			break;
 		case "SCL_RF": cavityIdentifier = "Cav";
-					   sclCavityKey = "a"      ;
+					   sclCavityKey = "a"      ; //This will not work for generating xdxf
 			break;
 		default: cavityIdentifier = "";
 			break;
@@ -135,13 +382,38 @@ public class Tools {
 		return postMat;
 	}
 	
+	/**
+	 * For determining if SCL cavity number is high or medium
+	 *
+	 * @param cavNum the cavity number
+	 * @return String "High" or "Med"
+	 */
+	public String getHighOrMed(String cavNum) {
+		String highOrMed = "";
+		if (Integer.parseInt(cavNum) > 11) {
+			highOrMed = "High";
+		} else {
+			highOrMed = "Med";
+		}
+		return highOrMed;
+	}
+	
+	/**
+	 * Gets the primary name needed for OpenXAL
+	 *
+	 * @param preSeq the prior name
+	 * @return the primary name for OpenXAL
+	 */
 	public String getPrimaryName(String preSeq) {
 		String primaryName = null;
 		
-		if      (preSeq.startsWith("MEBT"))            {primaryName = "MEBT";} 
-		else if (preSeq.startsWith("DTL"))             {primaryName = "DTL";}
-		else if (preSeq.startsWith("CCL"))             {primaryName = "CCL";}
-		else if (preSeq.startsWith("SCL"))             {primaryName = "SCL";}
+		String cavNum = getCavityNumber(preSeq);
+		if(cavNum.startsWith("0")) { cavNum = cavNum.substring(1); }
+		
+		if      (preSeq.startsWith("MEBT"))            {primaryName = "MEBT";} //+ cavNum;} 
+		else if (preSeq.startsWith("DTL"))             {primaryName = "DTL"  + cavNum;}
+		else if (preSeq.startsWith("CCL"))             {primaryName = "CCL"  + cavNum;}
+		else if (preSeq.startsWith("SCL"))             {primaryName = "SCL"  + getHighOrMed(cavNum);}
 		
 		return primaryName;
 	}
@@ -174,7 +446,13 @@ public class Tools {
 	 * @return the full new name readable by the accelerator
 	 */
 	public String getFullName(String secName, String origName) {
-		String gapNum = origName.substring(origName.lastIndexOf("g") + 1);
+		String gapNum = "";
+		try{
+		gapNum = origName.substring(origName.lastIndexOf("g") + 1);}
+		catch (NullPointerException e) {
+			System.out.println(origName);
+			e.printStackTrace();
+		}
 		
 		if (gapNum.length() == 1) {gapNum = "0" + gapNum;}
 		
@@ -226,6 +504,46 @@ public class Tools {
 		}
 		
 		return doubleArray;
+	}
+	
+	public void envelopeComparison(String seqID) throws InstantiationException, ModelException {
+		OSTR_TYPEOUT = System.out;
+		OSTR_TYPEOUT.println("Launching Model RF Gap TTF tester...");
+		ACCL_TEST = XMLDataManager.loadDefaultAccelerator();
+		SEQ_TEST = ACCL_TEST.findSequence(seqID);
+        ALGORITHM = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
+        
+	    // Increase the number of adaptive steps for stiff systems
+		ALGORITHM.setMaxIterations(30000);
+		
+		// Create the simulation probe
+        EnvelopeProbe probe = ProbeFactory.getEnvelopeProbe(SEQ_TEST,ALGORITHM);
+        probe.reset();
+		
+        // Create the simulation scenario, assign the probe, and run
+		Scenario model = Scenario.newScenarioFor(SEQ_TEST);
+		
+		model.setProbe(probe);
+		model.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+		model.resync();
+		model.run();
+
+		
+		// Extract the simulation data and type out
+		Trajectory<EnvelopeProbeState> trjData = probe.getTrajectory();
+
+		for ( EnvelopeProbeState state : trjData ) {
+            CovarianceMatrix matCov  = state.getCovarianceMatrix();
+
+            double          dblPos  = state.getPosition();
+            double          dblSigX = matCov.getSigmaX();
+            double          dblSigY = matCov.getSigmaY();
+            double          dblSigZ = matCov.getSigmaZ();
+			
+            String      strLine = "" + dblPos + '\t' + dblSigX + '\t' + dblSigY + '\t' + dblSigZ;
+            
+            System.out.println(strLine);
+		}
 	}
 	
 }

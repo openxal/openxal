@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import xal.model.ModelException;
 import xal.tools.math.poly.UnivariateRealPolynomial;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
@@ -60,7 +61,6 @@ public class Main extends JFrame {
 	 * Instantiates a new main.
 	 */
 	public Main() {
-
         initUI();
     }
 	
@@ -87,10 +87,9 @@ public class Main extends JFrame {
         
         final JButton generateXDXFButton =          new JButton("Generate XDXF File");
         
-        final JButton compareTTFButton =            new JButton("Compare to Andrei's TTF");
-        
         final JLabel calcLabel =                    new JLabel("Calculate TTF:      ");
-
+        
+        final JButton envelopeButton =              new JButton("Get Envelope");
         
         // When hovering cursor over the buttons, display the selected button's purpose
         fileSelectorButton.setToolTipText("Select File from Directory Browser");  
@@ -99,12 +98,11 @@ public class Main extends JFrame {
         acceleratorTTFButton.setToolTipText("Generate TTFs for all gaps in a chosen accelerator");
         sequenceTTFButton.setToolTipText("Generate TTFs for all gaps in a chosen sequence");
         gapTTFButton.setToolTipText("Generate TTF for a single chosen gap.");
-        compareTTFButton.setToolTipText("Compare integral-calculated TTFs to Andrei's TTFs.");
+        envelopeButton.setToolTipText("Get the envelope Sigma X, Y, Z");
         generateXDXFButton.setToolTipText("Generate xdxf file as an optics extra input into the accelerator");
         
         runButton.setEnabled(false);
         analyzeButton.setEnabled(false);
-        compareTTFButton.setEnabled(false);
         generateXDXFButton.setEnabled(false);
         
         //create a text field with a default file name
@@ -275,8 +273,7 @@ public class Main extends JFrame {
 						
 						setLastTree(gapTree);
 						generateXDXFButton.setEnabled(true);
-						compareTTFButton.setEnabled(true);
-					} catch (IOException | InvalidGapException e) {
+					} catch (IOException | InvalidGapException | IndexOutOfBoundsException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					} 
@@ -304,7 +301,6 @@ public class Main extends JFrame {
 						setLastTree(seqTree);
 						
 						generateXDXFButton.setEnabled(true);
-						compareTTFButton.setEnabled(true);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
@@ -338,8 +334,7 @@ public class Main extends JFrame {
 						setLastTree(gapTree);
 						
 						generateXDXFButton.setEnabled(true);
-						compareTTFButton.setEnabled(true);
-					} catch (IOException e) {
+					} catch (IOException | IndexOutOfBoundsException e) {
 						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
@@ -375,75 +370,23 @@ public class Main extends JFrame {
         	}
         });
         
-        compareTTFButton.addActionListener(new ActionListener() {
+        envelopeButton.addActionListener(new ActionListener() {
         	
 	        /* (non-Javadoc)
 	         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	         */
 	        @Override
         	public void actionPerformed(ActionEvent event) {
-	        	JOptionPane.showMessageDialog(getContentPane(), "To Compare to Andrei's data, his file will have to be parsed, press OK and select his file from the chooser.");
-        		int choice = compareSelector.showOpenDialog(Main.this);
-            	
-                if (choice == JFileChooser.APPROVE_OPTION) {
-                	TTFTools ttfTools = new TTFTools();                      //for linspace
-                	Parser parser = new Parser();
-                	// grab the selected file using java's io File class
-                	File file = compareSelector.getSelectedFile();
-                	// print the name of the file we are opening
-                	PRINTER.println("\nComparing...\n");
-                	try {
-						parser.parse(file);
-					} catch (ParseException | ResourceNotFoundException
-							| MalformedURLException e) {
-						JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
-                	
-                	DataTree andreiDatTree = null;
-                	
-                	if(getAndreiTree()==null){
-                		andreiDatTree = parser.getFixedAndreiPolyNames();
-                		setAndreiTree(andreiDatTree);
-                	} else { andreiDatTree = getAndreiTree(); }
-                	
-                	DataTree thisDataTree = getLastTree();
-                	
-                	DataTree thisBetaTree = getLastBetaTree();
-                	
-                	Set<Entry<String, List<String>>> entrySet = thisDataTree.getEntrySet();
-            		
-            		for (Entry<String, List<String>> entry : entrySet) {
-            			String thisName            = entry.getKey();                     //returns the current gap name
-            			List<String> thisData      = entry.getValue();                   //returns the current data
-            			
-            			double maxBeta             = Double.parseDouble(thisBetaTree.getValue(thisName, "beta_max"));
-            			double minBeta             = Double.parseDouble(thisBetaTree.getValue(thisName, "beta_min"));
-            			double frequency           = Double.parseDouble(thisBetaTree.getValue(thisName, "frequency"));
-            			double[] betaList          = ttfTools.linspace(minBeta, maxBeta, OUTSPACE);
-            			
-            			double[] thisTTF           = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "ttf").split(","));
-            			double[] thisSTF           = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "stf").split(","));
-            			double[] thisTTFP          = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "ttfp").split(","));
-            			double[] thisSTFP          = generalTools.stringArrayToDoubleArray(thisDataTree.getValue(thisName, "stfp").split(","));
-            		    
-            			double[] andTTF            = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "ttf").trim().split("\\s+"));
-            			double[] andSTF            = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "stf").trim().split("\\s+"));
-            			double[] andTTFP           = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "ttfp").trim().split("\\s+"));
-            			double[] andSTFP           = generalTools.stringArrayToDoubleArray(andreiDatTree.getValue(thisName, "stfp").trim().split("\\s+"));
-            			
-            			double errorTTF            = comparePolys(thisTTF,andTTF,betaList,frequency);
-            			double errorSTF            = comparePolys(thisSTF,andSTF,betaList,frequency);
-            			double errorTTFP           = comparePolys(thisTTFP,andTTFP,betaList,frequency);
-            			double errorSTFP           = comparePolys(thisTTFP,andTTFP,betaList,frequency);
-            			
-            			PRINTER.println("\nName: " + thisName + "\nTTF ERROR: " + Double.toString(errorTTF) + "\nSTF ERROR: " + Double.toString(errorSTF)
-            					       +"\nTTFP ERROR: " + Double.toString(errorTTFP) + "\nSTFP ERROR: " + Double.toString(errorSTFP));
-            		}
-                	PRINTER.println("\nFinished Comparing TTF(s)\n");
-                } else {
-                	PRINTER.println("File Selection Aborted by User");
-                }
+
+        		String seqOption = JOptionPane.showInputDialog(getContentPane(), "Type the name of the sequence/combosequence to get envelope for\n Possible Options: DTL, SCLHigh, SCLMed, MEBT, CCL, CCL1, etc.", "Sequence Selector"
+        				, JOptionPane.QUESTION_MESSAGE);
+        		
+        		try {
+					generalTools.envelopeComparison(seqOption);
+				} catch (InstantiationException | ModelException e) {
+					JOptionPane.showMessageDialog(getContentPane(), e.getMessage(), e.getClass().getName() + " ERROR", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
         	}
         });
         //----------------------------------------------------------------------------------------------- END ACTIONS
@@ -455,7 +398,7 @@ public class Main extends JFrame {
         // This line calls the createLayout method, which formats how items are displayed on the GUI
         GroupLayout gl = createLayout(true, panes, fileSelectorButton, runButton, fileLabel, gapLabel, gapChooser, valueLabel, analyzeButton, resultLabel, resultText, infoBox);
         //                                                  0                     1            2           3        4             5                 6  
-        GroupLayout gl2 = createLayout(false,pane2,acceleratorTTFButton,sequenceTTFButton,gapTTFButton,calcLabel,infoBox2,generateXDXFButton,compareTTFButton);
+        GroupLayout gl2 = createLayout(false,pane2,acceleratorTTFButton,sequenceTTFButton,gapTTFButton,calcLabel,infoBox2,generateXDXFButton,envelopeButton);
         
         panes.setLayout(gl);
         pane2.setLayout(gl2);
@@ -526,7 +469,7 @@ public class Main extends JFrame {
 	        				)
 	        		.addGroup(gl.createSequentialGroup()
 	        				.addComponent(arg[5]) // generate button
-	        				.addComponent(arg[6]) // compare button
+	        				.addComponent(arg[6]) // envelope button
 	        				)
 	        		);
 	        gl.setVerticalGroup(
@@ -540,7 +483,7 @@ public class Main extends JFrame {
 	        				)
 	        		.addGroup(gl.createParallelGroup()
 	        				.addComponent(arg[5]) // generate button
-	        				.addComponent(arg[6]) // compare button
+	        				.addComponent(arg[6]) // envelope button
 	        				)
 	        		);
     	}
@@ -580,6 +523,7 @@ public class Main extends JFrame {
 	    
 	    Boolean inner = false;
 	    Boolean end = false;
+	    Boolean ccl = false;
 	    
 		Parser betaParser = new Parser();                                                        // Next three lines: grab the beta mins/maxes for each gap
 		betaParser.readBetaConfigFile();
@@ -590,14 +534,14 @@ public class Main extends JFrame {
 	    DataTree gapDatTree = new DataTree();
 	    
 	    if (generalTools.isInnerGap(fileName))    { inner = true; }
-	    else if (generalTools.isEndGap(fileName)) { end = true;   }
+	    if (generalTools.isEndGap(fileName))      { end = true;   }
+	    if (fileName.startsWith("CCl"))           { ccl = true;   }
 	    
-	    if (!inner && !end) {
+	    if (!inner && !end && !ccl) {
 	    	
 	    	gapDatTree = normalGapTTF(filePath,fileName,betaTree);
-			PRINTER.println("\nFinished...\n");
 			
-	    } else if(inner) {
+	    } else if(inner && !ccl && !end) {
 	    	String fileNameOuter = fileName.substring(0, fileName.lastIndexOf("IN")) + "END.DAT";
 	    	String strPathOuter = "/" + filePathPath.subpath(0, filePathPath.getNameCount()-1).toString() + "/" + fileNameOuter;
 	    	PRINTER.println(filePath);
@@ -609,13 +553,17 @@ public class Main extends JFrame {
 			
 			for (Entry<String,List<String>> entry:curEntSet) {
 				gapDatTree.addListToTree(entry.getKey(), entry.getValue());
-		}
-		
-		PRINTER.println("\nFinished...\n");
+			} 
 			
-	    } else if(end)   {
+	    } else if(ccl && !end) {
+	    	
+	    	gapDatTree = normalGapTTF(filePath,fileName,betaTree);
+	    	
+		} else if(end)   {
 	    	throw new InvalidGapException("The chosen gap is an END gap, thus it cannot be analyzed. Choose 'INNER' version of same gap.");
 	    }
+	    PRINTER.println("\nFinished...\n");
+	    
 		return gapDatTree;
     }
     
@@ -648,20 +596,21 @@ public class Main extends JFrame {
 
 		    		Boolean inner = false;
 		    	    Boolean end = false;
-		    	    
+		    	    Boolean ccl = false;
+		    	    Boolean scl = false;
 
 		    		Parser betaParser = new Parser();                                                        // Next three lines: grab the beta mins/maxes for each gap
 		    		betaParser.readBetaConfigFile();
 		    		DataTree betaTree = betaParser.getDataTree();
 		    		
 		    		setLastBetaTree(betaTree);
+		    	    PRINTER.println(parsedName);
+		    	    if (generalTools.isInnerGap(fileName)) { inner = true; }
+		    	    if (generalTools.isEndGap(fileName))   { end   = true; }
+		    	    if (parsedName.startsWith("CCL"))      { ccl   = true; }
+		    	    if (parsedName.startsWith("SCL"))      { scl   = true; }
 		    	    
-		    	    Tools tools = new Tools();
-		    	    
-		    	    if (tools.isInnerGap(fileName))    { inner = true; }
-		    	    else if (tools.isEndGap(fileName)) { end = true;   }
-		    	    
-		    	    if (!inner && !end) {
+		    	    if (!inner && !end && !ccl && !scl) {
 		    	    	DataTree gapDatTree = normalGapTTF(stringLocalFilePath,fileName, betaTree);
 		    	    
 						String gapName = gapDatTree.getGaps().get(0);   //get the entry
@@ -671,10 +620,8 @@ public class Main extends JFrame {
 						for (Entry<String,List<String>> entry:curEntSet) {                    // add entry to accelerator data tree
 							accDatTree.addListToTree(entry.getKey(), entry.getValue());
 						}
-					
-		    			PRINTER.println("\nFinished...\n");
 		    			
-		    	    } else if(inner) {
+		    	    } else if(inner && !ccl && !end && !scl) {
 		    	    	String fileNameOuter = fileName.substring(0, fileName.lastIndexOf("IN")) + "END.DAT";
 		    	    	String strPathOuter = "/" + filePath.subpath(0, filePath.getNameCount()-1).toString() + "/" + fileNameOuter;
 		    	    	
@@ -687,12 +634,69 @@ public class Main extends JFrame {
 						for (Entry<String,List<String>> entry:curEntSet) {
 							accDatTree.addListToTree(entry.getKey(), entry.getValue());
 						}
-					
-		    			PRINTER.println("\nFinished...\n");
 		    			
-		    	    } else if(end)   { }
+		    	    } else if(ccl && !end && !scl) {
+		    	    	String fileNameOuter = fileName.substring(0, fileName.lastIndexOf(".D")) + "END.DAT";
+		    	    	String strPathOuter = "/" + filePath.subpath(0, filePath.getNameCount()-1).toString() + "/" + fileNameOuter;
+		    	    	
+		    	    	DataTree innerGapDatTree = normalGapTTF(stringLocalFilePath,fileName, betaTree);;
+		    	    	DataTree outerGapDatTree = endGapTTF(stringLocalFilePath,fileName,strPathOuter,fileNameOuter,betaTree);
+		    	    	
+		    	    	String[] nameList = generalTools.getCCLNameList(parsedName); //nameList = {END, IN, IN, IN, IN, IN, IN, END};
+		    	    	
+		    	    	Set<Entry<String,List<String>>> curInnerEntSet = innerGapDatTree.getEntrySet();
+		    	    	Set<Entry<String,List<String>>> curOuterEntSet = outerGapDatTree.getEntrySet();
+						
+		    	    	Entry<String,List<String>> innerEnt = innerGapDatTree.getFirstEntry();
+		    	    	Entry<String,List<String>> outerEnt = outerGapDatTree.getFirstEntry();
+		    	    	int i = 0;
+		    	    	for (String name:nameList) {
+		    	    		PRINTER.println("WORKING: " + name);
+		    	    		if (i == 0 || i == 7) {
+		    	    			accDatTree.addListToTree(name, outerEnt.getValue());
+		    	    			PRINTER.println("END");
+		    	    		} else {
+		    	    			accDatTree.addListToTree(name, innerEnt.getValue());
+		    	    		}
+		    	    		i++;
+		    	    	}
+						
+		    		} else if (scl && !end && !inner && !ccl) {
+		    			DataTree gapDatTree = normalGapTTF(stringLocalFilePath,fileName, betaTree);
+						
+						Entry<String,List<String>> ent = gapDatTree.getFirstEntry();
+						
+						String[] nameList = generalTools.getSCLNameList(parsedName);
+						
+		    	    	for (String name:nameList) {
+		    	    		if(name != null){
+		    	    			accDatTree.addListToTree(name, ent.getValue());
+		    	    			}
+		    	    	}
+		    	    	
+		    		} else if(scl && !end && !ccl && inner) {
+		    			String fileNameOuter = fileName.substring(0, fileName.lastIndexOf("IN")) + "END.DAT";
+		    	    	String strPathOuter = "/" + filePath.subpath(0, filePath.getNameCount()-1).toString() + "/" + fileNameOuter;
+		    	    	
+		    	    	DataTree gapDatTree = endGapTTF(stringLocalFilePath,fileName,strPathOuter,fileNameOuter,betaTree);
+						
+		    	    	Entry<String,List<String>> ent = gapDatTree.getFirstEntry();
+		    	    	
+		    	    	String[] nameList = generalTools.getSCLNameList(parsedName);
+						
+		    	    	for (String name:nameList) {
+		    	    		if(name != null) {
+		    	    			accDatTree.addListToTree(name, ent.getValue());
+		    	    		}
+		    	    	}
+		    	    	
+		    		}
+		    	    
+		    	    else if(end)   { }
 					
 		    	}
+		    	PRINTER.println("\nFinished...\n");
+		    	
 		    	return FileVisitResult.CONTINUE;
 		    }
 		    	
@@ -755,7 +759,6 @@ public class Main extends JFrame {
 		//For STFP: If not an end gap, these values are zero
 		String polyStringSTFP = "(0.0)+(0.0)x+(0.0)x^2+(0.0)x^3+(0.0)x^4";
 		String constsStringSTFP = "0.0,0.0,0.0,0.0,0.0";
-		
 		String primName = generalTools.getPrimaryName(parsedName);     
 		String secName = generalTools.getSecondaryName(primName, parsedName);
 
@@ -763,7 +766,6 @@ public class Main extends JFrame {
 		List<String> currentValueList = new ArrayList<>(Arrays.asList(primName,secName,constsStringTTF,constsStringTTFP,constsStringSTF,constsStringSTFP,freqStr,bMinStr,bMaxStr,polyStringTTF,polyStringSTF,polyStringTTFP,polyStringSTFP));
 		
 		datTree.addListToTree(parsedName, currentValueList);                                   // add the list of data to the DataTree
-		
 		return datTree;
     }
     
@@ -863,9 +865,9 @@ public class Main extends JFrame {
 		
 		return datTree;
     }
-    
+    // THIS COMPARE METHOD IS BROKEN, DO NOT USE IT EVER
     /**
-     * Compare two lists of doubles by calculating the L2 Norm error between them
+     * Compare two lists of doubles by calculating the L2 Norm error between them THIS METHOD DOES NOT WORK AND IS NOT USED
      *
      * @param dblPoly1 the double array containing the coefficients of the first polynomial (Our polys)
      * @param dblPoly2 the double array containing the coefficients of the second polynomial (andrei's polys)

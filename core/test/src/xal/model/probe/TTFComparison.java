@@ -30,7 +30,7 @@ public class TTFComparison {
      * Global Variables
      */
 	/** The seq id. */
-	private static String seqID = "CCL";  // To choose a different sequence or combosequence, change the seqID string
+	private static String seqID = "MEBT";  // To choose a different sequence or combosequence, change the seqID string
 	
 	/** The ostr typeout. */
 	private static PrintStream        OSTR_TYPEOUT;
@@ -115,7 +115,7 @@ public class TTFComparison {
 		    Double k = calculateK(seqID,beta);
 		    
 		    //evaluate the polynomial at k
-		    Double dblT = polyT.evaluateAt(k);
+		    Double dblT = polyT.evaluateAt(beta);
 		    Double dblS = polyS.evaluateAt(k);
 		    Double dblTp = polyTp.evaluateAt(k);
 		    Double dblSp = polySp.evaluateAt(k);

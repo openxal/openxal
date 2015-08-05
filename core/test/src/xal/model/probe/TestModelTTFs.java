@@ -27,7 +27,7 @@ public class TestModelTTFs {
      * Global Variables
      */
 	/** The seq id. */
-	private static String seqID = "DTL1";  // To choose a different sequence or combosequence, change the seqID string
+	private static String seqID = "DTL";  // To choose a different sequence or combosequence, change the seqID string
 	
 	/** The ostr typeout. */
 	private static PrintStream        OSTR_TYPEOUT;
@@ -97,43 +97,7 @@ public class TestModelTTFs {
 			
             String      strLine = "" + dblPos + '\t' + dblSigX + '\t' + dblSigY + '\t' + dblSigZ;
             
-			System.out.println(strLine);
-////=======
-////		Iterator<?> dataFinal = trajectory.iterator();
-////		OSTR_TYPEOUT.println("Sigma X-------------------------------------------------");
-////		while ( dataFinal.hasNext()) {
-////			Object state = dataFinal.next();
-////			double statePosition = ((EnvelopeProbeState) state).getPosition();
-////			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
-////			OSTR_TYPEOUT.println(statePosition);
-////			OSTR_TYPEOUT.println(covMat.getSigmaX());
-////		}
-//		Iterator<?> dataFinal2 = trajectory.iterator();
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("Sigma Y-------------------------------------------------");
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("");
-//		while ( dataFinal2.hasNext()) {
-//			Object state = dataFinal2.next();
-//			double statePosition = ((EnvelopeProbeState) state).getPosition();
-//			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
-//			OSTR_TYPEOUT.println(statePosition);
-//			OSTR_TYPEOUT.println(covMat.getSigmaY());
-//		}
-//		Iterator<?> dataFinal3 = trajectory.iterator();
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("Sigma Z-------------------------------------------------");
-//		OSTR_TYPEOUT.println("");
-//		OSTR_TYPEOUT.println("");
-//		while ( dataFinal3.hasNext()) {
-//			Object state = dataFinal3.next();
-//			double statePosition = ((EnvelopeProbeState) state).getPosition();
-//			CovarianceMatrix covMat = ((EnvelopeProbeState) state).getCovarianceMatrix();
-//			OSTR_TYPEOUT.println(statePosition);
-//			OSTR_TYPEOUT.println(covMat.getSigmaZ());
-//>>>>>>> branch 'jghawaly_ttf.ver1' of ssh://4va@ics-srv01.sns.ornl.gov/sns/ADE/gitroot/openxal/openxal.git
+            OSTR_TYPEOUT.println(strLine);
 		}
 	}
 	
