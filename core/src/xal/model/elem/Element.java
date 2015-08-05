@@ -391,17 +391,11 @@ public abstract class Element implements IElement {
 	    double py = getPhiY();
 	    double pz = getPhiZ();
 	    PhaseMatrix T = null, Ti = null;
-	    
-	    if (pz != 0.) {	    	     
-	    	T  = PhaseMatrix.rotationProduct(R3x3.newRotationZ(-pz));
-	    	Ti  = T.transpose();	    	
-	    }
-	    
+	    	    
 	    if (px != 0. || py != 0.) {
-	    	if (T == null || Ti == null) {
-	    		T = PhaseMatrix.identity();
-	    		Ti = PhaseMatrix.identity();
-	    	}
+	    	T = PhaseMatrix.identity();
+	    	Ti = PhaseMatrix.identity();
+	    	
 	    	if (len > 0.) {
 	    		T = thickPitchAndYaw(T, px, py, start - getPivotPosition());
 	    		Ti = thickPitchAndYaw(Ti, -px, -py, start - getPivotPosition() + len);
@@ -409,6 +403,16 @@ public abstract class Element implements IElement {
 	    	
 	    	T = thinPitchAndYaw(T, px, py);
 	    	Ti = thinPitchAndYaw(Ti, -px, -py);
+	    }
+	    
+	    if (pz != 0.) {
+	    	if (T == null || Ti == null) {
+	    		T = PhaseMatrix.identity();
+		    	Ti = PhaseMatrix.identity();	
+	    	}
+	    	PhaseMatrix R = PhaseMatrix.rotationProduct(R3x3.newRotationZ(-pz));
+	    	T = R.times(T);
+	    	Ti  = Ti.times(R.transpose());	    	
 	    }
 	    
 	    if (T != null) matPhi = Ti.times(matPhi).times(T);
