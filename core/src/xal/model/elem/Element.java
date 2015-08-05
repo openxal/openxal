@@ -164,6 +164,16 @@ public abstract class Element implements IElement {
     public void setPosition(double dblPos) {
         this.dblPos = dblPos;
     }
+
+    /**
+     * Set the pivot position of the element with the containing
+     * lattice.
+     * 
+     * @param dblPivotPos    pivot position along the design trajectory (meters) 
+     */
+    public void setPivotPosition(double dblPivotPos) {
+        dblLatPivotPos = dblPivotPos;
+    }
     
     /**
      * Set the alignment parameters all at once.
@@ -393,8 +403,8 @@ public abstract class Element implements IElement {
 	    		Ti = PhaseMatrix.identity();
 	    	}
 	    	if (len > 0.) {
-	    		T = thickPitchAndYaw(T, px, py, start - dblLatPivotPos);
-	    		Ti = thickPitchAndYaw(Ti, -px, -py, start - dblLatPivotPos + len);
+	    		T = thickPitchAndYaw(T, px, py, start - getPivotPosition());
+	    		Ti = thickPitchAndYaw(Ti, -px, -py, start - getPivotPosition() + len);
 	    	}
 	    	
 	    	T = thinPitchAndYaw(T, px, py);
@@ -538,7 +548,7 @@ public abstract class Element implements IElement {
         setId( strElemId != null ? strElemId : strSmfId);
         setHardwareNodeId(strSmfId);
         setPosition(latticeElement.getCenterPosition());
-        dblLatPivotPos = latticeElement.getNode().getPosition();
+        setPivotPosition(latticeElement.getNode().getPosition());
 
         AlignmentBucket alignmentBucket = latticeElement.getNode().getAlign(); 
         setAlignX(alignmentBucket.getX());
@@ -798,6 +808,17 @@ public abstract class Element implements IElement {
      */
     public abstract double energyGain(IProbe probe, double dblLen);
 
+
+    /**
+     * Return the pivot position of the element along the design trajectory.
+     * This is the pivot position with the containing lattice.
+     * 
+     * @return  pivot position of the element (meters)
+     */
+    public double getPivotPosition() {
+        return dblLatPivotPos;
+    }
+    
     /**
      * This is a kluge to make RF gaps work, since frequency is not defined for most
      * modeling elements.  For such elements we simply return 0 phase advance.  For
