@@ -713,7 +713,9 @@ class Send_Phases_to_EPICS_Listener(ActionListener):
 		cav_wrappers = self.scl_long_tuneup_controller.cav_wrappers
 		for cav_wrapper in cav_wrappers:
 			if(cav_wrapper.isGood):
-				cav_wrapper.cav.setCavPhase(cav_wrapper.rescaleBacket.livePhase + phase_shift_global)	
+				new_cav_phase = makePhaseNear(cav_wrapper.rescaleBacket.livePhase + phase_shift_global,0.)
+				cav_wrapper.cav.setCavPhase(new_cav_phase)
+				#time.sleep(0.02)
 				
 #------------------------------------------------------------------------
 #           Controllers

@@ -9,7 +9,6 @@ import random
 
 from java.lang import *
 from javax.swing import *
-from javax.swing import JTable
 from java.util import ArrayList
 from javax.swing.event import TableModelEvent, TableModelListener, ListSelectionListener
 from java.awt import Color, BorderLayout, GridLayout, FlowLayout

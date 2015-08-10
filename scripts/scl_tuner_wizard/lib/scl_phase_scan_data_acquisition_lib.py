@@ -552,16 +552,9 @@ class SCL_Cavity_Wrapper:
 		self.rescaleBacket = CavityRescaleBucket(self)
 		#------- the longitudinal Twiss parameters bucket
 		self.longTwissBucket = Long_Twiss_Bucket(self)
-		#--- blank CA channel
-		self.blank_channel = null
-		# the blanking PV will be defined in scl_long_tuneup_init_ctrl_lib.py
-		self.blank_channel = null
 		
 	def setBlankBeam(self,bool_val):
-		int_val = 1
-		if(not bool_val): int_val = 0
-		if(self.blank_channel != null):
-			self.blank_channel.putVal(int_val)
+		self.cav.setBlankBeam(bool_val)		
 		
 	def setUpBPM_Wrappers(self,bpm_wrappers,scl_long_tuneup_controller):
 		self.bpm_amp_phase_dict = {}
