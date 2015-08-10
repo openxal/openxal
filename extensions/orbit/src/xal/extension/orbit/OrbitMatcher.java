@@ -40,6 +40,7 @@ public class OrbitMatcher {
 	public OrbitMatcher( final AcceleratorNode targetNode, final List<? extends AcceleratorNode> measuredNodes, final Trajectory<TransferMapState> trajectory ) {
 		TARGET_NODE = targetNode;
 		MEASURED_NODES = measuredNodes;
+		setTrajectory( trajectory );
 	}
 
 	
@@ -68,6 +69,7 @@ public class OrbitMatcher {
 			xTransferRows.add( extractHorizontalSubMatrix( transferMatrix ) );
 			yTransferRows.add( extractVerticalSubMatrix( transferMatrix ) );
 		}
+
 		_xBeamPositionTransform = new BeamPositionTransform( xTransferRows );
 		_yBeamPositionTransform = new BeamPositionTransform( yTransferRows );
 	}
@@ -95,18 +97,17 @@ public class OrbitMatcher {
 	
 	/** get the transfer matrix from the transfer map trajectory */
 	protected PhaseMatrix getTransferMatrix( final AcceleratorNode fromNode, final AcceleratorNode toNode ) {
-//		return _trajectory.getTransferMatrix( fromNode.getId(), toNode.getId() );
-//		return _trajectory.getTransferMatrix( toNode.getId(), fromNode.getId() );
-	    TransferMapState   S1 = this._trajectory.stateForElement(fromNode.getId());
-	    TransferMapState   S2 = this._trajectory.stateForElement(toNode.getId() );
+	    final TransferMapState   fromState = this._trajectory.stateForElement(fromNode.getId());
+	    final TransferMapState   toState = this._trajectory.stateForElement(toNode.getId() );
+
+		// get the transfer matricies for the "from" and "to" states
+	    final PhaseMatrix fromTransferMatrix = fromState.getTransferMap().getFirstOrder();
+	    final PhaseMatrix toTransferMatrix = toState.getTransferMap().getFirstOrder();
+
+		// compute the transfer matrix from the "from" state to the "toState"
+	    final PhaseMatrix fromToTransferMatrix = toTransferMatrix.times( fromTransferMatrix.inverse() );
 	    
-	    PhaseMatrix    matPhi1 = S1.getTransferMap().getFirstOrder();
-	    PhaseMatrix    matPhi2 = S2.getTransferMap().getFirstOrder();
-	    
-	    PhaseMatrix    matPhi1inv = matPhi1.inverse();
-	    PhaseMatrix    matPhi21   = matPhi2.times( matPhi1inv );
-	    
-	    return matPhi21;
+	    return fromToTransferMatrix;
 	}
 }
 
