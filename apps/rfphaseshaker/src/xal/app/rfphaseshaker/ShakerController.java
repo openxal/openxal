@@ -206,9 +206,11 @@ public class ShakerController{
 		fGraphPanel.getClickedPointObject().xValueText.setColumns(9);
 		fGraphPanel.getClickedPointObject().yValueText.setColumns(10);
 		
-		fGraphPanel.getClickedPointObject().xValueFormat.applyPattern("###.##");
-		fGraphPanel.getClickedPointObject().yValueFormat.applyPattern("###.###");
-		
+//		fGraphPanel.getClickedPointObject().xValueFormat.applyPattern("###.##");
+//		fGraphPanel.getClickedPointObject().yValueFormat.applyPattern("###.###");
+		fGraphPanel.getClickedPointObject().setDecimalFormatX("###.##");
+		fGraphPanel.getClickedPointObject().setDecimalFormatY("###.###");
+
 		graphPanel.add(fGraphPanel,BorderLayout.CENTER);
 		graphPanel.add(	low_graphPanel,BorderLayout.SOUTH);	
 		
