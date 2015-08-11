@@ -25,13 +25,13 @@ public class SmartFormatGridLimits extends GridLimits {
     protected boolean sucessY = false;
 
     /**  The simple formats */
-    protected static DecimalFormat[] simpleFormats = new DecimalFormat[5];
+    protected static NumberFormat[] simpleFormats = new NumberFormat[5];
 
     /**  The scientific formats */
-    protected static DecimalFormat[] scientificFormats = new DecimalFormat[5];
+    protected static NumberFormat[] scientificFormats = new NumberFormat[5];
 
     /**  The universal format */
-    protected static DecimalFormat univFormat = new DecimalFormat( "#.###E0" );
+    protected static NumberFormat univFormat = new DecimalFormat( "#.###E0" );
 
     static {
         simpleFormats[0] = new DecimalFormat( "###0" );
@@ -144,9 +144,9 @@ public class SmartFormatGridLimits extends GridLimits {
      *@param  nExtraDigits  The additional numer of digits in mantissa
      *@return               The format
      */
-    protected static DecimalFormat getSmartFormat( double[] arr, int nExtraDigits ) {
+    protected static NumberFormat getSmartFormat( double[] arr, int nExtraDigits ) {
 
-        DecimalFormat frmt = univFormat;
+        NumberFormat frmt = univFormat;
 
         double v_max = Math.max( Math.abs( arr[1] ), Math.abs( arr[2] ) );
         int nV = (int) ( Math.floor( 1.0001 * Math.log( v_max ) / Math.log( 10.0 ) ) );
