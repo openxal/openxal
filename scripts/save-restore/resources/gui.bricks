@@ -1,0 +1,40 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Wed Aug 12 13:35:57 EDT 2015" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="744" tag="MainWindow" width="1085">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Simple Save and Restore"/>
+            <ViewNode tag="Main Vertical Layout">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Button Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty height="60" name="maximumSize" width="33636"/>
+                    <ViewNode tag="RefreshButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="toolTipText" value="Update the live values"/>
+                        <BeanProperty name="text" value="Refresh"/>
+                    </ViewNode>
+                    <ViewNode tag="RecordFilterField">
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Filter records"/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="RestoreButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="toolTipText" value="Restore the selected channels to the stored values"/>
+                        <BeanProperty name="text" value="Restore"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="ChannelRecordsScroller">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <ViewNode tag="ChannelRecordsTable">
+                        <ViewProxy type="javax.swing.JTable"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
