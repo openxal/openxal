@@ -146,6 +146,22 @@ class MachineState
 			end
 		end
 	end
+
+	def refresh
+		channels = ArrayList.new
+		@records.each { |record| channels.add( record.channel ) }
+		request = XAL::BatchGetValueRequest.new( channels )
+		request.submitAndWait( 5.0 )
+		@records.each do |record|
+			channel_record = request.getRecord( record.channel )
+			value = Double::NaN
+			if channel_record != nil
+				value = channel_record.doubleValue
+			end
+			record.set_live_value value
+			puts "#{value}"
+		end
+	end
 end
 
 
@@ -228,11 +244,20 @@ class SaveRestoreDocument < AcceleratorDocument
 		end
 
 		# read the model data
-		modelAdaptor = adaptor.childAdaptor( "model" )
-		channelAdaptors = modelAdaptor.childAdaptors( "waveform-channel" )
-		channelAdaptors.each do |channelAdaptor|
-			channelPV = channelAdaptor.stringValue( "PV" )
-			@waveform_selection_handler.addChannelPV channelPV
+		model_adaptor = adaptor.childAdaptor( "MachineState" )
+		record_adaptors = model_adaptor.childAdaptors( "record" )
+		values_by_pv = Hash.new
+		record_adaptors.each do |record_adaptor|
+			pv = record_adaptor.stringValue( "channel" )
+			value = record_adaptor.doubleValue( "value" )
+			values_by_pv[ pv ] = value
+		end
+
+		@machine_state.records.each do |record|
+			value = values_by_pv[ record.channel.channelName ]
+			if value != nil
+				record.set_saved_value( value )
+			end
 		end
 	end
 
@@ -242,11 +267,13 @@ class SaveRestoreDocument < AcceleratorDocument
 		adaptor.setValue( "date", Java::Date.new.toString )
 
 		# write the model data
-		modelAdaptor = adaptor.createChild( "model" )
-		channelPVs = @waveform_selection_handler.getChannelPVs
-		channelPVs.each do |channelPV|
-			channelAdaptor = modelAdaptor.createChild( "waveform-channel" )
-			channelAdaptor.setValue( "PV", channelPV )
+		model_adaptor = adaptor.createChild( "MachineState" )
+		@machine_state.records.each do |record|
+			if !Double.isNaN( record.live_value )
+				record_adaptor = model_adaptor.createChild( "record" )
+				record_adaptor.setValue( "channel", record.channel.channelName )
+				record_adaptor.setValue( "value", record.live_value )
+			end
 		end
 
 		# write the accelerator/sequence if any
@@ -277,6 +304,8 @@ class SaveRestoreDocument < AcceleratorDocument
 	def actionPerformed( event )
 		if event.source == @refresh_button
 			puts "Refresh the data"
+			@machine_state.refresh
+			@channel_records_table_model.fireTableDataChanged
 		elsif event.source == @restore_button
 			puts "Restore the data"
 		end
