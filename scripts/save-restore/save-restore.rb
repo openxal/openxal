@@ -1,7 +1,7 @@
 #!/usr/bin/env jruby
 #
-#  waveform-monitor.rb
-#  Monitor and Display a selected waveform and its spectrum
+#  save-restore.rb
+#  Simple Save and Restore as an alternative to SCORE if the database is not available
 #
 #  Created by Tom Pelaia on 3/3/08.
 #  Copyright (c) 2007 SNS. All rights reserved.
