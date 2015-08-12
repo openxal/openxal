@@ -480,7 +480,7 @@ public class BarChart {
 	 *@author     shishlo
 	 *created    October 10, 2005
 	 */
-    class MarkerFormat extends DecimalFormat {
+    class MarkerFormat extends NumberFormat {
         /** serialization ID */
         private static final long serialVersionUID = 1L;
 
@@ -498,8 +498,43 @@ public class BarChart {
         }
 
 
+		/** Don't call. Just returns null. Satisfied abstract method requirement. */
+		public Number parse( final String input, final ParsePosition position ) {
+			return null;
+		}
+
+
+		/** Generate the formatted string buffer for the specified double value */
+		private StringBuffer formattedStringBuffer( final double value ) {
+			StringBuffer strb = new StringBuffer(" ");
+			if (barColumns != null && barColumns.size() > 0) {
+				int ind = (int) Math.round(value - 1.0);
+				//System.out.println("debug ind=" + ind);
+				if (ind >= 0 && ind < barColumns.size()) {
+					strb.append( barColumns.get( ind ).marker() );
+				} else {
+					strb.append(emptyStr);
+				}
+			} else {
+				strb.append(emptyStr);
+			}
+
+			//System.out.println("debug strb=" + strb);
+
+			strb.append(" ");
+
+			return strb;
+		}
+
+
+		/** Generate the formatted string buffer for the specified long value */
+		private StringBuffer formattedStringBuffer( final long value ) {
+			return formattedStringBuffer( (double)value );
+		}
+
+
         /**
-         *  The overridden format method of the DecimalFormat class.
+         *  The overridden format method of the NumberFormat class.
          *
          *@param  val         The value to format
          *@param  toAppendTo  The string buffer to add to
@@ -507,29 +542,12 @@ public class BarChart {
          *@return             The formated string
          */
         public StringBuffer format(double val, StringBuffer toAppendTo, FieldPosition pos) {
-            StringBuffer strb = new StringBuffer(" ");
-            if (barColumns != null && barColumns.size() > 0) {
-                int ind = (int) Math.round(val - 1.0);
-                //System.out.println("debug ind=" + ind);
-                if (ind >= 0 && ind < barColumns.size()) {
-                    strb.append( ( barColumns.get( ind ) ).marker() );
-                } else {
-                    strb.append(emptyStr);
-                }
-            } else {
-                strb.append(emptyStr);
-            }
-
-            //System.out.println("debug strb=" + strb);
-
-            strb.append(" ");
-
-            return strb;
+			return formattedStringBuffer( val );
         }
 
 
         /**
-         *  The overridden method of the DecimalFormat that delegates formatting to
+         *  The overridden method of the NumberFormat that delegates formatting to
          *  the specific inner formatter
          *
          *@param  val         The integer value to be formatted
@@ -539,7 +557,7 @@ public class BarChart {
          *@return             The text that will be displayed
          */
         public StringBuffer format(long val, StringBuffer toAppendTo, FieldPosition pos) {
-            return format((double) val, toAppendTo, pos);
+			return formattedStringBuffer( val );
         }
     }
 
@@ -557,13 +575,13 @@ public class BarChart {
 		private double value_max = 0.;
 		private double scale = 0.0;
 
-		private DecimalFormat fmt_result = new DecimalFormat("#.###E0");
+		private NumberFormat fmt_result = new DecimalFormat("#.###E0");
 
-		private DecimalFormat[] simpleFormats = new DecimalFormat[5];
+		private NumberFormat[] simpleFormats = new NumberFormat[5];
 
-		private DecimalFormat[] scientificFormats = new DecimalFormat[5];
+		private NumberFormat[] scientificFormats = new NumberFormat[5];
 
-		private DecimalFormat universalFormat = new DecimalFormat("#.###E0");
+		private NumberFormat universalFormat = new DecimalFormat("#.###E0");
 
 
 		/**
@@ -695,7 +713,7 @@ public class BarChart {
 		 *
 		 *@return    The decimal format
 		 */
-		DecimalFormat getFormat() {
+		NumberFormat getFormat() {
 			return fmt_result;
 		}
 	}

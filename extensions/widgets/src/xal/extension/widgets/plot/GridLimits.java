@@ -16,8 +16,8 @@ public class GridLimits {
     private double xMin, yMin, xMax, yMax;
     private boolean ixMin, iyMin, ixMax, iyMax;
 
-    private DecimalFormat numberFormatX = new DecimalFormat( "0.00E0" );
-    private DecimalFormat numberFormatY = new DecimalFormat( "0.00E0" );
+    private NumberFormat numberFormatX = new DecimalFormat( "0.00E0" );
+    private NumberFormat numberFormatY = new DecimalFormat( "0.00E0" );
 
     private boolean gridLimitsSwitchOnYes = false;
 
@@ -66,7 +66,7 @@ public class GridLimits {
      *
      *@param  numberFormatX_In  The new format for x-axis
      */
-    public synchronized void setNumberFormatX( DecimalFormat numberFormatX_In ) {
+    public synchronized void setNumberFormatX( NumberFormat numberFormatX_In ) {
         numberFormatX = numberFormatX_In;
     }
 
@@ -76,7 +76,7 @@ public class GridLimits {
      *
      *@param  numberFormatY_In  The new format for x-axis
      */
-    public synchronized void setNumberFormatY( DecimalFormat numberFormatY_In ) {
+    public synchronized void setNumberFormatY( NumberFormat numberFormatY_In ) {
         numberFormatY = numberFormatY_In;
     }
 
@@ -86,7 +86,7 @@ public class GridLimits {
      *
      *@return    The format for x-axis
      */
-    public synchronized DecimalFormat getNumberFormatX() {
+    public synchronized NumberFormat getNumberFormatX() {
         return numberFormatX;
     }
 
@@ -96,7 +96,7 @@ public class GridLimits {
      *
      *@return    The format for y-axis
      */
-    public synchronized DecimalFormat getNumberFormatY() {
+    public synchronized NumberFormat getNumberFormatY() {
         return numberFormatY;
     }
 
