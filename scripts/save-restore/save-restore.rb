@@ -90,6 +90,22 @@ class MachineStateRecord < HashMap
 		return self["channel"]
 	end
 
+	def live_value
+		return self["live_value"]
+	end
+
+	def set_live_value value
+		self["live_value"] = value
+	end
+
+	def saved_value
+		return self["saved_value"]
+	end
+
+	def set_saved_value value
+		self["saved_value"] = value
+	end
+
 	def to_s
 		return "node: #{self.node.getId}, channel: #{self.channel.channelName}"
 	end
@@ -150,13 +166,16 @@ class SaveRestoreDocument < AcceleratorDocument
 		@restore_button = window_reference.getView( "RestoreButton" )
 		@refresh_button = window_reference.getView( "RefreshButton" )
 
+		record_filter_field = window_reference.getView( "RecordFilterField" )
+
 		@restore_button.addActionListener( self )
 		@refresh_button.addActionListener( self )
 
 		@machine_state = MachineState.new
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
-		@channel_records_table_model.setKeyPaths( "node.id", "channel.channelName" )
+		@channel_records_table_model.setInputFilterComponent record_filter_field
+		@channel_records_table_model.setKeyPaths( "node.id", "channel.channelName", "live_value", "saved_value" )
 		@channel_records_table.setModel( @channel_records_table_model )
 
 		self.hasChanges = false
