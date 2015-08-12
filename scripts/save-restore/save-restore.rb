@@ -114,6 +114,8 @@ end
 
 
 class MachineState
+	include XAL::PutListener
+
 	attr_reader :records
 	attr_reader :accelerator
 
@@ -161,6 +163,21 @@ class MachineState
 			record.set_live_value value
 			puts "#{value}"
 		end
+	end
+
+	def restore( records )
+		records.each do |record|
+			channel_record = record.channel
+			saved_value = record.saved_value
+			if !Double.isNaN( saved_value )
+				puts "restoring record: #{record}"
+				record.channel.putValCallback( saved_value, self )
+			end
+		end
+		XAL::Channel.flushIO
+	end
+
+	def putCompleted(channel)
 	end
 end
 
@@ -308,6 +325,14 @@ class SaveRestoreDocument < AcceleratorDocument
 			@channel_records_table_model.fireTableDataChanged
 		elsif event.source == @restore_button
 			puts "Restore the data"
+			selected_rows = @channel_records_table.getSelectedRows
+			selected_records = []
+			selected_rows.each do |row|
+				model_row = @channel_records_table.convertRowIndexToModel(row)
+				record = @channel_records_table_model.getRecordAtRow( model_row )
+				selected_records.push record
+			end
+			@machine_state.restore( selected_records )
 		end
 	end
 end
