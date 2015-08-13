@@ -240,7 +240,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "formatted_live_setpoint", "Live Setpoint" )
 		@channel_records_table_model.setColumnName( "formatted_saved_setpoint", "Saved Setpoint" )
-		@channel_records_table_model.setColumnName( "setpoint_diff", "Setpoint Difference" )
+		@channel_records_table_model.setColumnName( "formatted_setpoint_diff", "Setpoint Difference" )
 		@channel_records_table.setModel( @channel_records_table_model )
 		#@channel_records_table.setAutoCreateRowSorter( true )	can't do this unless FormattedNumber is Comparable
 
