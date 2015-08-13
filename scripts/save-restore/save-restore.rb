@@ -156,7 +156,7 @@ class MachineState
 		# setup a timer to refresh the live values
 		refresh_queue = XAL::DispatchQueue.getGlobalDefaultPriorityQueue()
 		@refresh_timer = XAL::DispatchTimer.getFixedRateInstance( refresh_queue, lambda {|| self.refresh_live } )
-		@refresh_timer.startNowWithInterval( 5000, 0 )	# refresh every 5000 milliseconds
+		@refresh_timer.startNowWithInterval( 1000, 0 )	# refresh every 1000 milliseconds
 	end
 
 	def set_accelerator(accelerator)
