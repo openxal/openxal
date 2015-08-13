@@ -70,6 +70,7 @@ module XAL
 	include_package "xal.smf.impl"
 	include_package "xal.ca"
 	include_package "xal.extension.widgets.swing"
+	include_package "xal.tools.dispatch"
 end
 
 
@@ -139,17 +140,31 @@ end
 
 class MachineState
 	include XAL::PutListener
+	include XAL::BatchGetRequestListener
 
 	attr_reader :records
 	attr_reader :accelerator
 	attr_accessor :comment
+	attr_accessor :delegate
 
 	def initialize
 		@records = ArrayList.new
+		@batch_channel_request = nil
 		@comment = ""
+		@delegate = nil
+
+		# setup a timer to refresh the live values
+		refresh_queue = XAL::DispatchQueue.getGlobalDefaultPriorityQueue()
+		@refresh_timer = XAL::DispatchTimer.getFixedRateInstance( refresh_queue, lambda {|| self.refresh_live } )
+		@refresh_timer.startNowWithInterval( 5000, 0 )	# refresh every 5000 milliseconds
 	end
 
 	def set_accelerator(accelerator)
+		# stop listening to the old batch request if any
+		if @batch_channel_request != nil
+			@batch_channel_request.removeBatchGetRequestListener( self )
+		end
+
 		@records = ArrayList.new
 		@accelerator = accelerator
 		puts "setting the machine state accelerator..."
@@ -161,6 +176,13 @@ class MachineState
 		append_records( cavities, [XAL::RfCavity::CAV_AMP_SET_HANDLE, XAL::RfCavity::CAV_PHASE_SET_HANDLE] )
 
 		@records.each { |record| puts "#{record}" }
+
+		# prepare a new batch request
+		setpoint_channels = ArrayList.new
+		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
+		@batch_channel_request = XAL::BatchGetValueRequest.new( setpoint_channels )
+		@batch_channel_request.addBatchGetRequestListener( self )
+		@batch_channel_request.submit()
 	end
 
 	def append_records( nodes, handles )
@@ -175,19 +197,32 @@ class MachineState
 		end
 	end
 
-	def refresh
-		setpoint_channels = ArrayList.new
-		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
-		request = XAL::BatchGetValueRequest.new( setpoint_channels )
-		request.submitAndWait( 5.0 )
-		@records.each do |record|
-			setpoint_channel_record = request.getRecord( record.setpoint_channel )
-			value = Double::NaN
-			if setpoint_channel_record != nil
-				value = setpoint_channel_record.doubleValue
+
+	def refresh_live
+		# refresh with what we have now
+		request = @batch_channel_request
+		if request != nil
+			setpoint_channels = ArrayList.new
+			@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
+			@records.each do |record|
+				setpoint_channel_record = request.getRecord( record.setpoint_channel )
+				value = Double::NaN
+				if setpoint_channel_record != nil
+					value = setpoint_channel_record.doubleValue
+				end
+				record.set_live_setpoint value
+				puts "#{value}"
 			end
-			record.set_live_setpoint value
-			puts "#{value}"
+		end
+
+		# submit a new request
+		if @batch_channel_request != nil
+			@batch_channel_request.submit
+		end
+
+		# if there is a delegate let them know
+		if delegate != nil
+			delegate.machine_state_updated( self )
 		end
 	end
 
@@ -205,6 +240,27 @@ class MachineState
 
 	def putCompleted(setpoint_channel)
 	end
+
+	def batchRequestCompleted( request, recordCount, exceptionCount )
+		setpoint_channels = ArrayList.new
+		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
+		@records.each do |record|
+			setpoint_channel_record = request.getRecord( record.setpoint_channel )
+			value = Double::NaN
+			if setpoint_channel_record != nil
+				value = setpoint_channel_record.doubleValue
+			end
+			record.set_live_setpoint value
+			puts "#{value}"
+		end
+	end
+
+	def exceptionInBatch( request, channel, exception )
+	end
+
+	def recordReceivedInBatch( request, channel, channel_record )
+	end
+
 end
 
 
@@ -228,7 +284,6 @@ class SaveRestoreDocument < AcceleratorDocument
 		record_filter_field = window_reference.getView( "RecordFilterField" )
 
 		@restore_button.addActionListener( self )
-		@refresh_button.addActionListener( self )
 
 		@machine_state = MachineState.new
 
@@ -244,7 +299,17 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table.setModel( @channel_records_table_model )
 		#@channel_records_table.setAutoCreateRowSorter( true )	can't do this unless FormattedNumber is Comparable
 
+		# handle machine state events
+		@machine_state.delegate = self
+
 		self.hasChanges = false
+	end
+
+	# update the display to reflect the new machine state
+	def machine_state_updated( machine_state )
+		# update the table model rows without affecting user selections
+		row_count = @channel_records_table_model.getRowCount
+		@channel_records_table_model.fireTableRowsUpdated(0, row_count)
 	end
 
 
@@ -369,11 +434,7 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		
 	def actionPerformed( event )
-		if event.source == @refresh_button
-			puts "Refresh the data"
-			@machine_state.refresh
-			@channel_records_table_model.fireTableDataChanged
-		elsif event.source == @restore_button
+		if event.source == @restore_button
 			puts "Restore the data"
 			selected_rows = @channel_records_table.getSelectedRows
 			selected_records = []
