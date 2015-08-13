@@ -167,7 +167,7 @@ class MachineState
 
 		@records = ArrayList.new
 		@accelerator = accelerator
-		puts "setting the machine state accelerator..."
+		System.out.println "setting the machine state accelerator..."
 
 		magnets = accelerator.getAllNodesOfType( XAL::Electromagnet.s_strType )
 		append_records( magnets, [XAL::MagnetMainSupply::FIELD_SET_HANDLE] )
@@ -175,7 +175,7 @@ class MachineState
 		cavities = accelerator.getAllNodesOfType( XAL::RfCavity.s_strType )
 		append_records( cavities, [XAL::RfCavity::CAV_AMP_SET_HANDLE, XAL::RfCavity::CAV_PHASE_SET_HANDLE] )
 
-		@records.each { |record| puts "#{record}" }
+		@records.each { |record| System.out.println "#{record}" }
 
 		# prepare a new batch request
 		setpoint_channels = ArrayList.new
@@ -211,7 +211,6 @@ class MachineState
 					value = setpoint_channel_record.doubleValue
 				end
 				record.set_live_setpoint value
-				puts "#{value}"
 			end
 		end
 
@@ -231,7 +230,7 @@ class MachineState
 			setpoint_channel_record = record.setpoint_channel
 			saved_setpoint = record.saved_setpoint
 			if !Double.isNaN( saved_setpoint )
-				puts "restoring record: #{record}"
+				System.out.println "restoring record: #{record}"
 				record.setpoint_channel.putValCallback( saved_setpoint, self )
 			end
 		end
@@ -412,7 +411,7 @@ class SaveRestoreDocument < AcceleratorDocument
 	def acceleratorChanged
 		@machine_state.set_accelerator self.accelerator
 		@channel_records_table_model.setRecords( @machine_state.records )
-		puts "setting the document accelerator..."
+		System.out.println "setting the document accelerator..."
 		self.hasChanges = true
 	end
 
@@ -424,7 +423,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		
 	def actionPerformed( event )
 		if event.source == @restore_button
-			puts "Restore the data"
+			System.out.println "Restore the data"
 			selected_rows = @channel_records_table.getSelectedRows
 			selected_records = []
 			selected_rows.each do |row|
@@ -445,7 +444,7 @@ class Main < ApplicationAdaptor
 
 		# locate the enclosing folder and get the bricks file within it
 		folder = File.expand_path File.dirname( __FILE__ )
-		puts "script folder: #{folder}"
+		System.out.println "script folder: #{folder}"
 
 		self.setResourcesParentDirectoryWithPath folder
 	end
