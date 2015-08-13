@@ -63,6 +63,7 @@ module Java
 	java_import 'javax.swing.ListSelectionModel'
 	java_import 'javax.swing.DefaultListModel'
 	include_package "java.text"
+	include_package "javax.swing.table"
 end
 
 module XAL
@@ -255,6 +256,24 @@ end
 
 
 
+# Comparator for sorting FormattedNumbers based on double value
+class FormattedNumberDoubleComparator
+	include java.util.Comparator
+
+	@@singleton = FormattedNumberDoubleComparator.new
+
+	def self.getInstance
+		return @@singleton
+	end
+
+	# compare two formatted numbers
+	def compare( num1, num2 )
+		return Java::Double.compare( num1.doubleValue, num2.doubleValue )
+	end
+end
+
+
+
 class SaveRestoreDocument < AcceleratorDocument
 	include java.awt.event.ActionListener
 	include DataListener
@@ -293,7 +312,11 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table_model.setColumnName( "formatted_saved_setpoint", "Saved Setpoint" )
 		@channel_records_table_model.setColumnName( "formatted_setpoint_diff", "Setpoint Difference" )
 		@channel_records_table.setModel( @channel_records_table_model )
-		#@channel_records_table.setAutoCreateRowSorter( true )	can't do this unless FormattedNumber is Comparable
+		rowSorter = Java::TableRowSorter.new(@channel_records_table_model)
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_diff"), FormattedNumberDoubleComparator.getInstance )
+		@channel_records_table.setRowSorter( rowSorter )
 
 		# handle machine state events
 		@machine_state.delegate = self
