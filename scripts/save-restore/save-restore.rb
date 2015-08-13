@@ -242,17 +242,6 @@ class MachineState
 	end
 
 	def batchRequestCompleted( request, recordCount, exceptionCount )
-		setpoint_channels = ArrayList.new
-		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
-		@records.each do |record|
-			setpoint_channel_record = request.getRecord( record.setpoint_channel )
-			value = Double::NaN
-			if setpoint_channel_record != nil
-				value = setpoint_channel_record.doubleValue
-			end
-			record.set_live_setpoint value
-			puts "#{value}"
-		end
 	end
 
 	def exceptionInBatch( request, channel, exception )
