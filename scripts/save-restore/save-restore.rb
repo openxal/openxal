@@ -73,10 +73,10 @@ end
 
 
 class MachineStateRecord < HashMap
-	def initialize( node, channel )
+	def initialize( node, setpoint_channel )
 		super()
 		put( "node", node )
-		put( "channel", channel )
+		put( "setpoint_channel", setpoint_channel )
 		put( "live_setpoint", Double::NaN )
 		put( "saved_setpoint", Double::NaN )
 	end
@@ -86,8 +86,8 @@ class MachineStateRecord < HashMap
 		return self["node"]
 	end
 
-	def channel
-		return self["channel"]
+	def setpoint_channel
+		return self["setpoint_channel"]
 	end
 
 	def live_setpoint
@@ -107,7 +107,7 @@ class MachineStateRecord < HashMap
 	end
 
 	def to_s
-		return "node: #{self.node.getId}, channel: #{self.channel.channelName}"
+		return "node: #{self.node.getId}, setpoint_channel: #{self.setpoint_channel.channelName}"
 	end
 end
 
@@ -140,9 +140,9 @@ class MachineState
 	def append_records( nodes, handles )
 		nodes.each do |node|
 			handles.each do |handle|
-				channel = node.findChannel( handle )
-				if channel != nil
-					record = MachineStateRecord.new( node, channel )
+				setpoint_channel = node.findChannel( handle )
+				if setpoint_channel != nil
+					record = MachineStateRecord.new( node, setpoint_channel )
 					@records.add record
 				end
 			end
@@ -150,15 +150,15 @@ class MachineState
 	end
 
 	def refresh
-		channels = ArrayList.new
-		@records.each { |record| channels.add( record.channel ) }
-		request = XAL::BatchGetValueRequest.new( channels )
+		setpoint_channels = ArrayList.new
+		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
+		request = XAL::BatchGetValueRequest.new( setpoint_channels )
 		request.submitAndWait( 5.0 )
 		@records.each do |record|
-			channel_record = request.getRecord( record.channel )
+			setpoint_channel_record = request.getRecord( record.setpoint_channel )
 			value = Double::NaN
-			if channel_record != nil
-				value = channel_record.doubleValue
+			if setpoint_channel_record != nil
+				value = setpoint_channel_record.doubleValue
 			end
 			record.set_live_setpoint value
 			puts "#{value}"
@@ -167,17 +167,17 @@ class MachineState
 
 	def restore( records )
 		records.each do |record|
-			channel_record = record.channel
+			setpoint_channel_record = record.setpoint_channel
 			saved_setpoint = record.saved_setpoint
 			if !Double.isNaN( saved_setpoint )
 				puts "restoring record: #{record}"
-				record.channel.putValCallback( saved_setpoint, self )
+				record.setpoint_channel.putValCallback( saved_setpoint, self )
 			end
 		end
 		XAL::Channel.flushIO
 	end
 
-	def putCompleted(channel)
+	def putCompleted(setpoint_channel)
 	end
 end
 
@@ -208,10 +208,10 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "channel.channelName", "live_setpoint", "saved_setpoint" )
+		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "live_setpoint", "saved_setpoint" )
 		@channel_records_table_model.setColumnClassForKeyPaths( Double.class, "live_setpoint", "saved_setpoint" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
-		@channel_records_table_model.setColumnName( "channel.channelName", "Setpoint Channel" )
+		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "live_setpoint", "Live Setpoint" )
 		@channel_records_table_model.setColumnName( "saved_setpoint", "Saved Setpoint" )
 		@channel_records_table.setModel( @channel_records_table_model )
@@ -276,7 +276,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		end
 
 		@machine_state.records.each do |record|
-			value = values_by_pv[ record.channel.channelName ]
+			value = values_by_pv[ record.setpoint_channel.channelName ]
 			if value != nil
 				record.set_saved_setpoint( value )
 			end
@@ -293,7 +293,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		@machine_state.records.each do |record|
 			if !Double.isNaN( record.live_setpoint )
 				record_adaptor = model_adaptor.createChild( "record" )
-				record_adaptor.setValue( "channel", record.channel.channelName )
+				record_adaptor.setValue( "channel", record.setpoint_channel.channelName )
 				record_adaptor.setValue( "value", record.live_setpoint )
 			end
 		end
