@@ -447,7 +447,7 @@ class SaveRestoreDocument < AcceleratorDocument
 			@snapshot_comment = JOptionPane.showInputDialog( self.mainWindow, "Snapshot Comment" )
 
 			# save the document
-			timestamp = FILE_TIMESTAMP_FORMAT.format( Date.new() )
+			timestamp = FILE_TIMESTAMP_FORMAT.format( Java::Date.new )
 			output_dir = XAL::Application.getApp.getDefaultDocumentFolder
 			output_file = Java::File.new( output_dir, "Snapshot_#{timestamp}.mstate" )
 			output_url = output_file.toURI.toURL
