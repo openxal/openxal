@@ -79,6 +79,7 @@ class MachineStateRecord < HashMap
 		put( "setpoint_channel", setpoint_channel )
 		put( "live_setpoint", Double::NaN )
 		put( "saved_setpoint", Double::NaN )
+		put( "setpoint_diff", Double::NaN )
 	end
 
 
@@ -96,6 +97,7 @@ class MachineStateRecord < HashMap
 
 	def set_live_setpoint value
 		self["live_setpoint"] = value
+		self.update_setpoint_diff
 	end
 
 	def saved_setpoint
@@ -104,6 +106,17 @@ class MachineStateRecord < HashMap
 
 	def set_saved_setpoint value
 		self["saved_setpoint"] = value
+		self.update_setpoint_diff
+	end
+
+	# computed difference between live and saved setpoint (live - saved)
+	def update_setpoint_diff
+		self["setpoint_diff"] = self.live_setpoint - self.saved_setpoint
+	end
+
+	# computed difference between live and saved setpoint (live - saved)
+	def setpoint_diff
+		return self["setpoint_diff"]
 	end
 
 	def to_s
@@ -210,12 +223,13 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "live_setpoint", "saved_setpoint" )
-		@channel_records_table_model.setColumnClassForKeyPaths( Double.class, "live_setpoint", "saved_setpoint" )
+		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "live_setpoint", "saved_setpoint", "setpoint_diff" )
+		@channel_records_table_model.setColumnClassForKeyPaths( Double.class, "live_setpoint", "saved_setpoint", "setpoint_diff" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "live_setpoint", "Live Setpoint" )
 		@channel_records_table_model.setColumnName( "saved_setpoint", "Saved Setpoint" )
+		@channel_records_table_model.setColumnName( "setpoint_diff", "Setpoint Difference" )
 		@channel_records_table.setModel( @channel_records_table_model )
 
 		self.hasChanges = false
