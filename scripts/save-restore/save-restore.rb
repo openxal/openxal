@@ -41,6 +41,7 @@ java_import 'xal.tools.apputils.ImageCaptureManager'
 java_import 'xal.tools.xml.XmlDataAdaptor'
 java_import 'xal.tools.data.DataAdaptor'
 java_import 'xal.tools.data.DataListener'
+java_import 'xal.tools.text.FormattedNumber'
 
 
 module Java
@@ -48,6 +49,7 @@ module Java
 	java_import 'java.lang.reflect.Array'
 	java_import 'java.lang.Class'
 	java_import 'java.lang.Double'
+	java_import 'java.lang.Number'
 	java_import 'java.io.File'
     java_import 'java.util.Date'
 	java_import 'java.util.List'
@@ -71,15 +73,21 @@ module XAL
 end
 
 
+# default number format
+DEFAULT_NUMBER_FORMAT = "0.00000"
 
 class MachineStateRecord < HashMap
+
 	def initialize( node, setpoint_channel )
 		super()
 		put( "node", node )
 		put( "setpoint_channel", setpoint_channel )
 		put( "live_setpoint", Double::NaN )
+		put( "formatted_live_setpoint", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 		put( "saved_setpoint", Double::NaN )
+		put( "formatted_saved_setpoint", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 		put( "setpoint_diff", Double::NaN )
+		put( "formatted_setpoint_diff", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 	end
 
 
@@ -97,6 +105,7 @@ class MachineStateRecord < HashMap
 
 	def set_live_setpoint value
 		self["live_setpoint"] = value
+		self["formatted_live_setpoint"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
 		self.update_setpoint_diff
 	end
 
@@ -106,12 +115,14 @@ class MachineStateRecord < HashMap
 
 	def set_saved_setpoint value
 		self["saved_setpoint"] = value
+		self["formatted_saved_setpoint"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
 		self.update_setpoint_diff
 	end
 
 	# computed difference between live and saved setpoint (live - saved)
 	def update_setpoint_diff
 		self["setpoint_diff"] = self.live_setpoint - self.saved_setpoint
+		self["formatted_setpoint_diff"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, setpoint_diff)
 	end
 
 	# computed difference between live and saved setpoint (live - saved)
@@ -223,14 +234,15 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "live_setpoint", "saved_setpoint", "setpoint_diff" )
-		@channel_records_table_model.setColumnClassForKeyPaths( Double.class, "live_setpoint", "saved_setpoint", "setpoint_diff" )
+		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_diff" )
+		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_diff" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
-		@channel_records_table_model.setColumnName( "live_setpoint", "Live Setpoint" )
-		@channel_records_table_model.setColumnName( "saved_setpoint", "Saved Setpoint" )
+		@channel_records_table_model.setColumnName( "formatted_live_setpoint", "Live Setpoint" )
+		@channel_records_table_model.setColumnName( "formatted_saved_setpoint", "Saved Setpoint" )
 		@channel_records_table_model.setColumnName( "setpoint_diff", "Setpoint Difference" )
 		@channel_records_table.setModel( @channel_records_table_model )
+		#@channel_records_table.setAutoCreateRowSorter( true )	can't do this unless FormattedNumber is Comparable
 
 		self.hasChanges = false
 	end
