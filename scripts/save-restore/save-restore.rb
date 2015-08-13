@@ -118,9 +118,11 @@ class MachineState
 
 	attr_reader :records
 	attr_reader :accelerator
+	attr_accessor :comment
 
 	def initialize
 		@records = ArrayList.new
+		@comment = ""
 	end
 
 	def set_accelerator(accelerator)
@@ -254,6 +256,9 @@ class SaveRestoreDocument < AcceleratorDocument
 
 
 	def update( adaptor )
+		# get the version
+		version = adaptor.stringValue("version")
+
 		# restore the accelerator/sequence if any
 		if adaptor.hasAttribute( "acceleratorPath" )
 			acceleratorPath = adaptor.stringValue( "acceleratorPath" )
@@ -270,31 +275,45 @@ class SaveRestoreDocument < AcceleratorDocument
 		record_adaptors = model_adaptor.childAdaptors( "record" )
 		values_by_pv = Hash.new
 		record_adaptors.each do |record_adaptor|
-			pv = record_adaptor.stringValue( "channel" )
-			value = record_adaptor.doubleValue( "value" )
-			values_by_pv[ pv ] = value
+			setpoint_pv = nil
+			setpoint = nil
+			if record_adaptor.hasAttribute("setpoint")
+				# this is the new style
+				setpoint_pv = record_adaptor.stringValue( "setpoint_pv" )
+				setpoint = record_adaptor.doubleValue( "setpoint" )
+			else
+				# this is the old style
+				setpoint_pv = record_adaptor.stringValue( "channel" )
+				setpoint = record_adaptor.doubleValue( "value" )
+			end
+			if setpoint_pv != nil
+				values_by_pv[ setpoint_pv ] = setpoint
+			end
 		end
 
 		@machine_state.records.each do |record|
-			value = values_by_pv[ record.setpoint_channel.channelName ]
-			if value != nil
-				record.set_saved_setpoint( value )
+			setpoint = values_by_pv[ record.setpoint_channel.channelName ]
+			if setpoint != nil
+				record.set_saved_setpoint( setpoint )
 			end
 		end
 	end
 
 
 	def write( adaptor )
-		adaptor.setValue( "version", "1.0.0" )
+		adaptor.setValue( "version", "2.0.0" )
 		adaptor.setValue( "date", Java::Date.new.toString )
 
-		# write the model data
+		# write the model state
 		model_adaptor = adaptor.createChild( "MachineState" )
+		model_adaptor.setValue( "comment", @machine_state.comment )
+
+		# write the model records
 		@machine_state.records.each do |record|
 			if !Double.isNaN( record.live_setpoint )
 				record_adaptor = model_adaptor.createChild( "record" )
-				record_adaptor.setValue( "channel", record.setpoint_channel.channelName )
-				record_adaptor.setValue( "value", record.live_setpoint )
+				record_adaptor.setValue( "setpoint_pv", record.setpoint_channel.channelName )
+				record_adaptor.setValue( "setpoint", record.live_setpoint )
 			end
 		end
 
