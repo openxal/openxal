@@ -77,8 +77,8 @@ class MachineStateRecord < HashMap
 		super()
 		put( "node", node )
 		put( "channel", channel )
-		put( "live_value", Double::NaN )
-		put( "saved_value", Double::NaN )
+		put( "live_setpoint", Double::NaN )
+		put( "saved_setpoint", Double::NaN )
 	end
 
 
@@ -90,20 +90,20 @@ class MachineStateRecord < HashMap
 		return self["channel"]
 	end
 
-	def live_value
-		return self["live_value"]
+	def live_setpoint
+		return self["live_setpoint"]
 	end
 
-	def set_live_value value
-		self["live_value"] = value
+	def set_live_setpoint value
+		self["live_setpoint"] = value
 	end
 
-	def saved_value
-		return self["saved_value"]
+	def saved_setpoint
+		return self["saved_setpoint"]
 	end
 
-	def set_saved_value value
-		self["saved_value"] = value
+	def set_saved_setpoint value
+		self["saved_setpoint"] = value
 	end
 
 	def to_s
@@ -160,7 +160,7 @@ class MachineState
 			if channel_record != nil
 				value = channel_record.doubleValue
 			end
-			record.set_live_value value
+			record.set_live_setpoint value
 			puts "#{value}"
 		end
 	end
@@ -168,10 +168,10 @@ class MachineState
 	def restore( records )
 		records.each do |record|
 			channel_record = record.channel
-			saved_value = record.saved_value
-			if !Double.isNaN( saved_value )
+			saved_setpoint = record.saved_setpoint
+			if !Double.isNaN( saved_setpoint )
 				puts "restoring record: #{record}"
-				record.channel.putValCallback( saved_value, self )
+				record.channel.putValCallback( saved_setpoint, self )
 			end
 		end
 		XAL::Channel.flushIO
@@ -208,7 +208,12 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "channel.channelName", "live_value", "saved_value" )
+		@channel_records_table_model.setKeyPaths( "node.id", "channel.channelName", "live_setpoint", "saved_setpoint" )
+		@channel_records_table_model.setColumnClassForKeyPaths( Double.class, "live_setpoint", "saved_setpoint" )
+		@channel_records_table_model.setColumnName( "node.id", "Node" )
+		@channel_records_table_model.setColumnName( "channel.channelName", "Setpoint Channel" )
+		@channel_records_table_model.setColumnName( "live_setpoint", "Live Setpoint" )
+		@channel_records_table_model.setColumnName( "saved_setpoint", "Saved Setpoint" )
 		@channel_records_table.setModel( @channel_records_table_model )
 
 		self.hasChanges = false
@@ -273,7 +278,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		@machine_state.records.each do |record|
 			value = values_by_pv[ record.channel.channelName ]
 			if value != nil
-				record.set_saved_value( value )
+				record.set_saved_setpoint( value )
 			end
 		end
 	end
@@ -286,10 +291,10 @@ class SaveRestoreDocument < AcceleratorDocument
 		# write the model data
 		model_adaptor = adaptor.createChild( "MachineState" )
 		@machine_state.records.each do |record|
-			if !Double.isNaN( record.live_value )
+			if !Double.isNaN( record.live_setpoint )
 				record_adaptor = model_adaptor.createChild( "record" )
 				record_adaptor.setValue( "channel", record.channel.channelName )
-				record_adaptor.setValue( "value", record.live_value )
+				record_adaptor.setValue( "value", record.live_setpoint )
 			end
 		end
 
