@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Wed Aug 12 13:35:57 EDT 2015" version="1.0.0">
+<BricksDocument date="Thu Aug 13 10:45:31 EDT 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="744" tag="MainWindow" width="1085">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="808" tag="MainWindow" width="1159">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Simple Save and Restore"/>
             <ViewNode tag="Main Vertical Layout">
@@ -9,10 +9,15 @@
                 <ViewNode tag="Button Box">
                     <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <BeanProperty height="60" name="maximumSize" width="33636"/>
+                    <ViewNode tag="SnapshotSaveButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Save Snapshot..."/>
+                        <BeanProperty name="toolTipText" value="Save a new machine snapshot"/>
+                    </ViewNode>
                     <ViewNode tag="RecordFilterField">
                         <ViewProxy type="javax.swing.JTextField"/>
-                        <BeanProperty name="text" value=""/>
                         <BeanProperty name="toolTipText" value="Filter records"/>
+                        <BeanProperty name="text" value=""/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
@@ -27,6 +32,18 @@
                     <ViewProxy type="javax.swing.JScrollPane"/>
                     <ViewNode tag="ChannelRecordsTable">
                         <ViewProxy type="javax.swing.JTable"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="CommenScroller">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <BeanProperty height="80" name="minimumSize" width="23"/>
+                    <BeanProperty height="100" name="preferredSize" width="85"/>
+                    <BeanProperty height="150" name="maximumSize" width="32767"/>
+                    <ViewNode tag="CommentTextArea">
+                        <ViewProxy type="javax.swing.JTextArea"/>
+                        <BeanProperty name="editable" value="false"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Snapshot Comment"/>
                     </ViewNode>
                 </ViewNode>
             </ViewNode>

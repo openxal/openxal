@@ -62,9 +62,11 @@ module Java
 	java_import 'javax.swing.Timer'
 	java_import 'javax.swing.ListSelectionModel'
 	java_import 'javax.swing.DefaultListModel'
+	include_package "java.text"
 end
 
 module XAL
+	include_package "xal.extension.application"
 	include_package "xal.smf.data"
 	include_package "xal.sim.scenario"
 	include_package "xal.smf.impl"
@@ -266,12 +268,15 @@ class SaveRestoreDocument < AcceleratorDocument
 		@window_reference = XalDocument.getDefaultWindowReference( "MainWindow", [ self ].to_java )
 
 		@channel_records_table = @window_reference.getView( "ChannelRecordsTable" )
+
+		@snapshot_save_button = window_reference.getView( "SnapshotSaveButton" )
 		@restore_button = window_reference.getView( "RestoreButton" )
-		@refresh_button = window_reference.getView( "RefreshButton" )
+		@comment_text_area = window_reference.getView( "CommentTextArea" )
 
 		record_filter_field = window_reference.getView( "RecordFilterField" )
 
-		@restore_button.addActionListener( self )
+		@snapshot_save_button.addActionListener self
+		@restore_button.addActionListener self
 
 		@machine_state = MachineState.new
 
@@ -351,6 +356,11 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		# read the model data
 		model_adaptor = adaptor.childAdaptor( "MachineState" )
+		if model_adaptor.hasAttribute( "comment" )
+			@machine_state.comment = model_adaptor.stringValue("comment")
+		end
+		@comment_text_area.setText @machine_state.comment
+
 		record_adaptors = model_adaptor.childAdaptors( "record" )
 		values_by_pv = Hash.new
 		record_adaptors.each do |record_adaptor|
@@ -420,9 +430,19 @@ class SaveRestoreDocument < AcceleratorDocument
 		self.hasChanges = true
 	end
 
-		
+
+	FILE_TIMESTAMP_FORMAT = Java::SimpleDateFormat.new("yyyyMMdd_HHmmss")
 	def actionPerformed( event )
-		if event.source == @restore_button
+		if event.source == @snapshot_save_button
+			# save the document
+			timestamp = FILE_TIMESTAMP_FORMAT.format( Date.new() )
+
+			output_dir = XAL::Application.getApp.getDefaultDocumentFolder
+			output_file = Java::File.new( output_dir, "Snapshot_#{timestamp}.mstate" )
+			output_url = output_file.toURI.toURL
+			saveDocumentAs( output_url )
+			System.out.println "output file: #{output_file}"
+		elsif event.source == @restore_button
 			System.out.println "Restore the data"
 			selected_rows = @channel_records_table.getSelectedRows
 			selected_records = []
