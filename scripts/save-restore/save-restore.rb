@@ -265,6 +265,9 @@ class SaveRestoreDocument < AcceleratorDocument
 	def initialize
 		super	# allows us to access inherited self
 
+		# comment from the last saving of a snapshot which may not be the current document open
+		@snapshot_comment = nil
+
 		@window_reference = XalDocument.getDefaultWindowReference( "MainWindow", [ self ].to_java )
 
 		@channel_records_table = @window_reference.getView( "ChannelRecordsTable" )
@@ -395,7 +398,13 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		# write the model state
 		model_adaptor = adaptor.createChild( "MachineState" )
-		model_adaptor.setValue( "comment", @machine_state.comment )
+
+		# save the comment assigned by the user for saving (not same as the current machine state comment)
+		comment = @snapshot_comment
+		if comment == nil
+			comment = ""
+		end
+		model_adaptor.setValue( "comment", comment )
 
 		# write the model records
 		@machine_state.records.each do |record|
@@ -434,9 +443,11 @@ class SaveRestoreDocument < AcceleratorDocument
 	FILE_TIMESTAMP_FORMAT = Java::SimpleDateFormat.new("yyyyMMdd_HHmmss")
 	def actionPerformed( event )
 		if event.source == @snapshot_save_button
+			# request the comment for this snapshot (note that the currently opened document show comment from when it was saved)
+			@snapshot_comment = JOptionPane.showInputDialog( self.mainWindow, "Snapshot Comment" )
+
 			# save the document
 			timestamp = FILE_TIMESTAMP_FORMAT.format( Date.new() )
-
 			output_dir = XAL::Application.getApp.getDefaultDocumentFolder
 			output_file = Java::File.new( output_dir, "Snapshot_#{timestamp}.mstate" )
 			output_url = output_file.toURI.toURL
