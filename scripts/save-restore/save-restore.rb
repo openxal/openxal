@@ -293,7 +293,9 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@snapshot_save_button = window_reference.getView( "SnapshotSaveButton" )
 		@restore_button = window_reference.getView( "RestoreButton" )
-		@comment_text_area = window_reference.getView( "CommentTextArea" )
+		@comment_text_area = window_reference.getView( "SnapshotCommentTextArea" )
+		@snapshot_timestamp_label = window_reference.getView( "SnapshotTimestampLabel" )
+		@live_update_timestamp_label = window_reference.getView( "LiveUpdateTimestampLabel" )
 
 		record_filter_field = window_reference.getView( "RecordFilterField" )
 
@@ -326,9 +328,21 @@ class SaveRestoreDocument < AcceleratorDocument
 
 	# update the display to reflect the new machine state
 	def machine_state_updated( machine_state )
+		#puts "updating machine state state"
+		XAL::DispatchQueue.getMainQueue().dispatchAsync( lambda {|| self.refresh_live_display } )
+	end
+
+
+	# refresh the live display (must be called on the main thread)
+	def refresh_live_display
 		# update the table model rows without affecting user selections
 		row_count = @channel_records_table_model.getRowCount
-		@channel_records_table_model.fireTableRowsUpdated(0, row_count)
+		if row_count > 0
+			@channel_records_table_model.fireTableRowsUpdated(0, row_count-1)
+		end
+
+		# update the live timestamp
+		@live_update_timestamp_label.text = Java::Date.new.toString
 	end
 
 
@@ -368,6 +382,9 @@ class SaveRestoreDocument < AcceleratorDocument
 	def update( adaptor )
 		# get the version
 		version = adaptor.stringValue("version")
+		timestamp = adaptor.stringValue("date")
+
+		@snapshot_timestamp_label.text = timestamp
 
 		# restore the accelerator/sequence if any
 		if adaptor.hasAttribute( "acceleratorPath" )
