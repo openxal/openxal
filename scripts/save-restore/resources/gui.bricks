@@ -15,7 +15,7 @@
                         <BeanProperty height="16" name="preferredSize" width="200"/>
                         <BeanProperty height="16" name="maximumSize" width="300"/>
                         <BeanProperty name="text" value=""/>
-                        <BeanProperty alpha="255" blue="153" green="153" name="foreground" red="153"/>
+                        <BeanProperty alpha="255" blue="100" green="100" name="foreground" red="100"/>
                         <BeanProperty name="toolTipText" value="Last update of live values"/>
                     </ViewNode>
                     <ViewNode tag="SnapshotSaveButton">
