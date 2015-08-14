@@ -92,8 +92,9 @@ class MachineStateRecord < HashMap
 		put( "formatted_saved_setpoint", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 		put( "setpoint_diff", Double::NaN )
 		put( "formatted_setpoint_diff", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
+		put( "setpoint_relative_diff", Double::NaN )
+		put( "formatted_setpoint_relative_diff", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 	end
-
 
 	def node
 		return self["node"]
@@ -111,6 +112,7 @@ class MachineStateRecord < HashMap
 		self["live_setpoint"] = value
 		self["formatted_live_setpoint"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
 		self.update_setpoint_diff
+		self.update_setpoint_relative_diff
 	end
 
 	def saved_setpoint
@@ -121,9 +123,10 @@ class MachineStateRecord < HashMap
 		self["saved_setpoint"] = value
 		self["formatted_saved_setpoint"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
 		self.update_setpoint_diff
+		self.update_setpoint_relative_diff
 	end
 
-	# computed difference between live and saved setpoint (live - saved)
+	# compute difference between live and saved setpoint (live - saved)
 	def update_setpoint_diff
 		self["setpoint_diff"] = self.live_setpoint - self.saved_setpoint
 		self["formatted_setpoint_diff"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, setpoint_diff)
@@ -132,6 +135,29 @@ class MachineStateRecord < HashMap
 	# computed difference between live and saved setpoint (live - saved)
 	def setpoint_diff
 		return self["setpoint_diff"]
+	end
+
+	# compute relative difference as a percent
+	def update_setpoint_relative_diff
+		relative_diff = 0.0
+		live_value = self.live_setpoint
+		saved_value = self.saved_setpoint
+		diff = Java::Math.abs(live_value - saved_value)
+		if diff > 0
+			# baseline is average of live and saved value to avoid issues if either is zero
+			baseline = 0.5 * ( Java::Math.abs( live_value ) + Java::Math.abs( saved_value ) )
+			# compute relative difference as a percent
+			relative_diff = 100 * diff / baseline
+		elsif Double.isNaN( diff )
+			relative_diff = Double::NaN
+		end
+		self["setpoint_relative_diff"] = relative_diff
+		self["formatted_setpoint_relative_diff"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, relative_diff)
+	end
+
+	# computed relative difference between live and saved setpoint
+	def setpoint_relative_diff
+		return self["setpoint_relative_diff"]
 	end
 
 	def to_s
@@ -306,18 +332,18 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_diff" )
-		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_diff" )
+		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff" )
+		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "formatted_live_setpoint", "Live Setpoint" )
 		@channel_records_table_model.setColumnName( "formatted_saved_setpoint", "Saved Setpoint" )
-		@channel_records_table_model.setColumnName( "formatted_setpoint_diff", "Setpoint Difference" )
+		@channel_records_table_model.setColumnName( "formatted_setpoint_relative_diff", "Setpoint Relative Error (%)" )
 		@channel_records_table.setModel( @channel_records_table_model )
 		rowSorter = Java::TableRowSorter.new(@channel_records_table_model)
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumberDoubleComparator.getInstance )
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_diff"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff"), FormattedNumberDoubleComparator.getInstance )
 		@channel_records_table.setRowSorter( rowSorter )
 
 		# handle machine state events
@@ -328,7 +354,7 @@ class SaveRestoreDocument < AcceleratorDocument
 
 	# update the display to reflect the new machine state
 	def machine_state_updated( machine_state )
-		#puts "updating machine state state"
+		# update the display on the main queue
 		XAL::DispatchQueue.getMainQueue().dispatchAsync( lambda {|| self.refresh_live_display } )
 	end
 
