@@ -10,15 +10,12 @@
 
 package xal.model.elem;
 
-
-
 import java.io.PrintWriter;
 
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.DriftSpace;
 import xal.tools.beam.optics.QuadrupoleLens;
-
 import xal.model.IProbe;
 
 
@@ -261,12 +258,11 @@ public class IdealMagQuad extends ThickElectromagnet {
 			matPhi.setSubMatrix( 0, 1, 0, 1, arrD );
 			matPhi.setSubMatrix( 2, 3, 2, 3, arrF );			
 		}
+				
+		// apply alignment and rotation errors
+		matPhi = applyErrors(matPhi, probe, length);			
 		
-	   matPhi = applyRotationError(matPhi, probe.getPosition(), length);
-	//sako, Apply align error
-	   matPhi = applyAlignError(matPhi);
-	
-	   return new PhaseMap( matPhi );
+	    return new PhaseMap( matPhi );
    }
     
     /*

@@ -7,7 +7,10 @@
 package xal.model.elem;
 
 import xal.tools.beam.PhaseMap;
-
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
+import xal.tools.math.r3.R3;
+import xal.tools.math.r3.R3x3;
 import xal.model.IProbe;
 import xal.model.ModelException;
 
@@ -188,4 +191,54 @@ public abstract class ThinElement extends Element {
     	return transferMap(probe);
     }
 
+    /**
+     * <h2>Add Rotation and Displacement Error to Transfer Matrix</h2>
+     * <p>
+     * Method to add the effects of a spatial rotation and displacement to the
+     * beamline element represented by the given transfer matrix.
+     * </p>
+     * <p>
+     * The returned matrix is the original transfer matrix conjugated by the 
+     * rotation and displacement matrix.
+     * </p>
+     *
+     * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
+     * @return  transfer matrix <b>&Phi;</b> after applying displacement
+     * 
+     * @author  Hiroyuki Sako
+     * @author  Christopher K. Allen
+     * @author  Ivo List
+     * 
+     * @see PhaseMatrix
+     * @see PhaseMatrix#translation(PhaseVector)
+     */
+    protected PhaseMatrix applyErrors(PhaseMatrix matPhi)
+    {		
+			double px = getPhiX();
+		    double py = getPhiY();
+		    double pz = getPhiZ();
+	    	double dx = getAlignX();
+	        double dy = getAlignY();
+	        double dz = getAlignZ();
+	        
+		    if (px != 0. || py != 0.) {
+		    	PhaseMatrix T = PhaseMatrix.translation(new PhaseVector(0., -px, 0., -py, 0., 0.));
+		    	PhaseMatrix Ti = PhaseMatrix.translation(new PhaseVector(0., px, 0., py, 0., 0.));
+		    	matPhi = Ti.times(matPhi).times(T);
+		    }
+		    
+		    if (pz != 0.) {		   
+		    	PhaseMatrix R = PhaseMatrix.rotationProduct(R3x3.newRotationZ(pz));		
+		    	matPhi = matPhi.conjugateTrans(R);		    			    	
+		    }		   
+
+	        if ((dx != 0)||(dy != 0)||(dz !=0)) {
+	            PhaseMatrix T = PhaseMatrix.spatialTranslation(new R3(-dx, -dy, -dz));
+	            PhaseMatrix Ti = PhaseMatrix.spatialTranslation(new R3(dx, dy, dz));
+	        	matPhi = Ti.times(matPhi).times(T);
+	        }
+		  		   
+	        return matPhi;
+    }
+    
 };

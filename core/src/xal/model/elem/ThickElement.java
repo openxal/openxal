@@ -13,6 +13,10 @@ import xal.model.ModelException;
 import xal.model.elem.sync.IRfCavity;
 import xal.sim.scenario.LatticeElement;
 import xal.tools.beam.PhaseMap;
+import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseVector;
+import xal.tools.math.r3.R3;
+import xal.tools.math.r3.R3x3;
 
 
 
@@ -40,9 +44,13 @@ public abstract class ThickElement extends Element {
 
     /** total length of the element */
     private double      m_dblLen = 0.0;
-
-
-
+    
+    /** total length of the node before it was sliced by scenario generator */
+    private double		m_dblNodeLen = 0.0;
+    
+    /** position of the element slice within the node */
+    private boolean firstSlice = true, lastSlice = true;
+    
 
     /*
      *  Initialization
@@ -90,7 +98,10 @@ public abstract class ThickElement extends Element {
     @Override
     public void initializeFrom(LatticeElement latticeElement) {
         super.initializeFrom(latticeElement);
-        setLength(latticeElement.getLength());		
+        setLength(latticeElement.getLength());
+        m_dblNodeLen = latticeElement.getNode().getLength();
+        firstSlice = latticeElement.getPartNr() == 0;
+        lastSlice = latticeElement.getPartNr() == latticeElement.getParts() - 1;
     }
 
     /**
@@ -190,4 +201,102 @@ public abstract class ThickElement extends Element {
     //    @Override
     //    public abstract PhaseMap transferMap(IProbe probe, double dblLen) throws ModelException;
 
-};
+    /**
+     * Returns the total length of the node, before the element was sliced by scenario generator
+     * @return original node length
+     */
+	public double getNodeLen() {
+		return m_dblNodeLen;
+	}
+	
+	/**
+	 * Checks if this is the first subslice transfer matrix is requested for
+	 * @param position position of the probe
+	 * @return is this the first subslice
+	 */
+    protected boolean isFirstSubslice(double position) {
+    	return firstSlice && Math.abs(position - (getPosition() - getLength()/2.)) < 1e-6;
+    }
+    
+    
+    /**
+	 * Checks if this is the last subslice transfer matrix is requested for
+	 * @param position position of the probe + subslice length
+	 * @return is this the last sub-slice
+	 */
+    protected boolean isLastSubslice(double position) {
+    	return lastSlice && Math.abs(position - (getPosition() + getLength()/2.)) < 1e-6;
+    }
+ 
+    /**
+     * <h2>Add Rotation and Displacement Error to Transfer Matrix</h2>
+     * <p>
+     * Method to add the effects of a spatial rotation and displacement to the
+     * beamline element represented by the given transfer matrix.
+     * 
+     * Method is optimized to add transformation only to the first and last sub-slice of
+     * the element. Besides reducing number of matrix multiplications, there is also less
+     * numerical error.
+     *
+     * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
+     * @return  transfer matrix <b>&Phi;</b> after applying displacement
+     * 
+     * @author  Ivo List
+     * 
+     * @see PhaseMatrix
+     * @see PhaseMatrix#translation(PhaseVector)
+     */
+    protected PhaseMatrix applyErrors(PhaseMatrix matPhi, IProbe probe, double length)
+    {
+		if (isFirstSubslice(probe.getPosition())) {
+			double px = getPhiX();
+		    double py = getPhiY();
+		    double pz = getPhiZ();
+	    	double dx = getAlignX();
+	        double dy = getAlignY();
+	        double dz = getAlignZ();
+	        
+		    if (px != 0. || py != 0.) {
+		    	PhaseMatrix T = PhaseMatrix.translation(new PhaseVector(px*m_dblNodeLen/2., -px, py*m_dblNodeLen/2., -py, 0., 0.));		    	
+		    	matPhi = matPhi.times(T);
+		    }
+		    
+		    if (pz != 0.) {		   
+		    	PhaseMatrix R = PhaseMatrix.rotationProduct(R3x3.newRotationZ(-pz));		    
+		    	matPhi = matPhi.times(R);
+		    }		   
+
+	        if ((dx != 0)||(dy != 0)||(dz !=0)) {
+	            PhaseMatrix T = PhaseMatrix.spatialTranslation(new R3(-dx, -dy, -dz));
+	        	matPhi = matPhi.times(T);
+	        }
+		}
+		
+		if (isLastSubslice(probe.getPosition() + length)) {
+			double px = getPhiX();
+		    double py = getPhiY();
+		    double pz = getPhiZ();
+			double dx = getAlignX();
+	        double dy = getAlignY();
+	        double dz = getAlignZ();
+	        
+		    if (px != 0. || py != 0.) {
+		    	PhaseMatrix T = PhaseMatrix.translation(new PhaseVector(px*m_dblNodeLen/2., px, py*m_dblNodeLen/2., py, 0., 0.)); 		    
+		    	matPhi = T.times(matPhi);
+		    }
+		    
+		    if (pz != 0.) {		   
+		    	PhaseMatrix R = PhaseMatrix.rotationProduct(R3x3.newRotationZ(pz));
+		    	matPhi = R.times(matPhi);	    		    
+		    }
+
+	        if ((dx != 0)||(dy != 0)||(dz !=0)) {
+	        	 PhaseMatrix T = PhaseMatrix.spatialTranslation(new R3(dx,dy,dz));
+	             matPhi = T.times(matPhi);
+	        } 
+		}
+		   		   
+		return matPhi;
+    }   
+}
+
