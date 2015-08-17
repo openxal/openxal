@@ -59,9 +59,11 @@ module Java
 	java_import 'java.util.Vector'
 	java_import 'java.text.DecimalFormat'
 	java_import 'javax.swing.ButtonGroup'
+	java_import 'javax.swing.JLabel'
 	java_import 'javax.swing.Timer'
 	java_import 'javax.swing.ListSelectionModel'
 	java_import 'javax.swing.DefaultListModel'
+	include_package "javax.swing"
 	include_package "java.text"
 	include_package "javax.swing.table"
 end
@@ -387,7 +389,26 @@ class FormattedNumberDoubleComparator
 end
 
 
+# tabel cell renderer for displaying numeric values
+class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer
+	# reuse this label
+	@@label = Java::JLabel.new
 
+	def getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+		model = table.model
+		model_row = table.convertRowIndexToModel row
+		record = model.getRecordAtRow model_row
+
+		#label = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column )
+		label = @@label
+		label.setHorizontalAlignment( Java::SwingConstants.RIGHT )
+
+		return label
+	end
+end
+
+
+# Application's Document
 class SaveRestoreDocument < AcceleratorDocument
 	include java.awt.event.ActionListener
 	include DataListener
@@ -431,12 +452,21 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table_model.setColumnName( "formatted_live_readback", "Live Readback" )
 		@channel_records_table_model.setColumnName( "formatted_saved_readback", "Saved Readback" )
 		@channel_records_table.setModel( @channel_records_table_model )
+
 		rowSorter = Java::TableRowSorter.new(@channel_records_table_model)
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback"), FormattedNumberDoubleComparator.getInstance )
+
+#		numeric_renderer = SaveRestoreNumericCellRenderer.new
+#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint") ).setCellRenderer( numeric_renderer )
+#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint") ).setCellRenderer( numeric_renderer )
+#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff") ).setCellRenderer( numeric_renderer )
+#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback") ).setCellRenderer( numeric_renderer )
+#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback") ).setCellRenderer( numeric_renderer )
+
 		@channel_records_table.setRowSorter( rowSorter )
 
 		# handle machine state events
