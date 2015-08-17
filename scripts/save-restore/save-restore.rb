@@ -280,7 +280,7 @@ class MachineState
 
 	def append_records( nodes, read_write_handles )
 		nodes.each do |node|
-			if node.getStatus	# make sure we have a valid node
+			if node.getStatus && node.getValid	# make sure we have a valid node with good status
 				read_write_handles.each do |read_write_handles|
 					read_handle = read_write_handles.read
 					write_handle = read_write_handles.write
