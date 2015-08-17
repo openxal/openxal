@@ -14,4 +14,43 @@
 			</channelsuite>
 		</node>
 	</sequence>
+
+	<!-- There are no setpoint channels for Ring RF, but we are using readbacks for the simple save-restore.rb script -->
+	<sequence id="Ring4">
+		<sequence id="Ring_RF:Cav01">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav1:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav1:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav02">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav2:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav2:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav03">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav3:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav3:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav04">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav4:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav4:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+	</sequence>
 </xdxf>
