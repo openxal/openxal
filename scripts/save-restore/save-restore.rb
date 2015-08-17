@@ -82,10 +82,14 @@ DEFAULT_NUMBER_FORMAT = "0.00000"
 
 class MachineStateRecord < HashMap
 
-	def initialize( node, setpoint_channel )
+	def initialize( node, readback_channel, setpoint_channel )
 		super()
+
 		put( "node", node )
 		put( "setpoint_channel", setpoint_channel )
+		put( "readback_channel", readback_channel )
+
+		# setpoint values
 		put( "live_setpoint", Double::NaN )
 		put( "formatted_live_setpoint", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 		put( "saved_setpoint", Double::NaN )
@@ -94,6 +98,12 @@ class MachineStateRecord < HashMap
 		put( "formatted_setpoint_diff", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 		put( "setpoint_relative_diff", Double::NaN )
 		put( "formatted_setpoint_relative_diff", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
+
+		# readback values
+		put( "live_readback", Double::NaN )
+		put( "formatted_live_readback", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
+		put( "saved_readback", Double::NaN )
+		put( "formatted_saved_readback", FormattedNumber.new(DEFAULT_NUMBER_FORMAT, Double::NaN) )
 	end
 
 	def node
@@ -102,6 +112,10 @@ class MachineStateRecord < HashMap
 
 	def setpoint_channel
 		return self["setpoint_channel"]
+	end
+
+	def readback_channel
+		return self["readback_channel"]
 	end
 
 	def live_setpoint
@@ -160,13 +174,47 @@ class MachineStateRecord < HashMap
 		return self["setpoint_relative_diff"]
 	end
 
+	def live_readback
+		return self["live_readback"]
+	end
+
+	def set_live_readback value
+		self["live_readback"] = value
+		self["formatted_live_readback"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
+	end
+
+	def saved_readback
+		return self["saved_readback"]
+	end
+
+	def set_saved_readback value
+		self["saved_readback"] = value
+		self["formatted_saved_readback"] = FormattedNumber.new(DEFAULT_NUMBER_FORMAT, value)
+	end
+
 	def to_s
-		return "node: #{self.node.getId}, setpoint_channel: #{self.setpoint_channel.channelName}"
+		setpoint_pv = self.setpoint_channel != nil ? self.setpoint_channel.channelName : "None"
+		readback_pv = self.readback_channel != nil ? self.readback_channel.channelName : "None"
+		return "node: #{self.node.getId}, setpoint_channel: #{setpoint_pv}, readback_channel: #{readback_pv}"
 	end
 end
 
 
 
+# hold the read/write handle pair
+class ReadWriteHandles
+	attr_accessor :read
+	attr_accessor :write
+
+	def initialize( read, write )
+		@read = read
+		@write = write
+	end
+end
+
+
+
+# main model for monitoring the machine state
 class MachineState
 	include XAL::PutListener
 	include XAL::BatchGetRequestListener
@@ -199,27 +247,56 @@ class MachineState
 		System.out.println "setting the machine state accelerator..."
 
 		magnets = accelerator.getAllNodesOfType( XAL::Electromagnet.s_strType )
-		append_records( magnets, [XAL::MagnetMainSupply::FIELD_SET_HANDLE] )
+		# read/write magnet field handles
+		magnet_field_handles = ReadWriteHandles.new( XAL::Electromagnet::FIELD_RB_HANDLE, XAL::MagnetMainSupply::FIELD_SET_HANDLE )
+		append_records( magnets, [magnet_field_handles])
 
 		cavities = accelerator.getAllNodesOfType( XAL::RfCavity.s_strType )
-		append_records( cavities, [XAL::RfCavity::CAV_AMP_SET_HANDLE, XAL::RfCavity::CAV_PHASE_SET_HANDLE] )
+		# read/write RF amplitude handles
+		rf_amp_handles = ReadWriteHandles.new( XAL::RfCavity::CAV_AMP_AVG_HANDLE, XAL::RfCavity::CAV_AMP_SET_HANDLE )
+		rf_phase_handles = ReadWriteHandles.new( XAL::RfCavity::CAV_PHASE_AVG_HANDLE, XAL::RfCavity::CAV_PHASE_SET_HANDLE )
+		append_records( cavities, [rf_amp_handles, rf_phase_handles] )
 
 		@records.each { |record| System.out.println "#{record}" }
 
-		# prepare a new batch request
-		setpoint_channels = ArrayList.new
-		@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
-		@batch_channel_request = XAL::BatchGetValueRequest.new( setpoint_channels )
+		# prepare a new batch request for channels to monitor
+		channels = ArrayList.new
+		@records.each do |record|
+			# add the setpoint channel if there is one
+			if record.setpoint_channel != nil
+				channels.add( record.setpoint_channel )
+			end
+			# add the readback channel if there is one
+			if record.readback_channel != nil
+				channels.add( record.readback_channel )
+			end
+		end
+		@batch_channel_request = XAL::BatchGetValueRequest.new( channels )
 		@batch_channel_request.addBatchGetRequestListener( self )
 		@batch_channel_request.submit()
 	end
 
-	def append_records( nodes, handles )
+	def append_records( nodes, read_write_handles )
 		nodes.each do |node|
-			handles.each do |handle|
-				setpoint_channel = node.findChannel( handle )
-				if setpoint_channel != nil
-					record = MachineStateRecord.new( node, setpoint_channel )
+			read_write_handles.each do |read_write_handles|
+				read_handle = read_write_handles.read
+				write_handle = read_write_handles.write
+
+				# make sure we have a valid setpoint channel otherwise treat it as nil
+				setpoint_channel = node.findChannel( write_handle )
+				if setpoint_channel != nil && !setpoint_channel.isValid
+					setpoint_channel = nil
+				end
+
+				# make sure we have a valid readback channel otherwise treat it as nil
+				readback_channel = node.findChannel( read_handle )
+				if readback_channel != nil && !readback_channel.isValid
+					readback_channel = nil
+				end
+
+				# only create a record to monitor if there is at least one of either a setpoint or readback channel
+				if setpoint_channel != nil || readback_channel != nil
+					record = MachineStateRecord.new( node, readback_channel, setpoint_channel )
 					@records.add record
 				end
 			end
@@ -228,18 +305,29 @@ class MachineState
 
 
 	def refresh_live
-		# refresh with what we have now
+		# refresh with what we have now from the last request
 		request = @batch_channel_request
 		if request != nil
-			setpoint_channels = ArrayList.new
-			@records.each { |record| setpoint_channels.add( record.setpoint_channel ) }
 			@records.each do |record|
-				setpoint_channel_record = request.getRecord( record.setpoint_channel )
-				value = Double::NaN
-				if setpoint_channel_record != nil
-					value = setpoint_channel_record.doubleValue
+				# update the live setpoint value
+				setpoint = Double::NaN
+				if record.setpoint_channel != nil
+					setpoint_channel_record = request.getRecord( record.setpoint_channel )
+					if setpoint_channel_record != nil
+						setpoint = setpoint_channel_record.doubleValue
+					end
 				end
-				record.set_live_setpoint value
+				record.set_live_setpoint setpoint
+
+				# update the live readback value
+				readback = Double::NaN
+				if record.readback_channel != nil
+					readback_channel_record = request.getRecord( record.readback_channel )
+					if readback_channel_record != nil
+						readback = readback_channel_record.doubleValue
+					end
+				end
+				record.set_live_readback readback
 			end
 		end
 
@@ -256,9 +344,9 @@ class MachineState
 
 	def restore( records )
 		records.each do |record|
-			setpoint_channel_record = record.setpoint_channel
+			# restore the record only if there is a saved setpoint and setpoint channel to restore
 			saved_setpoint = record.saved_setpoint
-			if !Double.isNaN( saved_setpoint )
+			if record.setpoint_channel != nil && !Double.isNaN( saved_setpoint )
 				System.out.println "restoring record: #{record}"
 				record.setpoint_channel.putValCallback( saved_setpoint, self )
 			end
@@ -332,18 +420,23 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
-		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff" )
+		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff", "readback_channel.channelName", "formatted_live_readback", "formatted_saved_readback" )
 		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "formatted_live_setpoint", "Live Setpoint" )
 		@channel_records_table_model.setColumnName( "formatted_saved_setpoint", "Saved Setpoint" )
 		@channel_records_table_model.setColumnName( "formatted_setpoint_relative_diff", "Setpoint Relative Error (%)" )
+		@channel_records_table_model.setColumnName( "readback_channel.channelName", "Readback Channel" )
+		@channel_records_table_model.setColumnName( "formatted_live_readback", "Live Readback" )
+		@channel_records_table_model.setColumnName( "formatted_saved_readback", "Saved Readback" )
 		@channel_records_table.setModel( @channel_records_table_model )
 		rowSorter = Java::TableRowSorter.new(@channel_records_table_model)
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback"), FormattedNumberDoubleComparator.getInstance )
 		@channel_records_table.setRowSorter( rowSorter )
 
 		# handle machine state events
@@ -431,15 +524,16 @@ class SaveRestoreDocument < AcceleratorDocument
 		@comment_text_area.setText @machine_state.comment
 
 		record_adaptors = model_adaptor.childAdaptors( "record" )
-		values_by_pv = Hash.new
+		values_by_pv = Hash.new		# setpoint and readback values keyed by PV
 		record_adaptors.each do |record_adaptor|
+			# get the saved setpoints
 			setpoint_pv = nil
 			setpoint = nil
 			if record_adaptor.hasAttribute("setpoint")
 				# this is the new style
 				setpoint_pv = record_adaptor.stringValue( "setpoint_pv" )
 				setpoint = record_adaptor.doubleValue( "setpoint" )
-			else
+			elsif record_adaptor.hasAttribute("channel")
 				# this is the old style
 				setpoint_pv = record_adaptor.stringValue( "channel" )
 				setpoint = record_adaptor.doubleValue( "value" )
@@ -447,12 +541,36 @@ class SaveRestoreDocument < AcceleratorDocument
 			if setpoint_pv != nil
 				values_by_pv[ setpoint_pv ] = setpoint
 			end
+
+			# get the saved readbacks
+			readback_pv = nil
+			readback = nil
+			if record_adaptor.hasAttribute("readback")
+				# this is the new style
+				readback_pv = record_adaptor.stringValue( "readback_pv" )
+				readback = record_adaptor.doubleValue( "readback" )
+			end
+			if readback_pv != nil
+				values_by_pv[ readback_pv ] = readback
+			end
 		end
 
+		# update the machine state records with the saved values
 		@machine_state.records.each do |record|
-			setpoint = values_by_pv[ record.setpoint_channel.channelName ]
-			if setpoint != nil
-				record.set_saved_setpoint( setpoint )
+			# load the saved setpoint values into the record
+			if record.setpoint_channel != nil
+				setpoint = values_by_pv[ record.setpoint_channel.channelName ]
+				if setpoint != nil
+					record.set_saved_setpoint( setpoint )
+				end
+			end
+
+			# load the saved readback values into the record
+			if record.readback_channel != nil
+				readback = values_by_pv[ record.readback_channel.channelName ]
+				if readback != nil
+					record.set_saved_readback( readback )
+				end
 			end
 		end
 	end
@@ -474,10 +592,26 @@ class SaveRestoreDocument < AcceleratorDocument
 
 		# write the model records
 		@machine_state.records.each do |record|
-			if !Double.isNaN( record.live_setpoint )
+			# capture snapshot of the current live setpoint and readback
+			live_setpoint = record.live_setpoint
+			has_live_setpoint = !Double.isNaN( live_setpoint )
+			live_readback = record.live_readback
+			has_live_readback = !Double.isNaN( live_readback )
+			# verify that there is something to save
+			if has_live_setpoint || has_live_readback
 				record_adaptor = model_adaptor.createChild( "record" )
-				record_adaptor.setValue( "setpoint_pv", record.setpoint_channel.channelName )
-				record_adaptor.setValue( "setpoint", record.live_setpoint )
+
+				# save the live setpoint if there is one
+				if has_live_setpoint
+					record_adaptor.setValue( "setpoint_pv", record.setpoint_channel.channelName )
+					record_adaptor.setValue( "setpoint", record.live_setpoint )
+				end
+
+				# save the live readback if there is one
+				if has_live_readback
+					record_adaptor.setValue( "readback_pv", record.readback_channel.channelName )
+					record_adaptor.setValue( "readback", record.live_readback )
+				end
 			end
 		end
 

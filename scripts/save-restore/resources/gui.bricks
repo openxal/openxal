@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Fri Aug 14 08:50:26 EDT 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="808" tag="MainWindow" width="1159">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="808" tag="MainWindow" width="1400">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Simple Save and Restore"/>
             <ViewNode tag="Main Vertical Layout">
