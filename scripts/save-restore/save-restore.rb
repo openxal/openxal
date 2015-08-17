@@ -444,7 +444,7 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table_model = XAL::KeyValueFilteredTableModel.new()
 		@channel_records_table_model.setInputFilterComponent record_filter_field
 		@channel_records_table_model.setKeyPaths( "node.id", "setpoint_channel.channelName", "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff", "readback_channel.channelName", "formatted_live_readback", "formatted_saved_readback" )
-		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff" )
+		@channel_records_table_model.setColumnClassForKeyPaths( FormattedNumber.class, "formatted_live_setpoint", "formatted_saved_setpoint", "formatted_setpoint_relative_diff", "formatted_live_readback", "formatted_saved_readback" )
 		@channel_records_table_model.setColumnName( "node.id", "Node" )
 		@channel_records_table_model.setColumnName( "setpoint_channel.channelName", "Setpoint Channel" )
 		@channel_records_table_model.setColumnName( "formatted_live_setpoint", "Live Setpoint" )
