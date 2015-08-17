@@ -280,26 +280,28 @@ class MachineState
 
 	def append_records( nodes, read_write_handles )
 		nodes.each do |node|
-			read_write_handles.each do |read_write_handles|
-				read_handle = read_write_handles.read
-				write_handle = read_write_handles.write
+			if node.getStatus	# make sure we have a valid node
+				read_write_handles.each do |read_write_handles|
+					read_handle = read_write_handles.read
+					write_handle = read_write_handles.write
 
-				# make sure we have a valid setpoint channel otherwise treat it as nil
-				setpoint_channel = node.findChannel( write_handle )
-				if setpoint_channel != nil && !setpoint_channel.isValid
-					setpoint_channel = nil
-				end
+					# make sure we have a valid setpoint channel otherwise treat it as nil
+					setpoint_channel = node.findChannel( write_handle )
+					if setpoint_channel != nil && !setpoint_channel.isValid
+						setpoint_channel = nil
+					end
 
-				# make sure we have a valid readback channel otherwise treat it as nil
-				readback_channel = node.findChannel( read_handle )
-				if readback_channel != nil && !readback_channel.isValid
-					readback_channel = nil
-				end
+					# make sure we have a valid readback channel otherwise treat it as nil
+					readback_channel = node.findChannel( read_handle )
+					if readback_channel != nil && !readback_channel.isValid
+						readback_channel = nil
+					end
 
-				# only create a record to monitor if there is at least one of either a setpoint or readback channel
-				if setpoint_channel != nil || readback_channel != nil
-					record = MachineStateRecord.new( node, readback_channel, setpoint_channel )
-					@records.add record
+					# only create a record to monitor if there is at least one of either a setpoint or readback channel
+					if setpoint_channel != nil || readback_channel != nil
+						record = MachineStateRecord.new( node, readback_channel, setpoint_channel )
+						@records.add record
+					end
 				end
 			end
 		end
