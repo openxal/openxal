@@ -392,20 +392,17 @@ end
 
 
 # tabel cell renderer for displaying numeric values
-class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer
-	# reuse this label
-	@@label = Java::JLabel.new
-
-	def getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
-		model = table.model
-		model_row = table.convertRowIndexToModel row
-		record = model.getRecordAtRow model_row
-
-		#label = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column )
-		label = @@label
-		label.setHorizontalAlignment( Java::SwingConstants.RIGHT )
-
-		return label
+class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer::UIResource
+	def setValue(value)
+		# provide fixed width for displaying value
+		output = "                    "
+		if value != nil
+			value_length = value.to_s.length
+			start = output.length - value_length
+			# pad the text to the left of the value with spaces (unfortunately not fixed width)
+			output[start, value_length] = value.to_s
+		end
+		setText( output )
 	end
 end
 
@@ -462,12 +459,9 @@ class SaveRestoreDocument < AcceleratorDocument
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback"), FormattedNumberDoubleComparator.getInstance )
 		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback"), FormattedNumberDoubleComparator.getInstance )
 
-#		numeric_renderer = SaveRestoreNumericCellRenderer.new
-#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint") ).setCellRenderer( numeric_renderer )
-#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint") ).setCellRenderer( numeric_renderer )
-#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff") ).setCellRenderer( numeric_renderer )
-#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback") ).setCellRenderer( numeric_renderer )
-#		@channel_records_table.getColumnModel().getColumn( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback") ).setCellRenderer( numeric_renderer )
+		# set the cell renderer for FormattedNumber
+		numeric_renderer = SaveRestoreNumericCellRenderer.new
+		@channel_records_table.setDefaultRenderer( FormattedNumber.class, numeric_renderer )
 
 		@channel_records_table.setRowSorter( rowSorter )
 
