@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Wed Aug 12 13:35:57 EDT 2015" version="1.0.0">
+<BricksDocument date="Fri Aug 14 08:50:26 EDT 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="744" tag="MainWindow" width="1085">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="808" tag="MainWindow" width="1400">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Simple Save and Restore"/>
             <ViewNode tag="Main Vertical Layout">
@@ -9,15 +9,24 @@
                 <ViewNode tag="Button Box">
                     <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <BeanProperty height="60" name="maximumSize" width="33636"/>
-                    <ViewNode tag="RefreshButton">
+                    <ViewNode tag="LiveUpdateTimestampLabel">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty height="16" name="minimumSize" width="250"/>
+                        <BeanProperty height="16" name="preferredSize" width="200"/>
+                        <BeanProperty height="16" name="maximumSize" width="300"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty alpha="255" blue="100" green="100" name="foreground" red="100"/>
+                        <BeanProperty name="toolTipText" value="Last update of live values"/>
+                    </ViewNode>
+                    <ViewNode tag="SnapshotSaveButton">
                         <ViewProxy type="javax.swing.JButton"/>
-                        <BeanProperty name="toolTipText" value="Update the live values"/>
-                        <BeanProperty name="text" value="Refresh"/>
+                        <BeanProperty name="toolTipText" value="Save a new machine snapshot"/>
+                        <BeanProperty name="text" value="Save Snapshot..."/>
                     </ViewNode>
                     <ViewNode tag="RecordFilterField">
                         <ViewProxy type="javax.swing.JTextField"/>
-                        <BeanProperty name="text" value=""/>
                         <BeanProperty name="toolTipText" value="Filter records"/>
+                        <BeanProperty name="text" value=""/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
@@ -32,6 +41,38 @@
                     <ViewProxy type="javax.swing.JScrollPane"/>
                     <ViewNode tag="ChannelRecordsTable">
                         <ViewProxy type="javax.swing.JTable"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="SaveSetVerticalLayout">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BorderNode tag="Titled Border">
+                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                        <BeanProperty name="title" value="Save Set"/>
+                    </BorderNode>
+                    <ViewNode tag="SaveSetInfoHorizontalBox">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="SnapshotTimestampLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="Timestamp"/>
+                            <BeanProperty name="toolTipText" value="Save Set Timestamp"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="CommentScroller">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BeanProperty height="75" name="preferredSize" width="85"/>
+                        <BeanProperty height="100" name="maximumSize" width="32767"/>
+                        <BeanProperty height="50" name="minimumSize" width="23"/>
+                        <ViewNode tag="SnapshotCommentTextArea">
+                            <ViewProxy type="javax.swing.JTextArea"/>
+                            <BeanProperty height="60" name="preferredSize" width="0"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty name="editable" value="false"/>
+                            <BeanProperty name="toolTipText" value="Save Set Comment"/>
+                            <BeanProperty height="60" name="minimumSize" width="0"/>
+                        </ViewNode>
                     </ViewNode>
                 </ViewNode>
             </ViewNode>
