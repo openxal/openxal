@@ -392,17 +392,15 @@ end
 
 
 # tabel cell renderer for displaying numeric values
-class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer::UIResource
-	def setValue(value)
-		# provide fixed width for displaying value
-		output = "                    "
-		if value != nil
-			value_length = value.to_s.length
-			start = output.length - value_length
-			# pad the text to the left of the value with spaces (unfortunately not fixed width)
-			output[start, value_length] = value.to_s
-		end
-		setText( output )
+class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer
+	# alias the superclass' getTableCellRendererComponent() method so we can call it
+	alias :super_get_render_component :getTableCellRendererComponent
+
+	def getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column )
+		# get the component from the inherited superclass call
+		label = super_get_render_component( table, value, isSelected, hasFocus, row, column )
+		label.horizontalAlignment = JLabel::RIGHT
+		return label
 	end
 end
 
