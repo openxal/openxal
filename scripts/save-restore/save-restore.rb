@@ -374,23 +374,6 @@ end
 
 
 
-# Comparator for sorting FormattedNumbers based on double value
-class FormattedNumberDoubleComparator
-	include java.util.Comparator
-
-	@@singleton = FormattedNumberDoubleComparator.new
-
-	def self.getInstance
-		return @@singleton
-	end
-
-	# compare two formatted numbers
-	def compare( num1, num2 )
-		return Java::Double.compare( num1.doubleValue, num2.doubleValue )
-	end
-end
-
-
 # tabel cell renderer for displaying numeric values
 class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer
 	# alias the superclass' getTableCellRendererComponent() method so we can call it
@@ -451,11 +434,11 @@ class SaveRestoreDocument < AcceleratorDocument
 		@channel_records_table.setModel( @channel_records_table_model )
 
 		rowSorter = Java::TableRowSorter.new(@channel_records_table_model)
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumberDoubleComparator.getInstance )
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumberDoubleComparator.getInstance )
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff"), FormattedNumberDoubleComparator.getInstance )
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback"), FormattedNumberDoubleComparator.getInstance )
-		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback"), FormattedNumberDoubleComparator.getInstance )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_setpoint"), FormattedNumber.doubleValueComparator )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_setpoint"), FormattedNumber.doubleValueComparator )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_setpoint_relative_diff"), FormattedNumber.doubleValueComparator )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_live_readback"), FormattedNumber.doubleValueComparator )
+		rowSorter.setComparator( @channel_records_table_model.getColumnForKeyPath("formatted_saved_readback"), FormattedNumber.doubleValueComparator )
 
 		# set the cell renderer for FormattedNumber
 		numeric_renderer = SaveRestoreNumericCellRenderer.new
