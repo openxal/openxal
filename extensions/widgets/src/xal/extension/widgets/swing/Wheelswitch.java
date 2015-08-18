@@ -1019,32 +1019,32 @@ public class Wheelswitch extends JPanel
 	/*
 	 * (Re)initializes existing value digits inside the wheelswitch.
 	 */
-	protected void initDigits()
-	{
+	protected void initDigits() {
 		String stringValue = formatter.getString();
 		char digitValue;
 
 		for (int i = 0; i < stringValue.length(); i++) {
 			digitValue = stringValue.charAt(i);
 
-			if ((digitValue == '+') || (digitValue == '-')
-			    || (digitValue == 'E') || (digitValue == 'e')
-			    || (digitValue == '.')) {
-				// do nothing in this case //
-			} else {
-				if (digits.get(i) instanceof ValueDigit) {
-					((ValueDigit)digits.get(i)).setValue(Integer.parseInt(
-					        stringValue.substring(i, i + 1)));
-				} else {
-					logger.log(Level.WARNING,
-					    "Wheelswitch#initDigits(): digits improperly synchronized");
-					setupValueDigits();
-					setupLayout();
-					validate();
-					repaint();
+			switch( digitValue ) {
+				case '+': case '-':
+					digits.get(i).setText( String.valueOf( digitValue ) );
+					break;
+				case 'E': case 'e': case '.':
+					break;	// do nothing as these never change for a fixed layout
+				default:
+					if (digits.get(i) instanceof ValueDigit) {
+						((ValueDigit)digits.get(i)).setValue(Integer.parseInt(stringValue.substring(i, i + 1)));
+					} else {
+						logger.log(Level.WARNING,"Wheelswitch#initDigits(): digits improperly synchronized");
+						setupValueDigits();
+						setupLayout();
+						validate();
+						repaint();
 
-					return;
-				}
+						return;
+					}
+					break;
 			}
 		}
 	}
@@ -1052,8 +1052,9 @@ public class Wheelswitch extends JPanel
 	/*
 	 * Repositions the components inside the wheelswitch.
 	 */
-	private void setupLayout()
-	{
+	private void setupLayout() {
+		//System.out.println( "Setup layout..." );
+
 		removeAll();
 
 		//  by mkadunc
@@ -1280,23 +1281,20 @@ public class Wheelswitch extends JPanel
 		return digitPosition;
 	}
 
+
+	/** Determine whether the new string has the same layout as the old string */
+	private boolean layoutMatches( final String oldString, final String newString ) {
+		if ( oldString.length() != newString.length() )  return false;
+		if ( oldString.indexOf( "." ) != newString.indexOf( "." ) )  return false;
+		if ( oldString.indexOf( "E" ) != newString.indexOf( "E" ) )  return false;
+		if ( oldString.indexOf( "e" ) != newString.indexOf( "e" ) )  return false;
+		return true;
+	}
+
 	private void process(String oldStringValue, String newStringValue)
 	{
-		if ((oldStringValue.length() == newStringValue.length())
-		    && (oldStringValue.indexOf(".") == newStringValue.indexOf("."))
-		    && (oldStringValue.indexOf("E") == newStringValue.indexOf("E"))
-		    && (oldStringValue.indexOf("e") == newStringValue.indexOf("e"))
-		    && (oldStringValue.indexOf("+") == newStringValue.indexOf("+"))
-		    && (oldStringValue.indexOf("-") == newStringValue.indexOf("-"))
-		    && (oldStringValue.indexOf("+", oldStringValue.indexOf("E")) == newStringValue
-		    .indexOf("+", newStringValue.indexOf("E")))
-		    && (oldStringValue.indexOf("+", oldStringValue.indexOf("e")) == newStringValue
-		    .indexOf("+", newStringValue.indexOf("e")))
-		    && (oldStringValue.indexOf("-", oldStringValue.indexOf("e")) == newStringValue
-		    .indexOf("-", newStringValue.indexOf("e")))
-		    && (oldStringValue.indexOf("-", oldStringValue.indexOf("E")) == newStringValue
-		    .indexOf("-", newStringValue.indexOf("E")))) {
-			initDigits();
+		if ( layoutMatches( oldStringValue, newStringValue ) ) {
+			initDigits();	// just update the digits (including sign)
 		} else {
 			setupValueDigits();
 			setupLayout();
