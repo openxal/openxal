@@ -1029,8 +1029,15 @@ public class SimpleButton extends GradientLabel
 			}
 		}
 
-
+		/** Mark the pressed state as false when the user releases the mouse */
 		public void mouseReleased( final MouseEvent event ) {
+			if ( isPressed() ) {
+				setPressed( false );
+			}
+		}
+
+		/** Mark the pressed state as false when the user exits this button with the mouse */
+		public void mouseExited( final MouseEvent event ) {
 			if ( isPressed() ) {
 				setPressed( false );
 			}
