@@ -16,6 +16,7 @@ package xal.extension.widgets.swing.wheelswitch.comp;
 
 import java.awt.BasicStroke;
 import xal.extension.widgets.swing.wheelswitch.util.ColorHelper;
+import xal.tools.dispatch.DispatchQueue;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -30,8 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Date;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -59,7 +59,6 @@ public class SimpleButton extends GradientLabel
 {
 	private static final long serialVersionUID = 1L;
 	
-	private static Timer actionTimer = null;
 	protected static final String MOUSE_PRESSED = "mousePressed";
 	protected static final String MOUSE_CLICKED = "mouseClicked";
 	protected static final String MOUSE_RELEASED = "mouseReleased";
@@ -76,7 +75,7 @@ public class SimpleButton extends GradientLabel
 
 	/** DOCUMENT ME! */
 	public static final int FAST_ACTION_MODE = 3;
-	private boolean pressed;
+	private volatile boolean pressed;
 	private boolean rollover;
 	private boolean rolloverEnabled;
 	private int fireRate;
@@ -703,8 +702,7 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * @param newPressed boolean
 	 */
-	protected void setPressed(boolean newPressed)
-	{
+	protected void setPressed(boolean newPressed) {
 		boolean oldPressed = pressed;
 
 		if (oldPressed == newPressed) {
@@ -1014,60 +1012,56 @@ public class SimpleButton extends GradientLabel
 		 * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
 		 */
         @Override
-		public void mousePressed(MouseEvent e)
-		{
+		public void mousePressed(MouseEvent e) {
 			if (!isEnabled()) {
 				return;
 			}
 
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				fireActionPerformed(new ActionEvent(SimpleButton.this,
-				        ActionEvent.ACTION_PERFORMED, MOUSE_PRESSED));
-				actionTimer = new Timer();
-				actionTimer.schedule(new TimerTask() {
-                        @Override
-						public void run()
-						{
-							fireActionPerformed(new ActionEvent(
-							        SimpleButton.this,
-							        ActionEvent.ACTION_PERFORMED, MOUSE_CHAIN));
-						}
-					}, 500, fireRate);
+				fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_PRESSED ) );
+
+				// wait 500 milliseconds before beginning to chain events for a pressed and held button
+				DispatchQueue.getMainQueue().dispatchAfterDelay( 500, new Runnable() {
+					public void run() {
+						chainPressEvents();
+					}
+				});
 			}
 		}
 
-		/**
-		 * Stops firing ActionEvents when mouseButton is released.
-		 *
-		 * @param e MouseEvent
-		 *
-		 * @see java.awt.event.MouseListener#mouseReleased(MouseEvent)
-		 */
-        @Override
-		public void mouseReleased(MouseEvent e)
-		{
-			if (actionTimer != null) {
-				actionTimer.cancel();
-				actionTimer = null;
+		/** Mark the pressed state as false when the user releases the mouse */
+		public void mouseReleased( final MouseEvent event ) {
+			if ( isPressed() ) {
+				setPressed( false );
 			}
 		}
 
-		/**
-		 * Stops firing ActionEvents when mouse exits.
-		 *
-		 * @param e MouseEvent
-		 *
-		 * @see java.awt.event.MouseListener#mouseExited(MouseEvent)
-		 */
-        @Override
-		public void mouseExited(MouseEvent e)
-		{
-			if (actionTimer != null) {
-				actionTimer.cancel();
-				actionTimer = null;
+		/** Mark the pressed state as false when the user exits this button with the mouse */
+		public void mouseExited( final MouseEvent event ) {
+			if ( isPressed() ) {
+				setPressed( false );
 			}
 		}
 	}
+
+
+	/** Chain periodic press events as long as the user keeps the button pressed */
+	private void chainPressEvents() {
+		if ( pressed && isEnabled() ) {	// make sure the user is still pressing the button and the button is still enabled
+			// fire the event
+			fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_CHAIN) );
+
+			// schedule the next event in the chain based on the fireRate (really a fire period in milliseconds)
+			DispatchQueue.getMainQueue().dispatchAfterDelay( fireRate, new Runnable() {
+				public void run() {
+					chainPressEvents();
+				}
+			});
+		} else {
+			//System.out.println( "Pressed: " + pressed + ", enabled: " + isEnabled() );
+		}
+	}
+
 
 	/*
 	 *
