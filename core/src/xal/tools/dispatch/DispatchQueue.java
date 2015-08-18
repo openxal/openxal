@@ -312,6 +312,17 @@ abstract public class DispatchQueue implements DispatchOperationListener {
 	}
 
 
+	/** 
+	 * Convenience method to dispatch the operation after the specified time delay in milliseconds from the current time.
+	 * @param delay Time delay in milliseconds from the current time after which the operation should run
+	 * @param rawOperation the operation to run
+	 */
+	public void dispatchAfterDelay( final long delay, final Runnable rawOperation ) {
+		final Date dispatchTime = new Date( new Date().getTime() + delay );	// dispatch time which is current time plus delay
+		dispatchAfter( dispatchTime, rawOperation );
+	}
+
+
 	/** dispatch the operation after the specified time without blocking */
 	public void dispatchAfter( final Date dispatchTime, final Runnable rawOperation ) {
 		final DispatchOperation<Void> operation = makeDispatchOperation( rawOperation, false );
