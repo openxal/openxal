@@ -383,6 +383,7 @@ class SaveRestoreNumericCellRenderer < Java::DefaultTableCellRenderer
 		# get the component from the inherited superclass call
 		label = super_get_render_component( table, value, isSelected, hasFocus, row, column )
 		label.horizontalAlignment = JLabel::RIGHT
+		label.foreground = Color::BLUE
 		return label
 	end
 end
