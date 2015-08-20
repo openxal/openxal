@@ -554,7 +554,9 @@ public class AnalysisPanel extends JPanel{
 		variables.add(new Variable("sigma1",sigma1, 1, 50));
 		variables.add(new Variable("sigma2",sigma2, 1, 50));
 		variables.add(new Variable("center",center, -200, 200));
-		variables.add(new Variable("offset",offset, -0.1, 0.1));
+
+		// comment out offset variable as it is being frozen to zero since Harp data already has baseline subtracted
+		//variables.add(new Variable("offset",offset, -0.1, 0.1));
         
 		ArrayList<Objective> objectives = new ArrayList<Objective>();
 		objectives.add(new TargetObjective( "diff", 0.0 ) );
@@ -565,7 +567,8 @@ public class AnalysisPanel extends JPanel{
 		problem.addHint(new InitialDelta( 0.05) );
         
 		double solvetime= 2;
-		Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper( 1, solvetime, 0.999 );
+		//Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper( 1, solvetime, 0.999 );
+		Stopper maxSolutionStopper = SolveStopperFactory.maxEvaluationsStopper( 100000 );
 		Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper );
         
 		solver.solve( problem );
@@ -754,7 +757,10 @@ public class AnalysisPanel extends JPanel{
 		variables.add(new Variable("amp1", amp1, 0.0, 50.0));
 		variables.add(new Variable("sigma1", sigma1, 1.0, 50.0));
 		variables.add(new Variable("center", center, -200.0, 200.0));
-		variables.add(new Variable("offset", offset, -0.1, 0.1));
+
+		// comment out offset variable as it is being frozen to zero since Harp data already has baseline subtracted
+		//variables.add(new Variable("offset", offset, -0.1, 0.1));
+
 		variables.add(new Variable("N1", exp1, 2, 6));
 		if (calcmodechooser.getSelectedIndex()==0){
 			variables.add(new Variable("amp2", amp2, 0.0, 50.0));
@@ -781,8 +787,9 @@ public class AnalysisPanel extends JPanel{
 		Problem problem = new Problem(objectives, variables, evaluator);
 
 		double solvetime=1.0;
-		Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper(1, solvetime, 0.999);
-		Solver solver = new Solver(new RandomShrinkSearch(), maxSolutionStopper);
+		//Stopper maxSolutionStopper = SolveStopperFactory.minMaxTimeSatisfactionStopper(1, solvetime, 0.999);
+		Stopper maxSolutionStopper = SolveStopperFactory.maxEvaluationsStopper( 100000 );
+		Solver solver = new Solver( new RandomShrinkSearch(), maxSolutionStopper );
 		//Solver solver = new Solver( maxSolutionStopper);
 
 		solver.solve(problem);
