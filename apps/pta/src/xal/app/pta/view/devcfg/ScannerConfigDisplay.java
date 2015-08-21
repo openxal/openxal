@@ -96,10 +96,10 @@ public class ScannerConfigDisplay extends JTabbedPane /* implements IConfigView 
         ACTR("MVT", ActuatorConfigPanel.class),
         
         /** Data acquisition parameters panel */
-        SMPL("Smplg", SmplConfigPanel.class),
+        SMPL("Smplg", SmplConfigPanel.class);
         
-        /** Triggering parameters panel */
-        TRIG("Trigger", TrgrConfigPanel.class);
+//        /** Triggering parameters panel */
+//        TRIG("Trigger", TrgrConfigPanel.class);
         
         
         /*

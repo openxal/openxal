@@ -173,8 +173,8 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
     /** Post acquisition data analysis configuration */
     public  final WireScanner.PrcgConfig    cfgPrcg;
     
-    /** Acquisition timing parameters */
-    public  final WireScanner.TrgConfig     cfgTmg;
+//    /** Acquisition timing parameters */
+//    public  final WireScanner.TrgConfig     cfgTmg;
 
     
     //
@@ -204,7 +204,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.cfgPrcg = new WireScanner.PrcgConfig();
         this.cfgSmp  = new WireScanner.SmplConfig();
         this.cfgScan = new WireScanner.ScanConfig();
-        this.cfgTmg  = new WireScanner.TrgConfig();
+//        this.cfgTmg  = new WireScanner.TrgConfig();
         
         this.initScadaRecList();
     }
@@ -236,7 +236,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.cfgPrcg = cfgPrcg;
         this.cfgScan = cfgScan;
         this.cfgSmp  = cfgSmp;
-        this.cfgTmg  = cfgTmg;
+//        this.cfgTmg  = cfgTmg;
         
         this.initScadaRecList();
     }
@@ -276,7 +276,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.cfgActr = WireScanner.ActrConfig.aquire(ws);
         this.cfgPrcg = WireScanner.PrcgConfig.acquire(ws);
         this.cfgSmp  = WireScanner.SmplConfig.acquire(ws);
-        this.cfgTmg  = WireScanner.TrgConfig.acquire(ws);
+//        this.cfgTmg  = WireScanner.TrgConfig.acquire(ws);
         
         this.initScadaRecList();
     }
@@ -441,7 +441,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.cfgPrcg.write(daptDev);
         this.cfgSmp.write(daptDev);
         this.cfgScan.write(daptDev);
-        this.cfgTmg.write(daptDev);
+//        this.cfgTmg.write(daptDev);
     }
 
     /**
@@ -485,7 +485,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.cfgPrcg.update(daptDev);
         this.cfgSmp.update(daptDev);
         this.cfgScan.update(daptDev);
-        this.cfgTmg.update(daptDev);
+//        this.cfgTmg.update(daptDev);
     }
 
     
@@ -510,7 +510,7 @@ public class ScannerConfig extends DeviceConfig implements DataListener, Seriali
         this.lstRecCfg.add(this.cfgPrcg);
         this.lstRecCfg.add(this.cfgScan);
         this.lstRecCfg.add(this.cfgSmp);
-        this.lstRecCfg.add(this.cfgTmg);
+//        this.lstRecCfg.add(this.cfgTmg);
     }
 
 }
