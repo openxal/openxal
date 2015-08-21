@@ -96,6 +96,7 @@ import xal.tools.math.poly.UnivariateRealPolynomial;
  * @since      November 22, 2005
  * @version    Nov 23, 2014
  *             <br/>Jan 16, 2015
+ *             <br/>July 29, 2015
  */
 public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
@@ -1854,6 +1855,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
      * @since  Jan 13, 2015   by Christopher K. Allen
      */
     private double  compGapOffsetPhaseChange(double beta_i, double beta_f) {
+        
+        // TODO This isn't right.  Think about the offset and the total gap length
         double dl     = this.getGapOffset();
         double dphi_i = this.compDriftingPhaseAdvance(beta_i, dl);
         double dphi_f = this.compDriftingPhaseAdvance(beta_f, dl);
@@ -2043,15 +2046,22 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * @return          the derivate of cosine transit time factor w.r.t. velocity &beta;
          *
          * @since  Feb 16, 2015   by Christopher K. Allen
+         * @version July 29, 2015: Modified to assume 
+         *          <code>fitTTFPrime</code> = <i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
          */
         private double  Tp(double beta) {
             double k   = this.waveNumber(beta);
             double dz  = - this.getGapOffset();
             double cos = Math.cos(k*dz);
+            double sin = Math.sin(k*dz);
             
-            double T0p = this.fitTTF.derivativeAt(beta);
-            double S   = this.S(beta);
-            double Tp  = (-beta/k)*T0p*cos - S*dz;
+//            double T0p = this.fitTTF.derivativeAt(beta);
+//            double S   = this.S(beta);
+//            double Tp  = (-beta/k)*T0p*cos - S*dz;
+            
+            double T0p = this.fitTTFPrime.evaluateAt(beta);
+            double T0  = this.fitTTF.evaluateAt(beta);
+            double Tp  = T0p*cos - T0*dz*sin;
             
             return Tp;
         }
@@ -2114,18 +2124,24 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * 
          * @param beta      normalized probe velocity
          * 
-         * @return          the derivate of sine transit time factor w.r.t. velocity &beta;
+         * @return          the derivative of sine transit time factor w.r.t. velocity &beta;
          *
          * @since  Feb 16, 2015   by Christopher K. Allen
+         * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
          */
         private double  Sp(double beta) {
             double k   = this.waveNumber(beta);
             double dz  = - this.getGapOffset();
             double sin = Math.sin(k*dz);
+            double cos = Math.cos(k*dz);
             
-            double T0p = this.fitTTF.derivativeAt(beta);
-            double T   = this.T(beta);
-            double Tp  = (-beta/k)*T0p*sin + T*dz;
+//            double T0p = this.fitTTF.derivativeAt(beta);
+//            double T   = this.T(beta);
+//            double Tp  = (-beta/k)*T0p*sin + T*dz;
+            
+            double T0p = this.fitSTFPrime.evaluateAt(beta);
+            double T0  = this.fitTTF.evaluateAt(beta);
+            double Tp  = T0p*sin + T0*dz*cos;
             
             return Tp;
         }

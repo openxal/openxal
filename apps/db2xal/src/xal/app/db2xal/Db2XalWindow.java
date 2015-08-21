@@ -7,10 +7,7 @@
 package xal.app.db2xal;
 
 import javax.swing.*;
-import java.util.*;
-
 import xal.extension.application.*;
-import xal.extension.application.smf.*;
 
 /**
  * Db2XalWindow is a subclass of XalWindow for Db2Xal application.
