@@ -1304,7 +1304,7 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 									+ sequences[k]
 									+ "' "
 									+ "and EPICS.DVC.Dvc_id = EPICS.BEAM_LINE_DVC_LOC.Dvc_id "
-									+ "order by EPICS.BEAM_LINE_DVC_LOC.Dist_From_Strt, EPICS.DVC.DVC_ID");
+									+ "order by EPICS.BEAM_LINE_DVC_LOC.Dist_From_Strt, EPICS.DVC.DVC_ID, EPICS.DVC_SETTING.SETTING_ID");
 
 					// get all the rf gaps within this sequence
 					ResultSet rsetRfGaps = stmt1.executeQuery("SELECT * FROM EPICS.RF_GAP ");
