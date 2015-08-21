@@ -930,6 +930,8 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 								str += channelEntry( "PrcgCfgAvgLengthRb", "Analysis_Avg_Len_rb", signalTable, false );
 								str += channelEntry( "PrcgCfgAvgLengthSet", "Analysis_Avg_Len_set", signalTable, true );
 								
+								// We may need to eliminate these signals and, consequently, remove
+								//  them from PTA
 								str += channelEntry( "TrgCfgDelayRb", "Delay00_Rb", signalTable, true );
 								str += channelEntry( "TrgCfgDelaySet", "Delay00", signalTable, true );
 								str += channelEntry( "TrgCfgTrigEventRb", "Event00_Rb", signalTable, true );
@@ -1304,7 +1306,7 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 									+ sequences[k]
 									+ "' "
 									+ "and EPICS.DVC.Dvc_id = EPICS.BEAM_LINE_DVC_LOC.Dvc_id "
-									+ "order by EPICS.BEAM_LINE_DVC_LOC.Dist_From_Strt, EPICS.DVC.DVC_ID");
+									+ "order by EPICS.BEAM_LINE_DVC_LOC.Dist_From_Strt, EPICS.DVC.DVC_ID, EPICS.DVC_SETTING.SETTING_ID");
 
 					// get all the rf gaps within this sequence
 					ResultSet rsetRfGaps = stmt1.executeQuery("SELECT * FROM EPICS.RF_GAP ");
