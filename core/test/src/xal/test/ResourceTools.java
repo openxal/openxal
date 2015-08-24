@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import xal.model.probe.traj.TestParticleProbeTrajectory;
 import xal.smf.Accelerator;
 import xal.smf.data.XMLDataManager;
 import xal.tools.ResourceManager;
@@ -23,7 +22,7 @@ import xal.tools.ResourceManager;
  * @author Christopher K. Allen
  * @since  Jul 10, 2015
  */
-public abstract class Tools {
+public abstract class ResourceTools {
     
     
     /*
@@ -224,7 +223,7 @@ public abstract class Tools {
      *
      * @since  Jul 10, 2015   by Christopher K. Allen
      */
-    private Tools() {
+    private ResourceTools() {
     }
 
 }

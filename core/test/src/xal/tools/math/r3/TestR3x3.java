@@ -81,7 +81,7 @@ public class TestR3x3 {
 		
 		Assert.assertTrue( szMatrix == 3 );
 		
-		System.out.println("\nTest matrix dynamic size = " + szMatrix);
+//		System.out.println("\nTest matrix dynamic size = " + szMatrix);
 	}
 
 	@Test
@@ -93,8 +93,8 @@ public class TestR3x3 {
 	    
 	    Assert.assertTrue( matSum.isEquivalentTo(MAT_2) );
 	    
-	    System.out.println("\nThe matrix addition test");
-	    System.out.println( matSum.toString() );
+//	    System.out.println("\nThe matrix addition test");
+//	    System.out.println( matSum.toString() );
 	}
 
     @Test
@@ -106,8 +106,8 @@ public class TestR3x3 {
         
         Assert.assertTrue( mat1.isEquivalentTo(MAT_2) );
         
-        System.out.println("\nThe matrix in place addition test");
-        System.out.println( mat1.toString() );
+//        System.out.println("\nThe matrix in place addition test");
+//        System.out.println( mat1.toString() );
     }
 
     @Test
@@ -119,8 +119,8 @@ public class TestR3x3 {
         
         Assert.assertTrue( matProd.isEquivalentTo(MAT_I) );
         
-        System.out.println("\nThe matrix multiplication test");
-        System.out.println( matProd.toString() );
+//        System.out.println("\nThe matrix multiplication test");
+//        System.out.println( matProd.toString() );
     }
 
     @Test
@@ -132,8 +132,8 @@ public class TestR3x3 {
         
         Assert.assertTrue( mat1.isEquivalentTo(MAT_I) );
         
-        System.out.println("\nThe matrix in place multiplication test");
-        System.out.println( mat1.toString() );
+//        System.out.println("\nThe matrix in place multiplication test");
+//        System.out.println( mat1.toString() );
     }
     
     @Test
@@ -142,10 +142,10 @@ public class TestR3x3 {
         double  dblDetId  = MAT_I.det();
         double  dblDetTst2 = MAT_2.det();
         
-        System.out.println("\nDeterminant Function");
-        System.out.println("|I|  = " + dblDetId);
-        System.out.println("|2I| = " + dblDetTst2);
-        System.out.println("|Rx| = " + dblDetRx);
+//        System.out.println("\nDeterminant Function");
+//        System.out.println("|I|  = " + dblDetId);
+//        System.out.println("|2I| = " + dblDetTst2);
+//        System.out.println("|Rx| = " + dblDetRx);
     }
     
     @Test
@@ -154,11 +154,11 @@ public class TestR3x3 {
         R3x3    matInv = MAT_X.inverse();
         R3x3    matCjt = MAT_X.conjugateTrans(MAT_Z);
         
-        System.out.println("\nMatrix Operations");
-        System.out.println("Rx       = " + MAT_X);
-        System.out.println("Rx^T     = " + matTrn);
-        System.out.println("Inv[Rx]  = " + matInv);
-        System.out.println("RzRxRz^T = " + matCjt);
+//        System.out.println("\nMatrix Operations");
+//        System.out.println("Rx       = " + MAT_X);
+//        System.out.println("Rx^T     = " + matTrn);
+//        System.out.println("Inv[Rx]  = " + matInv);
+//        System.out.println("RzRxRz^T = " + matCjt);
     }
     
     @Test
@@ -168,11 +168,11 @@ public class TestR3x3 {
         double  dblLinf = MAT_X.normInf();
         double  dblFrob = MAT_X.normF();
         
-        System.out.println("\nNorms of the Rx rotation matrix");
-        System.out.println("||Rx||_1   = " + dblL1);
-        System.out.println("||Rx||_2   = " + dblL2);
-        System.out.println("||Rx||_inf = " + dblLinf);
-        System.out.println("||Rx||_F   = " + dblFrob);
+//        System.out.println("\nNorms of the Rx rotation matrix");
+//        System.out.println("||Rx||_1   = " + dblL1);
+//        System.out.println("||Rx||_2   = " + dblL2);
+//        System.out.println("||Rx||_inf = " + dblLinf);
+//        System.out.println("||Rx||_F   = " + dblFrob);
     }
     
     @Test
@@ -185,10 +185,10 @@ public class TestR3x3 {
             R3x3                        matO = jacR.getRotationMatrix();
             R3x3                        matD = jacR.getDiagonalMatrix();
 
-            System.out.println("\nThe Jacobi Decomposition Test");
-            System.out.println("R = " + matR);
-            System.out.println("O = " + matO);
-            System.out.println("D = " + matD);
+//            System.out.println("\nThe Jacobi Decomposition Test");
+//            System.out.println("R = " + matR);
+//            System.out.println("O = " + matO);
+//            System.out.println("D = " + matD);
             
         } catch (IllegalArgumentException e) {
 
@@ -208,10 +208,10 @@ public class TestR3x3 {
             R3x3                        matE = decL.getEigenvalueMatrix();
             R3x3                        matV = decL.getEigenvectorMatrix();
 
-            System.out.println("\nThe Eigen Decomposition Test");
-            System.out.println("R = " + matT);
-            System.out.println("O = " + matE);
-            System.out.println("D = " + matV);
+//            System.out.println("\nThe Eigen Decomposition Test");
+//            System.out.println("R = " + matT);
+//            System.out.println("O = " + matE);
+//            System.out.println("D = " + matV);
             
         } catch (IllegalArgumentException e) {
 
