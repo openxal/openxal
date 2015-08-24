@@ -238,7 +238,7 @@ abstract public class TrackerAdaptive extends Tracker {
      * as the algorithm progresses according to the adaptation
      * rule.
      * 
-     * @param dblStepSize   initial step size in <m>meters</m>
+     * @param dblStepSize   initial step size in <b>meters</b>
      */
     public void setStepSize( final double dblStepSize ) {
         m_dblStepSize = dblStepSize;
