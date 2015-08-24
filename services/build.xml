@@ -8,13 +8,21 @@
 
     <!-- Build all the services which allow batch building. -->
     <target name="all">
-        <subant target="all">
+        <subant target="build">
             <property name="batch.service.build" value="true" />
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
-    
-    <!-- Build all the services which allow batch building. -->
+
+	<!-- Build all the services which allow batch building and archive them relative to the shared library. -->
+	<target name="all-relative">
+		<subant target="build-relative">
+			<property name="batch.service.build" value="true" />
+			<fileset dir="." includes="${build.path.pattern}" />
+		</subant>
+	</target>
+
+    <!-- Build all the services which allow batch building and archive them standalone. -->
     <target name="all-standalone">
         <subant target="build-standalone">
             <property name="batch.service.build" value="true" />
@@ -100,7 +108,8 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the services which allow batch building and assemble the jar products with dependence on the common libraries." />
+		<echo message="    all ........................ Compile the services which allow batch building and assemble the jar products according to the service.build.standalone property which is set to ${service.build.standalone}." />
+		<echo message="    all-relative ............... Compile the services which allow batch building and assemble the jar products with dependence on the common libraries." />
 		<echo message="    all-standalone ............. Compile the services which allow batch building and assemble the jar products as standalone services." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    force-all .................. Compile all services (regardless of whether they allow batch building) and assemble the jar products." />

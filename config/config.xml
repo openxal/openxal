@@ -7,7 +7,13 @@
     <property name="xal.home" value="${config.home}/.." />
 
     <property environment="env" />
-    
+
+	<!-- By default build applications against the shared library otherwise build them as standalone. You can override this property in your site specific config.xml -->
+	<property name="app.build.standalone" value="false" />
+
+	<!-- By default build services against the shared library otherwise build them as standalone. You can override this property in your site specific config.xml -->
+	<property name="service.build.standalone" value="false" />
+
     <!-- location of source code directory relative to a source root -->            
     <property name="source.code.dir" value="src" />
     

@@ -13,8 +13,16 @@
             <fileset dir="." includes="${build.path.pattern}" />
         </subant>
     </target>
-    
-    <!-- Build all the applications which allow batch building. -->
+
+	<!-- Build all the applications which allow batch building and archive them relative to the shared library. -->
+	<target name="all-relative">
+		<subant target="build-relative">
+			<property name="batch.app.build" value="true" />
+			<fileset dir="." includes="${build.path.pattern}" />
+		</subant>
+	</target>
+
+    <!-- Build all the applications which allow batch building and archive them standalone. -->
     <target name="all-standalone">
         <subant target="build-standalone">
             <property name="batch.app.build" value="true" />
@@ -100,7 +108,8 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    all ........................ Compile the applications which allow batch building and assemble the jar products with dependence on the common libraries." />
+		<echo message="    all ........................ Compile the applications which allow batch building and assemble the jar products according to the app.build.standalone property which is set to ${app.build.standalone}." />
+		<echo message="    all-relative ............... Compile the applications which allow batch building and assemble the jar products with dependence on the common libraries." />
 		<echo message="    all-standalone ............. Compile the applications which allow batch building and assemble the jar products as standalone applications." />
 		<echo message="    clean ...................... Clean compiled classes and build products" />
 		<echo message="    force-all .................. Compile all applications (regardless of whether they allow batch building) and assemble the jar products." />
