@@ -209,7 +209,7 @@ public class TestRunOnlineModel {
         Trajectory<EnvelopeProbeState>   trjData = MODEL_TEST.getTrajectory();
         
         this.saveSimData(trjData);
-        this.printSimData(trjData);
+//        this.printSimData(trjData);
     }
     
     /**
@@ -253,7 +253,7 @@ public class TestRunOnlineModel {
         Trajectory<ParticleProbeState>   trjData = MODEL_TEST.getTrajectory();
         
         this.saveSimData(trjData);
-        this.printSimData(trjData);
+//        this.printSimData(trjData);
     }
     
     /**

@@ -24,7 +24,8 @@ import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
-import xal.test.Tools;
+import xal.test.ResourceManager;
+import xal.test.ResourceTools;
 import xal.tools.beam.PhaseMatrix;
 
 /**
@@ -67,37 +68,38 @@ public class TestTransferMapTrajectory {
         if (BOL_TYPE_STOUT) 
             PSTR_OUTPUT = System.out;
         else
-            PSTR_OUTPUT = Tools.createOutputStream(TestTrajectory.class);
-        
-        ACCEL  = XMLDataManager.loadDefaultAccelerator();
+            PSTR_OUTPUT = ResourceTools.createOutputStream(TestTrajectory.class);
 
-                ArrayList<AcceleratorSeq> lst = new ArrayList<AcceleratorSeq>();
-                AcceleratorSeq hebt1 = ACCEL.getSequence("HEBT1");
-                AcceleratorSeq hebt2 = ACCEL.getSequence("HEBT2");
+//        ACCEL  = XMLDataManager.loadDefaultAccelerator();
+        ACCEL  = ResourceManager.getTestAccelerator();
 
-                lst.add(hebt1);
-                lst.add(hebt2);
+        ArrayList<AcceleratorSeq> lst = new ArrayList<AcceleratorSeq>();
+        AcceleratorSeq hebt1 = ACCEL.getSequence("HEBT1");
+        AcceleratorSeq hebt2 = ACCEL.getSequence("HEBT2");
 
-//                AcceleratorSeqCombo seq = new AcceleratorSeqCombo("LINAC", lst);
-                AcceleratorSeq seq = ACCEL.getSequence("SCLMed");
+        lst.add(hebt1);
+        lst.add(hebt2);
 
-//                MODEL = Scenario.newScenarioFor(hebt1)
-                MODEL = Scenario.newScenarioFor(seq);
-                MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+        //                AcceleratorSeqCombo seq = new AcceleratorSeqCombo("LINAC", lst);
+        AcceleratorSeq seq = ACCEL.getSequence("SCLMed");
 
-                TransferMapTracker ptracker = new TransferMapTracker();
-                PROBE = ProbeFactory.getTransferMapProbe(seq, ptracker);
-//                PROBE = ProbeFactory.getTransferMapProbe(hebt1, ptracker)
+        //                MODEL = Scenario.newScenarioFor(hebt1)
+        MODEL = Scenario.newScenarioFor(seq);
+        MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
 
-//                print "Probe update policy = ", ptracker.getProbeUpdatePolicy()
-//                ptracker.setProbeUpdatePolicy(Tracker.UPDATE_ENTRANCE)
-//                print "New probe update policy = ", ptracker.getProbeUpdatePolicy()
+        TransferMapTracker ptracker = new TransferMapTracker();
+        PROBE = ProbeFactory.getTransferMapProbe(seq, ptracker);
+        //                PROBE = ProbeFactory.getTransferMapProbe(hebt1, ptracker)
 
-                MODEL.setProbe(PROBE);
-                MODEL.resync();
-                MODEL.run();
+        //                print "Probe update policy = ", ptracker.getProbeUpdatePolicy()
+        //                ptracker.setProbeUpdatePolicy(Tracker.UPDATE_ENTRANCE)
+        //                print "New probe update policy = ", ptracker.getProbeUpdatePolicy()
 
-                TRAJ = MODEL.getTrajectory();
+        MODEL.setProbe(PROBE);
+        MODEL.resync();
+        MODEL.run();
+
+        TRAJ = MODEL.getTrajectory();
     }
 
     

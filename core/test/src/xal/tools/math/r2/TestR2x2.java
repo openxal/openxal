@@ -74,7 +74,7 @@ public class TestR2x2 {
 		
 		Assert.assertTrue( szMatrix == 2 );
 		
-		System.out.println("\nTest matrix dynamic size = " + szMatrix);
+//		System.out.println("\nTest matrix dynamic size = " + szMatrix);
 	}
 
 	@Test
@@ -86,8 +86,8 @@ public class TestR2x2 {
 	    
 	    Assert.assertTrue( matSum.isEquivalentTo(MAT_2) );
 	    
-	    System.out.println("\nThe matrix addition test");
-	    System.out.println( matSum.toString() );
+//	    System.out.println("\nThe matrix addition test");
+//	    System.out.println( matSum.toString() );
 	}
 
     @Test
@@ -99,8 +99,8 @@ public class TestR2x2 {
         
         Assert.assertTrue( mat1.isEquivalentTo(MAT_2) );
         
-        System.out.println("\nThe matrix in place addition test");
-        System.out.println( mat1.toString() );
+//        System.out.println("\nThe matrix in place addition test");
+//        System.out.println( mat1.toString() );
     }
 
     @Test
@@ -112,8 +112,8 @@ public class TestR2x2 {
         
         Assert.assertTrue( matProd.isEquivalentTo(MAT_I) );
         
-        System.out.println("\nThe matrix multiplication test");
-        System.out.println( matProd.toString() );
+//        System.out.println("\nThe matrix multiplication test");
+//        System.out.println( matProd.toString() );
     }
 
     @Test
@@ -125,8 +125,8 @@ public class TestR2x2 {
         
         Assert.assertTrue( mat1.isEquivalentTo(MAT_I) );
         
-        System.out.println("\nThe matrix in place multiplication test");
-        System.out.println( mat1.toString() );
+//        System.out.println("\nThe matrix in place multiplication test");
+//        System.out.println( mat1.toString() );
     }
     
     @Test
@@ -135,10 +135,10 @@ public class TestR2x2 {
         double  dblDetId  = MAT_I.det();
         double  dblDetTst2 = MAT_2.det();
         
-        System.out.println("\nDeterminant Function");
-        System.out.println("|I|  = " + dblDetId);
-        System.out.println("|2I| = " + dblDetTst2);
-        System.out.println("|J|  = " + dblDetSp2);
+//        System.out.println("\nDeterminant Function");
+//        System.out.println("|I|  = " + dblDetId);
+//        System.out.println("|2I| = " + dblDetTst2);
+//        System.out.println("|J|  = " + dblDetSp2);
     }
     
     @Test
@@ -147,11 +147,11 @@ public class TestR2x2 {
         R2x2    matInv = MAT_J.inverse();
         R2x2    matCjt = MAT_J.conjugateTrans(MAT_R);
         
-        System.out.println("\nMatrix Operations");
-        System.out.println("Sp(2) matrix J = " + MAT_J);
-        System.out.println("transpose of J = " + matTrn);
-        System.out.println("inverse of J   = " + matInv);
-        System.out.println("CT of J w/ Rot = " + matCjt);
+//        System.out.println("\nMatrix Operations");
+//        System.out.println("Sp(2) matrix J = " + MAT_J);
+//        System.out.println("transpose of J = " + matTrn);
+//        System.out.println("inverse of J   = " + matInv);
+//        System.out.println("CT of J w/ Rot = " + matCjt);
     }
     
     @Test
@@ -161,11 +161,11 @@ public class TestR2x2 {
         double  dblLinf = MAT_J.normInf();
         double  dblFrob = MAT_J.normF();
         
-        System.out.println("\nNorms of the Symplectic Matrix");
-        System.out.println("||J||_1   = " + dblL1);
-        System.out.println("||J||_2   = " + dblL2);
-        System.out.println("||J||_inf = " + dblLinf);
-        System.out.println("||J||_F   = " + dblFrob);
+//        System.out.println("\nNorms of the Symplectic Matrix");
+//        System.out.println("||J||_1   = " + dblL1);
+//        System.out.println("||J||_2   = " + dblL2);
+//        System.out.println("||J||_inf = " + dblLinf);
+//        System.out.println("||J||_F   = " + dblFrob);
     }
     
     @Test
