@@ -17,7 +17,7 @@
     <!-- run junit tests -->
     <target name="run-tests" depends="all">
         <mkdir dir="${build.tests.root}" />
-        <junit printsummary="yes" fork="yes">
+        <junit printsummary="yes" fork="yes" failureproperty="test.failure">
 			<jvmarg value="-Dxal.tests.root=${build.tests.root}"/>
 
             <classpath>
@@ -37,6 +37,7 @@
                 <formatter type="plain" usefile="true"/>
             </batchtest>
         </junit>
+        <fail message="Some JUnit tests failed" if="test.failure"/>
     </target>
 	
 	
