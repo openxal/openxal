@@ -201,7 +201,7 @@ public class TestSynchronizationManager {
         Trajectory<EnvelopeProbeState>   trjData = MODEL_TEST.getTrajectory();
         
         this.saveSimData(trjData);
-        this.printSimData(trjData);
+//        this.printSimData(trjData);
     }
     
     /**
@@ -227,15 +227,15 @@ public class TestSynchronizationManager {
             double                dblFldOld   = smfQuad1.getDesignField();
             double                dblFldNew   = dblFldOld*1.1;
             
-            System.out.println("Changing " + smfQuad1.getId() + " design field from " + dblFldOld + " to " + dblFldNew);
+//            System.out.println("Changing " + smfQuad1.getId() + " design field from " + dblFldOld + " to " + dblFldNew);
             
             Map<String, Double> mapPrpToValOld = MODEL_TEST.propertiesForNode(smfQuad1);
-            System.out.println("Old property map for " + smfQuad1.getId() + ": " + mapPrpToValOld.toString());
+//            System.out.println("Old property map for " + smfQuad1.getId() + ": " + mapPrpToValOld.toString());
             
             smfQuad1.setDfltField(dblFldNew);
             MODEL_TEST.resync();
             Map<String, Double> mapPrpToValNew = MODEL_TEST.propertiesForNode(smfQuad1);
-            System.out.println("New property map for " + smfQuad1.getId() + ": " + mapPrpToValNew.toString());
+//            System.out.println("New property map for " + smfQuad1.getId() + ": " + mapPrpToValNew.toString());
             
             PROBE_ENV_TEST.reset();
             MODEL_TEST.run();
