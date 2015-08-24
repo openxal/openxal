@@ -1,0 +1,20 @@
+variables:
+    GIT_SSL_NO_VERIFY: "true"
+before_script:
+    - yum install ant junit ant-junit -y
+stages:
+  - build
+  - test
+#build:
+#  stage: build
+#  script:
+#    - ant
+#  only:
+#    - gitlab-ci
+test:
+  stage: test
+  script:
+    - ant test
+  only:
+    - gitlab-ci
+
