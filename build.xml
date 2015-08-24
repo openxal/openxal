@@ -26,7 +26,7 @@
     <target name="install" depends="install-shared, install-services, install-apps, install-scripts" />
     
     
-    <!-- Build and run all unit tests. -->
+    <!-- Build unit tests and run them. -->
     <target name="run-tests" depends="">
         <subant target="run-tests">
             <fileset dir="core">
@@ -34,8 +34,13 @@
             </fileset>
         </subant>
     </target>
-    
-    
+
+
+	<!-- Build all and then build and run unit tests. -->
+	<target name="test" depends="all, run-tests">
+	</target>
+
+
     <!-- Clean the core and all the applications. -->
     <target name="clean">
         <subant target="clean">
@@ -144,8 +149,28 @@
             </fileset>
         </subant>
     </target>
-    
-    
+
+
+	<!-- Build all the applications which allow batch building and archive them relative to the shared library. -->
+	<target name="relative-apps" depends="shared">
+		<subant target="all-relative">
+			<fileset dir=".">
+				<include name="apps/build.xml" />
+			</fileset>
+		</subant>
+	</target>
+
+
+	<!-- Build all the services which allow batch building and archive them relative to the shared library. -->
+	<target name="relative-services" depends="shared">
+		<subant target="all-relative">
+			<fileset dir=".">
+				<include name="services/build.xml" />
+			</fileset>
+		</subant>
+	</target>
+
+
     <!-- Build all the applications standalone which allow batch building. -->
     <target name="standalone-apps" depends="shared">
         <subant target="all-standalone">
@@ -316,12 +341,15 @@
 		<echo message="    purge-install .............. Purge all installed products." />
 		<echo message="    purge-intermediates ........ Purge the build intermediates." />
 		<echo message="    purge-shared-intermediates . Purge the shared build intermediates." />
-		<echo message="    run-tests .................. Build and run unit tests." />
+		<echo message="    relative-apps .............. Build the applications which allow batch building and assemble the jar products relative to the shared library." />
+		<echo message="    relative-services .......... Build the services which allow batch building and assemble the jar products relative to the shared library." />
+		<echo message="    run-tests .................. Build unit tests and run them." />
 		<echo message="    scripts .................... Copy scripts to the build directory." />
 		<echo message="    services ................... Compile the services and assemble the jar products." />
 		<echo message="    shared ..................... Build the shared library including the core and any extensions and plugins." />
 		<echo message="    standalone-apps ............ Build the applications which allow batch building and assemble the jar products as standalone applications." />
 		<echo message="    standalone-services ........ Build the services which allow batch building and assemble the jar products as standalone services." />
+		<echo message="    test ....................... Build all and build and run unit tests." />
     </target>
 
 </project>

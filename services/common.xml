@@ -7,7 +7,12 @@
 	<property name="classpath.ref" value="default.classpath" />
 	<property name="manifest.classpath" value="../lib/xal-shared.jar" />
     <property name="mainclass.base" value="Main" />
-    
+
+	<!-- determine the correct target for building a service using the "build" target -->
+	<condition property="build.target" value="build-standalone" else="build-relative">
+		<istrue value="${service.build.standalone}" />
+	</condition>
+
     <!-- Initialization for the service build -->
     <target name="init">
         <dirname property="services.src.root" file="${ant.file.common.services.config}" />
@@ -217,13 +222,19 @@
 
     
     <!-- Build the service and place it in the services directory under the build directory -->
-    <target name="build" depends="init,jar" description="Build everything." if="allows.build">
-        <echo message="${servicename} built!" />
+    <target name="build" depends="init" description="Build everything." if="allows.build">
+		<antcall target="${build.target}" />
     </target>
-    
-    
+
+
+	<!-- Build the service relative to the shared library and place it in the services directory under the build directory -->
+	<target name="build-relative" depends="init, jar" description="Build everything." if="allows.build">
+		<echo message="${servicename} built!" />
+	</target>
+
+
     <!-- Build the service standalone and place it in the services directory under the build directory -->
-    <target name="build-standalone" depends="init,jar-standalone" description="Build everything." if="allows.build">
+    <target name="build-standalone" depends="init, jar-standalone" description="Build everything." if="allows.build">
         <echo message="${servicename} built standalone!" />
     </target>
 
@@ -250,7 +261,8 @@
 		<echo message="" />
 		<echo message="  where target(s) can be:" />
 		<echo message="    help ....................... Print this message." />
-		<echo message="    build ...................... Compile the service and assemble the jar product with dependence on the common libraries." />
+		<echo message="    build ...................... Compile the service and assemble the jar product according to the service.build.standalone property which is set to ${service.build.standalone}." />
+		<echo message="    build-relative ............. Compile the service and assemble the jar product relative to the shared library." />
 		<echo message="    build-standalone ........... Compile the service and assemble the jar product as standalone service." />
 		<echo message="    clean ...................... Clean compiled classes and build product" />
 		<echo message="    compile .................... Compile the service reporting all recommended warnings." />
