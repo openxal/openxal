@@ -7,10 +7,5 @@ before_install:
     - tar -xzvf apache-ant-1.9.6-bin.tar.gz
     - export PATH=`pwd`/apache-ant-1.9.6/bin:$PATH
 
-install:
-    - ant
-
 sudo: false
 
-script:
-    - ant run-tests
