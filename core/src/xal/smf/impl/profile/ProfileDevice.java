@@ -890,8 +890,8 @@ public abstract class ProfileDevice extends AcceleratorNode {
      *  @throws xal.smf.NoSuchChannelException  
      *                                             if the handle does not identify any 
      *                                             process variable of this accelerator node
-     *  @throws gov.sns.ca.ConnectionException     channel is not connected
-     *  @throws gov.sns.ca.MonitorException        general monitor failure
+     *  @throws xal.ca.ConnectionException     channel is not connected
+     *  @throws xal.ca.MonitorException        general monitor failure
      */
     public Monitor createMonitor(XalPvDescriptor.IPvDescriptor pvdFld, IEventSinkValue snkEvents, int ...mskEvtType)
             throws ConnectionException, MonitorException, NoSuchChannelException 

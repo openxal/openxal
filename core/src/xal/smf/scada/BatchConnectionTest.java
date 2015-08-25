@@ -90,7 +90,7 @@ public class BatchConnectionTest {
          * </p>
          * 
          * @since Feb 4, 2011
-         * @see gov.sns.ca.ConnectionListener#connectionMade(gov.sns.ca.Channel)
+         * @see xal.ca.ConnectionListener#connectionMade(xal.ca.Channel)
          */
         @Override
         @SuppressWarnings("synthetic-access")
@@ -106,7 +106,7 @@ public class BatchConnectionTest {
          * could have happened.
          * 
          * @since Feb 4, 2011
-         * @see gov.sns.ca.ConnectionListener#connectionDropped(gov.sns.ca.Channel)
+         * @see xal.ca.ConnectionListener#connectionDropped(xal.ca.Channel)
          */
         @Override
         public void connectionDropped(Channel channel) {
