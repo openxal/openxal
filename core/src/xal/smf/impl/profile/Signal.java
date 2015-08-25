@@ -563,7 +563,7 @@ public class Signal extends ScadaRecord {
      * @since       Mar 12, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.xal.smf.scada.ScadaRecord#toString()
+     * @see xal.smf.scada.ScadaRecord#toString()
      */
     @Override
     public String toString() {

@@ -614,7 +614,7 @@ public class WireHarp extends ProfileDevice {
 
         /**
          *
-         * @see gov.sns.xal.smf.impl.profile.ProfileDevice.IProfileDomain#getSampleCount(gov.sns.xal.smf.impl.profile.ProfileDevice.ANGLE)
+         * @see xal.smf.impl.profile.ProfileDevice.IProfileDomain#getSampleCount(xal.smf.impl.profile.ProfileDevice.ANGLE)
          *
          * @author Christopher K. Allen
          * @since  Apr 24, 2014
@@ -630,7 +630,7 @@ public class WireHarp extends ProfileDevice {
          * @author Christopher K. Allen
          * @since  Apr 24, 2014
          * 
-         * @see gov.sns.xal.smf.impl.profile.ProfileDevice.IProfileDomain#getSamplePositions(gov.sns.xal.smf.impl.profile.ProfileDevice.ANGLE)
+         * @see xal.smf.impl.profile.ProfileDevice.IProfileDomain#getSamplePositions(xal.smf.impl.profile.ProfileDevice.ANGLE)
          */
         @Override
         public double[] getSamplePositions(ANGLE angle) {
@@ -645,7 +645,7 @@ public class WireHarp extends ProfileDevice {
 
         /**
          *
-         * @see gov.sns.xal.smf.impl.profile.ProfileDevice.IProfileDomain#getInitialPosition(gov.sns.xal.smf.impl.profile.ProfileDevice.ANGLE)
+         * @see xal.smf.impl.profile.ProfileDevice.IProfileDomain#getInitialPosition(xal.smf.impl.profile.ProfileDevice.ANGLE)
          *
          * @author Christopher K. Allen
          * @since  Apr 24, 2014
@@ -660,7 +660,7 @@ public class WireHarp extends ProfileDevice {
 
         /**
          *
-         * @see gov.sns.xal.smf.impl.profile.ProfileDevice.IProfileDomain#getIntervalLength(gov.sns.xal.smf.impl.profile.ProfileDevice.ANGLE)
+         * @see xal.smf.impl.profile.ProfileDevice.IProfileDomain#getIntervalLength(xal.smf.impl.profile.ProfileDevice.ANGLE)
          *
          * @author Christopher K. Allen
          * @since  Apr 24, 2014

@@ -887,7 +887,7 @@ public abstract class ProfileDevice extends AcceleratorNode {
      *                       
      *  @return                 A new monitor on the given process variable
      *  
-     *  @throws gov.sns.xal.smf.NoSuchChannelException  
+     *  @throws xal.smf.NoSuchChannelException  
      *                                             if the handle does not identify any 
      *                                             process variable of this accelerator node
      *  @throws gov.sns.ca.ConnectionException     channel is not connected

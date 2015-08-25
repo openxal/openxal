@@ -29,7 +29,7 @@ public class TestSuiteProbe {
      * @since  Aug 26, 2011
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite("Test suite for gov.sns.xal.model.probe.tests");
+        TestSuite suite = new TestSuite("Test suite for xal.model.probe.tests");
         //$JUnit-BEGIN$
         suite.addTest(TestTwissProbe.getJUnitTest());
         //$JUnit-END$
