@@ -772,7 +772,7 @@ public abstract class EnvelopeTrackerBase extends Tracker {
      *  
      * @throws ModelException   could not compute the transfer map for given element 
      * 
-     * @see gov.sns.tools.beam.em.BeamEllipsoid
+     * @see xal.tools.beam.em.BeamEllipsoid
      */
     protected PhaseMatrix compScheffMatrix(double dblLen, EnvelopeProbe probe, IElement elem)
             throws ModelException {

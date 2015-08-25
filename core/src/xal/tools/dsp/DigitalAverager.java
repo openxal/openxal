@@ -35,7 +35,7 @@ public class DigitalAverager extends AbstractDigitalFilter {
      * 
      * @return  input coefficient for given delay index and current time
      * 
-     * @see gov.sns.tools.dsp.AbstractDigitalFilter#getInputCoefficient(int, int)
+     * @see xal.tools.dsp.AbstractDigitalFilter#getInputCoefficient(int, int)
      */
     @Override
     public double getInputCoefficient(int iTime, int iDelay) {
@@ -59,7 +59,7 @@ public class DigitalAverager extends AbstractDigitalFilter {
      * 
      * @return  output coefficient for given delay index and current time
      * 
-     * @see gov.sns.tools.dsp.AbstractDigitalFilter#getOutputCoefficient(int, int)
+     * @see xal.tools.dsp.AbstractDigitalFilter#getOutputCoefficient(int, int)
      */
     @Override
     public double getOutputCoefficient(int iTime, int iDelay) {

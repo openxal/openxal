@@ -12,7 +12,7 @@ package xal.tools.dsp;
  * <p>
  * Convenience class for packaging common digital processing operations.
  * This class relies heavily upon most of the other classes on the 
- * <code>gov.sns.tools.dsp</code> package.
+ * <code>xal.tools.dsp</code> package.
  * </p>
  * <p>
  * Rather than making this a utility class, it has been designed to be

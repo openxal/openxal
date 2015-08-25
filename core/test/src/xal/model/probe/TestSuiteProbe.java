@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
 
 
 /**
- * JUnit 4.x test suite for performing tests on the <code>gov.sns.tools.math</code> 
+ * JUnit 4.x test suite for performing tests on the <code>xal.tools.math</code> 
  * package classes.
  * 
  * @author Christopher K. Allen

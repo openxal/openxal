@@ -1650,7 +1650,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
 //                strBuf.append("{ "); //$NON-NLS-1$
 //                for (int j=0; j<INT_SIZE; j++) {
 ////                  strBuf.append(this.getElem(i,j));
-//                    // gov.sns.tools.text.DoubleToString.append(strBuf, this.getElem(i,j)); // DoubleToString is much more efficient that jdk
+//                    // xal.tools.text.DoubleToString.append(strBuf, this.getElem(i,j)); // DoubleToString is much more efficient that jdk
 //                    // jdg - trim fractions to avoid false  no-diagonal symmetry
 //                    num = this.getElem(i,j);
 //                    if(Math.abs(num) < 1000. && Math.abs(num) > 0.1)

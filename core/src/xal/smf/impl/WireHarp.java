@@ -175,7 +175,7 @@ public class WireHarp extends ProfileDevice {
         //        /**
         //         * Returns the name of this class as the data label
         //         *
-        //         * @see gov.sns.tools.data.DataListener#dataLabel()
+        //         * @see xal.tools.data.DataListener#dataLabel()
         //         *
         //         * @author Christopher K. Allen
         //         * @since  Mar 20, 2014
@@ -715,7 +715,7 @@ public class WireHarp extends ProfileDevice {
          * Returns the class name as the <code>DataAdaptor</code>
          * data label.
          *
-         * @see gov.sns.tools.data.DataListener#dataLabel()
+         * @see xal.tools.data.DataListener#dataLabel()
          *
          * @author Christopher K. Allen
          * @since  Mar 20, 2014
