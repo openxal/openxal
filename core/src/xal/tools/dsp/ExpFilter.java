@@ -23,7 +23,7 @@ import JSci.maths.vectors.AbstractComplexVector;
  * 
  * @author Christopher K. Allen
  *
- * @see gov.sns.tools.dsp.FourierExpTransform
+ * @see xal.tools.dsp.FourierExpTransform
  */
 public class ExpFilter {
 

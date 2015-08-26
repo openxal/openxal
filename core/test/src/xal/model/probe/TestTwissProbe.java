@@ -21,7 +21,7 @@ import xal.tools.math.r3.R3;
 
 /**
  * Class for performing JUnit 4.x test on the <code>TwissProbe</code> class
- * in the <code>gov.sns.xal.model.probe</code> package.
+ * in the <code>xal.model.probe</code> package.
  * 
  * @author Christopher K. Allen
  *

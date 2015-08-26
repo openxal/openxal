@@ -39,8 +39,8 @@ import xal.tools.math.r3.R3x3.POS;
  * 
  * @author Christopher K. Allen
  * 
- * #see gov.sns.tools.math.r3.R3x3
- * #see gov.sns.tools.math.r3.JacobiIterate
+ * #see xal.tools.math.r3.R3x3
+ * #see xal.tools.math.r3.JacobiIterate
  */
 
 public class R3x3JacobiDecomposition {

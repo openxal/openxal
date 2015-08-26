@@ -251,7 +251,7 @@ public class TransferMapState extends ProbeState<TransferMapState> {
     /**
      * Save the probe state values to a data store represented by the <code>DataAdaptor</code> interface.
      * @param daptSink    data sink to receive state information
-     * @see gov.sns.xal.model.probe.traj.ProbeState#addPropertiesTo(gov.DataAdaptor.tools.data.IDataAdaptor)
+     * @see xal.model.probe.traj.ProbeState#addPropertiesTo(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
     protected void addPropertiesTo(DataAdaptor daptSink) {
@@ -266,7 +266,7 @@ public class TransferMapState extends ProbeState<TransferMapState> {
      * represented by the <code>DataAdaptor</code> interface.
      * @param   daptSrc             data source for probe state information
      * @throws  ParsingException    error in data format
-     * @see gov.sns.xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
+     * @see xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor daptSrc) throws ParsingException {

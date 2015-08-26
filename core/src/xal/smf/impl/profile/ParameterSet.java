@@ -62,7 +62,7 @@ public abstract class ParameterSet extends ScadaRecord {
      * @since       Mar 4, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.tools.data.DataListener#dataLabel()
+     * @see xal.tools.data.DataListener#dataLabel()
      */
     @Override
     public String dataLabel() {

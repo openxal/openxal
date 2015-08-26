@@ -582,7 +582,7 @@ public class LatticeFactory {
 	/**
 	 * Sort lattice elements by their position.
 	 * @param allElements the list of 
-	 * (@link gov.sns.xal.slg.Element lattice elements} to be sorted. 
+	 * (@link xal.slg.Element lattice elements} to be sorted. 
 	 */
 	private void sortElementsByPosition(ArrayList<Element> allElements) {
 		Collections.sort(allElements, new Comparator<Element>() {

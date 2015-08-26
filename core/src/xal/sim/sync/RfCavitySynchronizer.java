@@ -15,7 +15,7 @@ import xal.smf.proxy.RfCavityPropertyAccessor;
 public class RfCavitySynchronizer implements Synchronizer {
 
 	/*
-	 * @see gov.sns.xal.model.sync.Synchronizer#resync(gov.sns.xal.model.IElement, java.util.Map)
+	 * @see xal.model.sync.Synchronizer#resync(xal.model.IElement, java.util.Map)
 	 */
 	public void resync( final IElement anElem, final Map<String,Double> valueMap ) throws SynchronizationException {
 		if ( !(anElem instanceof IRfCavity) )  throw new IllegalArgumentException( "expected IRfCavity instance, got: " + anElem.getClass().getName() );
@@ -31,7 +31,7 @@ public class RfCavitySynchronizer implements Synchronizer {
 
 	
 	/*
-	 * @see gov.sns.xal.model.sync.Synchronizer#checkSynchronization(gov.sns.xal.model.IElement, java.util.Map)
+	 * @see xal.model.sync.Synchronizer#checkSynchronization(xal.model.IElement, java.util.Map)
 	 */
 	public void checkSynchronization( final IElement anElem, final Map<String,Double> valueMap ) throws SynchronizationException {
 		if ( !(anElem instanceof IRfCavity) ) throw new IllegalArgumentException( "expected IRfCavity instance, got: " + anElem.getClass().getName() );

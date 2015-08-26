@@ -27,31 +27,31 @@ package xal.sim.mpx;
 public abstract class ModelProxyListenerAdaptor implements ModelProxyListener {
 
 	/* (non-Javadoc)
-	 * @see gov.sns.xal.model.mpx.MPXProxyListener#accelMasterChanged(MPXProxy)
+	 * @see xal.model.mpx.MPXProxyListener#accelMasterChanged(MPXProxy)
 	 */
 	public void accelMasterChanged(ModelProxy source) {
 	}
 
 	/* (non-Javadoc)
-	 * @see gov.sns.xal.model.mpx.ModelProxyListener#accelSequenceChanged(ModelProxy)
+	 * @see xal.model.mpx.ModelProxyListener#accelSequenceChanged(ModelProxy)
 	 */
 	public void accelSequenceChanged(ModelProxy source) {
 	}
 
 	/* (non-Javadoc)
-	 * @see gov.sns.xal.model.mpx.ModelProxyListener#probeMasterChanged(ModelProxy)
+	 * @see xal.model.mpx.ModelProxyListener#probeMasterChanged(ModelProxy)
 	 */
 	public void probeMasterChanged(ModelProxy source) {
 	}
 
 	/* (non-Javadoc)
-	 * @see gov.sns.xal.model.mpx.ModelProxyListener#modelResultsChanged(ModelProxy)
+	 * @see xal.model.mpx.ModelProxyListener#modelResultsChanged(ModelProxy)
 	 */
 	public void modelResultsChanged(ModelProxy source) {
 	}
 
 	/* (non-Javadoc)
-	 * @see gov.sns.xal.model.mpx.ModelProxyListener#missingInputToRun(ModelProxy)
+	 * @see xal.model.mpx.ModelProxyListener#missingInputToRun(ModelProxy)
 	 */
 	public void missingInputToRunModel(ModelProxy source) {
 	}

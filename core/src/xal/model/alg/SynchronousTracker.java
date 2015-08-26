@@ -146,7 +146,7 @@ public class SynchronousTracker extends Tracker {
      * 
      * @throws ModelException   error during propagation
      * 
-     * @see gov.sns.xal.model.alg.Tracker#doPropagation(gov.sns.xal.model.IProbe, gov.sns.xal.model.IElement)
+     * @see xal.model.alg.Tracker#doPropagation(xal.model.IProbe, xal.model.IElement)
      */
     @Override
     public void doPropagation(IProbe probe, IElement elem)

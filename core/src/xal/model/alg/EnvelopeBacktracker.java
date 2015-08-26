@@ -205,7 +205,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
      * @author Christopher K. Allen
      * @since Feb 9, 2009
      *
-     * @see gov.sns.xal.model.alg.EnvelopeTracker#advanceState(gov.sns.xal.model.IProbe, gov.sns.xal.model.IElement, double)
+     * @see xal.model.alg.EnvelopeTracker#advanceState(xal.model.IProbe, xal.model.IElement, double)
      * 
      */
     protected void retractState(IProbe ifcProbe, IElement ifcElem, double dblLen)
@@ -656,7 +656,7 @@ public class EnvelopeBacktracker extends EnvelopeTrackerBase {
      * 
      * @author Hiroyuki Sako
      * 
-     * @see gov.sns.xal.model.elem.ChargeExchangeFoil
+     * @see xal.model.elem.ChargeExchangeFoil
      * @see EnvelopeTracker#treatChargeExchange(EnvelopeProbe, IElement)
      */
     private void treatChargeExchange(EnvelopeProbe probe, IElement ifcElem) {
