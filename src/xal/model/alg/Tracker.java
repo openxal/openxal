@@ -873,7 +873,7 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     };
     
     /** 
-     * <p>Override of gov.sns.xal.model.alg.Tracker#advanceProbe(gov.sns.xal.model.IProbe, gov.sns.xal.model.IElement, double)</p>
+     * <p>Override of xal.model.alg.Tracker#advanceProbe(xal.model.IProbe, xal.model.IElement, double)</p>
      * 
      * <p>
      * This method is the <b>converse</b> of 

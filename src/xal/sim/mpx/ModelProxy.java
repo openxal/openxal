@@ -33,7 +33,7 @@ import org.w3c.dom.Document;
 
 /**This class provides an API to the on-line model.
  * It features convienience methods to input data to the model, to generate the lattice from 
- * an {@link gov.sns.xal.smf.AcceleratorSeq accelerator sequence}, to run the model, to synchronize the model with the real accelerator,
+ * an {@link xal.smf.AcceleratorSeq accelerator sequence}, to run the model, to synchronize the model with the real accelerator,
  * and to extract results from a model run.
  * @author wdklotz
  */
@@ -202,7 +202,7 @@ public class ModelProxy {
 	}
 
 	// -------------------------- setter members ------------------------------------------
-	/**Setter for the {@link gov.sns.xal.smf.AcceleratorSeq accelerator sequence} property.
+	/**Setter for the {@link xal.smf.AcceleratorSeq accelerator sequence} property.
 	 * As a result of calling this member a new Scenario will be generated.  In Addition all registered ModelproxyListeners will be notified
 	 * by {@link xal.sim.mpx.sns.xal.model.mpx.ModelProxyListener#accelSequenceChanged 
 	 * accelSequenceChanged}.
@@ -230,7 +230,7 @@ public class ModelProxy {
 		notifyListeners(ModelProxyListener.SEQUENCE_CHANGED);
 	}
 
-	/**Setter for the {@link gov.sns.xal.model.probe.Probe probe} property. All
+	/**Setter for the {@link xal.model.probe.Probe probe} property. All
 	 * registered ModleProxyListeners will be notified by
 	 * {@link xal.sim.mpx.sns.xal.model.mpx.ModelProxyListener#probeMasterChanged probeMasterChanged}.
 	 * @param  probeFile the file for the probe definition in XML.
@@ -327,7 +327,7 @@ public class ModelProxy {
 		return paramSrc;
 	}
 
-	/**Getter for the {@link xal.sim.slg.sns.xal.model.Lattice on-line-model lattice} property. 
+	/**Getter for the {@link xal.model.Lattice on-line-model lattice} property. 
 	 * @return the on-line-model lattice.
 	 */
 	public xal.model.Lattice getOnLineModelLattice() {
@@ -369,7 +369,7 @@ public class ModelProxy {
 		return -1;
 	}
 
-	/**Getter for the on-line-model {@link gov.sns.xal.model.probe.Probe probe} property.
+	/**Getter for the on-line-model {@link xal.model.probe.Probe probe} property.
 	 * @return the on-line-model probe. If probe is not set yet <code>null</code> is retuned.
 	 */
 	public Probe<?> getProbe() {
@@ -389,7 +389,7 @@ public class ModelProxy {
 		return probeMasterFile;
 	}
 
-	/**Getter for the {@link xal.sim.slg.sns.xal.model.Lattice on-line-model lattice} property. 
+	/**Getter for the {@link xal.model.Lattice on-line-model lattice} property. 
 	 * @return the on-line-model lattice. If lattice is not set yet <code>null</code> is returned.
 	 */
 	public Document getOnLineModelLatticeAsDocument() {
@@ -424,7 +424,7 @@ public class ModelProxy {
 		}
 	}
 
-	/**Find the probe's state for a given {@link gov.sns.xal.smf.AcceleratorNode accelerator node}.
+	/**Find the probe's state for a given {@link xal.smf.AcceleratorNode accelerator node}.
 	 * @param id the identifier of the given accelerator node.
 	 * @return the probe state for the center of that node.
 	 * @throws ModelException
@@ -444,7 +444,7 @@ public class ModelProxy {
 		return state;
 	}
 
-	/**Find all probe states for a given {@link gov.sns.xal.smf.AcceleratorNode accelerator node}.
+	/**Find all probe states for a given {@link xal.smf.AcceleratorNode accelerator node}.
 	 * @param id the identifier of the given accelerator node.
 	 * @return an array probe states for the given element.
 	 * @throws ModelException

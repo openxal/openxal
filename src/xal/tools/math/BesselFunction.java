@@ -120,7 +120,7 @@ package xal.tools.math;
  * @author  Christopher K. Allen
  * 
  * @see java.lang.Math
- * @see gov.sns.tools.math.ElementaryFunction
+ * @see xal.tools.math.ElementaryFunction
  * 
  */
 public final class BesselFunction {

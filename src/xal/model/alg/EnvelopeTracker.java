@@ -575,7 +575,7 @@ public class EnvelopeTracker extends EnvelopeTrackerBase {
      * 
      * @author Hiroyuki Sako
      * 
-     * @see gov.sns.xal.model.elem.ChargeExchangeFoil
+     * @see xal.model.elem.ChargeExchangeFoil
      */
     private void treatChargeExchange(EnvelopeProbe probe, IElement ifcElem) {
     	if (ifcElem instanceof ChargeExchangeFoil) {

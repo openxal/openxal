@@ -50,7 +50,7 @@ public abstract class BunchProbe<S extends BunchProbeState<S>> extends Probe<S> 
 //     *                          | <xp*x> <xp*xp> <xp*y> <xp*yp> <xp*z> <xp*zp> <xp> |
 //     *                            ...
 //     *
-//     *  @see    gov.sns.tools.beam.PhaseMatrix
+//     *  @see    xal.tools.beam.PhaseMatrix
 //     */
 //    public abstract CovarianceMatrix getCorrelation();
 //    

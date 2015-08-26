@@ -27,7 +27,7 @@ import xal.tools.math.r6.R6x6;
  * @author  Christopher Allen
  *
  *  @see    Jama.Matrix
- *  @see    gov.sns.tools.r3.R3
+ *  @see    xal.tools.r3.R3
  */
 
 public class R2x2 extends SquareMatrix<R2x2> implements java.io.Serializable {

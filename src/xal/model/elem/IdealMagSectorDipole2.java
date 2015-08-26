@@ -409,13 +409,15 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
      * squared.  The square-root of this value provides the betatron
      * phase advance wave number.
      * </p>
-     * 
-     * <l>
+     *
+     * <br>
+     * <br>
      *  K_quad := (1/R)(1/B)(dB/dR)
-     * </l>
-     * <l>
+     * <br>
+     * <br>
      *          = - h^2 * n0
-     * </l>
+     * <br>
+     * <br>
      * <p>
      * where <i>K_quad</i> is the quadrupole focusing constant, <i>R</i> is 
      * the bending radius at current settings, <i>B</i> is the current magnet 

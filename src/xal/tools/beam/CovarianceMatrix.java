@@ -11,7 +11,7 @@ import xal.tools.math.r3.R3x3;
  * all moments of a phase space distribution up to and include second order.  This is 
  * seen by taken the moment of the outer product of two phase vectors.  We find
   * <pre>
- * &lt;zz<sup>T</sup>&gt;  = | &lt;xx&gt;   &lt;xx'   &lt;xy&gt;   &lt;xy'&gt;  &lt;xz&gt;   &lt;xz'&gt;  &lt;x&gt;  |
+ * &lt;zz&circ;T&gt;  = | &lt;xx&gt;   &lt;xx'   &lt;xy&gt;   &lt;xy'&gt;  &lt;xz&gt;   &lt;xz'&gt;  &lt;x&gt;  |
  *           | &lt;x'x&gt;  &lt;x'x'&gt; &lt;x'y&gt;  &lt;x'y'&gt; &lt;x'z&gt;  &lt;x'z'&gt; &lt;x'&gt; |
  *           | &lt;yx&gt;   &lt;yx'&gt;  &lt;yy&gt;   &lt;yy'&gt;  &lt;yz&gt;   &lt;yz'&gt;  &lt;y&gt;  |
  *           | &lt;y'x&gt;  &lt;y'x'&gt; &lt;y'y&gt;  &lt;y'y'&gt; &lt;y'z&gt;  &lt;y'z'&gt; &lt;y'&gt; |
@@ -21,7 +21,7 @@ import xal.tools.math.r3.R3x3;
  * </pre>
  * where <i>x', y', z'</i> represent the momentum coordinate in the <i>x, y,</i> and <i>z</i>
  * directions, respectively.
- * </p>
+ *
  * <p>
  * Note that the covariance matrix is not necessarily centralized.  Specifically, if the
  * beam is off axis, then at least one of the moments 
@@ -86,11 +86,11 @@ public class CovarianceMatrix extends PhaseMatrix {
      * a covariance matrix to produce a <i>central</i> covariance matrix.
      *  </p>  
      *  <p>
-     *  <l>NOTE:</l>
+     *  <h3>NOTE:</h3>
      *  The returned matrix is the outer product of the given argument.
      *  Specifically <b>&sigma;</b> = <b>v*v'</b>.
      *  
-     *  @param  vecCen mean value vector of the phase space coordinates, i.e., <z>
+     *  @param  vecCen mean value vector of the phase space coordinates, i.e., &lt;z&gt;
      *
      *  @return     center matrix corresponding to mean value vector
      */
@@ -197,7 +197,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *      | Rxx   0   0  &lt;x&gt; | <br>
      *      |   0 Ryy   0  &lt;y&gt; | <br>
      *      |   0   0 Rzz  &lt;z&gt; | <br>
-     *      | &lt;x> &lt;y> &lt;z&gt;   1  | 
+     *      | &lt;x&gt; &lt;y&gt; &lt;z&gt;   1  | 
      *  <br>
      *  <br>
      *  where Rii are 2x2 symmetric blocks corresponding to each phase
@@ -208,7 +208,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  @param  twissX  twiss parameters of the x phase plane
      *  @param  twissY  twiss parameters of the y phase plane
      *  @param  twissZ  twiss parameters of the z phase plane
-     *  @param  vecCen mean value vector of the phase space coordinates, i.e., <z>
+     *  @param  vecCen mean value vector of the phase space coordinates, i.e., &lt;z&gt;
      *
      *  @return     correlation matrix corresponding to the above twiss parameters and mean value vector
      */
@@ -509,18 +509,18 @@ public class CovarianceMatrix extends PhaseMatrix {
     /**
      * Compute and return the 3x3 symmetric matrix of all centralized spatial covariance
      * values.  Recall that the covariance matrix <b>sig</b> is the matrix of 
-     * central second moments and is related to the correlation matrix <<b>zz</b>> 
+     * central second moments and is related to the correlation matrix &lt;<b>zz</b>&gt;
      * according to
      *
-     *      <b>sig</b> = <<b>zz</b>> - <<b>z</b>><<b>z</b>>
+     *      <b>sig</b> = &lt;<b>zz</b>&gt; - &lt;<b>z</b>&gt;&lt;<b>z</b>&gt;
      *      
      * where <b>z</b> = (x x' y y' z z' 1) is the phase space coordinate vector. 
      * 
      * Thus, the returned spatial covariance matrix has the form
      * 
-     *      | <xx>-<x><x>  <xy>-<x><y>  <xz>-<x><z> |
-     *      | <xy>-<x><y>  <yy>-<y><y>  <yz>-<y><z> |
-     *      | <xz>-<x><z>  <yz>-<x><z>  <zz>-<z><z> |
+     *      | &lt;xx&gt;-&lt;x&gt;&lt;x&gt;  &lt;xy&gt;-&lt;x&gt;&lt;y&gt;  &lt;xz&gt;-&lt;x&gt;&lt;z&gt; |
+     *      | &lt;xy&gt;-&lt;x&gt;&lt;y&gt;  &lt;yy&gt;-&lt;y&gt;&lt;y&gt;  &lt;yz&gt;-&lt;y&gt;&lt;z&gt; |
+     *      | &lt;xz&gt;-&lt;x&gt;&lt;z&gt;  &lt;yz&gt;-&lt;x&gt;&lt;z&gt;  &lt;zz&gt;-&lt;z&gt;&lt;z&gt; |
      *      
      *      
      * @return  3x3 symmetric matrix of central, spatial covariance moments 

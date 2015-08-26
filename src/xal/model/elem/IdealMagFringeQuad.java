@@ -20,8 +20,8 @@ import xal.tools.math.r3.R3;
  * 
  * @author Hiroyuki Sako
  * 
- * @see gov.sns.xal.model.elem#IdealMagQuad
- * @see gov.sns.xal.model.elem#IdealMagFringeQuadFace
+ * @see xal.model.elem#IdealMagQuad
+ * @see xal.model.elem#IdealMagFringeQuadFace
  *
  */
 public class IdealMagFringeQuad extends ElectromagnetSeq {
@@ -88,7 +88,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      * strings of each composite element.
      * 
      * @param   strId       identifier string of this compsite.
-     * @see gov.sns.xal.model.elem.ElementSeq#setId(java.lang.String)
+     * @see xal.model.elem.ElementSeq#setId(java.lang.String)
      */
     @Override
     public void setId(String strId) {
@@ -453,8 +453,8 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
 		Bend magnet = (Bend) element.getNode();
 		setPosition(element.getCenter(), element.getLength());
 
-		// gov.sns.xal.model.elem.ThickDipole xalDipole =
-		// new gov.sns.xal.model.elem.ThickDipole();
+		// xal.model.elem.ThickDipole xalDipole =
+		// new xal.model.elem.ThickDipole();
 		// xalDipole.setId(element.getNode().getId());
 		// xalDipole.setLength(element.getLength());
 		// xalDipole.setMagField(magnet.getDesignField());

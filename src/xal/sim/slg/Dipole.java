@@ -62,7 +62,7 @@ public class Dipole extends Element {
     }
 
     /**  
-     * Implementation of interface gov.sns.tools.data.DataListener:
+     * Implementation of interface xal.tools.data.DataListener:
      * Instructs the implementor to write its data to the adaptor for external
      * storage.
      */

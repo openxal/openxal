@@ -86,7 +86,7 @@ public abstract class DatabaseAdaptor {
 	 * Fetch all schemas from the connected database
 	 * @return  list of all schemas in the database
 	 * @exception DatabaseException
-	 * @throws gov.sns.tools.database.DatabaseException  if the schema fetch fails
+	 * @throws xal.tools.database.DatabaseException  if the schema fetch fails
 	 */
 	public List<String> fetchAllSchemas( final Connection connection ) throws DatabaseException {
 		try {

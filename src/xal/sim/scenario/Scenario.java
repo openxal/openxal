@@ -88,7 +88,7 @@ public class Scenario {
     /**
      * Creates a new <code>Scenario</code> object for the explicit case where
      * the <code>AcceleratorSeq</code> object is of type 
-     * <code>gov.sns.xal.smf.Ring</code>.
+     * <code>xal.smf.Ring</code>.
      * 
      * @param   smfRing     target hardware (SMF) ring object 
      * @return              <code>Scenario</code> object encapsulating ring
