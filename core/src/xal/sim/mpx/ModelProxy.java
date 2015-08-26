@@ -327,7 +327,7 @@ public class ModelProxy {
 		return paramSrc;
 	}
 
-	/**Getter for the {@link xal.sim.slg.sns.xal.model.Lattice on-line-model lattice} property. 
+	/**Getter for the {@link xal.model.Lattice on-line-model lattice} property. 
 	 * @return the on-line-model lattice.
 	 */
 	public xal.model.Lattice getOnLineModelLattice() {
@@ -389,7 +389,7 @@ public class ModelProxy {
 		return probeMasterFile;
 	}
 
-	/**Getter for the {@link xal.sim.slg.sns.xal.model.Lattice on-line-model lattice} property. 
+	/**Getter for the {@link xal.model.Lattice on-line-model lattice} property. 
 	 * @return the on-line-model lattice. If lattice is not set yet <code>null</code> is returned.
 	 */
 	public Document getOnLineModelLatticeAsDocument() {
