@@ -20,12 +20,6 @@ import java.net.URL;
 public class Launcher implements DataListener {
 	/** the data adaptor label used for reading and writing this instance */
 	static public final String DATA_LABEL = "Launcher";
-    
-    /** XAL core jar file name */
-    static private final String XAL_CORE_JAR = "xal-core.jar";
-    
-    /** XAL core library file name */
-    static private final String XAL_LIB_JAR = "xal-lib.jar";
 	
 	/** generator of the hosts */
 	protected HostGenerator _hostGenerator;
@@ -68,36 +62,32 @@ public class Launcher implements DataListener {
 						
 			// check whether the current environment has a valid CLASSPATH to the XAL core and lib jars and if so don't modify the environment
 			final String currentClassPath = environment.get( "CLASSPATH" );
-			if ( currentClassPath != null && currentClassPath.contains( XAL_CORE_JAR ) && currentClassPath.contains( XAL_LIB_JAR ) ) {
+			
+			// URL to xal-shared.jar (or whichever jar holds xal.tools.messaging.MessageCenter)
+			final URL xalLibJar = MessageCenter.class.getProtectionDomain().getCodeSource().getLocation();
+			final File xalLibJarFile = new File( xalLibJar.toURI() );
+			
+			// attempt to find the class path in the properties and use it if it references the XAL core and lib jars
+			final String classPathProperty = System.getProperty( "java.class.path" );
+			
+			if ( currentClassPath != null && currentClassPath.contains( xalLibJarFile.getName() ) ) {
 				System.out.println( "Environment CLASSPATH: " + currentClassPath );
 				return null;
 			}
-			else {
-				// attempt to find the class path in the properties and use it if it references the XAL core and lib jars
-				final String classPathProperty = System.getProperty( "java.class.path" );
-				if ( classPathProperty != null && classPathProperty.contains( XAL_CORE_JAR ) && classPathProperty.contains( XAL_LIB_JAR ) ) {
-					System.out.println( "Property CLASSPATH: " + classPathProperty );
-					environment.put( "CLASSPATH", classPathProperty );
-				}
-				else {		// if all else fails, generate a class path assuming the default relative location
-					// set the watch folder to be the directory containing the jar file that launched this application
-					final URL jarURL = getClass().getProtectionDomain().getCodeSource().getLocation();
-					final File jarFile = new File( jarURL.toURI() );
-					final File applicationsDirectory = jarFile.getParentFile();
-					final File jarRootDirectory = applicationsDirectory.getParentFile();		// directory which is the root of the jar files
-					
-					final String classPath = new File( jarRootDirectory, XAL_LIB_JAR ).getAbsolutePath() + File.pathSeparator + new File( jarRootDirectory, XAL_CORE_JAR ).getAbsolutePath();
-					
-					// if the class path is good, then assign it in the environment
-					if ( classPath != null ) {
-						environment.put( "CLASSPATH", classPath );
-						System.out.println( "Constructed CLASSPATH: " + classPath );
-					}
-				}
+			else if  ( classPathProperty != null && classPathProperty.contains( xalLibJarFile.getName() ) ) {
+				final String newClassPath;
+				if ( currentClassPath == null ) newClassPath = classPathProperty;
+				else newClassPath = classPathProperty + File.pathSeparator + currentClassPath;
+				System.out.println( "Property CLASSPATH: " + newClassPath );
+				environment.put( "CLASSPATH", newClassPath );
+			}
+			else {	// if all else fails, make it simple
+				System.out.println( "New CLASSPATH: " + xalLibJarFile.getAbsolutePath() );
+				environment.put( "CLASSPATH", xalLibJarFile.getAbsolutePath() );
+			}
 
 				return environment;
 			}
-		}
 		catch ( Exception exception ) {
 			exception.printStackTrace();
 			return null;
