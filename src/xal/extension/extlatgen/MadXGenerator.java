@@ -18,7 +18,7 @@ import xal.smf.impl.RfCavity;
 import xal.ca.*;
 import xal.sim.slg.*; // for lattice generation
 import xal.model.probe.*; // Probe for Mad header
-// import gov.sns.xal.model.probe.traj.EnvelopeProbeState;
+// import xal.model.probe.traj.EnvelopeProbeState;
 import xal.sim.scenario.Scenario;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.TraceXalUnitConverter;
