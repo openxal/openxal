@@ -94,7 +94,7 @@ import JSci.maths.Complex;
  * 
  * @author Christopher K. Allen
  *
- * @see gov.sns.tools.dsp.AbstractDigitalFilter
+ * @see xal.tools.dsp.AbstractDigitalFilter
  */
 public class LtiDigitalFilter extends AbstractDigitalFilter {
 
@@ -126,8 +126,8 @@ public class LtiDigitalFilter extends AbstractDigitalFilter {
      * 
      * @return  the input coefficient for the given delay index
      * 
-     * @see gov.sns.tools.dsp.LtiDigitalFilter#setInputCoefficient(int, double)
-     * @see gov.sns.tools.dsp.AbstractDigitalFilter#getInputCoefficient(int, int)
+     * @see xal.tools.dsp.LtiDigitalFilter#setInputCoefficient(int, double)
+     * @see xal.tools.dsp.AbstractDigitalFilter#getInputCoefficient(int, int)
      */
     @Override
     public double getInputCoefficient(int iTime, int iDelay) {
@@ -146,8 +146,8 @@ public class LtiDigitalFilter extends AbstractDigitalFilter {
      * 
      * @return  the output coefficient for the given delay index
      * 
-     * @see gov.sns.tools.dsp.LtiDigitalFilter#setOutputCoefficient(int, double)
-     * @see gov.sns.tools.dsp.AbstractDigitalFilter#getOutputCoefficient(int, int)
+     * @see xal.tools.dsp.LtiDigitalFilter#setOutputCoefficient(int, double)
+     * @see xal.tools.dsp.AbstractDigitalFilter#getOutputCoefficient(int, int)
      */
     @Override
     public double getOutputCoefficient(int iTime, int iDelay) {

@@ -336,7 +336,7 @@ public class IdealMagDipoleFace2 extends ThinElectromagnet {
      * @return
      * @throws ModelException
      * 
-     * @see xal.sim.slg.sns.xal.model.elem.ThinElement#transferMap(gov.sns.xal.model.IProbe)
+     * @see xal.model.elem.ThinElement#transferMap(xal.model.IProbe)
      */
     @Override
     protected PhaseMap transferMap(IProbe probe) throws ModelException {

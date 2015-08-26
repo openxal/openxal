@@ -106,10 +106,9 @@ public class IdealMagSectorDipole extends ThickElectromagnet {
      *  @param  strId  identifier for this IdealMagSectorDipole object
      *  @param  dblFld    field gradient strength (in <b>Tesla</b>)
      *  @param  dblLen    pathLength of the dipole (in m)
-     *  @param  entAng entrance angle of the dipole (in rad)
-     *  @param  exitAng exit angle of the dipole (in rad)
+     *  @param  enmOrient orientation
      *  @param  dblGap    full pole gap of the dipole (in m)
-     *  @param  fInt   The dimensionless integral term for the extended fringe field focsing, Should be = 1/6 for linear drop off, ~ 0.4 for clamped Rogowski coil, or 0.7 for an unclamped Rogowski coil. (dimensionless)
+     *  @param  dblFldInd field index
      *
     */
     public IdealMagSectorDipole(String strId, double dblLen, 

@@ -14,7 +14,7 @@ package xal.tools.data;
  * 
  * @author Christopher K. Allen
  *
- * @see gov.sns.tools.data.EditContext
+ * @see xal.tools.data.EditContext
  */
 public interface IContextAware {
 

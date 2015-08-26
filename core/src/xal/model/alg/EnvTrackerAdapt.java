@@ -313,7 +313,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      * The current step size is reset to this value anytime the
      * <code>initialize()</code> method is called.
      * 
-     * @param dblStepSize   initial step size in <m>meters</m>
+     * @param dblStepSize   initial step size in <b>meters</b>
      * 
      * @see EnvTrackerAdapt#setInitStepSize(double)
      * @see EnvTrackerAdapt#initialize()
@@ -329,7 +329,7 @@ public class EnvTrackerAdapt extends EnvelopeTrackerBase {
      * as the algorithm progresses according to the adaptation
      * rule.
      * 
-     * @param dblStepSize   initial step size in <m>meters</m>
+     * @param dblStepSize   initial step size in <b>meters</b>
      */
     public void setStepSize( final double dblStepSize ) {
         m_dblStepSize = dblStepSize;

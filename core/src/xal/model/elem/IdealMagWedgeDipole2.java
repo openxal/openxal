@@ -587,8 +587,8 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
 		Bend magnet = (Bend) element.getNode();
 		setPosition(element.getCenter(), element.getLength());
 
-		// gov.sns.xal.model.elem.ThickDipole xalDipole =
-		// new gov.sns.xal.model.elem.ThickDipole();
+		// xal.model.elem.ThickDipole xalDipole =
+		// new xal.model.elem.ThickDipole();
 		// xalDipole.setId(element.getNode().getId());
 		// xalDipole.setLength(element.getLength());
 		// xalDipole.setMagField(magnet.getDesignField());

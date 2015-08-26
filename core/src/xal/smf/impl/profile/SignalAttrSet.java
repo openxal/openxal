@@ -307,7 +307,7 @@ public abstract class SignalAttrSet implements DataListener {
      * @since       Mar 4, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.tools.data.DataListener#dataLabel()
+     * @see xal.tools.data.DataListener#dataLabel()
      */
     @Override
     public String dataLabel() {
@@ -324,7 +324,7 @@ public abstract class SignalAttrSet implements DataListener {
      * @since       Mar 4, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.tools.data.DataListener#update(gov.sns.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
      */
     @Override
     public void update(DataAdaptor daptSrc) {
@@ -385,7 +385,7 @@ public abstract class SignalAttrSet implements DataListener {
      * @since       Mar 4, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.tools.data.DataListener#write(gov.sns.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
      */
     @Override
     public void write(DataAdaptor adaptor) {

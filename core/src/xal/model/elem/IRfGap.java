@@ -12,7 +12,7 @@ package xal.model.elem;
  *
  * @author  CKAllen
  */
-public interface IRfGap /*extends gov.sns.xal.model.IElement*/ {
+public interface IRfGap /*extends xal.model.IElement*/ {
     
     
     /**

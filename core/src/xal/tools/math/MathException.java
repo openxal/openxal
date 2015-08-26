@@ -7,7 +7,7 @@
 package xal.tools.math;
 
 /**
- * Exception class for <code>gov.sns.tools.math</code> package.
+ * Exception class for <code>xal.tools.math</code> package.
  *
  * @author  Christopher K. Allen
  * @since   Jan 27, 2003

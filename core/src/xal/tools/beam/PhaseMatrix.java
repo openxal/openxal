@@ -296,7 +296,6 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *           |  1    |
      * </pre>
      * which we see is equivalent to the simple vector addition <b>v</b> + <b>&Delta;</b>.
-     * </p>
      * 
      *  @param  vecTrans    translation vector <b>&Delta;</b>
      *  
@@ -342,7 +341,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      * </pre>
      * which is the translation operator in phase space restricted to the
      * spatial coordinates.
-     * </p>
+     *
      * <p>
      * See <code>{@link PhaseMatrix#translation(PhaseVector)}</code> for further
      * discussion of translation operators and their representation by 
@@ -928,7 +927,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  In-place matrix addition. The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
-     *  <h3>NOTE:<h3>
+     *  <h3>NOTE:</h3>
      *  <p>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for addition operations.
@@ -967,7 +966,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
      *  In-place matrix subtraction. The homogeneous pivot
      *  element on the diagonal is unchanged at value 1.
      *  </p>
-     *  <h3>NOTE:<h3>
+     *  <h3>NOTE:</h3>
      *  <p>
      *  BE VERY CAREFUL when using this function.  The homogeneous coordinates
      *  are not meant for addition operations.
@@ -1650,7 +1649,7 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
 //                strBuf.append("{ "); //$NON-NLS-1$
 //                for (int j=0; j<INT_SIZE; j++) {
 ////                  strBuf.append(this.getElem(i,j));
-//                    // gov.sns.tools.text.DoubleToString.append(strBuf, this.getElem(i,j)); // DoubleToString is much more efficient that jdk
+//                    // xal.tools.text.DoubleToString.append(strBuf, this.getElem(i,j)); // DoubleToString is much more efficient that jdk
 //                    // jdg - trim fractions to avoid false  no-diagonal symmetry
 //                    num = this.getElem(i,j);
 //                    if(Math.abs(num) < 1000. && Math.abs(num) > 0.1)

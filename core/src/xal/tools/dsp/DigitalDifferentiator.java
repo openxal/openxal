@@ -30,7 +30,7 @@ package xal.tools.dsp;
  * 
  * @author Christopher K. Allen
  *
- * @see gov.sns.tools.dsp.LtiDigitalFilter
+ * @see xal.tools.dsp.LtiDigitalFilter
  */
 public class DigitalDifferentiator extends LtiDigitalFilter {
 

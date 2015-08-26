@@ -487,7 +487,7 @@ public class Signal extends ScadaRecord {
      * persistent data format that belongs to this <code>Signal</code>
      * class. 
      *
-     * @see gov.sns.tools.data.DataListener#dataLabel()
+     * @see xal.tools.data.DataListener#dataLabel()
      *
      * @author Christopher K. Allen
      * @since  Jan 30, 2013
@@ -563,7 +563,7 @@ public class Signal extends ScadaRecord {
      * @since       Mar 12, 2010
      * @author  Christopher K. Allen
      *
-     * @see gov.sns.xal.smf.scada.ScadaRecord#toString()
+     * @see xal.smf.scada.ScadaRecord#toString()
      */
     @Override
     public String toString() {

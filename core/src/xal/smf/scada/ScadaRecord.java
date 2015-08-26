@@ -258,7 +258,7 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
      * @throws  MissingResourceException        a data field was missing from the data source
      * @throws BadStructException  data structure fields are ill-defined/incompatible
      *  
-     * @see gov.sns.tools.data.DataListener#update(gov.sns.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#update(xal.tools.data.DataAdaptor)
      */
     @Override
     public void update(DataAdaptor daptSrc) throws MissingResourceException, BadStructException {
@@ -350,7 +350,7 @@ public abstract class ScadaRecord implements DataListener, Cloneable {
      *
      * @throws BadStructException  data structure fields are ill-defined/incompatible
      *  
-     * @see gov.sns.tools.data.DataListener#write(gov.sns.tools.data.DataAdaptor)
+     * @see xal.tools.data.DataListener#write(xal.tools.data.DataAdaptor)
      */
     @Override
     public void write(DataAdaptor daptSink) throws BadStructException {
