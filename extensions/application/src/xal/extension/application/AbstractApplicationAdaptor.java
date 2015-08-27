@@ -34,14 +34,47 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	/** location of the resources directory */
 	private ApplicationResourceManager _resourceManager;
 
+	/** accessory for this application's default document folder */
+	final private DefaultFolderAccessory DEFAULT_FOLDER_ACCESSORY;
+
 
 	/** Constructor */
 	public AbstractApplicationAdaptor() {
 		// resources are located using the default resource manager
 		setResourcesLocation( null );
+
+		// construct the accessory for the default document folder for this application
+		DEFAULT_FOLDER_ACCESSORY = new DefaultFolderAccessory( XalDocument.class, null, applicationName() );
 	}
 
-	
+
+	/** 
+	 * Get the document's default folder accessory (needed at startup for some applications prior to the Application instance)
+	 * @return the default folder accessory
+	 */
+	final DefaultFolderAccessory getDefaultFolderAccessory() {
+		return DEFAULT_FOLDER_ACCESSORY;
+	}
+
+
+	/**
+	 * Get the default document folder.
+	 * @return the default folder for documents or null if none has been set.
+	 */
+	final public File getDefaultDocumentFolder() {
+		return DEFAULT_FOLDER_ACCESSORY.getDefaultFolder();
+	}
+
+
+	/**
+	 * Get the default document folder as a URL.
+	 * @return the default folder for documents as a URL or null if none has been set.
+	 */
+	final public URL getDefaultDocumentFolderURL() {
+		return DEFAULT_FOLDER_ACCESSORY.getDefaultFolderURL();
+	}
+
+
 	/**
 	 * Launch the application with the specified document URLs.
 	 * @param urls The document URLs to open upon launching the application.
