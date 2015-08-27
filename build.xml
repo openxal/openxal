@@ -2,5 +2,6 @@
 
 <!-- Build the application whose name matches that of the project. -->
 <project name="bricks" basedir="." default="all">	
-	<import file="../common.xml"/>		
+	<property name="exclude.install" value="true" />
+	<import file="../common.xml"/>
 </project>
