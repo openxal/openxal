@@ -54,39 +54,35 @@ public class Launcher implements DataListener {
 	}
 	
 	
-	/** determine the Class Path to use for application environments  */
+	/** 
+	 * Determine the Class Path to use for application environments.
+	 * 
+	 * In order ot make sure Jython/JRuby scripts use the same OpenXAL version, we
+	 * simply force the xal-shared library to be first in the CLASSPATH variable.
+	 * 
+	 * This means if a user already has xal-shared.jar in his CLASSPATH it will now
+	 * show up twice, but that should not cause any harm.
+	 */
 	private Map<String,String> determineEnvironment() {
 		try {
 			// grab the current environment
 			final Map<String,String> environment = new HashMap<String,String>( System.getenv() );
-						
+
 			// check whether the current environment has a valid CLASSPATH to the XAL core and lib jars and if so don't modify the environment
 			final String currentClassPath = environment.get( "CLASSPATH" );
-			
+
 			// URL to xal-shared.jar (or whichever jar holds xal.tools.messaging.MessageCenter)
 			final URL xalLibJar = MessageCenter.class.getProtectionDomain().getCodeSource().getLocation();
 			final File xalLibJarFile = new File( xalLibJar.toURI() );
-			
-			// attempt to find the class path in the properties and use it if it references the XAL core and lib jars
-			final String classPathProperty = System.getProperty( "java.class.path" );
-			
-			if ( currentClassPath != null && currentClassPath.contains( xalLibJarFile.getName() ) ) {
-				System.out.println( "Environment CLASSPATH: " + currentClassPath );
-				return null;
-			}
-			else if  ( classPathProperty != null && classPathProperty.contains( xalLibJarFile.getName() ) ) {
-				final String newClassPath;
-				if ( currentClassPath == null ) newClassPath = classPathProperty;
-				else newClassPath = classPathProperty + File.pathSeparator + currentClassPath;
-				System.out.println( "Property CLASSPATH: " + newClassPath );
-				environment.put( "CLASSPATH", newClassPath );
-			}
-			else {	// if all else fails, make it simple
-				System.out.println( "New CLASSPATH: " + xalLibJarFile.getAbsolutePath() );
-				environment.put( "CLASSPATH", xalLibJarFile.getAbsolutePath() );
-			}
 
-				return environment;
+			final String newClassPath;
+			if ( currentClassPath == null ) newClassPath = xalLibJarFile.getAbsolutePath();
+			else newClassPath = xalLibJarFile.getAbsolutePath() + File.pathSeparator + currentClassPath;
+			environment.put( "CLASSPATH", newClassPath );
+
+			System.out.println( "CLASSPATH: " + environment.get( "CLASSPATH" ) );
+
+			return environment;
 			}
 		catch ( Exception exception ) {
 			exception.printStackTrace();
