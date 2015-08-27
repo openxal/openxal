@@ -112,34 +112,64 @@ public class Main extends ApplicationAdaptor {
     static public void main(String[] args) {
         try {
             System.out.println("Starting Launcher...");
-			boolean openDefaultDocument = !Boolean.getBoolean("SAFE_MODE");
-			URL url = null;
-			if (openDefaultDocument) {
+
+			// create an instance of this adaptor
+			final Main applicationAdaptor = new Main();
+
+			// URL of document to open (if any)
+			URL documentURL = null;
+
+			// see if the user has passed a Launcher document to open
+			if ( args.length > 0 ) {
+				final String documentSpec = args[0];
+				System.out.println( "open document with spec: " + documentSpec );
+
+				// first see if the user has passed a valid URL spec and if not then treat it as a file path
 				try {
-					url = PreferenceController.getDefaultDocumentURL();
-					openDefaultDocument = url != null;
+					// attempt to interpret document spec as a URL
+					documentURL = new URL( documentSpec );
+				} catch( MalformedURLException exception ) {
+					// attempt to treat the document spec as a file path (either absolute or relative to the application's default document folder)
+					if ( documentSpec.startsWith( File.pathSeparator ) ) {	// absolute path
+						documentURL = new File( documentSpec ).toURI().toURL();
+					} else {	// relative path (assume relative to this application's default folder)
+						final URL defaultFolderURL = applicationAdaptor.getDefaultDocumentFolderURL();
+						documentURL = new URL( defaultFolderURL, documentSpec );
+					}
+				}
+			}
+			else if ( !Boolean.getBoolean("SAFE_MODE") ) {		// unless we are in safe mode, attempt to open the default document if any
+				documentURL = PreferenceController.getDefaultDocumentURL();
+			}
+
+			// open the document URL only after we have verified it exists and has content
+			boolean openDocumentURL = false;
+			if ( documentURL != null ) {
+				try {
 					// test to make sure the URL content really exists
-					if ( openDefaultDocument ) {
-						int contentLength = url.openConnection().getContentLength();
-						openDefaultDocument = contentLength > 0;
-						if (!openDefaultDocument) {
-							throw new RuntimeException("Contents of \"" + url +"\" is missing.");
-						}
+					int contentLength = documentURL.openConnection().getContentLength();
+					if ( !( contentLength > 0 ) ) {
+						throw new RuntimeException("Contents of \"" + documentURL +"\" is missing.");
+					}
+					else {
+						// document URL exists and has content
+						openDocumentURL = true;
+						System.out.println( "opening document at URL: " + documentURL );
 					}
 				}
 				catch(MalformedURLException exception) {
-					openDefaultDocument = false;
 					System.err.println(exception);
 				}
 				catch(Exception exception) {
-					openDefaultDocument = false;
 					System.err.println(exception);
-					System.err.println("Default document \"" + url +"\" cannot be openned.");
-					Application.displayApplicationError("Launch Exception", "Default document \"" + url +"\" cannot be openned.", exception);
+					System.err.println("Default document \"" + documentURL +"\" cannot be openned.");
+					Application.displayApplicationError("Launch Exception", "Default document \"" + documentURL +"\" cannot be openned.", exception);
 				}
 			}
-			URL[] urls = (openDefaultDocument) ? new URL[] {url} : new URL[] {};
-			Application.launch( new Main(), urls );
+
+			// launch the application and open the document URL if any
+			final URL[] urls = openDocumentURL ? new URL[] {documentURL} : new URL[] {};
+			Application.launch( applicationAdaptor, urls );
         }
         catch(Exception exception) {
             System.err.println( exception.getMessage() );
