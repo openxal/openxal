@@ -20,12 +20,6 @@ import java.net.URL;
 public class Launcher implements DataListener {
 	/** the data adaptor label used for reading and writing this instance */
 	static public final String DATA_LABEL = "Launcher";
-    
-    /** XAL core jar file name */
-    static private final String XAL_CORE_JAR = "xal-core.jar";
-    
-    /** XAL core library file name */
-    static private final String XAL_LIB_JAR = "xal-lib.jar";
 	
 	/** generator of the hosts */
 	protected HostGenerator _hostGenerator;
@@ -60,44 +54,36 @@ public class Launcher implements DataListener {
 	}
 	
 	
-	/** determine the Class Path to use for application environments  */
+	/** 
+	 * Determine the Class Path to use for application environments.
+	 * 
+	 * In order ot make sure Jython/JRuby scripts use the same OpenXAL version, we
+	 * simply force the xal-shared library to be first in the CLASSPATH variable.
+	 * 
+	 * This means if a user already has xal-shared.jar in his CLASSPATH it will now
+	 * show up twice, but that should not cause any harm.
+	 */
 	private Map<String,String> determineEnvironment() {
 		try {
 			// grab the current environment
 			final Map<String,String> environment = new HashMap<String,String>( System.getenv() );
-						
+
 			// check whether the current environment has a valid CLASSPATH to the XAL core and lib jars and if so don't modify the environment
 			final String currentClassPath = environment.get( "CLASSPATH" );
-			if ( currentClassPath != null && currentClassPath.contains( XAL_CORE_JAR ) && currentClassPath.contains( XAL_LIB_JAR ) ) {
-				System.out.println( "Environment CLASSPATH: " + currentClassPath );
-				return null;
-			}
-			else {
-				// attempt to find the class path in the properties and use it if it references the XAL core and lib jars
-				final String classPathProperty = System.getProperty( "java.class.path" );
-				if ( classPathProperty != null && classPathProperty.contains( XAL_CORE_JAR ) && classPathProperty.contains( XAL_LIB_JAR ) ) {
-					System.out.println( "Property CLASSPATH: " + classPathProperty );
-					environment.put( "CLASSPATH", classPathProperty );
-				}
-				else {		// if all else fails, generate a class path assuming the default relative location
-					// set the watch folder to be the directory containing the jar file that launched this application
-					final URL jarURL = getClass().getProtectionDomain().getCodeSource().getLocation();
-					final File jarFile = new File( jarURL.toURI() );
-					final File applicationsDirectory = jarFile.getParentFile();
-					final File jarRootDirectory = applicationsDirectory.getParentFile();		// directory which is the root of the jar files
-					
-					final String classPath = new File( jarRootDirectory, XAL_LIB_JAR ).getAbsolutePath() + File.pathSeparator + new File( jarRootDirectory, XAL_CORE_JAR ).getAbsolutePath();
-					
-					// if the class path is good, then assign it in the environment
-					if ( classPath != null ) {
-						environment.put( "CLASSPATH", classPath );
-						System.out.println( "Constructed CLASSPATH: " + classPath );
-					}
-				}
 
-				return environment;
+			// URL to xal-shared.jar (or whichever jar holds xal.tools.messaging.MessageCenter)
+			final URL xalLibJar = MessageCenter.class.getProtectionDomain().getCodeSource().getLocation();
+			final File xalLibJarFile = new File( xalLibJar.toURI() );
+
+			final String newClassPath;
+			if ( currentClassPath == null ) newClassPath = xalLibJarFile.getAbsolutePath();
+			else newClassPath = xalLibJarFile.getAbsolutePath() + File.pathSeparator + currentClassPath;
+			environment.put( "CLASSPATH", newClassPath );
+
+			System.out.println( "CLASSPATH: " + environment.get( "CLASSPATH" ) );
+
+			return environment;
 			}
-		}
 		catch ( Exception exception ) {
 			exception.printStackTrace();
 			return null;
