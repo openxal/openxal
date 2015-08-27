@@ -61,10 +61,7 @@ abstract public class Application {
     private JFileChooser _saveFileChooser;   // file chooser for save
 	/** cache and retrieve recently accessed files */
 	private RecentFileTracker _recentFileTracker;
-	
-	/** keep track of the application's default documents folder */
-	private DefaultFolderAccessory _defaultFolderAccessory;
-    
+
     // messaging instance variables
     private MessageCenter _messageCenter;        // local message center
     protected ApplicationListener _noticeProxy;    // proxy for broadcasting ApplicationListener events
@@ -288,7 +285,7 @@ abstract public class Application {
 	 */
 	public void setSaveFileChooser( final JFileChooser fileChooser ) {
 		_saveFileChooser = fileChooser;
-		_defaultFolderAccessory.applyTo( _saveFileChooser );
+		_applicationAdaptor.getDefaultFolderAccessory().applyTo( _saveFileChooser );
 	}
 	
 	
@@ -307,15 +304,14 @@ abstract public class Application {
 	 */
 	public void setOpenFileChooser( final JFileChooser fileChooser ) {
 		_openFileChooser = fileChooser;
-		_defaultFolderAccessory.applyTo( _openFileChooser );
+		_applicationAdaptor.getDefaultFolderAccessory().applyTo( _openFileChooser );
 	}
     
     
     /** Create a file chooser for opening and saving documents. */
     protected void makeFileChoosers() {
 		_recentFileTracker = new RecentFileTracker( getAdaptor().getClass(), "recent_files" );
-		_defaultFolderAccessory = new DefaultFolderAccessory( XalDocument.class, null, getAdaptor().applicationName() );
-		
+
 		setOpenFileChooser( new JFileChooser() );
 		FileFilterFactory.applyFileFilters( _openFileChooser, _applicationAdaptor.readableDocumentTypes() );
         _openFileChooser.setMultiSelectionEnabled( true );
@@ -1045,7 +1041,7 @@ abstract public class Application {
 	 */
 	public File getDefaultDocumentFolder() {
         if ( _defaultDocumentFolder == null ) {
-            _defaultDocumentFolder = _defaultFolderAccessory.getDefaultFolder();
+            _defaultDocumentFolder = _applicationAdaptor.getDefaultDocumentFolder();
         }
         
         return _defaultDocumentFolder;
@@ -1057,7 +1053,7 @@ abstract public class Application {
 	 * @return the default folder for documents as a URL or null if none has been set.
 	 */
 	public URL getDefaultDocumentFolderURL() {
-		return _defaultFolderAccessory.getDefaultFolderURL();
+		return _applicationAdaptor.getDefaultDocumentFolderURL();
 	}
     
     
