@@ -150,12 +150,13 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/**
-	 * Append the formatted values to the output
+	 * Append the formatted values to the output throwing any internal IOException from the output.
+	 * Use this method when you want to handle IO Exceptions
 	 * @param output the output to which to append the formatted values
 	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
 	 * @param values the values to format and output
 	 */
-	public void appendTo( final Appendable output, final CharSequence separator,  final double ... values ) throws IOException {
+	public void appendToIO( final Appendable output, final CharSequence separator,  final double ... values ) throws IOException {
 		if ( values == null || values.length == 0 )  return;	//nothing to append
 
 		// append the first formatted value
@@ -170,20 +171,32 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/**
+	 * Convenience method to append the formatted values to the output suppressing IOException and instead dumping the stack trace upon exception.
+	 * This is useful when calling with outputs that don't through IOException (e.g. StringBuffer and StringBuilder)
+	 * @param output the output to which to append the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	final public void appendTo( final Appendable output, final CharSequence separator,  final double ... values ) {
+		try {
+			appendToIO( output, separator, values );
+		}
+		catch( IOException exception ) {
+			System.err.println( "Error appending formatted values to an appendable output." );
+			exception.printStackTrace();
+		}
+	}
+
+
+	/**
 	 * Print the formatted values
 	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
 	 * @param terminator the characters to append to the end of the line of formatted values (e.g. this could be "\n")
 	 * @param values the values to format and output
 	 */
 	final public void print( final CharSequence separator, final CharSequence terminator, final double ... values ) {
-		try {
-			appendTo( System.out, separator, values );
-			System.out.append( terminator );
-		}
-		catch( IOException exception ) {
-			System.err.println( "Error printing formatted values to the standard output." );
-			exception.printStackTrace();
-		}
+		appendTo( System.out, separator, values );
+		System.out.append( terminator );
 	}
 
 
