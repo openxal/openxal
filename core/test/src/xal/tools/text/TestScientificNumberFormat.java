@@ -15,6 +15,8 @@ import org.junit.*;
 public class TestScientificNumberFormat {
 	@Test
 	public void testPositiveSimpleFormats() {
+		assertFormat( "    4", 1, 5, 4.32 );
+		assertFormat( "   -5", 1, 5, -5.13 );
 		assertFormat( "    3.1416", 5, 10, 3.14159265 );
 	}
 
