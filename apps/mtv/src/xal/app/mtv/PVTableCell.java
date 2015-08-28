@@ -8,7 +8,7 @@ import java.text.*;
 import java.awt.event.*;
 
 import xal.ca.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
 * This is an intermediate object to facilitate the table display 
@@ -39,7 +39,7 @@ public class PVTableCell
 	private boolean wasClicked = false;
 	
 	/** format for displaying numbers */
-	private FortranNumberFormat scientificFormat = new FortranNumberFormat("G12.5");
+	private ScientificNumberFormat scientificFormat = new ScientificNumberFormat( 6, 12, false );
 	
 	//--------------------------------------
 	// constructors:

@@ -12,7 +12,7 @@ import java.util.prefs.*;
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 import xal.extension.fit.DampedSinusoidFit;
 
@@ -67,7 +67,7 @@ public class RingBPMsWaveFormController {
 	//analyzer from fitting package
 	final private Object FITTER_LOCK = new Object();
 	private DampedSinusoidFit fitter;
-	private FortranNumberFormat fmt = new FortranNumberFormat("G10.4");
+	private ScientificNumberFormat fmt = new ScientificNumberFormat( 5, 10, false );
 	//-------------------------------------------------------------
 	//south knobs panel
 	//-------------------------------------------------------------
@@ -91,7 +91,8 @@ public class RingBPMsWaveFormController {
 	//update controller for the changing the set of bar columns in charts
 	private UpdatingEventController ucContent = null;
 
-	private FortranNumberFormat frmt = new FortranNumberFormat("G10.5", true);
+	// format with a fixed length
+	private ScientificNumberFormat frmt = new ScientificNumberFormat( 6, 10 );
 
 	private volatile boolean isShowing = false;
 

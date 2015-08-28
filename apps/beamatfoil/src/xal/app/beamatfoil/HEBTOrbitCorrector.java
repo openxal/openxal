@@ -16,7 +16,7 @@ import java.util.List;
 import java.beans.*;
 
 import xal.extension.widgets.swing.Wheelswitch;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
 import xal.tools.apputils.*;
@@ -106,7 +106,7 @@ public class HEBTOrbitCorrector {
 	private AcceleratorSeq accSeq = null;
 
 	//current format
-	private FortranNumberFormat frmt = new FortranNumberFormat("G10.3");
+	private ScientificNumberFormat frmt = new ScientificNumberFormat( 4, 10, false );
 
 	//message text field. It is actually message text field from Window
 	private JTextField messageTextLocal = new JTextField();
@@ -128,9 +128,9 @@ public class HEBTOrbitCorrector {
 		angleWeightTextField.setValue(1.0);
 		
 		
-		fieldWeightTextField.setDecimalFormat(frmt);
-		posWeightTextField.setDecimalFormat(frmt);
-		angleWeightTextField.setDecimalFormat(frmt);
+		fieldWeightTextField.setNumberFormat(frmt);
+		posWeightTextField.setNumberFormat(frmt);
+		angleWeightTextField.setNumberFormat(frmt);
 
 		fieldWeightTextField.setHorizontalAlignment(JTextField.CENTER);
 		posWeightTextField.setHorizontalAlignment(JTextField.CENTER); 
@@ -215,8 +215,8 @@ public class HEBTOrbitCorrector {
 		ftDownPanel.add(ftDown0Panel);
 		ftDownPanel.add(ftDown1Panel);
 		
-		posResTextField.setDecimalFormat(frmt);
-		angleResTextField.setDecimalFormat(frmt);
+		posResTextField.setNumberFormat(frmt);
+		angleResTextField.setNumberFormat(frmt);
 		posResTextField.setHorizontalAlignment(JTextField.CENTER);
 		angleResTextField.setHorizontalAlignment(JTextField.CENTER); 
 		

@@ -13,7 +13,7 @@ import java.util.*;
 
 import xal.ca.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
  * This class is a Table Model to show the Name-Value pairs. 
@@ -30,7 +30,7 @@ public class  NameValueTableModel extends AbstractTableModel{
     private static final long serialVersionUID = 1L;
 
 	private Vector<TableRecord> tb_recV = new Vector<TableRecord>();
-	private FortranNumberFormat format = new FortranNumberFormat("G12.5");
+	private ScientificNumberFormat format = new ScientificNumberFormat( 6, 12, false );
 	private String[] col_names = new String[2];
 	
 	/**

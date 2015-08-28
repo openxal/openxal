@@ -8,7 +8,7 @@ import xal.extension.scan.WrappedChannel;
 
 import xal.smf.impl.*;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
  *  Description of the Class
@@ -27,7 +27,7 @@ public class Corr_Element {
 	private double upperFieldLimit = Double.MAX_VALUE;
 
 	//field value format
-	private FortranNumberFormat frmt = new FortranNumberFormat("G10.4");
+	private ScientificNumberFormat frmt = new ScientificNumberFormat( 5, 10, false );
 
 	//position vs. B field coeff with keys as Quad_Elements
 	//dimension [mm/T]

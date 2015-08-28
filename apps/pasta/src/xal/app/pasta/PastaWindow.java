@@ -657,7 +657,7 @@ public class PastaWindow extends AcceleratorWindow {
 	gbc.weightx = 0.; gbc.weighty = 1.;	
 	gbc.gridx = 1; gbc.gridy = sumy++;
 	nModelStepsField = new DoubleInputTextField( (new Integer(theDoc.analysisStuff.nCalcPoints)).toString());
-	nModelStepsField.setDecimalFormat(new DecimalFormat("###"));
+	nModelStepsField.setNumberFormat(new DecimalFormat("###"));
 	nModelStepsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 theDoc.analysisStuff.nCalcPoints = (int) nModelStepsField.getValue();

@@ -14,7 +14,7 @@ import java.awt.event.*;
 
 import xal.ca.*;
 import xal.extension.widgets.plot.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.tools.xml.*;
 
 import xal.extension.scan.MonitoredPV;
@@ -255,8 +255,8 @@ public class ScalarPVs {
 	 */
 	public void writeChart(BufferedWriter out) {
 
-		FortranNumberFormat fmtT = new FortranNumberFormat("G20.13");
-		FortranNumberFormat fmtY = new FortranNumberFormat("G10.3");
+		ScientificNumberFormat fmtT = new ScientificNumberFormat( 14, 20, false );
+		ScientificNumberFormat fmtY = new ScientificNumberFormat( 4, 10 , false );
 
 		try {
 

@@ -17,7 +17,7 @@ import javax.swing.tree.TreePath;
 
 import java.util.*;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 
 /**
@@ -36,7 +36,7 @@ public class DevTree extends JTree {
 	
 	private JRadioButton treeButton = new JRadioButton(); 
 	
-	FortranNumberFormat formatter = new FortranNumberFormat("G8.4");
+	ScientificNumberFormat formatter = new ScientificNumberFormat( 5, 8, false );
 	
 	/**
 	 *  Costructor

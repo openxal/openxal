@@ -10,7 +10,7 @@ import java.util.*;
 import xal.extension.scan.UpdatingEventController;
 import xal.tools.xml.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.tools.data.DataAdaptor;
 
 import xal.extension.widgets.plot.barchart.*;
@@ -68,7 +68,7 @@ public class TrLineBPMsController {
 	//update controller for the changing the set of bar columns in charts
 	private UpdatingEventController ucContent = null;
 
-	private FortranNumberFormat frmt = new FortranNumberFormat("G10.4");
+	private ScientificNumberFormat frmt = new ScientificNumberFormat( 5, 10, false );
 
 
 	/**

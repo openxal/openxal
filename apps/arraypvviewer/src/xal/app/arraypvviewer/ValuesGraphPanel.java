@@ -92,8 +92,8 @@ public class ValuesGraphPanel {
         panel.setBorder( border );
 
         //GUI elements definition
-        sampleStart_Text.setDecimalFormat( int_Format );
-        sampleStop_Text.setDecimalFormat( int_Format );
+        sampleStart_Text.setNumberFormat( int_Format );
+        sampleStop_Text.setNumberFormat( int_Format );
 
         sampleStart_Text.setHorizontalAlignment( JTextField.CENTER );
         sampleStop_Text.setHorizontalAlignment( JTextField.CENTER );

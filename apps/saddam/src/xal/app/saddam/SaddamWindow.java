@@ -202,7 +202,7 @@ public class SaddamWindow extends AcceleratorWindow {
 	mainPanel.add(selectValueLabel);
 	
 	valueField = new DoubleInputTextField( (new Double(theDoc.newSetValue)).toString());
-	valueField.setDecimalFormat(new DecimalFormat("####.#####"));
+	valueField.setNumberFormat(new DecimalFormat("####.#####"));
 	valueField.setEnabled(false);
 	valueField.setPreferredSize(new Dimension(80, 20));
 	gbc.weightx = 1.; gbc.weighty = 1.;	

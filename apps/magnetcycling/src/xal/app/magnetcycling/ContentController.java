@@ -579,11 +579,11 @@ public class ContentController {
 		maxCurrTimeText.setNormalBackground(Color.white);
 		maxCurrText.setNormalBackground(Color.white);
 
-		changeRateText.setDecimalFormat(decimalFormat);
-		nCyclesText.setDecimalFormat(intFormat);
-		minCurrTimeText.setDecimalFormat(decimalFormat);
-		maxCurrTimeText.setDecimalFormat(decimalFormat);
-		maxCurrText.setDecimalFormat(decimalFormat);
+		changeRateText.setNumberFormat(decimalFormat);
+		nCyclesText.setNumberFormat(intFormat);
+		minCurrTimeText.setNumberFormat(decimalFormat);
+		maxCurrTimeText.setNumberFormat(decimalFormat);
+		maxCurrText.setNumberFormat(decimalFormat);
 
 		changeRateText.setHorizontalAlignment(JTextField.CENTER);
 		nCyclesText.setHorizontalAlignment(JTextField.CENTER);

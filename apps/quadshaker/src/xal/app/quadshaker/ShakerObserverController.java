@@ -15,7 +15,7 @@ import xal.extension.widgets.plot.*;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
 import xal.extension.widgets.swing.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 import xal.extension.fit.lsm.Polynomial;
 
@@ -55,7 +55,7 @@ public class ShakerObserverController {
 	private JLabel analysisResYLabel = new JLabel("Analysis for V(Y):", JLabel.LEFT);
 	private JTextArea analysisXText = new JTextArea(2, 120);
 	private JTextArea analysisYText = new JTextArea(2, 120);
-	private FortranNumberFormat numberFormat = new FortranNumberFormat("G10.4");
+	private ScientificNumberFormat numberFormat = new ScientificNumberFormat( 5, 10, false );
 	//LSQ Fitters
 	private Polynomial polinom_x_fitter = new Polynomial();
 	private Polynomial polinom_y_fitter = new Polynomial();
