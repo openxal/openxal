@@ -32,31 +32,66 @@ public class ScientificNumberFormat extends NumberFormat {
 	/** field width of right justified text to display */
 	private int _fieldWidth;
 
+	/** format the number padding with spaces to the left (right justification) as needed to fill out the field width */
+	private boolean _fixedLength;
+
+
+	/**
+	 * Designated constructor.
+	 * @param significantDigits total number of significant digits to display
+	 * @param fieldWidth field width of right justified text to display
+	 * @param fixedLength specified whether to pad the formatted output to the left (right justification) as needed to fill out the field width
+	 */
+	public ScientificNumberFormat( final int significantDigits, final int fieldWidth, final boolean fixedLength ) {
+		setSignificantDigits( significantDigits );
+		setFieldWidth( fieldWidth );
+		setFixedLength( fixedLength );
+	}
+
 
 	/** 
-	 * Designated constructor 
+	 * Convenience constructor.
+	 * By default, formats a value with padding to the field width (set fixedLength to change mode).
 	 * @param significantDigits total number of significant digits to display
 	 * @param fieldWidth field width of right justified text to display
 	 */
 	public ScientificNumberFormat( final int significantDigits, final int fieldWidth ) {
-		setSignificantDigits( significantDigits );
-		setFieldWidth( fieldWidth );
+		this( significantDigits, fieldWidth, true );
 	}
 
 
 	/**
-	 * Convenience constructor. 
+	 * Convenience constructor.
 	 * The width is significant digits + 1 space + 1 sign + 1 decimal point + 5 for exponent field.
+	 * By default, formats a value without padding to the field width (set fixedLength to change mode).
 	 * @param significantDigits total number of significant digits to display
 	 */
 	public ScientificNumberFormat( final int significantDigits ) {
-		this( significantDigits, significantDigits + 1 + 1 + 1 + 5 );
+		this( significantDigits, significantDigits + 1 + 1 + 1 + 5, false );
 	}
 
 
-	/** Empty convenience constructor defaulting to four significant digits. */
+	/** 
+	 * Empty convenience constructor defaulting to four significant digits. 
+	 * By default, formats a value without padding to the field width (set fixedLength to change mode).
+	 */
 	public ScientificNumberFormat() {
 		this( 4 );
+	}
+
+
+	/** 
+	 * Determine whether the formatted output is padded with spaces to the left (right justification) as needed to fill out the fixed width.
+	 * @return true if using fixed length mode and false if not
+	 */
+	public boolean isFixedLength() {
+		return _fixedLength;
+	}
+
+
+	/** format values using a the field width and padding with spaces as needed */
+	public void setFixedLength( final boolean fixedLength ) {
+		_fixedLength = fixedLength;
 	}
 
 
@@ -95,7 +130,7 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/** 
-	 * Get the field width for displaying the right justified output.
+	 * Get the field width for displaying the right justified output when used with fixed length mode.
 	 * @return the field width
 	 */
 	public int getFieldWidth() {
@@ -104,7 +139,7 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/** 
-	 * Set the field width 
+	 * Set the field width (used with fixed length mode to format output with fixed width padding with spaces as needed)
 	 * @param fieldWidth field width of right justified text to display
 	 */
 	public void setFieldWidth( final int fieldWidth ) {
@@ -125,11 +160,13 @@ public class ScientificNumberFormat extends NumberFormat {
 			buffer = EXPONENTIAL_FORMAT.format( number, inputBuffer, position );
 		}
 
-		// pad with spaces to the left of the number for a total width matching the field width
-		final int spaces = _fieldWidth - buffer.length();
-		if ( spaces > 0 ) {
-			for( int space = 0 ; space < spaces ; space++ ) {
-				buffer.insert( 0, " " );
+		// if fixed length mode, pad with spaces to the left of the number for a total width matching the field width
+		if ( _fixedLength ) {
+			final int spaces = _fieldWidth - buffer.length();
+			if ( spaces > 0 ) {
+				for( int space = 0 ; space < spaces ; space++ ) {
+					buffer.insert( 0, " " );
+				}
 			}
 		}
 
