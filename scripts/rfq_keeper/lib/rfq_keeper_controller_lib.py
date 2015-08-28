@@ -10,11 +10,12 @@ from java.lang import *
 from javax.swing import *
 
 from java.awt import Color, BorderLayout, GridLayout, FlowLayout
-from java.text import SimpleDateFormat,NumberFormat
+from java.text import SimpleDateFormat,NumberFormat,DecimalFormat
 from java.awt.event import ActionEvent, ActionListener
 
 from xal.ca import ChannelFactory
 from xal.extension.widgets.swing import DoubleInputTextField 
+from xal.tools.text import FortranNumberFormat
 
 false= Boolean("false").booleanValue()
 true= Boolean("true").booleanValue()
@@ -38,27 +39,44 @@ class PV_Data_Reader_Setter:
 		self.pv_continuous = ChannelFactory.defaultFactory().getChannel("ICS_Tim:Gate_BeamOn:SSMode")
 		self.pv_reprate = ChannelFactory.defaultFactory().getChannel("ICS_Tim:Gate_BeamOn:RR")
 		self.pv_rfq_PW = ChannelFactory.defaultFactory().getChannel("RFQ_LLRF:FCM1:CtlRFPW")
+		self.pv_chumps_beam_on = ChannelFactory.defaultFactory().getChannel("MEBT_Diag:ChMPS:BeamOn")
+		self.pv_chumps_beam_gap = ChannelFactory.defaultFactory().getChannel("MEBT_Diag:ChMPS:BeamInGap")
+		self.pv_target_pwr = ChannelFactory.defaultFactory().getChannel("RTBT_Diag:BCM25I:Power1_KW")		
 		self.pv_current_tbt.connectAndWait(0.5)
 		self.pv_beamOn.connectAndWait(0.5)
 		self.pv_continuous.connectAndWait(0.5)
 		self.pv_reprate.connectAndWait(0.5)
 		self.pv_rfq_PW.connectAndWait(0.5)
+		self.pv_chumps_beam_on.connectAndWait(0.5)
+		self.pv_chumps_beam_gap.connectAndWait(0.5)
+		self.pv_target_pwr.connectAndWait(0.5)
 		self.current_integral = 0.
 		self.beam_on = 0
 		self.continuous = 0
 		self.reprate = 0.
 		self.pw = 0.
+		self.target_pwr = 0.
 		
 	def readData(self):
-		current_arr = self.pv_current_tbt.getArrDbl() 
-		current_arr = current_arr[1:]
-		self.current_integral = self.currArrAnalysis(current_arr)
+		#current_arr = self.pv_current_tbt.getArrDbl() 
+		#current_arr = current_arr[1:]
+		#self.current_integral = self.currArrAnalysis(current_arr)
+		self.current_integral = self.pv_chumps_beam_on.getValDbl() + self.pv_chumps_beam_gap.getValDbl()
 		self.beam_on = self.pv_beamOn.getValInt()
-		self.continuous = self.pv_continuous.getValInt()
+		#self.continuous = 1 - self.pv_continuous.getValInt()
+		self.continuous = 1 - self.pv_continuous.getValEnum()
+		#print "debug continuous text =",self.pv_continuous.getValString()
 		self.reprate = self.pv_reprate.getValDbl()
 		self.pw = self.pv_rfq_PW.getValDbl()
+		self.target_pwr = self.pv_target_pwr.getValDbl()
+		#print "debug current_integral =",self.current_integral
+		#print "debug beam_on =",self.beam_on
+		#print "debug continuous =",self.continuous
+		#print "debug reprate =",self.reprate
+		#print "debug pw =",self.pw		
 		
-	def currArrAnalysis(self,arr):
+		
+	def currArrAnalysis(self,current_arr):
 		max_val = current_arr[0]
 		for val in current_arr:
 			if(val > max_val):
@@ -71,13 +89,15 @@ class PV_Data_Reader_Setter:
 			if(threshold < val and threshold > val_old):
 				ind_min = ind
 				break
+			val_old = val
 		val_old = current_arr[len(current_arr)-1]
 		ind_max = len(current_arr)-1
 		for ind in range(len(current_arr)-2,0,-1):
 			val = current_arr[ind]
 			if(threshold < val and threshold > val_old):
 				ind_max = ind
-				break			
+				break		
+			val_old = val
 		curr_integral = 0.
 		if(ind_max > ind_min): 
 			for ind in range(ind_min,ind_max):
@@ -86,8 +106,9 @@ class PV_Data_Reader_Setter:
 		
 	def setRFQ_PW(self,pw):
 		#""" ?????? """
-		self.pv_rfq_PW.putVal(pw)
-		#pass
+		#print "debug pw=",int(pw)
+		#self.pv_rfq_PW.putVal(int(pw))
+		pass
 		
 	def getRFQ_PW(self):
 		self.pw = self.pv_rfq_PW.getValDbl()
@@ -102,32 +123,32 @@ class Keeper_Runner(Runnable):
 		statusTextField = self.rfq_keeper_controller.star_stop_keeper_panel.keeper_status_text
 		statusTextField.setText("Running!")	
 		rfq_pw_parameters_holder = self.rfq_keeper_controller.rfq_pw_parameters_holder
-		pw_addition_old = 0.
+		pw_addition_old = 0
 		update_time = self.rfq_keeper_controller.init_keeper_panel.update_time_text.getValue()
-		while(2 > 1):
+		while(2 > 1):		
 			messageTextField.setText("")	
-			try:
-				if(self.rfq_keeper_controller.keeperShouldStop): return
-				time.sleep(update_time)
-				if(self.rfq_keeper_controller.keeperShouldStop): return
-				self.rfq_keeper_controller.pv_data_reader_setter.readData()
-				pw_addition_new = rfq_pw_parameters_holder.calculateAdditionPW()
-				pw = self.rfq_keeper_controller.pv_data_reader_setter.pw - pw_addition_old + pw_addition_new
-				self.rfq_keeper_controller.pv_data_reader_setter.setRFQ_PW(pw)
-				pw_addition_old = pw_addition_new
-				st = "Running!"+" extra PW= %5.1 "%pw_addition_new
-				statusTextField.setText(st)
-				#-----------debug section START
-				#print "debug current_integral =",self.rfq_keeper_controller.pv_data_reader_setter.current_integral
-				#print "debug beam_on =",self.rfq_keeper_controller.pv_data_reader_setter.beam_on
-				#print "debug continuous =",self.rfq_keeper_controller.pv_data_reader_setter.continuous
-				#print "debug reprate =",self.rfq_keeper_controller.pv_data_reader_setter.reprate
-				#print "debug pw =",self.rfq_keeper_controller.pv_data_reader_setter.pw
-				#-----------debug section STOP
-				if(self.rfq_keeper_controller.keeperShouldStop): return
-			except:
-				messageTextField.setText("Cannot read PV! Stop!")
-				break
+			#try:
+			if(self.rfq_keeper_controller.keeperShouldStop): break
+			time.sleep(update_time)
+			if(self.rfq_keeper_controller.keeperShouldStop): break
+			self.rfq_keeper_controller.pv_data_reader_setter.readData()
+			pw_addition_new = rfq_pw_parameters_holder.calculateAdditionPW()
+			pw = self.rfq_keeper_controller.pv_data_reader_setter.pw - pw_addition_old + pw_addition_new
+			self.rfq_keeper_controller.pv_data_reader_setter.setRFQ_PW(pw)
+			pw_addition_old = pw_addition_new
+			st = "Running! Extra PW= %7.0f "%pw_addition_new
+			statusTextField.setText(st)
+			#-----------debug section START
+			#print "debug current_integral =",self.rfq_keeper_controller.pv_data_reader_setter.current_integral
+			#print "debug beam_on =",self.rfq_keeper_controller.pv_data_reader_setter.beam_on
+			#print "debug continuous =",self.rfq_keeper_controller.pv_data_reader_setter.continuous
+			#print "debug reprate =",self.rfq_keeper_controller.pv_data_reader_setter.reprate
+			#print "debug pw =",self.rfq_keeper_controller.pv_data_reader_setter.pw
+			#-----------debug section STOP
+			if(self.rfq_keeper_controller.keeperShouldStop): break
+			#except:
+				#messageTextField.setText("Cannot read PV! Stop!")
+				#break
 		statusTextField.setText("Not running!")
 		self.rfq_keeper_controller.keeperShouldStop = false
 		self.rfq_keeper_controller.keeperIsRuning = false
@@ -141,25 +162,32 @@ class Keeper_Runner(Runnable):
 
 class RFQ_PW_Parameter_Holder:
 	def __init__(self,rfq_keeper_controller):
-		self.pw_addition = 0.
+		self.rfq_keeper_controller = rfq_keeper_controller
 		
 	def calculateAdditionPW(self):
+		pw_addition_local = 0.
 		pv_data_reader_setter = self.rfq_keeper_controller.pv_data_reader_setter
 		current_integral = pv_data_reader_setter.current_integral
 		beam_on = pv_data_reader_setter.beam_on
 		beam_countinuous = pv_data_reader_setter.continuous
 		rep_rate = pv_data_reader_setter.reprate	
+		init_keeper_panel = self.rfq_keeper_controller.init_keeper_panel		
+		max_pw_addition_local = init_keeper_panel.rfq_max_pw_correction_text.getValue()
 		#------------------------------------------
-		init_keeper_panel = self.rfq_keeper_controller.init_keeper_panel
 		current_integral_init = init_keeper_panel.current_integral_text.getValue()
 		rep_rate_init = init_keeper_panel.reprate_text.getValue()
-		max_pw_addition = init_keeper_panel.rfq_max_pw_correction_text.getValue()
 		if(current_integral_init != 0.):
 			coeff = current_integral*rep_rate/(current_integral_init*rep_rate_init)
-			self.pw_addition = max_pw_addition*(1.0-beam_on*beam_countinuous*coeff)
+			pw_addition_local = max_pw_addition_local*(1.0-beam_on*beam_countinuous*coeff)
 		else:
-			self.pw_addition = 0.
-		return self.pw_addition
+			pw_addition_local = 0.
+		#----- calculation through the target power
+		target_pwr_init = init_keeper_panel.target_pwr_text.getValue()
+		if(target_pwr_init == 0.): return 0
+		target_pwr = pv_data_reader_setter.target_pwr
+		coeff = 1.0-target_pwr/target_pwr_init
+		pw_addition_local = max_pw_addition_local*(1.0-target_pwr/target_pwr_init)
+		return int(pw_addition_local)
 
 #------------------------------------------------------------------------
 #           Auxiliary panels
@@ -201,22 +229,25 @@ class Init_Keeper_Panel(JPanel):
 		#---------------------------------------------
 		buttons_panel.add(init_keeper_button)
 		#---------------------------------------------
-		info_panel = JPanel(GridLayout(5,1))
-		label_current_integral = JLabel("Current Integral=",JLabel.RIGHT)
+		info_panel = JPanel(GridLayout(6,2))
+		label_current_integral = JLabel("Current Integral [nC]=",JLabel.RIGHT)
 		label_reprate = JLabel("Rep. rate[Hz]=",JLabel.RIGHT)
 		label_rfq_pw = JLabel("RFQ Pulse Width=",JLabel.RIGHT)
+		label_target_pwr =JLabel("Avg. Pwr. on Target[kW]=",JLabel.RIGHT)
 		label_rfq_max_pw_correction = JLabel("Max PW Correction=",JLabel.RIGHT)
 		label_update_time = JLabel("Update Time [sec]=",JLabel.RIGHT)
 		#-------
 		self.current_integral_text = DoubleInputTextField("G12.5")
 		self.reprate_text = DoubleInputTextField("F4.1")
 		self.rfq_pw_text = DoubleInputTextField("F6.1")
+		self.target_pwr_text = DoubleInputTextField("F9.3")
 		self.rfq_max_pw_correction_text = DoubleInputTextField("F6.1")
 		self.update_time_text = DoubleInputTextField("F6.1")
 		#-------
 		self.current_integral_text.setHorizontalAlignment(JTextField.CENTER)
 		self.reprate_text.setHorizontalAlignment(JTextField.CENTER)
 		self.rfq_pw_text.setHorizontalAlignment(JTextField.CENTER)
+		self.target_pwr_text.setHorizontalAlignment(JTextField.CENTER)
 		self.rfq_max_pw_correction_text.setHorizontalAlignment(JTextField.CENTER)
 		self.update_time_text.setHorizontalAlignment(JTextField.CENTER)
 		#-------
@@ -228,7 +259,9 @@ class Init_Keeper_Panel(JPanel):
 		info_panel.add(label_reprate)
 		info_panel.add(self.reprate_text)		
 		info_panel.add(label_rfq_pw)
-		info_panel.add(self.rfq_pw_text)		
+		info_panel.add(self.rfq_pw_text)	
+		info_panel.add(label_target_pwr)
+		info_panel.add(self.target_pwr_text)
 		info_panel.add(label_rfq_max_pw_correction)
 		info_panel.add(self.rfq_max_pw_correction_text)
 		info_panel.add(label_update_time)
@@ -261,6 +294,7 @@ class Init_Keeper_Button_Listener(ActionListener):
 			init_keeper_panel.current_integral_text.setValue(pv_data_reader_setter.current_integral)
 			init_keeper_panel.reprate_text.setValue(pv_data_reader_setter.reprate)
 			init_keeper_panel.rfq_pw_text.setValue(pv_data_reader_setter.pw)
+			init_keeper_panel.target_pwr_text.setValue(pv_data_reader_setter.target_pwr)
 		except:
 			messageTextField.setText("Cannot read PV to initilize the RFQ Keeper!")
 
