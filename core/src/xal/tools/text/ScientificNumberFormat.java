@@ -54,9 +54,9 @@ public class ScientificNumberFormat extends NumberFormat {
 	}
 
 
-	/** Empty convenience constructor defaulting to five significant digits. */
+	/** Empty convenience constructor defaulting to four significant digits. */
 	public ScientificNumberFormat() {
-		this( 5 );
+		this( 4 );
 	}
 
 
