@@ -6,6 +6,7 @@
 
 package xal.tools.text;
 
+import java.io.IOException;
 import java.text.*;
 
 
@@ -145,6 +146,54 @@ public class ScientificNumberFormat extends NumberFormat {
 	/** Implement the abstract parse method by delegating to an internal number format */
 	public Number parse( final String source, final ParsePosition position ) {
 		return SIMPLE_FORMAT.parse( source, position );
+	}
+
+
+	/**
+	 * Append the formatted values to the output
+	 * @param output the output to which to append the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	public void appendTo( final Appendable output, final CharSequence separator,  final double ... values ) throws IOException {
+		if ( values == null || values.length == 0 )  return;	//nothing to append
+
+		// append the first formatted value
+		output.append( format(values[0]) );
+
+		// append the remaining formatted values with the leading separator
+		for ( int index = 1 ; index < values.length ; index++ ) {
+			output.append( separator );
+			output.append( format( values[index] ) );
+		}
+	}
+
+
+	/**
+	 * Print the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param terminator the characters to append to the end of the line of formatted values (e.g. this could be "\n")
+	 * @param values the values to format and output
+	 */
+	final public void print( final CharSequence separator, final CharSequence terminator, final double ... values ) {
+		try {
+			appendTo( System.out, separator, values );
+			System.out.append( terminator );
+		}
+		catch( IOException exception ) {
+			System.err.println( "Error printing formatted values to the standard output." );
+			exception.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * Convenience method to print the formatted values with the system's trailing line terminator
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	final public void println( final CharSequence separator, final double ... values ) {
+		this.print( separator, System.getProperty("line.separator"), values );
 	}
 }
 
