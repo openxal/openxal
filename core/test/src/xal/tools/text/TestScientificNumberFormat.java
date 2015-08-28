@@ -55,10 +55,26 @@ public class TestScientificNumberFormat {
 	}
 
 
-	/** Assert whether the formatted output matches the specified reference */
+	@Test
+	public void testFormattedOutput() {
+		assertFormattedOutput( "      1.49,      3.14,     -2.60,     -5.00,    5.50E3,   7.30E17, -1.24E-19", 3, 10, ",",   1.494999, 3.14159, -2.6, -5, 5496.48, 7.298534E17, -1.2359E-19 );
+	}
+
+
+	/** Assert whether the formatted value matches the specified reference */
 	static private void assertFormat( final String reference, final int significantDigits, final int width, final double value ) {
 		final ScientificNumberFormat format = new ScientificNumberFormat( significantDigits, width );
 		final String output = format.format( value );
 		Assert.assertEquals( "Failed format equality for number: " + value + " with output: " + output + " of length: " + output.length(), reference, output );
+	}
+
+
+	/** Assert whether the formatted output matches the specified reference */
+	static private void assertFormattedOutput( final String reference, final int significantDigits, final int width, final CharSequence separator, final double ... values ) {
+		final ScientificNumberFormat format = new ScientificNumberFormat( significantDigits, width );
+		final StringBuffer buffer = new StringBuffer();
+		format.appendTo( buffer, separator, values );
+		final String output = buffer.toString();
+		Assert.assertEquals( "Failed formatted output equality for values with output >>" + output + "<< and expected result of >>" + reference + "<<", reference, output );
 	}
 }
