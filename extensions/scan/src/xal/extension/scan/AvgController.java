@@ -53,7 +53,7 @@ public class AvgController{
 	timeDelayText.setEditable(false);
 
 	avgNumberText.setDecimalFormat(avgNumberFormat);
-	timeDelayText.setDecimalFormat(timeDelayFormat);
+	timeDelayText.setNumberFormat(timeDelayFormat);
 
 	changeEvent = new ChangeEvent(this);
 
@@ -151,7 +151,7 @@ public class AvgController{
     }
 
     public void setTimeDelayFormat(DecimalFormat timeDelayFormat){
-	timeDelayText.setDecimalFormat(avgNumberFormat);
+	timeDelayText.setNumberFormat(avgNumberFormat);
     }
 
     public void setOnOff(boolean isOnIn){

@@ -212,7 +212,7 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 		commonPanel.setBackground(commonPanel.getBackground().darker());
 
 		designEnrgDevText.setNormalBackground(Color.white);
-		designEnrgDevText.setDecimalFormat(ampFormat);
+		designEnrgDevText.setNumberFormat(ampFormat);
 		designEnrgDevText.setHorizontalAlignment(JTextField.CENTER);
 		designEnrgDevText.setValue(designEnrg_tmp);
 
@@ -478,8 +478,8 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 		paramPV_ValueText.setEditable(false);
 		paramPV_RB_ValueText.setEditable(false);
 
-		paramPV_ValueText.setDecimalFormat(ampFormat);
-		paramPV_RB_ValueText.setDecimalFormat(ampFormat);
+		paramPV_ValueText.setNumberFormat(ampFormat);
+		paramPV_RB_ValueText.setNumberFormat(ampFormat);
 
 		paramPV_ValueText.setHorizontalAlignment(JTextField.CENTER);
 		paramPV_RB_ValueText.setHorizontalAlignment(JTextField.CENTER);
@@ -496,9 +496,9 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 		guessAmpP0_Text.setEditable(false);
 		guessPhaseP0_Text.setEditable(false);
 
-		widthP0_Text.setDecimalFormat(ampFormat);
-		guessAmpP0_Text.setDecimalFormat(ampFormat);
-		guessPhaseP0_Text.setDecimalFormat(phaseFormat);
+		widthP0_Text.setNumberFormat(ampFormat);
+		guessAmpP0_Text.setNumberFormat(ampFormat);
+		guessPhaseP0_Text.setNumberFormat(phaseFormat);
 
 		widthP0_Text.setHorizontalAlignment(JTextField.CENTER);
 		guessAmpP0_Text.setHorizontalAlignment(JTextField.CENTER);
@@ -731,21 +731,21 @@ public final class AnalysisCntrlDTLPhase extends AnalysisController {
 
 		//text elements
 		enrgDltP1_Text.setEditable(false);
-		enrgDltP1_Text.setDecimalFormat(ampFormat);
+		enrgDltP1_Text.setNumberFormat(ampFormat);
 		enrgDltP1_Text.setHorizontalAlignment(JTextField.CENTER);
 		enrgDltP1_Text.removeInnerFocusListener();
 		enrgDltP1_Text.setText(null);
 		enrgDltP1_Text.setBackground(Color.white);
 
 		guessAmpP1_Text.setEditable(false);
-		guessAmpP1_Text.setDecimalFormat(ampFormat);
+		guessAmpP1_Text.setNumberFormat(ampFormat);
 		guessAmpP1_Text.setHorizontalAlignment(JTextField.CENTER);
 		guessAmpP1_Text.removeInnerFocusListener();
 		guessAmpP1_Text.setText(null);
 		guessAmpP1_Text.setBackground(Color.white);
 
 		guessPhaseP1_Text.setEditable(false);
-		guessPhaseP1_Text.setDecimalFormat(phaseFormat);
+		guessPhaseP1_Text.setNumberFormat(phaseFormat);
 		guessPhaseP1_Text.setHorizontalAlignment(JTextField.CENTER);
 		guessPhaseP1_Text.removeInnerFocusListener();
 		guessPhaseP1_Text.setText(null);

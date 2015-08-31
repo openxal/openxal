@@ -48,8 +48,8 @@ public class ValidationController{
         lowLimText.setNormalBackground(Color.white);
         uppLimText.setNormalBackground(Color.white);
 
-        lowLimText.setDecimalFormat(limFormat);
-        uppLimText.setDecimalFormat(limFormat);
+        lowLimText.setNumberFormat(limFormat);
+        uppLimText.setNumberFormat(limFormat);
  
 	lowLimText.setEditable(false);
 	uppLimText.setEditable(false);
