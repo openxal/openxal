@@ -35,16 +35,13 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	private ApplicationResourceManager _resourceManager;
 
 	/** accessory for this application's default document folder */
-	final private DefaultFolderAccessory DEFAULT_FOLDER_ACCESSORY;
+	private DefaultFolderAccessory DEFAULT_FOLDER_ACCESSORY = null;
 
 
 	/** Constructor */
 	public AbstractApplicationAdaptor() {
 		// resources are located using the default resource manager
 		setResourcesLocation( null );
-
-		// construct the accessory for the default document folder for this application
-		DEFAULT_FOLDER_ACCESSORY = new DefaultFolderAccessory( XalDocument.class, null, applicationName() );
 	}
 
 
@@ -53,6 +50,12 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @return the default folder accessory
 	 */
 	final DefaultFolderAccessory getDefaultFolderAccessory() {
+		// lazily instantiate the accessory for the default document folder for this application
+		// It is necessary for this to be lazy (not in the adaptor's constructor) to support script based applications
+		// as they (e.g. JRuby) don't call the overriden methods via the super construtor within the inherited constructor.
+		if ( DEFAULT_FOLDER_ACCESSORY == null ) {
+			DEFAULT_FOLDER_ACCESSORY = new DefaultFolderAccessory( XalDocument.class, null, applicationName() );
+		}
 		return DEFAULT_FOLDER_ACCESSORY;
 	}
 
@@ -62,7 +65,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @return the default folder for documents or null if none has been set.
 	 */
 	final public File getDefaultDocumentFolder() {
-		return DEFAULT_FOLDER_ACCESSORY.getDefaultFolder();
+		return getDefaultFolderAccessory().getDefaultFolder();
 	}
 
 
@@ -71,7 +74,7 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	 * @return the default folder for documents as a URL or null if none has been set.
 	 */
 	final public URL getDefaultDocumentFolderURL() {
-		return DEFAULT_FOLDER_ACCESSORY.getDefaultFolderURL();
+		return getDefaultFolderAccessory().getDefaultFolderURL();
 	}
 
 
