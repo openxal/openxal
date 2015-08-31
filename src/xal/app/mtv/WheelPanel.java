@@ -15,7 +15,7 @@ import java.util.*;
 import xal.extension.widgets.swing.Wheelswitch;
 
 import xal.ca.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
  * The window representation / view of an xiodiag document
@@ -37,7 +37,7 @@ public class WheelPanel extends JPanel {
     private PropertyChangeListener wheelListener;
 		private PVTableCell pv_cell = null;
 		
-    private FortranNumberFormat scientificFormat = new FortranNumberFormat("G12.5");
+    private ScientificNumberFormat scientificFormat = new ScientificNumberFormat( 6, 12, false );
 		
     /** Creates a new instance of MainWindow */
     public WheelPanel(MTVDocument aDocument) {
