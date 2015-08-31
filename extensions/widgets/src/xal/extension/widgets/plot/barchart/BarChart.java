@@ -7,7 +7,7 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.text.*;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 
@@ -33,7 +33,7 @@ public class BarChart {
 
 	private SmartFormater formatter = new SmartFormater();
 
-	private FortranNumberFormat fortranFrmt = new FortranNumberFormat("G8.3");
+	private ScientificNumberFormat fortranFrmt = new ScientificNumberFormat( 4, 8, false );
 
 	//the bar line width
 	private volatile int width = 3;

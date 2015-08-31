@@ -24,7 +24,7 @@ import java.text.*;
  * to get and to set double value to this container. User has to add one
  * or several ActionListeners as usual to interact with the external code.
  * By default the format of this text field is ###.###. To specify another 
- * format the method <code> setDecimalFormat </code>should be used.
+ * format the method <code> setNumberFormat </code>should be used.
  */
 
 public class DoubleInputTextField extends JTextField{
@@ -33,7 +33,7 @@ public class DoubleInputTextField extends JTextField{
     private Color alertColor  = Color.orange ;
     private Color normalColor = null;
 
-    private DecimalFormat format = new DecimalFormat("####.###");
+    private NumberFormat format = new DecimalFormat("####.###");
     private double val = 0.0;
 
     private DocumentListener docListener = null;
@@ -79,7 +79,7 @@ public class DoubleInputTextField extends JTextField{
     /** Creates new DoubleInputTextField with predefined value, 
      *  format, and number of columns 
      */
-    public DoubleInputTextField(double valIn, DecimalFormat formatIn, int col){
+    public DoubleInputTextField(double valIn, NumberFormat formatIn, int col){
 	super(col);
 	if(formatIn != null){
 	    format = formatIn;
@@ -131,31 +131,44 @@ public class DoubleInputTextField extends JTextField{
 	return val;	
     }
 
+
+	/** 
+	 * @deprecated use setNumberFormat() instead as constraining to DecimalFormat is not necessary and there should be
+	 * no expectation that the internal number format is a DecimalFormat. This method is around temporarily for backward compatibility
+	 * but will be removed in the near future.
+	 * Set the number format
+	 */
+	@Deprecated
+	public void setDecimalFormat( final DecimalFormat formatIn ) {
+		setNumberFormat( formatIn );
+	}
+
     /** Sets the format */
-    public void setDecimalFormat(DecimalFormat formatIn){
-	if(formatIn != null){
-	    format = formatIn;
-	}
-	try{
-	    val = Double.parseDouble(format.format(val));
-	    setValue(val);
-	}
-	catch (NumberFormatException  exc){
-	    setText("bad format");
-	}
+    public void setNumberFormat( final NumberFormat formatIn ){
+		if(formatIn != null){
+			format = formatIn;
+		}
+		try{
+			val = Double.parseDouble(format.format(val));
+			setValue(val);
+		}
+		catch (NumberFormatException  exc){
+			setText("bad format");
+		}
     }
-    
-    /** Sets the integer value quietly. The external listeners 
+
+
+	/** Returns the format */
+	public NumberFormat getNumberFormat(){
+		return format;
+	}
+
+
+    /** Sets the integer value quietly. The external listeners
      *  do not receive the "action performed" call.
      */
     public int setValueQuietly(int valIn){ 
         return ( (int) setValueQuietly((double) valIn) );
-    }
-    
-    
-    /** Returns the format */
-    public DecimalFormat getDecimalFormat(){
-        return format;
     }
 
     /** Sets the alert background color */
