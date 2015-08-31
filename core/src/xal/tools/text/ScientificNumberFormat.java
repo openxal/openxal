@@ -152,9 +152,9 @@ public class ScientificNumberFormat extends NumberFormat {
 		// get the absolute value
 		final double absValue = Math.abs( number );
 
-		// if the absolute value is between 1 inclusive and 10 exclusive, we can use a simple format otherwise we must use exponential notation
+		// if the absolute value is between 1 inclusive and 10 exclusive or if it is identically zero, we can use a simple format otherwise we must use exponential notation
 		final StringBuffer buffer;
-		if ( absValue >= 1.0 && absValue < 10.0 ) {
+		if ( ( absValue >= 1.0 && absValue < 10.0 ) || absValue == 0.0 ) {
 			buffer = SIMPLE_FORMAT.format( number, inputBuffer, position );
 		} else {
 			buffer = EXPONENTIAL_FORMAT.format( number, inputBuffer, position );
