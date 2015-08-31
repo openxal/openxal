@@ -188,9 +188,7 @@ public class LaunchModel implements DataListener {
 		RULES.add( new Rule( "*.jar", "Application", "java", "-DuseDefaultAccelerator=true", "-jar", "%f" ) );
 		RULES.add( new Rule( "*.rb", "JRuby", "jruby", "%f" ) );
 		RULES.add( new Rule( "*.py", "Jython", "jython", "%f" ) );
-		
-		FILE_WATCHER.preConfigure();
-		
+				
 		LAUNCHER.preConfigure();
 		
 		refreshApplications();
