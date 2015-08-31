@@ -19,7 +19,6 @@ from java.awt import Dimension
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap, BPM
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.smf import AcceleratorSeqCombo

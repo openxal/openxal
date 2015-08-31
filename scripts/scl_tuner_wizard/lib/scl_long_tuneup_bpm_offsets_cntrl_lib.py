@@ -22,7 +22,7 @@ from javax.swing.filechooser import FileNameExtensionFilter
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.plot import GraphDataOperations
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 
 from xal.ca import ChannelFactory
@@ -606,7 +606,7 @@ class BPMs_Offsets_from_CCL4_Panel(JPanel):
 		get_offsets_ccl1_button = JButton("Calculate Offsets from CCL4 forward")
 		get_offsets_ccl1_button.addActionListener(Offsets_from_CCL4_Button_Listener(self.scl_long_tuneup_controller))	
 		ccl4_energy_lbl = JLabel("<html> SCL Entrance E<SUB>kin</SUB>[MeV] = <html>",JLabel.RIGHT)
-		self.ccl4_energy_text = DoubleInputTextField(185.6,FortranNumberFormat("G9.6"),6)
+		self.ccl4_energy_text = DoubleInputTextField(185.6,ScientificNumberFormat(7),6)
 		self.add(get_offsets_ccl1_button)
 		self.add(ccl4_energy_lbl)
 		self.add(self.ccl4_energy_text)
@@ -626,13 +626,13 @@ class BPMs_Offsets_from_HEBT1_Panel(JPanel):
 		stop_statistics_button = JButton("Stop")
 		stop_statistics_button.addActionListener(Stop_HEBT_Statistics_Button_Listener(self.scl_long_tuneup_controller))		
 		iter_lbl = JLabel("Iterations=",JLabel.RIGHT)
-		self.iter_text = DoubleInputTextField(10.0,FortranNumberFormat("G2.0"),2)
+		self.iter_text = DoubleInputTextField(10.0,ScientificNumberFormat(1),2)
 		iter_left_lbl = JLabel("Count=",JLabel.RIGHT)
-		self.iter_left_text = DoubleInputTextField(0.0,FortranNumberFormat("G2.0"),2)
+		self.iter_left_text = DoubleInputTextField(0.0,ScientificNumberFormat(1),2)
 		ring_energy_lbl = JLabel("<html>E<SUB>RING</SUB>[MeV]= <html>",JLabel.RIGHT)
-		self.ring_energy_text = DoubleInputTextField(0.0,FortranNumberFormat("G9.6"),8)
+		self.ring_energy_text = DoubleInputTextField(0.0,ScientificNumberFormat(7),8)
 		ring_energy_err_lbl = JLabel(" +- ",JLabel.RIGHT)		
-		self.ring_energy_err_text = DoubleInputTextField(0.0,FortranNumberFormat("G9.3"),8)
+		self.ring_energy_err_text = DoubleInputTextField(0.0,ScientificNumberFormat(4),8)
 		panel_1_1 = JPanel(FlowLayout(FlowLayout.LEFT,10,3))
 		panel_1_1.setBorder(etched_border)		
 		panel_1_1.add(get_statistics_button)
@@ -655,7 +655,7 @@ class BPMs_Offsets_from_HEBT1_Panel(JPanel):
 		get_offsets_hebt1_button = JButton("Calculate Offsets from HEBT1 backward")
 		get_offsets_hebt1_button.addActionListener(Offsets_from_HEBT1_Button_Listener(self.scl_long_tuneup_controller))	
 		init_energy_lbl = JLabel("<html> SCL Entrance E<SUB>kin</SUB>[MeV] = <html>",JLabel.RIGHT)
-		self.init_energy_text = DoubleInputTextField(0.,FortranNumberFormat("G9.6"),6)
+		self.init_energy_text = DoubleInputTextField(0.,ScientificNumberFormat(7),6)
 		#------ Stage 1 Panel
 		stage1_panel = JPanel(FlowLayout(FlowLayout.LEFT,10,3))
 		stage1_panel.setBorder(etched_border)
@@ -733,7 +733,7 @@ class PhaseOffsets_BPMs_Table_Model(AbstractTableModel):
 		self.columnNames += ["<html>Final &Delta;&phi;<SUB>BPM</SUB>(deg)<html>",]
 		self.string_class = String().getClass()
 		self.boolean_class = Boolean(true).getClass()		
-		#self.dataFormat = FortranNumberFormat("G4.1")
+		#self.dataFormat = ScientificNumberFormat(2)
 
 	def getColumnCount(self):
 		return len(self.columnNames)

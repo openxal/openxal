@@ -21,7 +21,7 @@ from javax.swing.filechooser import FileNameExtensionFilter
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.plot import GraphDataOperations
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.model.probe import ParticleProbe
@@ -282,9 +282,9 @@ class InitStartStopStatistics_Panel(JPanel):
 		stop_statistics_button = JButton("Stop")
 		stop_statistics_button.addActionListener(Stop_Statistics_Button_Listener(self.scl_long_tuneup_controller))		
 		counter_lbl = JLabel("  Counter=",JLabel.RIGHT)
-		self.counter_text = DoubleInputTextField(0.,FortranNumberFormat("F4.0"),4)	
+		self.counter_text = DoubleInputTextField(0.,ScientificNumberFormat(1),4)
 		buffer_size_lbl = JLabel("  Buffer Size=",JLabel.RIGHT)
-		self.buffer_size_text = DoubleInputTextField(10.,FortranNumberFormat("F4.0"),4)	
+		self.buffer_size_text = DoubleInputTextField(10.,ScientificNumberFormat(1),4)
 		self.fixInitEenergy_RadioButton = JRadioButton("Keep Guess Energy (to get offsets)")	
 		self.fixInitEenergy_RadioButton.setSelected(false)
 		buttons_panel.add(init_meter_button)
@@ -298,11 +298,11 @@ class InitStartStopStatistics_Panel(JPanel):
 		#----- energy panel
 		energy_panel =  JPanel(FlowLayout(FlowLayout.LEFT,10,3))
 		energy_guess_lbl = JLabel("<html>Initial Guess E<SUB>kin</SUB>[MeV]=<html>",JLabel.RIGHT)
-		self.energy_guess_text = DoubleInputTextField(0.,FortranNumberFormat("G10.6"),12)		
+		self.energy_guess_text = DoubleInputTextField(0.,ScientificNumberFormat(7),12)
 		energy_lbl = JLabel("<html>Found E<SUB>kin</SUB>[MeV]=<html>",JLabel.RIGHT)
-		self.energy_text = DoubleInputTextField(0.,FortranNumberFormat("G10.6"),12)
+		self.energy_text = DoubleInputTextField(0.,ScientificNumberFormat(7),12)
 		energy_err_lbl = JLabel("+-",JLabel.RIGHT)
-		self.energy_err_text = DoubleInputTextField(0.,FortranNumberFormat("G10.6"),12)
+		self.energy_err_text = DoubleInputTextField(0.,ScientificNumberFormat(7),12)
 		energy_panel.add(energy_guess_lbl)
 		energy_panel.add(self.energy_guess_text)		
 		energy_panel.add(energy_lbl)

@@ -18,7 +18,6 @@ from java.beans import PropertyChangeListener
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.model.probe import ParticleProbe

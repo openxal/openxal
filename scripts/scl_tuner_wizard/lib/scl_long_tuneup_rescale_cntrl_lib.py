@@ -21,7 +21,7 @@ from java.beans import PropertyChangeListener
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.model.probe import ParticleProbe
@@ -362,14 +362,14 @@ class BPMs_Phase_Shift_Panel(JPanel):
 		stop_measurement_button = JButton("Stop")
 		stop_measurement_button.addActionListener(Stop_BPMs_Shift_Measurements_Listener(self.scl_long_tuneup_controller))	
 		iter_measurement_lbl = JLabel("Iteration=",JLabel.RIGHT)
-		self.iter_measuremen_text = DoubleInputTextField(10.,FortranNumberFormat("F3.0"),4)
+		self.iter_measuremen_text = DoubleInputTextField(10.,ScientificNumberFormat(1),4)
 		bpm_names_lbl = JLabel(" Phases BPM00a/b ",JLabel.RIGHT)
 		old_phases_lbl = JLabel("Old=",JLabel.RIGHT)
 		self.old_phases_text = JTextField(12)
 		new_phases_lbl = JLabel("  New=",JLabel.RIGHT)
 		self.new_phases_text = JTextField(12)
 		phase_shift_lbl = JLabel("  Phase Shift[deg]=",JLabel.RIGHT)
-		self.phase_shift_text = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),6)		
+		self.phase_shift_text = DoubleInputTextField(0.,ScientificNumberFormat(5),6)
 		#---- buttons panel
 		buttons_panel = JPanel(FlowLayout(FlowLayout.LEFT,3,3))
 		buttons_panel.add(start_measurement_button)
@@ -419,7 +419,7 @@ class Init_New_Amps_Phases_Panel(JPanel):
 		energy_calc_button = JButton("<html>Calculate E<SUB>kin</SUB><html>")
 		energy_calc_button.addActionListener(Calculate_Energy_Listener(self.scl_long_tuneup_controller))			
 		energy_lbl = JLabel("<html>SCL Final E<SUB>kin</SUB>[MeV]=<html>",JLabel.RIGHT)
-		self.energy_text = DoubleInputTextField(0.,FortranNumberFormat("G10.6"),12)
+		self.energy_text = DoubleInputTextField(0.,ScientificNumberFormat(7),12)
 		energy_panel.add(energy_calc_button)
 		energy_panel.add(energy_lbl)
 		energy_panel.add(self.energy_text)

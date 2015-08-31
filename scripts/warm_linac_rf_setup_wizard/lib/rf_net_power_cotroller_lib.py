@@ -25,7 +25,7 @@ from xal.smf.data import XMLDataManager
 from xal.smf import AcceleratorSeqCombo
 
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 
 from xal.smf.impl import Marker, Quadrupole, RfGap, BPM
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
@@ -145,9 +145,9 @@ class Start_Stop_Panel(JPanel):
 		stop_button = JButton("Stop")
 		stop_button.addActionListener(Stop_Button_Listener(self.rf_power_controller))	
 		n_avg_label = JLabel("N Avg.=",JLabel.RIGHT)
-		self.n_avg_text = DoubleInputTextField(10.0,FortranNumberFormat("G4.1"),4)	
+		self.n_avg_text = DoubleInputTextField(10.0,ScientificNumberFormat(2),4)
 		time_step_label = JLabel("Time Step[sec]=",JLabel.RIGHT)
-		self.time_step_text = DoubleInputTextField(1.1,FortranNumberFormat("G4.2"),4)	
+		self.time_step_text = DoubleInputTextField(1.1,ScientificNumberFormat(3),4)
 		send_amp_phase_to_EPICS_button = JButton("Send New Amp to Selected Cavs")
 		send_amp_phase_to_EPICS_button.addActionListener(Send_Amp_Phase_to_EPICS_Button_Listener(self.rf_power_controller))	
 		make_new_pwrs_as_target_button = JButton("Make Measured Powers as New Traget for Selected Cavs")

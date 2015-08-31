@@ -15,7 +15,6 @@ from java.awt.event import ActionEvent, ActionListener
 
 from xal.ca import ChannelFactory
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
 
 false= Boolean("false").booleanValue()
 true= Boolean("true").booleanValue()

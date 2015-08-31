@@ -18,7 +18,7 @@ from java.awt.event import ActionEvent, ActionListener
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, ProfileMonitor, Quadrupole, RfGap
 from xal.extension.wirescan.apputils import GaussFitter, WireScanData
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
@@ -148,12 +148,12 @@ class WS_Scan_and_Fit_Record:
 		self.cav_amp_phase_dict = {}
 		self.param_dict = [self.quad_dict,self.cav_amp_phase_dict]
 		#-----Gauss Fitting params----------------
-		self.CONST = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		self.A0 = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		self.X_CENTER = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		self.SIGMA = DoubleInputTextField(self.gauss_sigma,FortranNumberFormat("G8.4"),10)
-		self.X_MIN = DoubleInputTextField(ws_scan_Record.left_limit,FortranNumberFormat("G8.4"),10)
-		self.X_MAX = DoubleInputTextField(ws_scan_Record.right_limit,FortranNumberFormat("G8.4"),10)
+		self.CONST = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		self.A0 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		self.X_CENTER = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		self.SIGMA = DoubleInputTextField(self.gauss_sigma,ScientificNumberFormat(5),10)
+		self.X_MIN = DoubleInputTextField(ws_scan_Record.left_limit,ScientificNumberFormat(5),10)
+		self.X_MAX = DoubleInputTextField(ws_scan_Record.right_limit,ScientificNumberFormat(5),10)
 				
 	def plotFitData(self):
 		x_min = self.X_MIN.getValue()
@@ -1002,12 +1002,12 @@ class LabelDoulbeTextFieldPanel(JPanel):
 class GaussFitDataPanel(LabelDoulbeTextFieldPanel):
 	def __init__(self):
 		LabelDoulbeTextFieldPanel.__init__(self,3,2)
-		dbl_text_filed1 = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		dbl_text_filed2 = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		dbl_text_filed3 = DoubleInputTextField(0.,FortranNumberFormat("G8.4"),10)
-		dbl_text_filed4 = DoubleInputTextField(0.,FortranNumberFormat("G8.2"),10)
-		dbl_text_filed5 = DoubleInputTextField(0.,FortranNumberFormat("G8.2"),10)
-		dbl_text_filed6 = DoubleInputTextField(0.,FortranNumberFormat("G8.2"),10)
+		dbl_text_filed1 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		dbl_text_filed2 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		dbl_text_filed3 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		dbl_text_filed4 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		dbl_text_filed5 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
+		dbl_text_filed6 = DoubleInputTextField(0.,ScientificNumberFormat(5),10)
 		dbl_text_filed1.setValueQuietly(0.)
 		dbl_text_filed2.setValueQuietly(0.)
 		dbl_text_filed3.setValueQuietly(0.)

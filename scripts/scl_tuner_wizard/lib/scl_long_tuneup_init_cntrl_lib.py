@@ -20,7 +20,7 @@ from java.awt import Dimension
 from xal.ca import BatchGetValueRequest, ChannelFactory
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 
@@ -463,9 +463,9 @@ class SCL_Long_TuneUp_Init_Controller:
 		init_set_bpm2_button.addActionListener(Init_Set_BPM_to_Cav_Button_Listener(self.scl_long_tuneup_controller,2))
 		init_set_bpm3_button.addActionListener(Clear_BPM0_BPM1_Button_Listener(self.scl_long_tuneup_controller))
 		min_bpm_dist_label = JLabel("Min. BPM 1-2 Dist.[m]=",JLabel.RIGHT)
-		self.min_bpm_dist_txt = DoubleInputTextField(22.0,FortranNumberFormat("G10.5"),6)
+		self.min_bpm_dist_txt = DoubleInputTextField(22.0,ScientificNumberFormat(6),6)
 		max_bpm_dist_label = JLabel("Max.=",JLabel.RIGHT)
-		self.max_bpm_dist_txt = DoubleInputTextField(75.0,FortranNumberFormat("G10.5"),6)		
+		self.max_bpm_dist_txt = DoubleInputTextField(75.0,ScientificNumberFormat(6),6)
 		init_panel1.add(init_set_bpm1_button)
 		init_panel1.add(init_set_bpm2_button)
 		init_panel1.add(init_set_bpm3_button)
