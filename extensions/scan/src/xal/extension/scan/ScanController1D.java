@@ -166,10 +166,10 @@ public class ScanController1D {
     valueTextRB.setBackground(Color.getHSBColor(0.0f, 0.0f, 0.9f));
     valueTextRB.setEditable(false);
 
-    lowLimText.setDecimalFormat(valueFormat);
-    uppLimText.setDecimalFormat(valueFormat);
-    stepText.setDecimalFormat(valueFormat);
-    sleepTimeText.setDecimalFormat(sleepTimeFormat);
+    lowLimText.setNumberFormat(valueFormat);
+    uppLimText.setNumberFormat(valueFormat);
+    stepText.setNumberFormat(valueFormat);
+    sleepTimeText.setNumberFormat(sleepTimeFormat);
 
     lowLimText.setHorizontalAlignment(JTextField.CENTER);
     uppLimText.setHorizontalAlignment(JTextField.CENTER);

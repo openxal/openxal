@@ -179,9 +179,9 @@ public final class AnalysisCntrlFindMinMax extends AnalysisController {
 		pvSetVal_Text.setEditable(false);
 		pvRBVal_Text.setEditable(false);
 
-		markerPos_Text.setDecimalFormat(val_Format);
-		pvSetVal_Text.setDecimalFormat(val_Format);
-		pvRBVal_Text.setDecimalFormat(val_Format);
+		markerPos_Text.setNumberFormat(val_Format);
+		pvSetVal_Text.setNumberFormat(val_Format);
+		pvRBVal_Text.setNumberFormat(val_Format);
 
 		markerPos_Text.setHorizontalAlignment(JTextField.CENTER);
 		pvSetVal_Text.setHorizontalAlignment(JTextField.CENTER);

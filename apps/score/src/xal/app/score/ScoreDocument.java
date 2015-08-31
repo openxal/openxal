@@ -470,7 +470,7 @@ public class ScoreDocument extends XalDocument implements HandleErrorMessage{
 	    frame.getContentPane().add(valueField);
 	    frame.setVisible(true);
 	    frame.setSize(new Dimension(220, 100));
-	    valueField.setDecimalFormat(new DecimalFormat("##.###"));
+	    valueField.setNumberFormat(new DecimalFormat("##.###"));
 	    valueField.setMinimumSize(new Dimension(80, 25));
 	    valueField.setPreferredSize(new Dimension(80, 25));
 	    

@@ -25,7 +25,7 @@ import xal.smf.AcceleratorNode;
 import xal.smf.impl.BPM;
 import xal.smf.impl.RfCavity;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.extension.widgets.swing.DoubleInputTextField;
 
 import xal.extension.widgets.plot.BasicGraphData;
@@ -116,9 +116,9 @@ public class ShakerController{
 		cntrl_0_Panel.add(stopMeasure_Button);
 		
 		cntrPanel.add(cntrl_0_Panel,BorderLayout.NORTH);
-		phaseShiftTextFiled.setDecimalFormat(new FortranNumberFormat("##.#"));
-		sleepTimeTextFiled.setDecimalFormat(new FortranNumberFormat("##.#"));
-		numbAvgTextFiled.setDecimalFormat(new FortranNumberFormat("###"));
+		phaseShiftTextFiled.setNumberFormat(new DecimalFormat("##.#"));
+		sleepTimeTextFiled.setNumberFormat(new DecimalFormat("##.#"));
+		numbAvgTextFiled.setNumberFormat(new DecimalFormat("###"));
 		phaseShiftTextFiled.setValue(3.0);
 		sleepTimeTextFiled.setValue(5.0);
 		numbAvgTextFiled.setValue(1.0);

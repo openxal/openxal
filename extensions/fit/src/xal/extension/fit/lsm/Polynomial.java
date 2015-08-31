@@ -1,6 +1,6 @@
 package xal.extension.fit.lsm;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
  *  This class is for data fitting with polynomial equation.
@@ -32,7 +32,7 @@ public class Polynomial {
 	
 	private double[] x_tmp = new double[1];
 
-	private FortranNumberFormat frmt = new FortranNumberFormat("G6.3");
+	private ScientificNumberFormat frmt = new ScientificNumberFormat(4);
 
 
 	/**
@@ -391,7 +391,7 @@ public class Polynomial {
 	 *@param  frmt_loc  The format for coefficients
 	 *@return           The characteristic equation as a String
 	 */
-	private String equation(FortranNumberFormat frmt_loc) {
+	private String equation(final ScientificNumberFormat frmt_loc ) {
 		String eq = new String();
 		eq = "Y = ";
 		if (a.length <= 0) {
@@ -430,10 +430,10 @@ public class Polynomial {
 	 *@param  format_pattern  The fortran format pattern, e.g. G12.5
 	 *@return                 The characteristic equation as a String
 	 */
-	public String equation(String format_pattern) {
-		FortranNumberFormat frmt_loc = new FortranNumberFormat(format_pattern);
-		return equation(frmt_loc);
-	}
+//	public String equation(String format_pattern) {
+//		FortranNumberFormat frmt_loc = new FortranNumberFormat(format_pattern);
+//		return equation(frmt_loc);
+//	}
 
 
 	/**

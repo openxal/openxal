@@ -11,6 +11,7 @@ from java.lang import *
 from javax.swing import *
 from javax.swing import JTable
 from java.util import ArrayList
+from java.util import Calendar
 from javax.swing.event import TableModelEvent, TableModelListener, ListSelectionListener
 from java.awt import Color, BorderLayout, GridLayout, FlowLayout
 from java.text import SimpleDateFormat,NumberFormat
@@ -23,8 +24,7 @@ from javax.swing.filechooser import FileNameExtensionFilter
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.plot import GraphDataOperations
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
-from xal.smf.impl import Marker, Quadrupole, RfGap
+from xal.smf.impl import Marker, Quadrupole, RfGap, SCLCavity
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.smf.data import XMLDataManager
 from xal.model.probe import ParticleProbe
@@ -756,42 +756,54 @@ class Make_XAL_Acc_File_Button_Listener(ActionListener):
 		self.scl_long_tuneup_controller = scl_long_tuneup_controller
 		
 	def actionPerformed(self,actionEvent):
-		self.scl_long_tuneup_controller.getMessageTextField().setText("")			
+		self.scl_long_tuneup_controller.getMessageTextField().setText("")	
+		rightNow = Calendar.getInstance()
+		date_format = SimpleDateFormat("MM.dd.yyyy")
+		time_str = date_format.format(rightNow.getTime())				
 		fc = JFileChooser(constants_lib.const_path_dict["XAL_XML_ACC_FILES_DIRS_PATH"])
-		fc.setDialogTitle("Read SCL.xdxf Accelerator Config File ...")
-		fc.setApproveButtonText("Open")
-		fl_filter = FileNameExtensionFilter("SCL.xdxf File",["xdxf",])
-		fc.setFileFilter(fl_filter)		
+		fc.setDialogTitle("Save SCL data into the SCL_new.xdxf file")
+		fc.setApproveButtonText("Save")
+		fl_filter = FileNameExtensionFilter("SCL Acc File",["xdxf",])
+		fc.setFileFilter(fl_filter)
+		fc.setSelectedFile(File("SCL_"+time_str+".xdxf"))		
 		returnVal = fc.showOpenDialog(self.scl_long_tuneup_controller.linac_wizard_document.linac_wizard_window.frame)
 		if(returnVal == JFileChooser.APPROVE_OPTION):
-			fl_in = fc.getSelectedFile()
-			scl_DA = XmlDataAdaptor.adaptorForFile(fl_in, false)
-			scl_xdxf_DA = scl_DA.childAdaptor("xdxf")
-			seq_list = scl_xdxf_DA.childAdaptors()
-			for seq_DA in seq_list.toArray():
-				cav_list = seq_DA.childAdaptors()
-				for cav_DA in cav_list.toArray():
-					cav_name = cav_DA.stringValue("id")
-					cav_wrappper = self.scl_long_tuneup_controller.getCav_WrapperForCavId(cav_name)
-					if(cav_wrappper != null and cav_wrappper.isMeasured and cav_wrappper.isAnalyzed):
-						cav_atr_DA = cav_DA.childAdaptor("attributes")
-						rf_cav_atr_DA = cav_atr_DA.childAdaptor("rfcavity")
-						(amp,phase) =  (cav_wrappper.designAmp,cav_wrappper.designPhase)
-						rf_cav_atr_DA.setValue("amp",float("%8.5f"%amp))
-						rf_cav_atr_DA.setValue("phase",float("%8.3f"%phase))
-			time.sleep(3.0)
-			fc = JFileChooser(constants_lib.const_path_dict["XAL_XML_ACC_FILES_DIRS_PATH"])
-			fc.setDialogTitle("Now Save SCL data into the SCL_new.xdxf file")
-			fc.setApproveButtonText("Save")
-			fl_filter = FileNameExtensionFilter("SCL Acc File",["xdxf",])
-			fc.setFileFilter(fl_filter)
-			returnVal = fc.showOpenDialog(self.scl_long_tuneup_controller.linac_wizard_document.linac_wizard_window.frame)
-			if(returnVal == JFileChooser.APPROVE_OPTION):
-				fl_out = fc.getSelectedFile()
-				fl_path = fl_out.getPath()
-				if(fl_path.rfind(".xdxf") != (len(fl_path) - 5)):
-					fl_out = File(fl_out.getPath()+".xdxf")			
-				scl_DA.writeTo(fl_out)		
+			fl_out = fc.getSelectedFile()
+			fl_path = fl_out.getPath()
+			if(fl_path.rfind(".xdxf") != (len(fl_path) - 5)):
+				fl_out = File(fl_out.getPath()+".xdxf")	
+			#---------prepare the XmlDataAdaptor 
+			root_DA = XmlDataAdaptor.newEmptyDocumentAdaptor()
+			scl_DA = root_DA.createChild("xdxf")	
+			scl_DA.setValue("date",time_str)
+			scl_DA.setValue("system","sns")
+			scl_DA.setValue("version","2.0")
+			#---- SCLMed	
+			seq_name_arr = ["SCLMed","SCLHigh","HEBT1"]
+			for seq_name in seq_name_arr:
+				accl = self.scl_long_tuneup_controller.linac_wizard_document.accl
+				seq = accl.findSequence(seq_name)
+				cavs = seq.getAllNodesWithQualifier(AndTypeQualifier().and((OrTypeQualifier()).or(SCLCavity.s_strType)))
+				quads = seq.getAllNodesWithQualifier(AndTypeQualifier().and((OrTypeQualifier()).or(Quadrupole.s_strType)))
+				scl_seq_DA = scl_DA.createChild("sequence")
+				scl_seq_DA.setValue("id",seq.getId())
+				for quad in quads:
+					node_DA = scl_seq_DA.createChild("node")
+					node_DA.setValue("id",quad.getId())
+					attr_DA = node_DA.createChild("attributes")
+					field_DA = attr_DA.createChild("magnet")
+					scl_quad_fields_dict_holder = self.scl_long_tuneup_controller.scl_long_tuneup_init_controller.scl_quad_fields_dict_holder
+					field_DA.setValue("dfltMagFld",str(scl_quad_fields_dict_holder.quad_field_dict[quad]))
+				for cav in cavs:
+					node_DA = scl_seq_DA.createChild("sequence")
+					node_DA.setValue("id",cav.getId())
+					attr_DA = node_DA.createChild("attributes")
+					rf_cav_DA = attr_DA.createChild("rfcavity")
+					cav_wrappper = self.scl_long_tuneup_controller.getCav_WrapperForCavId(cav.getId())
+					(amp,phase) =  (cav_wrappper.designAmp,cav_wrappper.designPhase)
+					rf_cav_DA.setValue("amp",float("%8.5f"%amp))
+					rf_cav_DA.setValue("phase",float("%8.3f"%phase))
+			root_DA.writeTo(fl_out)		
 		
 class Make_OpenXAL_Acc_File_Button_Listener(ActionListener):
 	# make OpenXAL accelerator file

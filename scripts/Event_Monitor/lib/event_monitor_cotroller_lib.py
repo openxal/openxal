@@ -35,7 +35,7 @@ from xal.ca import ChannelFactory,IEventSinkValue,Monitor,IEventSinkValTime,Chan
 from xal.ca.view import ChannelNameDocument
 
 from xal.extension.widgets.swing import DoubleInputTextField
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 
 false= Boolean("false").booleanValue()
 true= Boolean("true").booleanValue()
@@ -47,7 +47,7 @@ class WindowCloser(WindowAdapter):
 		sys.exit(1)
 	
 
-buffer_size_text = DoubleInputTextField(5.0,FortranNumberFormat("G4.0"),10)
+buffer_size_text = DoubleInputTextField(5.0,ScientificNumberFormat(1),10)
 
 class Event_Checker:
 	def __init__(self, event_handler, min_limit_text, max_limit_text):
@@ -634,12 +634,12 @@ class Monitor_Controller:
 		buffer_size_label = JLabel("Buff. Time [sec]:",JLabel.RIGHT)
 		monitor_params0_panel.add(buffer_size_label)
 		monitor_params0_panel.add(self.buffer_size_text)
-		self.event_buffer_size_text = DoubleInputTextField(3.0,FortranNumberFormat("G4.0"),10)
+		self.event_buffer_size_text = DoubleInputTextField(3.0,ScientificNumberFormat(1),10)
 		event_buffer_size_label = JLabel("Event Buff. Size:",JLabel.RIGHT)
 		monitor_params0_panel.add(event_buffer_size_label)
 		monitor_params0_panel.add(self.event_buffer_size_text)	
-		self.min_limit_text = DoubleInputTextField(1.0e-8,FortranNumberFormat("G10.3"),10)
-		self.max_limit_text = DoubleInputTextField(1.0e-3,FortranNumberFormat("G10.3"),10)
+		self.min_limit_text = DoubleInputTextField(1.0e-8,ScientificNumberFormat(4),10)
+		self.max_limit_text = DoubleInputTextField(1.0e-3,ScientificNumberFormat(4),10)
 		min_lim_label = JLabel("Trigger Min Value:",JLabel.RIGHT)
 		max_lim_label = JLabel("Trigger Max Value:",JLabel.RIGHT)
 		monitor_params0_panel.add(min_lim_label)

@@ -20,7 +20,6 @@ from javax.swing.filechooser import FileNameExtensionFilter
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
 from xal.smf.impl import Marker, ProfileMonitor, Quadrupole, RfGap, RfCavity 
 from xal.extension.wirescan.apputils import GaussFitter, WireScanData
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier

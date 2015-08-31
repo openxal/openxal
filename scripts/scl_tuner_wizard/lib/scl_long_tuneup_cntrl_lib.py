@@ -19,7 +19,6 @@ from java.awt import Dimension
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap, BPM
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.smf import AcceleratorSeqCombo
@@ -246,11 +245,11 @@ class SCL_Long_TuneUp_Controller:
 					#print "debug cav=",cav_wrapper.alias
 					cav_wrapper.readDataFromXML(cav_wrapper_da,self)
 			#------ read info from other longitudinal scan controllers
-			self.scl_long_twiss_analysis_controller.readDataFromXML(scl_phase_scan_da)			
+			self.scl_long_twiss_analysis_controller.readDataFromXML(scl_phase_scan_da)	
+			self.scl_long_tuneup_init_controller.scl_quad_fields_dict_holder.readDataFromXML(scl_phase_scan_da)			
 		#------ read info from other controllers
 		self.scl_long_tuneup_energy_meter_controller.readDataFromXML(root_da)
-		self.scl_long_tuneup_init_controller.scl_quad_fields_dict_holder.readDataFromXML(root_da)		
-			
+	
 	def putFoundConfigInAccelerator(self):
 		# This method will be called from linac setup controller to 
 		# update accelerator from the found cavities amplitudes and phases

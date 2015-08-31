@@ -19,7 +19,7 @@ from java.awt import Dimension
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 
@@ -457,12 +457,12 @@ class SetPhaseShiftAndTimeStep_Panel(JPanel):
 		set_phase_shift_button = JButton(" Set Phase Shift to Selected Cavs ")
 		set_phase_shift_button.addActionListener(Set_Phase_Shift_Button_Listener(self.scl_long_tuneup_controller))
 		sub1_panel.add(set_phase_shift_button)
-		self.phase_shift_text = DoubleInputTextField(-18.0,FortranNumberFormat("G6.3"),6)
+		self.phase_shift_text = DoubleInputTextField(-18.0,ScientificNumberFormat(4),6)
 		phase_shift_lbl = JLabel("Phase Shift[deg]=",JLabel.RIGHT)
 		sub1_panel.add(phase_shift_lbl)
 		sub1_panel.add(self.phase_shift_text)
 		time_wait_lbl = JLabel("   Scan Wait Time[sec]=",JLabel.LEFT)
-		self.time_wait_text = DoubleInputTextField(0.5,FortranNumberFormat("G10.5"),6)
+		self.time_wait_text = DoubleInputTextField(0.5,ScientificNumberFormat(6),6)
 		sub1_panel.add(time_wait_lbl)
 		sub1_panel.add(self.time_wait_text)
 		self.keepLiveCavPhases_RadioButton = JRadioButton("Keep Cav. Phases")
@@ -486,7 +486,7 @@ class StartStopPhaseScan_Panel(JPanel):
 		etched_border = BorderFactory.createEtchedBorder()
 		self.setBorder(etched_border)
 		buttons_panel =  JPanel(FlowLayout(FlowLayout.LEFT,3,3))
-		self.phase_step_text = DoubleInputTextField(20.0,FortranNumberFormat("G8.3"),8)
+		self.phase_step_text = DoubleInputTextField(20.0,ScientificNumberFormat(4),8)
 		phase_step_lbl = JLabel("Phase Step[deg]=",JLabel.RIGHT)
 		start_scan_button = JButton("Start Scan")
 		start_scan_button.addActionListener(Start_Phase_Scan_Button_Listener(self.scl_long_tuneup_controller))
@@ -530,7 +530,7 @@ class PostPhaseScanActions_Panel(JPanel):
 		amp_limit_panel = JPanel(FlowLayout(FlowLayout.LEFT,3,3))
 		titled_border = BorderFactory.createTitledBorder(etched_border,"Post Scan: Apply BPM Amp. Limit to all Cavs and BPMs")
 		amp_limit_panel.setBorder(titled_border)
-		self.amp_limit_text = DoubleInputTextField(1.0,FortranNumberFormat("G8.3"),8)
+		self.amp_limit_text = DoubleInputTextField(1.0,ScientificNumberFormat(4),8)
 		amp_limit_lbl = JLabel("BPM Amp Limit=",JLabel.RIGHT)
 		amp_limit_bpm_button = JButton(" Apply BPM Amp. Limit ")
 		amp_limit_bpm_button.addActionListener(Apply_BPM_Amp_Limit_Button_Listener(self.scl_long_tuneup_controller))

@@ -84,8 +84,8 @@ public class  IDmpWS_Wrapper {
 		wsButtonPanel.add(getHandVButton);
 
    //positions values and labels
-	 xPositionTextField.setDecimalFormat(new DecimalFormat("###.#"));
-	 yPositionTextField.setDecimalFormat(new DecimalFormat("###.#"));
+	 xPositionTextField.setNumberFormat(new DecimalFormat("###.#"));
+	 yPositionTextField.setNumberFormat(new DecimalFormat("###.#"));
 	 xPositionTextField.setValue(0.);
 	 yPositionTextField.setValue(0.);
 	 JPanel xPosPanel = new JPanel(new BorderLayout());

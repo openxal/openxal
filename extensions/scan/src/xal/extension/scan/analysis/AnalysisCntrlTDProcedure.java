@@ -18,7 +18,7 @@ import xal.extension.widgets.plot.*;
 import xal.extension.application.Application;
 import xal.tools.apputils.VerticalLayout;
 import xal.extension.widgets.swing.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 /**
  *  This creates an ASCII file for dT procedure
@@ -95,7 +95,7 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 	private DoubleInputTextField expSlope_Text = new DoubleInputTextField(10);
 	private DoubleInputTextField energyStep_Text = new DoubleInputTextField(10);
 
-	private DecimalFormat format = new FortranNumberFormat("G10.4");
+	private NumberFormat format = new ScientificNumberFormat( 5, 10, false );
 
 	//main local analysis panel
 	private JPanel localAnalysisPanel = new JPanel();
@@ -685,12 +685,12 @@ public final class AnalysisCntrlTDProcedure extends AnalysisController {
 
 		setToAccelButton.setForeground(Color.red);
 
-		rfPhase_Text.setDecimalFormat(format);
-		rfAmp_Text.setDecimalFormat(format);
-		inputEnergyDev_Text.setDecimalFormat(format);
-		currentAmp_Text.setDecimalFormat(format);
-		expSlope_Text.setDecimalFormat(format);
-		energyStep_Text.setDecimalFormat(format);
+		rfPhase_Text.setNumberFormat(format);
+		rfAmp_Text.setNumberFormat(format);
+		inputEnergyDev_Text.setNumberFormat(format);
+		currentAmp_Text.setNumberFormat(format);
+		expSlope_Text.setNumberFormat(format);
+		energyStep_Text.setNumberFormat(format);
 
 		rfPhase_Text.setHorizontalAlignment(JTextField.CENTER);
 		rfAmp_Text.setHorizontalAlignment(JTextField.CENTER);

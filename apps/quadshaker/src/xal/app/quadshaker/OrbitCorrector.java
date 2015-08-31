@@ -18,7 +18,7 @@ import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.tools.xml.*;
 
 import xal.service.pvlogger.*;
@@ -108,7 +108,7 @@ public class OrbitCorrector {
 	private AcceleratorSeqCombo accSeq = null;
 
 	//current format
-	private FortranNumberFormat frmt = new FortranNumberFormat("G10.5");
+	private ScientificNumberFormat frmt = new ScientificNumberFormat( 6, 10, false );
 
 	//message text field. It is actually message text field from Window
 	private JTextField messageTextLocal = new JTextField();

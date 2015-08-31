@@ -15,7 +15,7 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 
 import xal.extension.widgets.plot.*;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.extension.scan.UpdatingEventController;
 
 /**
@@ -30,7 +30,7 @@ public class ScalarPVsValuesTable {
 
 	private JPanel tablePanel = new JPanel(new BorderLayout());
 
-	private FortranNumberFormat fmtVal = new FortranNumberFormat("G10.3");
+	private ScientificNumberFormat fmtVal = new ScientificNumberFormat( 4, 10, false );
 
 	private JPanel leftTablePanel = new JPanel(new BorderLayout());
 	private JPanel centerTablePanel = new JPanel(new BorderLayout());

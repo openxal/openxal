@@ -16,7 +16,7 @@ from java.beans import PropertyChangeListener
 from java.awt.event import ActionListener
 
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 
 false= Boolean("false").booleanValue()
 true= Boolean("true").booleanValue()
@@ -34,35 +34,35 @@ class Abstract_Cavity_Controller:
 		#---- backward cavity amplitude move params
 		panel0 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		cav_amp_backward_steps_mult_label = JLabel("N cav. amp. backward steps multiplier =",JLabel.RIGHT)
-		self.cav_amp_backward_steps_mult_text =  DoubleInputTextField(1.0,FortranNumberFormat("G3.1"),5)
+		self.cav_amp_backward_steps_mult_text =  DoubleInputTextField(1.0,ScientificNumberFormat(2),5)
 		panel0.add(cav_amp_backward_steps_mult_label)
 		panel0.add(self.cav_amp_backward_steps_mult_text)
 		#---- cavity's wait time multiplier
 		panel1 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		cav_amp_wait_time_mult_label = JLabel("Cav. amp. time wait multiplier =",JLabel.RIGHT)
-		self.cav_amp_wait_time_mult_text =  DoubleInputTextField(3.0,FortranNumberFormat("G3.1"),5)
+		self.cav_amp_wait_time_mult_text =  DoubleInputTextField(3.0,ScientificNumberFormat(2),5)
 		panel1.add(cav_amp_wait_time_mult_label)
 		panel1.add(self.cav_amp_wait_time_mult_text)
 		#---- cavity's safe amplitude up and down limits		
 		panel2 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		safe_relative_amp_up_label = JLabel("Cav. amp. safe Up [%]=",JLabel.RIGHT)
-		self.safe_relative_amp_up_text = DoubleInputTextField(7.0,FortranNumberFormat("G3.1"),5)
+		self.safe_relative_amp_up_text = DoubleInputTextField(7.0,ScientificNumberFormat(2),5)
 		panel2.add(safe_relative_amp_up_label)
 		panel2.add(self.safe_relative_amp_up_text)
 		panel3 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		safe_relative_amp_down_label = JLabel("Cav. amp. safe Down [%]=",JLabel.RIGHT)
-		self.safe_relative_amp_down_text = DoubleInputTextField(7.0,FortranNumberFormat("G3.1"),5)
+		self.safe_relative_amp_down_text = DoubleInputTextField(7.0,ScientificNumberFormat(2),5)
 		panel3.add(safe_relative_amp_down_label)
 		panel3.add(self.safe_relative_amp_down_text)
 		#----- cavity's guess phase[deg] and amplitude[%] corrections after 360 deg full scan for inner BPMs
 		panel4 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		guess_phase_shift_label = JLabel("Cav. Guess Phase Shift after Full Scan [deg]=",JLabel.RIGHT)
-		self.guess_phase_shift_text =  DoubleInputTextField(0.0,FortranNumberFormat("F3.1"),5)
+		self.guess_phase_shift_text =  DoubleInputTextField(0.0,ScientificNumberFormat(2),5)
 		panel4.add(guess_phase_shift_label)
 		panel4.add(self.guess_phase_shift_text)
 		panel5 = JPanel(FlowLayout(FlowLayout.LEFT,1,3))
 		guess_cav_amp_shift_label = JLabel("Cav. Amp Shift after Full Scan [%]=",JLabel.RIGHT)
-		self.guess_cav_amp_shift_text =  DoubleInputTextField(0.0,FortranNumberFormat("F3.1"),5)
+		self.guess_cav_amp_shift_text =  DoubleInputTextField(0.0,ScientificNumberFormat(2),5)
 		panel5.add(guess_cav_amp_shift_label)
 		panel5.add(self.guess_cav_amp_shift_text)		
 		#-----------------------------------------------

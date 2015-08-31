@@ -6,6 +6,7 @@
 
 package xal.tools.text;
 
+import java.io.IOException;
 import java.text.*;
 
 
@@ -31,31 +32,66 @@ public class ScientificNumberFormat extends NumberFormat {
 	/** field width of right justified text to display */
 	private int _fieldWidth;
 
+	/** format the number padding with spaces to the left (right justification) as needed to fill out the field width */
+	private boolean _fixedLength;
+
+
+	/**
+	 * Designated constructor.
+	 * @param significantDigits total number of significant digits to display
+	 * @param fieldWidth field width of right justified text to display
+	 * @param fixedLength specified whether to pad the formatted output to the left (right justification) as needed to fill out the field width
+	 */
+	public ScientificNumberFormat( final int significantDigits, final int fieldWidth, final boolean fixedLength ) {
+		setSignificantDigits( significantDigits );
+		setFieldWidth( fieldWidth );
+		setFixedLength( fixedLength );
+	}
+
 
 	/** 
-	 * Designated constructor 
+	 * Convenience constructor.
+	 * By default, formats a value with padding to the field width (set fixedLength to change mode).
 	 * @param significantDigits total number of significant digits to display
 	 * @param fieldWidth field width of right justified text to display
 	 */
 	public ScientificNumberFormat( final int significantDigits, final int fieldWidth ) {
-		setSignificantDigits( significantDigits );
-		setFieldWidth( fieldWidth );
+		this( significantDigits, fieldWidth, true );
 	}
 
 
 	/**
-	 * Convenience constructor. 
+	 * Convenience constructor.
 	 * The width is significant digits + 1 space + 1 sign + 1 decimal point + 5 for exponent field.
+	 * By default, formats a value without padding to the field width (set fixedLength to change mode).
 	 * @param significantDigits total number of significant digits to display
 	 */
 	public ScientificNumberFormat( final int significantDigits ) {
-		this( significantDigits, significantDigits + 1 + 1 + 1 + 5 );
+		this( significantDigits, significantDigits + 1 + 1 + 1 + 5, false );
 	}
 
 
-	/** Empty convenience constructor defaulting to five significant digits. */
+	/** 
+	 * Empty convenience constructor defaulting to four significant digits. 
+	 * By default, formats a value without padding to the field width (set fixedLength to change mode).
+	 */
 	public ScientificNumberFormat() {
-		this( 5 );
+		this( 4 );
+	}
+
+
+	/** 
+	 * Determine whether the formatted output is padded with spaces to the left (right justification) as needed to fill out the fixed width.
+	 * @return true if using fixed length mode and false if not
+	 */
+	public boolean isFixedLength() {
+		return _fixedLength;
+	}
+
+
+	/** format values using a the field width and padding with spaces as needed */
+	public void setFixedLength( final boolean fixedLength ) {
+		_fixedLength = fixedLength;
 	}
 
 
@@ -94,7 +130,7 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/** 
-	 * Get the field width for displaying the right justified output.
+	 * Get the field width for displaying the right justified output when used with fixed length mode.
 	 * @return the field width
 	 */
 	public int getFieldWidth() {
@@ -103,7 +139,7 @@ public class ScientificNumberFormat extends NumberFormat {
 
 
 	/** 
-	 * Set the field width 
+	 * Set the field width (used with fixed length mode to format output with fixed width padding with spaces as needed)
 	 * @param fieldWidth field width of right justified text to display
 	 */
 	public void setFieldWidth( final int fieldWidth ) {
@@ -116,19 +152,21 @@ public class ScientificNumberFormat extends NumberFormat {
 		// get the absolute value
 		final double absValue = Math.abs( number );
 
-		// if the absolute value is between 1 inclusive and 10 exclusive, we can use a simple format otherwise we must use exponential notation
+		// if the absolute value is between 1 inclusive and 10 exclusive or if it is identically zero, we can use a simple format otherwise we must use exponential notation
 		final StringBuffer buffer;
-		if ( absValue >= 1.0 && absValue < 10.0 ) {
+		if ( ( absValue >= 1.0 && absValue < 10.0 ) || absValue == 0.0 ) {
 			buffer = SIMPLE_FORMAT.format( number, inputBuffer, position );
 		} else {
 			buffer = EXPONENTIAL_FORMAT.format( number, inputBuffer, position );
 		}
 
-		// pad with spaces to the left of the number for a total width matching the field width
-		final int spaces = _fieldWidth - buffer.length();
-		if ( spaces > 0 ) {
-			for( int space = 0 ; space < spaces ; space++ ) {
-				buffer.insert( 0, " " );
+		// if fixed length mode, pad with spaces to the left of the number for a total width matching the field width
+		if ( _fixedLength ) {
+			final int spaces = _fieldWidth - buffer.length();
+			if ( spaces > 0 ) {
+				for( int space = 0 ; space < spaces ; space++ ) {
+					buffer.insert( 0, " " );
+				}
 			}
 		}
 
@@ -145,6 +183,67 @@ public class ScientificNumberFormat extends NumberFormat {
 	/** Implement the abstract parse method by delegating to an internal number format */
 	public Number parse( final String source, final ParsePosition position ) {
 		return SIMPLE_FORMAT.parse( source, position );
+	}
+
+
+	/**
+	 * Append the formatted values to the output throwing any internal IOException from the output.
+	 * Use this method when you want to handle IO Exceptions
+	 * @param output the output to which to append the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	public void appendToIO( final Appendable output, final CharSequence separator,  final double ... values ) throws IOException {
+		if ( values == null || values.length == 0 )  return;	//nothing to append
+
+		// append the first formatted value
+		output.append( format(values[0]) );
+
+		// append the remaining formatted values with the leading separator
+		for ( int index = 1 ; index < values.length ; index++ ) {
+			output.append( separator );
+			output.append( format( values[index] ) );
+		}
+	}
+
+
+	/**
+	 * Convenience method to append the formatted values to the output suppressing IOException and instead dumping the stack trace upon exception.
+	 * This is useful when calling with outputs that don't through IOException (e.g. StringBuffer and StringBuilder)
+	 * @param output the output to which to append the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	final public void appendTo( final Appendable output, final CharSequence separator,  final double ... values ) {
+		try {
+			appendToIO( output, separator, values );
+		}
+		catch( IOException exception ) {
+			System.err.println( "Error appending formatted values to an appendable output." );
+			exception.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * Print the formatted values
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param terminator the characters to append to the end of the line of formatted values (e.g. this could be "\n")
+	 * @param values the values to format and output
+	 */
+	final public void print( final CharSequence separator, final CharSequence terminator, final double ... values ) {
+		appendTo( System.out, separator, values );
+		System.out.append( terminator );
+	}
+
+
+	/**
+	 * Convenience method to print the formatted values with the system's trailing line terminator
+	 * @param separator the characters to insert between each formatted value (e.g. this could be a comma)
+	 * @param values the values to format and output
+	 */
+	final public void println( final CharSequence separator, final double ... values ) {
+		this.print( separator, System.getProperty("line.separator"), values );
 	}
 }
 

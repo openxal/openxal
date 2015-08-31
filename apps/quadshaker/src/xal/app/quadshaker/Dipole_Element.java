@@ -6,7 +6,6 @@ import xal.ca.*;
 import xal.tools.xml.*;
 import xal.extension.scan.WrappedChannel;
 
-import xal.tools.text.FortranNumberFormat;
 
 public class Dipole_Element{
 

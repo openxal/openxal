@@ -27,7 +27,7 @@ from Jama import Matrix
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, Quadrupole, RfGap, SCLCavity
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 from xal.model.probe import EnvelopeProbe
@@ -634,7 +634,7 @@ class CavityTwissParams_Panel(JPanel):
 		init_twiss_design_button.addActionListener(Init_Twiss_from_Design_Button_Listener(self.scl_long_tuneup_controller))
 		init_twiss_lw_button = JButton("Init. Tr. Twiss from LW Analysis")
 		init_twiss_lw_button.addActionListener(Init_Twiss_from_LW_Button_Listener(self.scl_long_tuneup_controller))
-		self.current_text = DoubleInputTextField(32.0,FortranNumberFormat("G8.3"),8)
+		self.current_text = DoubleInputTextField(32.0,ScientificNumberFormat(4),8)
 		current_lbl = JLabel("Current[mA]=",JLabel.RIGHT)	
 		button1_panel = JPanel(BorderLayout())
 		button1_panel.add(current_lbl,BorderLayout.WEST)
@@ -735,9 +735,9 @@ class StartStopAnalysis_Panel(JPanel):
 		etched_border = BorderFactory.createEtchedBorder()
 		self.setBorder(etched_border)
 		buttons_panel =  JPanel(FlowLayout(FlowLayout.LEFT,3,3))
-		self.iterations_text = DoubleInputTextField(200.0,FortranNumberFormat("G8.3"),8)
+		self.iterations_text = DoubleInputTextField(200.0,ScientificNumberFormat(4),8)
 		iterations_lbl = JLabel("Fit Iterations=",JLabel.RIGHT)
-		self.chi2_txt = DoubleInputTextField(0.0,FortranNumberFormat("G10.5"),10)
+		self.chi2_txt = DoubleInputTextField(0.0,ScientificNumberFormat(6),10)
 		chi2_label = JLabel("Avg. Err=",JLabel.RIGHT)
 		start_scan_button = JButton("Start Analysis")
 		start_scan_button.addActionListener(Start_Analysis_Button_Listener(self.scl_long_tuneup_controller))

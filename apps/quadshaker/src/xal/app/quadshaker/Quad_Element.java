@@ -6,7 +6,7 @@ import xal.ca.*;
 import xal.tools.xml.*;
 import xal.extension.scan.WrappedChannel;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.tools.data.DataAdaptor;
 
 /**
@@ -67,7 +67,7 @@ public class Quad_Element implements Dev_Element {
 	private double posErrX = 0.;
 	private double posErrY = 0.;
 
-	private FortranNumberFormat numberFormat = new FortranNumberFormat("G10.4");
+	private ScientificNumberFormat numberFormat = new ScientificNumberFormat( 5, 10, false );
 
 	/**
 	 *  Constructor for the Quad_Element object

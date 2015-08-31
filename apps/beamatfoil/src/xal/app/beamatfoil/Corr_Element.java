@@ -3,7 +3,7 @@ package xal.app.beamatfoil;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.smf.impl.Electromagnet;
 
 /**
@@ -23,7 +23,7 @@ public class Corr_Element {
 	private double upperFieldLimit = Double.MAX_VALUE;
 
 	//field value format
-	private final FortranNumberFormat frmt = new FortranNumberFormat("G10.4");
+	private final ScientificNumberFormat frmt = new ScientificNumberFormat( 5, 10, false );
 
 	//position and angle vs. B field coeff 
 	//dimension [mm/T] and [mrad/T]

@@ -30,7 +30,7 @@ from xal.model.probe import ParticleProbe
 from xal.sim.scenario import Scenario, AlgorithmFactory, ProbeFactory
 
 from xal.extension.widgets.swing import DoubleInputTextField
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 
 from xal.extension.widgets.swing import Wheelswitch
 
@@ -726,9 +726,9 @@ class Orbit_Index_Info_Panel(JPanel):
 		label = JLabel("Orbit #"+str(index)+"  ",JLabel.LEFT)
 		self.dc_label = JLabel("Dipole Corr.: none  ",JLabel.RIGHT)
 		field_label = JLabel("  field[T]=",JLabel.RIGHT)
-		self.dc_field_txt = DoubleInputTextField(0.0,FortranNumberFormat("G8.5"),10)
+		self.dc_field_txt = DoubleInputTextField(0.0,ScientificNumberFormat(6),10)
 		percent_label = JLabel("   % of Max Field=",JLabel.RIGHT)
-		self.percent_txt = DoubleInputTextField(90.0,FortranNumberFormat("G3.0"),5)
+		self.percent_txt = DoubleInputTextField(90.0,ScientificNumberFormat(1),5)
 		self.add(label)
 		self.add(self.dc_label)
 		self.add(field_label)
@@ -743,9 +743,9 @@ class Orbit_Measurer_Controller_Panel(JPanel):
 			self.orbit_index_info_panel_0 = Orbit_Index_Info_Panel(self.mebt_main_orbit_diff_cntrl,0)
 			self.orbit_index_info_panel_1 = Orbit_Index_Info_Panel(self.mebt_main_orbit_diff_cntrl,1)
 			self.avg_label = JLabel("Number of Avg.=",JLabel.RIGHT)
-			self.avg_number_txt = DoubleInputTextField(1.0,FortranNumberFormat("G3.0"),5)
+			self.avg_number_txt = DoubleInputTextField(1.0,ScientificNumberFormat(1),5)
 			self.time_step_label = JLabel("  Time step[sec]=",JLabel.RIGHT)
-			self.time_step_txt = DoubleInputTextField(2.0,FortranNumberFormat("G4.2"),5)
+			self.time_step_txt = DoubleInputTextField(2.0,ScientificNumberFormat(3),5)
 			start_measuring_button = JButton("Start Measuring")
 			start_measuring_button.addActionListener(Start_Measuring_Button_Listener(self.mebt_main_orbit_diff_cntrl))
 			stop_measuring_button = JButton("Stop")

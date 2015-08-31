@@ -20,7 +20,7 @@ from java.awt import Dimension
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
-from xal.tools.text import FortranNumberFormat
+from xal.tools.text import ScientificNumberFormat
 from xal.smf.impl import Marker, ProfileMonitor, Quadrupole, RfGap
 from xal.extension.wirescan.apputils import GaussFitter, WireScanData
 from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
@@ -488,19 +488,19 @@ class Init_and_Fit_Params_Controller:
 		self.transverse_twiss_fitting_controller = transverse_twiss_fitting_controller
 		self.main_panel = JPanel(BorderLayout())
 		tmp_panel = JPanel(GridLayout(7,2))
-		self.eKin_text = DoubleInputTextField(0.,FortranNumberFormat("G8.6"),8)
+		self.eKin_text = DoubleInputTextField(0.,ScientificNumberFormat(7),8)
 		eKin_lbl = JLabel("eKin[MeV]=",JLabel.RIGHT)
-		self.current_text = DoubleInputTextField(0.,FortranNumberFormat("G8.3"),8) 
+		self.current_text = DoubleInputTextField(0.,ScientificNumberFormat(4),8)
 		current_lbl = JLabel("Curr.[mA]=",JLabel.RIGHT)
-		self.fit_err_text = DoubleInputTextField(0.,FortranNumberFormat("G8.3"),8) 
+		self.fit_err_text = DoubleInputTextField(0.,ScientificNumberFormat(4),8)
 		fit_err_lbl = JLabel("Fit Err,%=",JLabel.RIGHT)	
 		self.fit_err_text.setValue(5.0)
-		self.fit_iter_text = DoubleInputTextField(0.,FortranNumberFormat("G8.0"),8)
+		self.fit_iter_text = DoubleInputTextField(0.,ScientificNumberFormat(1),8)
 		iter_lbl = JLabel("Fit Iterations=",JLabel.RIGHT)
 		self.fit_iter_text.setValue(200)
-		self.fit_iter_left_text = DoubleInputTextField(0.,FortranNumberFormat("G8.0"),8)
+		self.fit_iter_left_text = DoubleInputTextField(0.,ScientificNumberFormat(1),8)
 		iter_left_lbl = JLabel("Iters. Left=",JLabel.RIGHT)		
-		self.avg_diff_text = DoubleInputTextField(0.,FortranNumberFormat("G8.6"),8) 
+		self.avg_diff_text = DoubleInputTextField(0.,ScientificNumberFormat(7),8)
 		avg_diff_lbl = JLabel("Avg.Diff.[mm]=",JLabel.RIGHT)
 		tmp_panel.add(eKin_lbl)
 		tmp_panel.add(self.eKin_text)

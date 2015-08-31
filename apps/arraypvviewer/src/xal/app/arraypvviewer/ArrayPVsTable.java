@@ -5,7 +5,7 @@
  */
 package xal.app.arraypvviewer;
 
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,7 +37,8 @@ public class ArrayPVsTable {
 
 	private final JPanel tablePanel = new JPanel(new BorderLayout());
 
-	private final FortranNumberFormat fmtVal = new FortranNumberFormat("G11.4");
+	/** fixed width scientific number format */
+	private final ScientificNumberFormat fmtVal = new ScientificNumberFormat( 5, 11 );
 
 	private final JPanel leftTablePanel = new JPanel(new BorderLayout());
 	private final JPanel centerTablePanel = new JPanel(new BorderLayout());
@@ -72,8 +73,6 @@ public class ArrayPVsTable {
 	 */
 	public ArrayPVsTable(Vector<ArrayViewerPV> arrayPVsIn) {
 		arrayPVsExt = arrayPVsIn;
-
-		fmtVal.setFixedLength(true);
 
 		leftTableModel =
 			new AbstractTableModel() {

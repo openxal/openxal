@@ -9,7 +9,7 @@ import xal.extension.widgets.apputils.SimpleChartPopupMenu;
 import xal.tools.apputils.VerticalLayout;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.scan.UpdatingEventController;
-import xal.tools.text.FortranNumberFormat;
+import xal.tools.text.ScientificNumberFormat;
 import xal.extension.widgets.plot.CurveData;
 
 import java.awt.BorderLayout;
@@ -95,7 +95,7 @@ public class ScalarPVsValuePanel {
 		GP.setGraphBackGroundColor(Color.white);
 		GP.setAxisNames("PV index", "PV Value");
 		GP.setNumberFormatX(new DecimalFormat("#0"));
-		FortranNumberFormat frmt = new FortranNumberFormat("G9.4");
+		ScientificNumberFormat frmt = new ScientificNumberFormat( 5, 9, false );
 		frmt.setFixedLength(true);
 		GP.setNumberFormatY(frmt);
 		GP.setLimitsAndTicksX(0., 1.0, 1, 0);

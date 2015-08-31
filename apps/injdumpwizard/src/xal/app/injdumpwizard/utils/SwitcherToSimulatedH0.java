@@ -150,9 +150,9 @@ public class  SwitcherToSimulatedH0 {
 		switcherPanel.add(lowerPanel,BorderLayout.CENTER);
 		
 		//set coefficients
-		injSpt_coeff_TextField.setDecimalFormat(new DecimalFormat("######.######"));
-		dha11_coeff_TextField.setDecimalFormat(new DecimalFormat("######.######"));
-		dha12_coeff_TextField.setDecimalFormat(new DecimalFormat("######.######"));
+		injSpt_coeff_TextField.setNumberFormat(new DecimalFormat("######.######"));
+		dha11_coeff_TextField.setNumberFormat(new DecimalFormat("######.######"));
+		dha12_coeff_TextField.setNumberFormat(new DecimalFormat("######.######"));
 		
 		injSpt_coeff_TextField.setValue(1.01474);
 		dha11_coeff_TextField.setValue(0.742995);

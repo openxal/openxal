@@ -29,7 +29,7 @@ public class BeamTrigger{
          
 	tDelayText.setHorizontalAlignment(JTextField.CENTER);
         tDelayText.setNormalBackground(Color.white);
-        tDelayText.setDecimalFormat(tDelayFormat);
+        tDelayText.setNumberFormat(tDelayFormat);
 	tDelayText.setValue(0.2);
         
 	//get channel from timing center

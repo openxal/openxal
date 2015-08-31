@@ -195,9 +195,9 @@ public class ScanController2D {
 		paramTextRB.setBackground(Color.getHSBColor(0.0f, 0.0f, 0.9f));
 		paramTextRB.setEditable(false);
 
-		paramLowLimText.setDecimalFormat(valueFormat);
-		paramUppLimText.setDecimalFormat(valueFormat);
-		paramStepText.setDecimalFormat(valueFormat);
+		paramLowLimText.setNumberFormat(valueFormat);
+		paramUppLimText.setNumberFormat(valueFormat);
+		paramStepText.setNumberFormat(valueFormat);
 
 		paramLowLimText.setHorizontalAlignment(JTextField.CENTER);
 		paramUppLimText.setHorizontalAlignment(JTextField.CENTER);
@@ -303,10 +303,10 @@ public class ScanController2D {
 		valueTextRB.setEditable(false);
 		valueText.setEditable(false);
 
-		lowLimText.setDecimalFormat(valueFormat);
-		uppLimText.setDecimalFormat(valueFormat);
-		stepText.setDecimalFormat(valueFormat);
-		sleepTimeText.setDecimalFormat(sleepTimeFormat);
+		lowLimText.setNumberFormat(valueFormat);
+		uppLimText.setNumberFormat(valueFormat);
+		stepText.setNumberFormat(valueFormat);
+		sleepTimeText.setNumberFormat(sleepTimeFormat);
 
 		lowLimText.setHorizontalAlignment(JTextField.CENTER);
 		uppLimText.setHorizontalAlignment(JTextField.CENTER);
