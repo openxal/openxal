@@ -1737,8 +1737,8 @@ public class ScanDocument1D extends AcceleratorDocument {
 			setButtonState(true, false);
 
 			paramPV_RB_ValueText.setEditable(false);
-			paramPV_ValueText.setDecimalFormat(valueFormat);
-			paramPV_RB_ValueText.setDecimalFormat(valueFormat);
+			paramPV_ValueText.setNumberFormat(valueFormat);
+			paramPV_RB_ValueText.setNumberFormat(valueFormat);
 
 			paramPV_ValueText.setHorizontalAlignment(JTextField.CENTER);
 			paramPV_RB_ValueText.setHorizontalAlignment(JTextField.CENTER);
