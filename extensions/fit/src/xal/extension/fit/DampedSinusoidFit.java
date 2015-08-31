@@ -215,7 +215,7 @@ final public class DampedSinusoidFit {
 		return amplitude * Math.pow( growthFactor, index ) * Math.sin( 2 * Math.PI * frequency * index + phase ) + offset;
 	}
 
-
+	
 	/** calculate the initial waveform error */
 	private void fitInitialWaveformError() {
 		final double offset = getInitialOffset();
@@ -720,7 +720,7 @@ final public class DampedSinusoidFit {
 		return _initialAmplitude;
 	}
 
-
+	
 	/** Get the optimized sine-like amplitude */
 	public double getAmplitude() {
 		return _amplitude;
