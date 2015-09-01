@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.logging.*;
 import java.io.*;
 
+import xal.Info;
 import xal.tools.messaging.MessageCenter;
 import xal.tools.apputils.ImageCaptureManager;
 
@@ -211,8 +212,13 @@ public abstract class XalWindow extends JFrame implements XalDocumentView, XalDo
 	 * if the document has unsaved changes.
 	 */
 	public void generateWindowTitle() {
-        final StringBuffer windowTitle = new StringBuffer( Application.getApp().getApplicationAdaptor().applicationName() );
-		
+		// prefix the window title with the label for this version of Open XAL
+		final StringBuffer windowTitle = new StringBuffer( "[" + Info.getLabel() +  "] - " );
+
+		// append the application name
+		windowTitle.append( Application.getApp().getApplicationAdaptor().applicationName() );
+
+		// append the document title
 		String documentTitle = document.getTitle();
 		if ( documentTitle != null && !documentTitle.isEmpty() ) {
 			windowTitle.append( " - " + documentTitle );

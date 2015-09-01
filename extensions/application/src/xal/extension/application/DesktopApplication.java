@@ -22,6 +22,7 @@ import java.net.*;
 import java.io.*;
 import java.util.prefs.Preferences;
 
+import xal.Info;
 import xal.tools.StringJoiner;
 import xal.tools.apputils.files.*;
 import xal.tools.messaging.MessageCenter;
@@ -135,7 +136,7 @@ public class DesktopApplication extends Application implements XalInternalDocume
 		final JDesktopPane desktop = new JDesktopPane();
 		desktop.setDragMode( ((DesktopApplicationAdaptor)_applicationAdaptor).drawsDocumentContentOnDrag() ? JDesktopPane.LIVE_DRAG_MODE : JDesktopPane.OUTLINE_DRAG_MODE );
 		
-		_desktopFrame = new JFrame( _applicationAdaptor.applicationName() );
+		_desktopFrame = new JFrame( Info.getLabel() + " - " + _applicationAdaptor.applicationName() );
 		_desktopFrame.setSize( 1024, 768 );
 		_desktopFrame.setContentPane( desktop );
 		
