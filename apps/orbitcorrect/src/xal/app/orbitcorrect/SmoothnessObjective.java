@@ -21,11 +21,11 @@ public class SmoothnessObjective extends OrbitObjective {
 	protected final int _planeIndex;
 
 	/** scale of orbit angle used for calculating satisfaction */
-	protected final double _angleScale;
+	protected double _angleScale;
 
-	
+
 	/**
-	 * Constructor
+	 * Primary Constructor
 	 * @param planeIndex  identifier of the x or y plane
 	 * @param angleScale  the scale against which to measure angle errors
 	 */
@@ -34,6 +34,27 @@ public class SmoothnessObjective extends OrbitObjective {
 
 		_planeIndex = planeIndex;
 		_angleScale = ( angleScale != 0.0 ) ? angleScale : 1.0;		// make sure the scale is non-zero
+	}
+
+	
+	/**
+	 * Constructor with the default angle scale of 1.0
+	 * @param planeIndex  identifier of the x or y plane
+	 */
+	public SmoothnessObjective( final int planeIndex ) {
+		this( planeIndex, 1.0 );
+	}
+
+
+	/** Get the angle scale */
+	public double getAngleScale() {
+		return _angleScale;
+	}
+
+
+	/** Set the angle scale */
+	public void setAngleScale( final double angleScale ) {
+		_angleScale = angleScale;
 	}
 
 

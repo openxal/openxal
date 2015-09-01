@@ -64,7 +64,16 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 	
 	/** objective for Y distortion */
 	protected DisplacementObjective _yDistortionObjective;
-	
+
+	/** objective for the corrector duty (attempt to reduce corrector strengths) */
+	protected CorrectorDutyObjective _correctorDutyObjective;
+
+	/** objective to reduce the RMS horizontal orbit angles */
+	protected SmoothnessObjective _xSmoothnessObjective;
+
+	/** objective to reduce the RMS vertical orbit angles */
+	protected SmoothnessObjective _ySmoothnessObjective;
+
 	/** objectives */
 	protected List<OrbitObjective> _objectives;
 	
@@ -115,6 +124,18 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 	
 		_yDistortionObjective = new DisplacementObjective( Orbit.Y_PLANE );
 		_objectives.add( _yDistortionObjective );
+
+		_correctorDutyObjective = new CorrectorDutyObjective();
+		_correctorDutyObjective.setEnabled( false );	// disable this objective unless the user enables it manually
+		_objectives.add( _correctorDutyObjective );
+
+		_xSmoothnessObjective = new SmoothnessObjective( Orbit.X_PLANE );
+		_xSmoothnessObjective.setEnabled( false );		// disable this objective unless the user enables it manually
+		_objectives.add( _xSmoothnessObjective );
+
+		_ySmoothnessObjective = new SmoothnessObjective( Orbit.Y_PLANE );
+		_ySmoothnessObjective.setEnabled( false );		// disable this objective unless the user enables it manually
+		_objectives.add( _ySmoothnessObjective );
 	}
 
 
@@ -306,7 +327,7 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 
 		final Problem problem = new Problem();
 		final Map<CorrectorSupply,Variable> variables = new HashMap<CorrectorSupply,Variable>();
-		
+
 		final double xRmsDisplacement = orbit.getOrbitPlane( Orbit.X_PLANE ).rmsDisplacement();
 		final double yRmsDisplacement = orbit.getOrbitPlane( Orbit.Y_PLANE ).rmsDisplacement();
 		final double xRmsAngle = orbit.getOrbitPlane( Orbit.X_PLANE ).rmsAngle();
@@ -338,7 +359,10 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 		
 		_xDistortionObjective.setOrbitScale( xRmsDisplacement );
 		_yDistortionObjective.setOrbitScale( yRmsDisplacement );
-		
+
+		_xSmoothnessObjective.setAngleScale( xRmsAngle );
+		_ySmoothnessObjective.setAngleScale( yRmsAngle );
+
 		for ( OrbitObjective objective : _objectives ) {
 			if ( objective.isEnabled() ) {
 				problem.addObjective( objective );
@@ -348,10 +372,8 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 		if ( problem.getObjectives().size() < 1 ) {
 			throw new RuntimeException( "At least 1 objective must be enabled..." );
 		}
-		
-		//problem.addObjective( new SmoothnessObjective( Orbit.X_PLANE, xRmsAngle) );
-		//problem.addObjective( new SmoothnessObjective( Orbit.Y_PLANE, yRmsAngle ) );
-		problem.addObjective( new CorrectorDutyObjective() );
+
+		final double initialCorrectorDuty = _correctorDutyObjective.score( orbit, _initialCorrectorDistribution );
 
 		// Setup the solver
 		if ( _solver != null ) {
@@ -378,6 +400,11 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 		evaluator.updateCorrectorDistribution( bestDistribution, solution.getTrialPoint() );
 		_optimalCorrectorDistribution = bestDistribution.getDistribution();
 		final Orbit predictedOrbit = _simulator.predictOrbit( orbit, _initialCorrectorDistribution, bestDistribution );
+
+		final double finalCorrectorDuty = _correctorDutyObjective.score( predictedOrbit, _optimalCorrectorDistribution );
+
+		System.out.println( "Initial Corrector Duty: " + initialCorrectorDuty );
+		System.out.println( "Final Corrector Duty: " + finalCorrectorDuty );
 
 		System.out.println( "Initial X RMS: " + xRmsDisplacement );
 		System.out.println( "Predicted X RMS: " + predictedOrbit.getOrbitPlane( Orbit.X_PLANE ).rmsDisplacement() );
