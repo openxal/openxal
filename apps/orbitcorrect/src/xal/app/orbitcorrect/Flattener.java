@@ -385,7 +385,7 @@ public class Flattener implements ScoreBoardListener, DataListener, OrbitModelLi
 		System.out.println( "Predicted X-Angle RMS: " + predictedOrbit.getOrbitPlane( Orbit.X_PLANE ).rmsAngle() );
 		System.out.println( "Initial Y RMS: " + yRmsDisplacement );
 		System.out.println( "Predicted Y RMS: " + predictedOrbit.getOrbitPlane( Orbit.Y_PLANE ).rmsDisplacement() );
-		System.out.println( "Initial Y-Angle RMS: " + xRmsAngle );
+		System.out.println( "Initial Y-Angle RMS: " + yRmsAngle );
 		System.out.println( "Predicted Y-Angle RMS: " + predictedOrbit.getOrbitPlane( Orbit.Y_PLANE ).rmsAngle() );
 
 		_eventProxy.progressUpdated( this, 1.0, "Corrector search completed" );
