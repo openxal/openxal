@@ -43,7 +43,7 @@
 
 			<!-- Copy the core's site specific resources into the compile directory -->
 			<copy todir="${core.intermediates.resources}" quiet="true" failonerror="false" overwrite="true">
-				<fileset dir="${site.core.resources}" />
+				<fileset dir="${site.core.root}/resources" />
 			</copy>
 		</sequential>
 	</macrodef>
