@@ -914,18 +914,24 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 		// for all rf cavities
         for ( final RfCavity rfCavity : rfCavities ) {
 			try {
-				Channel ampSetCh = rfCavity
-                .getAndConnectChannel(RfCavity.CAV_AMP_SET_HANDLE);
-				//System.out.println("Ready to put " + rfCavity.getDfltCavAmp() + " to " + ampSetCh.getId());
-				if (rfCavity instanceof xal.smf.impl.SCLCavity) {
-					ampSetCh.putValCallback( rfCavity.getDfltCavAmp()*((SCLCavity)rfCavity).getStructureTTF(), this );
+				final Channel ampSetCh = rfCavity.findChannel( RfCavity.CAV_AMP_SET_HANDLE );
+				if ( ampSetCh.isValid() ) {
+					ampSetCh.connectAndWait();
+					//System.out.println("Ready to put " + rfCavity.getDfltCavAmp() + " to " + ampSetCh.getId());
+					if (rfCavity instanceof xal.smf.impl.SCLCavity) {
+						ampSetCh.putValCallback( rfCavity.getDfltCavAmp()*((SCLCavity)rfCavity).getStructureTTF(), this );
+					}
+					else {
+						ampSetCh.putValCallback( rfCavity.getDfltCavAmp(), this );
+					}
 				}
-				else {
-					ampSetCh.putValCallback( rfCavity.getDfltCavAmp(), this );
+
+				final Channel phaseSetCh = rfCavity.findChannel( RfCavity.CAV_PHASE_SET_HANDLE );
+				if ( phaseSetCh.isValid() ) {
+					phaseSetCh.connectAndWait();
+					//System.out.println("Ready to put " + rfCavity.getDfltCavPhase() + " to " + phaseSetCh.getId());
+					phaseSetCh.putValCallback( rfCavity.getDfltCavPhase(), this );
 				}
-				Channel phaseSetCh = rfCavity.getAndConnectChannel(RfCavity.CAV_PHASE_SET_HANDLE);
-				//System.out.println("Ready to put " + rfCavity.getDfltCavPhase() + " to " + phaseSetCh.getId());
-				phaseSetCh.putValCallback( rfCavity.getDfltCavPhase(), this );
 			} catch (NoSuchChannelException e) {
 				System.err.println(e.getMessage());
 			} catch (ConnectionException e) {
@@ -1233,12 +1239,25 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 			
 			// for rf PVs
             for ( final RfCavity rfCav : rfCavities ) {
-				READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, rfCav.getChannel( RfCavity.CAV_AMP_AVG_HANDLE ), rfCav.getChannel( RfCavity.CAV_AMP_SET_HANDLE ) ) );
-				READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, rfCav.getChannel( RfCavity.CAV_PHASE_AVG_HANDLE ), rfCav.getChannel( RfCavity.CAV_PHASE_SET_HANDLE ) ) );
-				ch_noiseMap.put( rfCav.getChannel( RfCavity.CAV_AMP_AVG_HANDLE ), rfAmpNoise );
-				ch_noiseMap.put( rfCav.getChannel( RfCavity.CAV_PHASE_AVG_HANDLE ), rfPhaseNoise );
-				ch_offsetMap.put( rfCav.getChannel( RfCavity.CAV_AMP_AVG_HANDLE ), rfAmpOffset );
-				ch_offsetMap.put( rfCav.getChannel( RfCavity.CAV_PHASE_AVG_HANDLE ), rfPhaseOffset );
+				final Channel ampSetChannel = rfCav.findChannel( RfCavity.CAV_AMP_SET_HANDLE );
+				final Channel ampReadChannel = rfCav.findChannel( RfCavity.CAV_AMP_AVG_HANDLE );
+				if ( ampReadChannel != null && ampReadChannel.isValid() ) {
+					if ( ampSetChannel != null && ampSetChannel.isValid() ) {
+						READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, ampReadChannel, ampSetChannel ) );
+					}
+					ch_noiseMap.put( ampReadChannel, rfAmpNoise );
+					ch_offsetMap.put( ampReadChannel, rfAmpOffset );
+				}
+
+				final Channel phaseSetChannel = rfCav.findChannel( RfCavity.CAV_PHASE_SET_HANDLE );
+				final Channel phaseReadChannel = rfCav.findChannel( RfCavity.CAV_PHASE_AVG_HANDLE );
+				if ( phaseReadChannel != null && phaseReadChannel.isValid() ) {
+					if ( phaseSetChannel != null && phaseSetChannel.isValid() ) {
+						READBACK_SET_RECORDS.add( new ReadbackSetRecord( rfCav, phaseReadChannel, phaseSetChannel ) );
+					}
+					ch_noiseMap.put( phaseReadChannel, rfPhaseNoise );
+					ch_offsetMap.put( phaseReadChannel, rfPhaseOffset );
+				}
 			}
 			
 			Collections.sort( READBACK_SET_RECORDS, new ReadbackSetRecordPositionComparator( selectedSequence ) );
