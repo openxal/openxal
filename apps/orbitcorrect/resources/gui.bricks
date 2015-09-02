@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <BricksDocument date="Wed Jan 07 13:38:44 EST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="838" tag="MainWindow" width="1233">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="875" tag="MainWindow" width="1233">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Orbit Correction"/>
             <ViewNode tag="Main View">
@@ -136,7 +136,7 @@
                             <BeanProperty name="orientation" value="0"/>
                             <BeanProperty height="163" name="minimumSize" width="320000"/>
                             <BeanProperty height="729" name="preferredSize" width="979"/>
-                            <BeanProperty name="dividerLocation" value="100"/>
+                            <BeanProperty name="dividerLocation" value="130"/>
                             <ViewNode tag="Objectives Config Box">
                                 <ViewProxy type="javax.swing.Box_Vertical"/>
                                 <BeanProperty height="55" name="minimumSize" width="35000"/>
