@@ -86,7 +86,7 @@ public class SmoothnessObjective extends OrbitObjective {
 	 * @return  an objective name for the specified orbit plane
 	 */
 	protected static String generateName( final int planeIndex ) {
-		final String prefix = ( planeIndex == Orbit.X_PLANE ) ? "X Plane" : "Y Plane";
+		final String prefix = ( planeIndex == Orbit.X_PLANE ) ? "X " : "Y ";
 		return prefix + " RMS Angle";
 	}
 }
