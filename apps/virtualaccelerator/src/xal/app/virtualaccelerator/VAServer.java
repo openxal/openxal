@@ -99,21 +99,24 @@ public class VAServer {
 		final TypeQualifier qualifier = QualifierFactory.qualifierForQualifiers( true, nodeFilter );
 		final List<AcceleratorNode> nodes = SEQUENCE.getAllInclusiveNodesWithQualifier( qualifier );
 		
-        System.out.println( "type: " + type );
+        //System.out.println( "\n\ntype: " + type );
 		for ( AcceleratorNode node : nodes ) {
-            System.out.println( "node: " + node.getId() + ", soft type: " + node.getSoftType() + ", status: " + node.getStatus() );
+            System.out.println( "\nnode: " + node.getId() + ", type: " + type + ", soft type: " + node.getSoftType() + ", status: " + node.getStatus() );
 			final Collection<String> handles = processor.getHandlesToProcess( node );
-            System.out.println( "handles: " + handles + "\n\n" );
+            System.out.println( "handles: " + handles );
             for ( final String handle : handles ) {
 				System.out.println( "Getting channel for handle: " + handle );
-				final Channel channel = node.getChannel( handle );
-				if ( channel != null ) {
+				final Channel channel = node.findChannel( handle );
+				//System.out.println( "Channel with signal: " + channel.channelName() + " and validity: " + channel.isValid() );
+				if ( channel != null && channel.isValid() ) {
 					final String signal = channel.channelName();
-					System.out.println( "Channel for handle: " + signal );
+					System.out.println( "Registering channel: " + signal + " for handle: " + handle );
 					final SignalEntry entry = new SignalEntry( signal, handle );
 					if ( !signals.contains( entry ) ) {
 						signals.add( entry );
 					}
+				} else {
+					System.err.println( "Warning! No valid channel for handle: " + handle );
 				}
 			}
 		}
