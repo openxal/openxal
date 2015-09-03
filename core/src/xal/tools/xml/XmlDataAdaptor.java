@@ -535,18 +535,7 @@ public class XmlDataAdaptor implements DataAdaptor {
      * Generate an XmlDataAdaptor from a urlPath and given dtd validating option
      */
     static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating ) throws ParseException, ResourceNotFoundException {
-        try {
-            DocumentBuilder builder = newDocumentBuilder( isValidating );
-            Document document = builder.parse( urlPath );
-
-            return new XmlDataAdaptor( document );
-        }
-        catch( java.io.FileNotFoundException exception ) {
-            throw new ResourceNotFoundException( exception );
-        }
-        catch( Exception exception ) {
-            throw new ParseException( exception );
-        }
+		return adaptorForUrl( urlPath, isValidating, null );
     }
     
     /**
@@ -554,7 +543,7 @@ public class XmlDataAdaptor implements DataAdaptor {
      */
     static public XmlDataAdaptor adaptorForUrl( final String urlPath, final boolean isValidating, final String schemaPath ) throws ParseException, ResourceNotFoundException {
         try {
-			final URL schemaURL = ResourceManager.getResourceURL( XmlDataAdaptor.class, schemaPath );
+			final URL schemaURL = schemaPath != null ? ResourceManager.getResourceURL( XmlDataAdaptor.class, schemaPath ) : null;
             DocumentBuilder builder = newDocumentBuilder( isValidating, schemaURL );
             Document document = builder.parse( urlPath );
 
@@ -606,24 +595,26 @@ public class XmlDataAdaptor implements DataAdaptor {
     
     
     /** Create a new document builder with the given DTD validation */
-    static protected DocumentBuilder newDocumentBuilder(boolean isValidating) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(isValidating);
-		
-        return factory.newDocumentBuilder();
+    static protected DocumentBuilder newDocumentBuilder( final boolean isValidating ) throws Exception {
+		return newDocumentBuilder( isValidating, null );
     }
     
     
     /** Create a new document builder with the given DTD validation, and schemaUrl */
-    static protected DocumentBuilder newDocumentBuilder(boolean isValidating, URL schemaUrl) throws Exception {
+    static protected DocumentBuilder newDocumentBuilder( final boolean isValidating, final URL schemaURL ) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(isValidating);
+        factory.setValidating( isValidating );
+
+		// Loading the schema causes significant overhead when loading large files (e.g. optics files).
+		// In several places this method is called with the schemaURL, but it is only intended to be used when validation is specifically enabled.
+		// Only load the schema if validating and the schemaURL is not null.
+		if ( isValidating && schemaURL != null ) {
+			factory.setNamespaceAware(true);
+			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = schemaFactory.newSchema( schemaURL );
+			factory.setSchema(schema);
+		}
 		
-        factory.setNamespaceAware(true);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(schemaUrl);
-        factory.setSchema(schema);
-        
         return factory.newDocumentBuilder();
     }
     
