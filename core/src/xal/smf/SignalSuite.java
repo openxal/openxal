@@ -19,14 +19,17 @@ import java.util.*;
  * @author  tap
  */
 public class SignalSuite {
-    protected Map<String,SignalEntry> _signalMap;        // handle-PV name table
-    protected Map<String,ValueTransform> _transformTable;     // handle-value transform table
+	/** map of signal entries keyed by handle */
+    final private Map<String,SignalEntry> SIGNAL_MAP;        // handle-PV name table
+
+	/** map of transforms keyed by name */
+    final private Map<String,ValueTransform> TRANSFORM_MAP;     // handle-value transform table
     
     
     /** Creates a new instance of SignalSuite */
     public SignalSuite() {
-        _signalMap = new HashMap<String,SignalEntry>();
-        _transformTable = new HashMap<String,ValueTransform>();
+        SIGNAL_MAP = new HashMap<String,SignalEntry>();
+        TRANSFORM_MAP = new HashMap<String,ValueTransform>();
     }
     
     
@@ -40,9 +43,9 @@ public class SignalSuite {
             final String handle = channelAdaptor.stringValue("handle");
 			
 			if ( !hasHandle( handle ) ) {
-				_signalMap.put( handle, new SignalEntry() );
+				SIGNAL_MAP.put( handle, new SignalEntry() );
 			}
-			final SignalEntry signalEntry = _signalMap.get( handle );
+			final SignalEntry signalEntry = SIGNAL_MAP.get( handle );
 			
             final String signal = channelAdaptor.stringValue( "signal" );
 			if ( signal != null )  signalEntry.setSignal( signal );
@@ -67,8 +70,8 @@ public class SignalSuite {
 		for ( final DataAdaptor transformAdaptor : transformAdaptors ) {
             final String name = transformAdaptor.stringValue( "name" );
             final ValueTransform transform = TransformFactory.getTransform( transformAdaptor );
-            _transformTable.put( name, transform );
-        }        
+			putTransform( name, transform );
+        }
     }
     
     
@@ -77,7 +80,7 @@ public class SignalSuite {
      * @param adaptor The adaptor to which the receiver's data is written
      */
     public void write( final DataAdaptor adaptor ) {
-		final Collection<Map.Entry<String,SignalEntry>> signalMapEntries = _signalMap.entrySet();
+		final Collection<Map.Entry<String,SignalEntry>> signalMapEntries = SIGNAL_MAP.entrySet();
 		for ( final Map.Entry<String,SignalEntry> entry : signalMapEntries ) {
             final DataAdaptor channelAdaptor = adaptor.createChild("channel");
             final SignalEntry signalEntry = entry.getValue();
@@ -86,17 +89,45 @@ public class SignalSuite {
             channelAdaptor.setValue( "signal", signalEntry.signal() );
             channelAdaptor.setValue( "settable", signalEntry.settable() );
             channelAdaptor.setValue( "valid", signalEntry.isValid() );
+			if ( signalEntry.getTransformKey() != null ) {
+            	channelAdaptor.setValue( "transform", signalEntry.getTransformKey() );
+			}
         }
     }
-    
-    
-    /** 
+
+	
+	/**
+	 * Programmatically add or replace a signal entry corresponding to the specified handle
+	 * @param handle The handle referring to the signal entry
+	 * @param signal PV signal associated with the handle
+	 * @param transformKey Key of the signal's transformation
+	 * @param settable indicates whether the channel is settable
+	 * @param valid specifies whether the channel is marked valid
+	 */
+	public void putChannel( final String handle, final String signal, final String transformKey, final boolean settable, final boolean valid ) {
+		final SignalEntry signalEntry = new SignalEntry( signal, settable, transformKey );
+		signalEntry.setValid( valid );
+		SIGNAL_MAP.put( handle, signalEntry );
+	}
+
+
+	/** 
+	 * Programmatically assign a transform for the specified name
+	 * @param name key for associating the transform
+	 * @param transform the value transform
+	 */
+	public void putTransform( final String name, final ValueTransform transform ) {
+		TRANSFORM_MAP.put( name, transform );
+	}
+
+
+    /**
      * Check if this suite manages the specified PV signal.
      * @param signal The PV signal name for which to check.
      * @return true if this suite manages the specified signal and false otherwise.
      */
     boolean hasSignal( final String signal ) {
-		for ( final SignalEntry entry : _signalMap.values() ) {
+		for ( final SignalEntry entry : SIGNAL_MAP.values() ) {
             if ( entry.signal().equals( signal ) )  return true;
 		}
         
@@ -120,7 +151,7 @@ public class SignalSuite {
      * @return The handles managed by this suite.
      */
     public Collection<String> getHandles() {
-        return _signalMap.keySet();
+        return SIGNAL_MAP.keySet();
     }
     
     
@@ -130,7 +161,7 @@ public class SignalSuite {
      * @return true if the handle is available and false otherwise.
      */
     public boolean hasHandle( final String handle ) {
-        return _signalMap.containsKey( handle );
+        return SIGNAL_MAP.containsKey( handle );
     }
     
     
@@ -153,7 +184,7 @@ public class SignalSuite {
      */
     public ValueTransform getTransform(String handle) {
         final SignalEntry signalEntry = getSignalEntry( handle );
-		return signalEntry != null ? _transformTable.get( signalEntry.getTransformKey() ) : null;
+		return signalEntry != null ? TRANSFORM_MAP.get( signalEntry.getTransformKey() ) : null;
     }
 
 
@@ -174,7 +205,7 @@ public class SignalSuite {
      * @return signal entry for the handle or null if there is none
      */
 	private SignalEntry getSignalEntry( final String handle ) {
-		return _signalMap.get( handle );
+		return SIGNAL_MAP.get( handle );
 	}
 }
 

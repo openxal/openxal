@@ -80,8 +80,31 @@ public class ChannelSuite implements DataListener {
     public void write( final DataAdaptor adaptor ) {
         SIGNAL_SUITE.write( adaptor );
     }
-    
-    
+
+
+	/**
+	 * Programmatically add or replace a signal entry corresponding to the specified handle
+	 * @param handle The handle referring to the signal entry
+	 * @param signal PV signal associated with the handle
+	 * @param transformKey Key of the signal's transformation
+	 * @param settable indicates whether the channel is settable
+	 * @param valid specifies whether the channel is marked valid
+	 */
+	public void putChannel( final String handle, final String signal, final String transformKey, final boolean settable, final boolean valid ) {
+		SIGNAL_SUITE.putChannel( handle, signal, transformKey, settable, valid );
+	}
+
+	
+	/**
+	 * Programmatically assign a transform for the specified name
+	 * @param name key for associating the transform
+	 * @param transform the value transform
+	 */
+	public void putTransform( final String name, final ValueTransform transform ) {
+		SIGNAL_SUITE.putTransform( name, transform );
+	}
+
+
     /** 
      * See if this channel suite manages the specified signal.
      * @param signal The PV signal to check for availability.
