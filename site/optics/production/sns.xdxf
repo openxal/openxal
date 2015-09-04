@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Fri Aug 21 10:18:51 EDT 2015">
+<xdxf system="sns" ver="2.0.0" date="Fri Sep 04 14:01:56 EDT 2015">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -22590,6 +22590,172 @@
           <channel handle="phaseTBT" signal="HEBT_Diag:BPM28:beamPA" settable="false"/>
        </channelsuite>
     </node>
+    <node type="WS" softType="Version 2.0.0" id="HEBT_Diag:WS28" pos="102.336689" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="81.245" yaw="0" roll="0"/>
+       </attributes>
+       <channelsuite name="wssuite">
+          <channel handle="Command" signal="HEBT_Diag:WS28:Command" settable="true"/>
+          <channel handle="CommandResult" signal="HEBT_Diag:WS28:CommandResult" settable="false"/>
+          <channel handle="CommandStatus" signal="HEBT_Diag:WS28:Status" settable="false"/>
+          <channel handle="StatCollisionRb" signal="HEBT_Diag:WS28:Collision" settable="false"/>
+          <channel handle="StatFwdLimitRb" signal="HEBT_Diag:WS28:Forward" settable="false"/>
+          <channel handle="StatRevLimitRb" signal="HEBT_Diag:WS28:Reverse" settable="false"/>
+          <channel handle="StatScanOutOfRngRb" signal="HEBT_Diag:WS28:Scan_OOR" settable="false"/>
+          <channel handle="StatHorWireDmgRb" signal="HEBT_Diag:WS28:Hor_Cont" settable="false"/>
+          <channel handle="StatVerWireDmgRb" signal="HEBT_Diag:WS28:Ver_Cont" settable="false"/>
+          <channel handle="StatDiaWireDmgRb" signal="HEBT_Diag:WS28:Diag_Cont" settable="false"/>
+          <channel handle="StatAlarmSgnlRb" signal="HEBT_Diag:WS28:SignalAlarm" settable="false"/>
+          <channel handle="StatAlarmTmgRb" signal="HEBT_Diag:WS28:TimingAlarm" settable="false"/>
+          <channel handle="StatMps0Rb" signal="HEBT_Diag:WS28:MPS0" settable="false"/>
+          <channel handle="StatMps1Rb" signal="HEBT_Diag:WS28:MPS1" settable="false"/>
+          <channel handle="StatWirePosRb" signal="HEBT_Diag:WS28:Position" settable="false"/>
+          <channel handle="StatPowerSupplyRb" signal="HEBT_Diag:WS28:Power" settable="false"/>
+          <channel handle="StatWireSpeedRb" signal="HEBT_Diag:WS28:Speed" settable="false"/>
+          <channel handle="StatScanErrorRb" signal="HEBT_Diag:WS28:ScanErr" settable="false"/>
+          <channel handle="StatMotionRb" signal="HEBT_Diag:WS28:MotionStat" settable="false"/>
+          <channel handle="StatScanSeqIdRb" signal="HEBT_Diag:WS28:Sequence" settable="false"/>
+          <channel handle="StatScanStrokeRb" signal="HEBT_Diag:WS28:Stroke" settable="false"/>
+          <channel handle="ScanMotionRb" signal="HEBT_Diag:WS28:MotionStat" settable="false"/>
+          <channel handle="ScanPositionRb" signal="HEBT_Diag:WS28:Position" settable="false"/>
+          <channel handle="ScanSpeedRb" signal="HEBT_Diag:WS28:Speed" settable="false"/>
+          <channel handle="ScanRevLimitRb" signal="HEBT_Diag:WS28:Reverse" settable="false"/>
+          <channel handle="ScanForLimitRb" signal="HEBT_Diag:WS28:Forward" settable="false"/>
+          <channel handle="ScanSeqIdRb" signal="HEBT_Diag:WS28:Sequence" settable="false"/>
+          <channel handle="ScanErrorRb" signal="HEBT_Diag:WS28:ScanErr" settable="false"/>
+          <channel handle="ScanCfgInitPosRb" signal="HEBT_Diag:WS28:Scan_InitialMove_rb" settable="false"/>
+          <channel handle="ScanCfgInitPosSet" signal="HEBT_Diag:WS28:Scan_InitialMove_set" settable="true"/>
+          <channel handle="ScanCfgStepCntRb" signal="HEBT_Diag:WS28:Scan_Steps_rb" settable="false"/>
+          <channel handle="ScanCfgStepCntSet" signal="HEBT_Diag:WS28:Scan_Steps_set" settable="true"/>
+          <channel handle="ScanCfgStepLngRb" signal="HEBT_Diag:WS28:Scan_StepSize_rb" settable="false"/>
+          <channel handle="ScanCfgStepLngSet" signal="HEBT_Diag:WS28:Scan_StepSize_set" settable="true"/>
+          <channel handle="ScanCfgStepPulsesRb" signal="HEBT_Diag:WS28:Scan_Traces/step_rb" settable="false"/>
+          <channel handle="ScanCfgStepPulsesSet" signal="HEBT_Diag:WS28:Scan_Traces/step_set" settable="true"/>
+          <channel handle="ScanCfgStrokeLngRb" signal="HEBT_Diag:WS28:Stroke" settable="false"/>
+          <channel handle="ScanCfgScanLngRb" signal="HEBT_Diag:WS28:Scan_Length" settable="false"/>
+          <channel handle="ScanCfgScanOutOfRngRb" signal="HEBT_Diag:WS28:Scan_OOR" settable="false"/>
+          <channel handle="ActrCfgInitSpeedRb" signal="HEBT_Diag:WS28:Motion_Speed_Init_rb" settable="false"/>
+          <channel handle="ActrCfgInitSpeedSet" signal="HEBT_Diag:WS28:Motion_Speed_Init_set" settable="true"/>
+          <channel handle="ActrCfgInitAccelRb" signal="HEBT_Diag:WS28:Motion_Accel_Init_rb" settable="false"/>
+          <channel handle="ActrCfgInitAccelSet" signal="HEBT_Diag:WS28:Motion_Accel_Init_set" settable="true"/>
+          <channel handle="ActrCfgStepSpeedRb" signal="HEBT_Diag:WS28:Motion_Speed_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepSpeedSet" signal="HEBT_Diag:WS28:Motion_Speed_Step_set" settable="true"/>
+          <channel handle="ActrCfgStepAccelRb" signal="HEBT_Diag:WS28:Motion_Accel_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepAccelSet" signal="HEBT_Diag:WS28:Motion_Accel_Step_set" settable="true"/>
+          <channel handle="ActrCfgSearchSpeedRb" signal="HEBT_Diag:WS28:Motion_Speed_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchSpeedSet" signal="HEBT_Diag:WS28:Motion_Speed_Search_set" settable="true"/>
+          <channel handle="ActrCfgSearchAccelRb" signal="HEBT_Diag:WS28:Motion_Accel_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchAccelSet" signal="HEBT_Diag:WS28:Motion_Accel_Search_set" settable="true"/>
+          <channel handle="ActrCfgReturnSpeedRb" signal="HEBT_Diag:WS28:Motion_Speed_Return_rb" settable="false"/>
+          <channel handle="ActrCfgReturnSpeedSet" signal="HEBT_Diag:WS28:Motion_Speed_Return_set" settable="true"/>
+          <channel handle="ActrCfgReturnAccelRb" signal="HEBT_Diag:WS28:Motion_Accel_Return_rb" settable="false"/>
+          <channel handle="ActrCfgReturnAccelSet" signal="HEBT_Diag:WS28:Motion_Accel_Return_set" settable="true"/>
+          <channel handle="ActrCfgSearchTimeoutRb" signal="HEBT_Diag:WS28:Motion_TMO_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchTimeoutSet" signal="HEBT_Diag:WS28:Motion_TMO_Search_set" settable="true"/>
+          <channel handle="ActrCfgStepTimeoutRb" signal="HEBT_Diag:WS28:Motion_TMO_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepTimeoutSet" signal="HEBT_Diag:WS28:Motion_TMO_Step_set" settable="true"/>
+          <channel handle="DaqCfgScanRateRb" signal="HEBT_Diag:WS28:Acq_Scanrate_rb" settable="false"/>
+          <channel handle="DaqCfgScanRateSet" signal="HEBT_Diag:WS28:Acq_Scanrate_set" settable="true"/>
+          <channel handle="DaqCfgGainRb" signal="HEBT_Diag:WS28:Acq_Gain_rb" settable="false"/>
+          <channel handle="DaqCfgGainSet" signal="HEBT_Diag:WS28:Acq_Gain_set" settable="true"/>
+          <channel handle="DaqCfgWindowRb" signal="HEBT_Diag:WS28:Acq_Length_rb" settable="false"/>
+          <channel handle="DaqCfgWindowSet" signal="HEBT_Diag:WS28:Acq_Length_set" settable="true"/>
+          <channel handle="DaqCfgTimeoutRb" signal="HEBT_Diag:WS28:Acq_Time-out_rb" settable="false"/>
+          <channel handle="DaqCfgTimeoutSet" signal="HEBT_Diag:WS28:Acq_Time-out_set" settable="true"/>
+          <channel handle="PrcgCfgInvertRb" signal="HEBT_Diag:WS28:Analysis_Gain_rb" settable="false"/>
+          <channel handle="PrcgCfgInvertSet" signal="HEBT_Diag:WS28:Analysis_Gain_set" settable="true"/>
+          <channel handle="PrcgCfgAvgBeginRb" signal="HEBT_Diag:WS28:Analysis_Avg_Start_rb" settable="false"/>
+          <channel handle="PrcgCfgAvgBeginSet" signal="HEBT_Diag:WS28:Analysis_Avg_Start_set" settable="true"/>
+          <channel handle="PrcgCfgAvgLengthRb" signal="HEBT_Diag:WS28:Analysis_Avg_Len_rb" settable="false"/>
+          <channel handle="PrcgCfgAvgLengthSet" signal="HEBT_Diag:WS28:Analysis_Avg_Len_set" settable="true"/>
+          <channel handle="TrgCfgDelayRb" signal="HEBT_Diag:WS28:Delay00_Rb" settable="true"/>
+          <channel handle="TrgCfgDelaySet" signal="HEBT_Diag:WS28:Delay00" settable="true"/>
+          <channel handle="TrgCfgTrigEventRb" signal="HEBT_Diag:WS28:Event00_Rb" settable="true"/>
+          <channel handle="TrgCfgTrigEventSet" signal="HEBT_Diag:WS28:Event00" settable="true"/>
+          <channel handle="DatDiaLivePtPositions" signal="HEBT_Diag:WS28:Diag_point_pos" settable="false"/>
+          <channel handle="DatHorLivePtPositions" signal="HEBT_Diag:WS28:Hor_point_pos" settable="false"/>
+          <channel handle="DatVerLivePtPositions" signal="HEBT_Diag:WS28:Ver_point_pos" settable="false"/>
+          <channel handle="DatDiaLivePtSignal" signal="HEBT_Diag:WS28:Diag_point_sig" settable="false"/>
+          <channel handle="DatHorLivePtSignal" signal="HEBT_Diag:WS28:Hor_point_sig" settable="false"/>
+          <channel handle="DatVerLivePtSignal" signal="HEBT_Diag:WS28:Ver_point_sig" settable="false"/>
+          <channel handle="DatDiaLiveArrPositions" signal="HEBT_Diag:WS28:Diag_live_pos" settable="false"/>
+          <channel handle="DatHorLiveArrPositions" signal="HEBT_Diag:WS28:Hor_live_pos" settable="false"/>
+          <channel handle="DatVerLiveArrPositions" signal="HEBT_Diag:WS28:Ver_live_pos" settable="false"/>
+          <channel handle="DatDiaLiveArrSignal" signal="HEBT_Diag:WS28:Diag_live_sig" settable="false"/>
+          <channel handle="DatHorLiveArrSignal" signal="HEBT_Diag:WS28:Hor_live_sig" settable="false"/>
+          <channel handle="DatVerLiveArrSignal" signal="HEBT_Diag:WS28:Ver_live_sig" settable="false"/>
+          <channel handle="DatDiaRawPositions" signal="HEBT_Diag:WS28:Diag_prof_pos" settable="false"/>
+          <channel handle="DatHorRawPositions" signal="HEBT_Diag:WS28:Hor_prof_pos" settable="false"/>
+          <channel handle="DatVerRawPositions" signal="HEBT_Diag:WS28:Ver_prof_pos" settable="false"/>
+          <channel handle="DatDiaRawSignal" signal="HEBT_Diag:WS28:Diag_prof_sig" settable="false"/>
+          <channel handle="DatHorRawSignal" signal="HEBT_Diag:WS28:Hor_prof_sig" settable="false"/>
+          <channel handle="DatVerRawSignal" signal="HEBT_Diag:WS28:Ver_prof_sig" settable="false"/>
+          <channel handle="DatDiaFitPositions" signal="HEBT_Diag:WS28:Diag_prof_pos" settable="false"/>
+          <channel handle="DatHorFitPositions" signal="HEBT_Diag:WS28:Hor_prof_pos" settable="false"/>
+          <channel handle="DatVerFitPositions" signal="HEBT_Diag:WS28:Ver_prof_pos" settable="false"/>
+          <channel handle="DatDiaFitSignal" signal="HEBT_Diag:WS28:Diag_prof_fit" settable="false"/>
+          <channel handle="DatHorFitSignal" signal="HEBT_Diag:WS28:Hor_prof_fit" settable="false"/>
+          <channel handle="DatVerFitSignal" signal="HEBT_Diag:WS28:Ver_prof_fit" settable="false"/>
+          <channel handle="DatTraceTimeStep" signal="HEBT_Diag:WS28:trace_dt" settable="false"/>
+          <channel handle="DatDiaTracePositions" signal="HEBT_Diag:WS28:trace_x" settable="false"/>
+          <channel handle="DatHorTracePositions" signal="HEBT_Diag:WS28:trace_x" settable="false"/>
+          <channel handle="DatVerTracePositions" signal="HEBT_Diag:WS28:trace_x" settable="false"/>
+          <channel handle="DatDiaTraceSignal" signal="HEBT_Diag:WS28:Diag_trace_raw" settable="false"/>
+          <channel handle="DatHorTraceSignal" signal="HEBT_Diag:WS28:Hor_trace_raw" settable="false"/>
+          <channel handle="DatVerTraceSignal" signal="HEBT_Diag:WS28:Ver_trace_raw" settable="false"/>
+          <channel handle="DatHorNoiseAvg" signal="HEBT_Diag:WS28:Hor_noise_mean" settable="false"/>
+          <channel handle="DatHorNoiseStd" signal="HEBT_Diag:WS28:Hor_noise_std" settable="false"/>
+          <channel handle="DatVerNoiseAvg" signal="HEBT_Diag:WS28:Ver_noise_mean" settable="false"/>
+          <channel handle="DatVerNoiseStd" signal="HEBT_Diag:WS28:Ver_noise_std" settable="false"/>
+          <channel handle="DatDiaNoiseAvg" signal="HEBT_Diag:WS28:Diag_noise_mean" settable="false"/>
+          <channel handle="DatDiaNoiseStd" signal="HEBT_Diag:WS28:Diag_noise_std" settable="false"/>
+          <channel handle="SigHorStatAmp" signal="HEBT_Diag:WS28:Hor_Amp_rms" settable="false"/>
+          <channel handle="SigVerStatAmp" signal="HEBT_Diag:WS28:Ver_Amp_rms" settable="false"/>
+          <channel handle="SigDiaStatAmp" signal="HEBT_Diag:WS28:Diag_Amp_rms" settable="false"/>
+          <channel handle="SigHorStatOffset" signal="HEBT_Diag:WS28:Hor_Offset_rms" settable="false"/>
+          <channel handle="SigVerStatOffset" signal="HEBT_Diag:WS28:Ver_Offset_rms" settable="false"/>
+          <channel handle="SigDiaStatOffset" signal="HEBT_Diag:WS28:Diag_Offset_rms" settable="false"/>
+          <channel handle="SigHorStatArea" signal="HEBT_Diag:WS28:Hor_Area_rms" settable="false"/>
+          <channel handle="SigVerStatArea" signal="HEBT_Diag:WS28:Ver_Area_rms" settable="false"/>
+          <channel handle="SigDiaStatArea" signal="HEBT_Diag:WS28:Diag_Area_rms" settable="false"/>
+          <channel handle="SigHorStatMean" signal="HEBT_Diag:WS28:Hor_Mean_rms" settable="false"/>
+          <channel handle="SigVerStatMean" signal="HEBT_Diag:WS28:Ver_Mean_rms" settable="false"/>
+          <channel handle="SigDiaStatMean" signal="HEBT_Diag:WS28:Diag_Mean_rms" settable="false"/>
+          <channel handle="SigHorStatStd" signal="HEBT_Diag:WS28:Hor_Sigma_rms" settable="false"/>
+          <channel handle="SigVerStatStd" signal="HEBT_Diag:WS28:Ver_Sigma_rms" settable="false"/>
+          <channel handle="SigDiaStatStd" signal="HEBT_Diag:WS28:Diag_Sigma_rms" settable="false"/>
+          <channel handle="SigHorGaussAmp" signal="HEBT_Diag:WS28:Hor_Amp_gs" settable="false"/>
+          <channel handle="SigVerGaussAmp" signal="HEBT_Diag:WS28:Ver_Amp_gs" settable="false"/>
+          <channel handle="SigDiaGaussAmp" signal="HEBT_Diag:WS28:Diag_Amp_gs" settable="false"/>
+          <channel handle="SigHorGaussOffset" signal="HEBT_Diag:WS28:Hor_Offset_gs" settable="false"/>
+          <channel handle="SigVerGaussOffset" signal="HEBT_Diag:WS28:Ver_Offset_gs" settable="false"/>
+          <channel handle="SigDiaGaussOffset" signal="HEBT_Diag:WS28:Diag_Offset_gs" settable="false"/>
+          <channel handle="SigHorGaussArea" signal="HEBT_Diag:WS28:Hor_Area_gs" settable="false"/>
+          <channel handle="SigVerGaussArea" signal="HEBT_Diag:WS28:Ver_Area_gs" settable="false"/>
+          <channel handle="SigDiaGaussArea" signal="HEBT_Diag:WS28:Diag_Area_gs" settable="false"/>
+          <channel handle="SigHorGaussMean" signal="HEBT_Diag:WS28:Hor_Mean_gs" settable="false"/>
+          <channel handle="SigVerGaussMean" signal="HEBT_Diag:WS28:Ver_Mean_gs" settable="false"/>
+          <channel handle="SigDiaGaussMean" signal="HEBT_Diag:WS28:Diag_Mean_gs" settable="false"/>
+          <channel handle="SigHorGaussStd" signal="HEBT_Diag:WS28:Hor_Sigma_gs" settable="false"/>
+          <channel handle="SigVerGaussStd" signal="HEBT_Diag:WS28:Ver_Sigma_gs" settable="false"/>
+          <channel handle="SigDiaGaussStd" signal="HEBT_Diag:WS28:Diag_Sigma_gs" settable="false"/>
+          <channel handle="SigHorDblGaussAmp" signal="HEBT_Diag:WS28:Hor_Amp_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussAmp" signal="HEBT_Diag:WS28:Ver_Amp_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussAmp" signal="HEBT_Diag:WS28:Diag_Amp_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussOffset" signal="HEBT_Diag:WS28:Hor_Offset_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussOffset" signal="HEBT_Diag:WS28:Ver_Offset_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussOffset" signal="HEBT_Diag:WS28:Diag_Offset_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussArea" signal="HEBT_Diag:WS28:Hor_Area_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussArea" signal="HEBT_Diag:WS28:Ver_Area_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussArea" signal="HEBT_Diag:WS28:Diag_Area_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussMean" signal="HEBT_Diag:WS28:Hor_Mean_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussMean" signal="HEBT_Diag:WS28:Ver_Mean_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussMean" signal="HEBT_Diag:WS28:Diag_Mean_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussStd" signal="HEBT_Diag:WS28:Hor_Sigma_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussStd" signal="HEBT_Diag:WS28:Ver_Sigma_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussStd" signal="HEBT_Diag:WS28:Diag_Sigma_dgs" settable="false"/>
+       </channelsuite>
+    </node>
     <node type="BLM" id="HEBT_Diag:BLM29" pos="104.586689" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="81.245" yaw="0" roll="0"/>
@@ -22616,6 +22782,172 @@
           <channel handle="amplitudeAvg" signal="HEBT_Diag:BPM29:amplitudeAvg" settable="false"/>
           <channel handle="ampTBT" signal="HEBT_Diag:BPM29:beamIA" settable="false"/>
           <channel handle="phaseTBT" signal="HEBT_Diag:BPM29:beamPA" settable="false"/>
+       </channelsuite>
+    </node>
+    <node type="WS" softType="Version 2.0.0" id="HEBT_Diag:WS29" pos="106.608689" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="81.245" yaw="0" roll="0"/>
+       </attributes>
+       <channelsuite name="wssuite">
+          <channel handle="Command" signal="HEBT_Diag:WS29:Command" settable="true"/>
+          <channel handle="CommandResult" signal="HEBT_Diag:WS29:CommandResult" settable="false"/>
+          <channel handle="CommandStatus" signal="HEBT_Diag:WS29:Status" settable="false"/>
+          <channel handle="StatCollisionRb" signal="HEBT_Diag:WS29:Collision" settable="false"/>
+          <channel handle="StatFwdLimitRb" signal="HEBT_Diag:WS29:Forward" settable="false"/>
+          <channel handle="StatRevLimitRb" signal="HEBT_Diag:WS29:Reverse" settable="false"/>
+          <channel handle="StatScanOutOfRngRb" signal="HEBT_Diag:WS29:Scan_OOR" settable="false"/>
+          <channel handle="StatHorWireDmgRb" signal="HEBT_Diag:WS29:Hor_Cont" settable="false"/>
+          <channel handle="StatVerWireDmgRb" signal="HEBT_Diag:WS29:Ver_Cont" settable="false"/>
+          <channel handle="StatDiaWireDmgRb" signal="HEBT_Diag:WS29:Diag_Cont" settable="false"/>
+          <channel handle="StatAlarmSgnlRb" signal="HEBT_Diag:WS29:SignalAlarm" settable="false"/>
+          <channel handle="StatAlarmTmgRb" signal="HEBT_Diag:WS29:TimingAlarm" settable="false"/>
+          <channel handle="StatMps0Rb" signal="HEBT_Diag:WS29:MPS0" settable="false"/>
+          <channel handle="StatMps1Rb" signal="HEBT_Diag:WS29:MPS1" settable="false"/>
+          <channel handle="StatWirePosRb" signal="HEBT_Diag:WS29:Position" settable="false"/>
+          <channel handle="StatPowerSupplyRb" signal="HEBT_Diag:WS29:Power" settable="false"/>
+          <channel handle="StatWireSpeedRb" signal="HEBT_Diag:WS29:Speed" settable="false"/>
+          <channel handle="StatScanErrorRb" signal="HEBT_Diag:WS29:ScanErr" settable="false"/>
+          <channel handle="StatMotionRb" signal="HEBT_Diag:WS29:MotionStat" settable="false"/>
+          <channel handle="StatScanSeqIdRb" signal="HEBT_Diag:WS29:Sequence" settable="false"/>
+          <channel handle="StatScanStrokeRb" signal="HEBT_Diag:WS29:Stroke" settable="false"/>
+          <channel handle="ScanMotionRb" signal="HEBT_Diag:WS29:MotionStat" settable="false"/>
+          <channel handle="ScanPositionRb" signal="HEBT_Diag:WS29:Position" settable="false"/>
+          <channel handle="ScanSpeedRb" signal="HEBT_Diag:WS29:Speed" settable="false"/>
+          <channel handle="ScanRevLimitRb" signal="HEBT_Diag:WS29:Reverse" settable="false"/>
+          <channel handle="ScanForLimitRb" signal="HEBT_Diag:WS29:Forward" settable="false"/>
+          <channel handle="ScanSeqIdRb" signal="HEBT_Diag:WS29:Sequence" settable="false"/>
+          <channel handle="ScanErrorRb" signal="HEBT_Diag:WS29:ScanErr" settable="false"/>
+          <channel handle="ScanCfgInitPosRb" signal="HEBT_Diag:WS29:Scan_InitialMove_rb" settable="false"/>
+          <channel handle="ScanCfgInitPosSet" signal="HEBT_Diag:WS29:Scan_InitialMove_set" settable="true"/>
+          <channel handle="ScanCfgStepCntRb" signal="HEBT_Diag:WS29:Scan_Steps_rb" settable="false"/>
+          <channel handle="ScanCfgStepCntSet" signal="HEBT_Diag:WS29:Scan_Steps_set" settable="true"/>
+          <channel handle="ScanCfgStepLngRb" signal="HEBT_Diag:WS29:Scan_StepSize_rb" settable="false"/>
+          <channel handle="ScanCfgStepLngSet" signal="HEBT_Diag:WS29:Scan_StepSize_set" settable="true"/>
+          <channel handle="ScanCfgStepPulsesRb" signal="HEBT_Diag:WS29:Scan_Traces/step_rb" settable="false"/>
+          <channel handle="ScanCfgStepPulsesSet" signal="HEBT_Diag:WS29:Scan_Traces/step_set" settable="true"/>
+          <channel handle="ScanCfgStrokeLngRb" signal="HEBT_Diag:WS29:Stroke" settable="false"/>
+          <channel handle="ScanCfgScanLngRb" signal="HEBT_Diag:WS29:Scan_Length" settable="false"/>
+          <channel handle="ScanCfgScanOutOfRngRb" signal="HEBT_Diag:WS29:Scan_OOR" settable="false"/>
+          <channel handle="ActrCfgInitSpeedRb" signal="HEBT_Diag:WS29:Motion_Speed_Init_rb" settable="false"/>
+          <channel handle="ActrCfgInitSpeedSet" signal="HEBT_Diag:WS29:Motion_Speed_Init_set" settable="true"/>
+          <channel handle="ActrCfgInitAccelRb" signal="HEBT_Diag:WS29:Motion_Accel_Init_rb" settable="false"/>
+          <channel handle="ActrCfgInitAccelSet" signal="HEBT_Diag:WS29:Motion_Accel_Init_set" settable="true"/>
+          <channel handle="ActrCfgStepSpeedRb" signal="HEBT_Diag:WS29:Motion_Speed_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepSpeedSet" signal="HEBT_Diag:WS29:Motion_Speed_Step_set" settable="true"/>
+          <channel handle="ActrCfgStepAccelRb" signal="HEBT_Diag:WS29:Motion_Accel_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepAccelSet" signal="HEBT_Diag:WS29:Motion_Accel_Step_set" settable="true"/>
+          <channel handle="ActrCfgSearchSpeedRb" signal="HEBT_Diag:WS29:Motion_Speed_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchSpeedSet" signal="HEBT_Diag:WS29:Motion_Speed_Search_set" settable="true"/>
+          <channel handle="ActrCfgSearchAccelRb" signal="HEBT_Diag:WS29:Motion_Accel_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchAccelSet" signal="HEBT_Diag:WS29:Motion_Accel_Search_set" settable="true"/>
+          <channel handle="ActrCfgReturnSpeedRb" signal="HEBT_Diag:WS29:Motion_Speed_Return_rb" settable="false"/>
+          <channel handle="ActrCfgReturnSpeedSet" signal="HEBT_Diag:WS29:Motion_Speed_Return_set" settable="true"/>
+          <channel handle="ActrCfgReturnAccelRb" signal="HEBT_Diag:WS29:Motion_Accel_Return_rb" settable="false"/>
+          <channel handle="ActrCfgReturnAccelSet" signal="HEBT_Diag:WS29:Motion_Accel_Return_set" settable="true"/>
+          <channel handle="ActrCfgSearchTimeoutRb" signal="HEBT_Diag:WS29:Motion_TMO_Search_rb" settable="false"/>
+          <channel handle="ActrCfgSearchTimeoutSet" signal="HEBT_Diag:WS29:Motion_TMO_Search_set" settable="true"/>
+          <channel handle="ActrCfgStepTimeoutRb" signal="HEBT_Diag:WS29:Motion_TMO_Step_rb" settable="false"/>
+          <channel handle="ActrCfgStepTimeoutSet" signal="HEBT_Diag:WS29:Motion_TMO_Step_set" settable="true"/>
+          <channel handle="DaqCfgScanRateRb" signal="HEBT_Diag:WS29:Acq_Scanrate_rb" settable="false"/>
+          <channel handle="DaqCfgScanRateSet" signal="HEBT_Diag:WS29:Acq_Scanrate_set" settable="true"/>
+          <channel handle="DaqCfgGainRb" signal="HEBT_Diag:WS29:Acq_Gain_rb" settable="false"/>
+          <channel handle="DaqCfgGainSet" signal="HEBT_Diag:WS29:Acq_Gain_set" settable="true"/>
+          <channel handle="DaqCfgWindowRb" signal="HEBT_Diag:WS29:Acq_Length_rb" settable="false"/>
+          <channel handle="DaqCfgWindowSet" signal="HEBT_Diag:WS29:Acq_Length_set" settable="true"/>
+          <channel handle="DaqCfgTimeoutRb" signal="HEBT_Diag:WS29:Acq_Time-out_rb" settable="false"/>
+          <channel handle="DaqCfgTimeoutSet" signal="HEBT_Diag:WS29:Acq_Time-out_set" settable="true"/>
+          <channel handle="PrcgCfgInvertRb" signal="HEBT_Diag:WS29:Analysis_Gain_rb" settable="false"/>
+          <channel handle="PrcgCfgInvertSet" signal="HEBT_Diag:WS29:Analysis_Gain_set" settable="true"/>
+          <channel handle="PrcgCfgAvgBeginRb" signal="HEBT_Diag:WS29:Analysis_Avg_Start_rb" settable="false"/>
+          <channel handle="PrcgCfgAvgBeginSet" signal="HEBT_Diag:WS29:Analysis_Avg_Start_set" settable="true"/>
+          <channel handle="PrcgCfgAvgLengthRb" signal="HEBT_Diag:WS29:Analysis_Avg_Len_rb" settable="false"/>
+          <channel handle="PrcgCfgAvgLengthSet" signal="HEBT_Diag:WS29:Analysis_Avg_Len_set" settable="true"/>
+          <channel handle="TrgCfgDelayRb" signal="HEBT_Diag:WS29:Delay00_Rb" settable="true"/>
+          <channel handle="TrgCfgDelaySet" signal="HEBT_Diag:WS29:Delay00" settable="true"/>
+          <channel handle="TrgCfgTrigEventRb" signal="HEBT_Diag:WS29:Event00_Rb" settable="true"/>
+          <channel handle="TrgCfgTrigEventSet" signal="HEBT_Diag:WS29:Event00" settable="true"/>
+          <channel handle="DatDiaLivePtPositions" signal="HEBT_Diag:WS29:Diag_point_pos" settable="false"/>
+          <channel handle="DatHorLivePtPositions" signal="HEBT_Diag:WS29:Hor_point_pos" settable="false"/>
+          <channel handle="DatVerLivePtPositions" signal="HEBT_Diag:WS29:Ver_point_pos" settable="false"/>
+          <channel handle="DatDiaLivePtSignal" signal="HEBT_Diag:WS29:Diag_point_sig" settable="false"/>
+          <channel handle="DatHorLivePtSignal" signal="HEBT_Diag:WS29:Hor_point_sig" settable="false"/>
+          <channel handle="DatVerLivePtSignal" signal="HEBT_Diag:WS29:Ver_point_sig" settable="false"/>
+          <channel handle="DatDiaLiveArrPositions" signal="HEBT_Diag:WS29:Diag_live_pos" settable="false"/>
+          <channel handle="DatHorLiveArrPositions" signal="HEBT_Diag:WS29:Hor_live_pos" settable="false"/>
+          <channel handle="DatVerLiveArrPositions" signal="HEBT_Diag:WS29:Ver_live_pos" settable="false"/>
+          <channel handle="DatDiaLiveArrSignal" signal="HEBT_Diag:WS29:Diag_live_sig" settable="false"/>
+          <channel handle="DatHorLiveArrSignal" signal="HEBT_Diag:WS29:Hor_live_sig" settable="false"/>
+          <channel handle="DatVerLiveArrSignal" signal="HEBT_Diag:WS29:Ver_live_sig" settable="false"/>
+          <channel handle="DatDiaRawPositions" signal="HEBT_Diag:WS29:Diag_prof_pos" settable="false"/>
+          <channel handle="DatHorRawPositions" signal="HEBT_Diag:WS29:Hor_prof_pos" settable="false"/>
+          <channel handle="DatVerRawPositions" signal="HEBT_Diag:WS29:Ver_prof_pos" settable="false"/>
+          <channel handle="DatDiaRawSignal" signal="HEBT_Diag:WS29:Diag_prof_sig" settable="false"/>
+          <channel handle="DatHorRawSignal" signal="HEBT_Diag:WS29:Hor_prof_sig" settable="false"/>
+          <channel handle="DatVerRawSignal" signal="HEBT_Diag:WS29:Ver_prof_sig" settable="false"/>
+          <channel handle="DatDiaFitPositions" signal="HEBT_Diag:WS29:Diag_prof_pos" settable="false"/>
+          <channel handle="DatHorFitPositions" signal="HEBT_Diag:WS29:Hor_prof_pos" settable="false"/>
+          <channel handle="DatVerFitPositions" signal="HEBT_Diag:WS29:Ver_prof_pos" settable="false"/>
+          <channel handle="DatDiaFitSignal" signal="HEBT_Diag:WS29:Diag_prof_fit" settable="false"/>
+          <channel handle="DatHorFitSignal" signal="HEBT_Diag:WS29:Hor_prof_fit" settable="false"/>
+          <channel handle="DatVerFitSignal" signal="HEBT_Diag:WS29:Ver_prof_fit" settable="false"/>
+          <channel handle="DatTraceTimeStep" signal="HEBT_Diag:WS29:trace_dt" settable="false"/>
+          <channel handle="DatDiaTracePositions" signal="HEBT_Diag:WS29:trace_x" settable="false"/>
+          <channel handle="DatHorTracePositions" signal="HEBT_Diag:WS29:trace_x" settable="false"/>
+          <channel handle="DatVerTracePositions" signal="HEBT_Diag:WS29:trace_x" settable="false"/>
+          <channel handle="DatDiaTraceSignal" signal="HEBT_Diag:WS29:Diag_trace_raw" settable="false"/>
+          <channel handle="DatHorTraceSignal" signal="HEBT_Diag:WS29:Hor_trace_raw" settable="false"/>
+          <channel handle="DatVerTraceSignal" signal="HEBT_Diag:WS29:Ver_trace_raw" settable="false"/>
+          <channel handle="DatHorNoiseAvg" signal="HEBT_Diag:WS29:Hor_noise_mean" settable="false"/>
+          <channel handle="DatHorNoiseStd" signal="HEBT_Diag:WS29:Hor_noise_std" settable="false"/>
+          <channel handle="DatVerNoiseAvg" signal="HEBT_Diag:WS29:Ver_noise_mean" settable="false"/>
+          <channel handle="DatVerNoiseStd" signal="HEBT_Diag:WS29:Ver_noise_std" settable="false"/>
+          <channel handle="DatDiaNoiseAvg" signal="HEBT_Diag:WS29:Diag_noise_mean" settable="false"/>
+          <channel handle="DatDiaNoiseStd" signal="HEBT_Diag:WS29:Diag_noise_std" settable="false"/>
+          <channel handle="SigHorStatAmp" signal="HEBT_Diag:WS29:Hor_Amp_rms" settable="false"/>
+          <channel handle="SigVerStatAmp" signal="HEBT_Diag:WS29:Ver_Amp_rms" settable="false"/>
+          <channel handle="SigDiaStatAmp" signal="HEBT_Diag:WS29:Diag_Amp_rms" settable="false"/>
+          <channel handle="SigHorStatOffset" signal="HEBT_Diag:WS29:Hor_Offset_rms" settable="false"/>
+          <channel handle="SigVerStatOffset" signal="HEBT_Diag:WS29:Ver_Offset_rms" settable="false"/>
+          <channel handle="SigDiaStatOffset" signal="HEBT_Diag:WS29:Diag_Offset_rms" settable="false"/>
+          <channel handle="SigHorStatArea" signal="HEBT_Diag:WS29:Hor_Area_rms" settable="false"/>
+          <channel handle="SigVerStatArea" signal="HEBT_Diag:WS29:Ver_Area_rms" settable="false"/>
+          <channel handle="SigDiaStatArea" signal="HEBT_Diag:WS29:Diag_Area_rms" settable="false"/>
+          <channel handle="SigHorStatMean" signal="HEBT_Diag:WS29:Hor_Mean_rms" settable="false"/>
+          <channel handle="SigVerStatMean" signal="HEBT_Diag:WS29:Ver_Mean_rms" settable="false"/>
+          <channel handle="SigDiaStatMean" signal="HEBT_Diag:WS29:Diag_Mean_rms" settable="false"/>
+          <channel handle="SigHorStatStd" signal="HEBT_Diag:WS29:Hor_Sigma_rms" settable="false"/>
+          <channel handle="SigVerStatStd" signal="HEBT_Diag:WS29:Ver_Sigma_rms" settable="false"/>
+          <channel handle="SigDiaStatStd" signal="HEBT_Diag:WS29:Diag_Sigma_rms" settable="false"/>
+          <channel handle="SigHorGaussAmp" signal="HEBT_Diag:WS29:Hor_Amp_gs" settable="false"/>
+          <channel handle="SigVerGaussAmp" signal="HEBT_Diag:WS29:Ver_Amp_gs" settable="false"/>
+          <channel handle="SigDiaGaussAmp" signal="HEBT_Diag:WS29:Diag_Amp_gs" settable="false"/>
+          <channel handle="SigHorGaussOffset" signal="HEBT_Diag:WS29:Hor_Offset_gs" settable="false"/>
+          <channel handle="SigVerGaussOffset" signal="HEBT_Diag:WS29:Ver_Offset_gs" settable="false"/>
+          <channel handle="SigDiaGaussOffset" signal="HEBT_Diag:WS29:Diag_Offset_gs" settable="false"/>
+          <channel handle="SigHorGaussArea" signal="HEBT_Diag:WS29:Hor_Area_gs" settable="false"/>
+          <channel handle="SigVerGaussArea" signal="HEBT_Diag:WS29:Ver_Area_gs" settable="false"/>
+          <channel handle="SigDiaGaussArea" signal="HEBT_Diag:WS29:Diag_Area_gs" settable="false"/>
+          <channel handle="SigHorGaussMean" signal="HEBT_Diag:WS29:Hor_Mean_gs" settable="false"/>
+          <channel handle="SigVerGaussMean" signal="HEBT_Diag:WS29:Ver_Mean_gs" settable="false"/>
+          <channel handle="SigDiaGaussMean" signal="HEBT_Diag:WS29:Diag_Mean_gs" settable="false"/>
+          <channel handle="SigHorGaussStd" signal="HEBT_Diag:WS29:Hor_Sigma_gs" settable="false"/>
+          <channel handle="SigVerGaussStd" signal="HEBT_Diag:WS29:Ver_Sigma_gs" settable="false"/>
+          <channel handle="SigDiaGaussStd" signal="HEBT_Diag:WS29:Diag_Sigma_gs" settable="false"/>
+          <channel handle="SigHorDblGaussAmp" signal="HEBT_Diag:WS29:Hor_Amp_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussAmp" signal="HEBT_Diag:WS29:Ver_Amp_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussAmp" signal="HEBT_Diag:WS29:Diag_Amp_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussOffset" signal="HEBT_Diag:WS29:Hor_Offset_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussOffset" signal="HEBT_Diag:WS29:Ver_Offset_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussOffset" signal="HEBT_Diag:WS29:Diag_Offset_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussArea" signal="HEBT_Diag:WS29:Hor_Area_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussArea" signal="HEBT_Diag:WS29:Ver_Area_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussArea" signal="HEBT_Diag:WS29:Diag_Area_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussMean" signal="HEBT_Diag:WS29:Hor_Mean_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussMean" signal="HEBT_Diag:WS29:Ver_Mean_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussMean" signal="HEBT_Diag:WS29:Diag_Mean_dgs" settable="false"/>
+          <channel handle="SigHorDblGaussStd" signal="HEBT_Diag:WS29:Hor_Sigma_dgs" settable="false"/>
+          <channel handle="SigVerDblGaussStd" signal="HEBT_Diag:WS29:Ver_Sigma_dgs" settable="false"/>
+          <channel handle="SigDiaDblGaussStd" signal="HEBT_Diag:WS29:Diag_Sigma_dgs" settable="false"/>
        </channelsuite>
     </node>
     <node type="BLM" id="HEBT_Diag:BLM30" pos="108.086689" len="0.0" status="true">
