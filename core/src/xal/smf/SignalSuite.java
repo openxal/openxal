@@ -100,11 +100,11 @@ public class SignalSuite {
 	 * Programmatically add or replace a signal entry corresponding to the specified handle
 	 * @param handle The handle referring to the signal entry
 	 * @param signal PV signal associated with the handle
-	 * @param transformKey Key of the signal's transformation
 	 * @param settable indicates whether the channel is settable
+	 * @param transformKey Key of the signal's transformation
 	 * @param valid specifies whether the channel is marked valid
 	 */
-	public void putChannel( final String handle, final String signal, final String transformKey, final boolean settable, final boolean valid ) {
+	public void putChannel( final String handle, final String signal, final boolean settable, final String transformKey, final boolean valid ) {
 		final SignalEntry signalEntry = new SignalEntry( signal, settable, transformKey );
 		signalEntry.setValid( valid );
 		SIGNAL_MAP.put( handle, signalEntry );

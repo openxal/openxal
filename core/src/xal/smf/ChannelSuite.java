@@ -83,15 +83,38 @@ public class ChannelSuite implements DataListener {
 
 
 	/**
-	 * Programmatically add or replace a signal entry corresponding to the specified handle
-	 * @param handle The handle referring to the signal entry
+	 * Programmatically add or replace a channel corresponding to the specified handle
+	 * @param handle The handle referring to the signal
 	 * @param signal PV signal associated with the handle
-	 * @param transformKey Key of the signal's transformation
 	 * @param settable indicates whether the channel is settable
+	 * @param transformKey Key of the signal's transformation
 	 * @param valid specifies whether the channel is marked valid
 	 */
-	public void putChannel( final String handle, final String signal, final String transformKey, final boolean settable, final boolean valid ) {
-		SIGNAL_SUITE.putChannel( handle, signal, transformKey, settable, valid );
+	public void putChannel( final String handle, final String signal, final boolean settable, final String transformKey, final boolean valid ) {
+		SIGNAL_SUITE.putChannel( handle, signal, settable, transformKey, valid );
+	}
+
+
+	/**
+	 * Convenience method to programmatically add or replace a channel corresponding to the specified handle with valid set to true
+	 * @param handle The handle referring to the signal
+	 * @param signal PV signal associated with the handle
+	 * @param settable indicates whether the channel is settable
+	 * @param transformKey Key of the signal's transformation
+	 */
+	public void putChannel( final String handle, final String signal, final boolean settable, final String transformKey ) {
+		putChannel( handle, signal, settable, transformKey, true );
+	}
+
+
+	/**
+	 * Convenience method to programmatically add or replace a channel corresponding to the specified handle with valid set to true and no transform
+	 * @param handle The handle referring to the signal
+	 * @param signal PV signal associated with the handle
+	 * @param settable indicates whether the channel is settable
+	 */
+	public void putChannel( final String handle, final String signal, final boolean settable ) {
+		putChannel( handle, signal, settable, null );
 	}
 
 	
