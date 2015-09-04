@@ -35,14 +35,34 @@ abstract public class AbstractPropertyAccessor implements PropertyAccessor {
 	
 	/** get the map of live values keyed by property name */
 	protected Map<String,Double> getLiveValueMap( final AcceleratorNode node, final Map<Channel,Double> channelValues, final List<String> propertyNames ) {
+		// property values keyed by property name
 		final Map<String,Double> valueMap = new HashMap<String,Double>();
-		for( final String propertyName : propertyNames	) {
+
+		// loop over each property by name
+		propertyLoop: for( final String propertyName : propertyNames	) {
+			// get the array of channels that are required to computer the property's value
 			final Channel[] propertyChannels = node.getLivePropertyChannels( propertyName );
+
+			// array to populate with channel values for the property
 			final double[] propertyChannelValues = new double[propertyChannels.length];
+
+			// loop over each channel for the current property and populate the propertyChannelValues with the corresponding value
 			for ( int index = 0 ; index < propertyChannels.length ; index++ ) {
 				final Channel channel = propertyChannels[index];
-				propertyChannelValues[index] = channelValues.get( channel );
+				final Double value = channelValues.get( channel );
+				if ( value != null ) {
+					propertyChannelValues[index] = value.doubleValue();
+				} else {
+					// Missing property values will likely cause a SynchronizationException later if and when the property is needed, so no need to throw any exceptions here.
+					// Just print to standard error for extra diagnostics.
+					System.err.println( "Missing channel value for property: " + propertyName + ", node: " + node.getId() + ", channel: " + channel.channelName() );
+					// we need all of a property's channel values to compute the property value, so abandon the current property if we are missing any
+					continue propertyLoop;		// abandon this property and continue with the next property if any
+				}
 			}
+
+			// we only get here if all the channel values for the current property are available
+			// compute the property value from the the property's channel values and populate the value map
 			final double scale = getPropertyScale( propertyName );
 			final double propertyValue = scale * node.getLivePropertyValue( propertyName, propertyChannelValues );
 			valueMap.put( propertyName, propertyValue );
