@@ -103,21 +103,51 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
             String powerSupplyType = powerSupplyAdaptor.stringValue("type");
             String powerSupplyId = powerSupplyAdaptor.stringValue("id");
             if ( powerSupplyType.equals("main") ) {
-                MagnetMainSupply powerSupply = getMagnetMainSupply(powerSupplyId);
+				MagnetMainSupply powerSupply = getMagnetMainSupply( powerSupplyId );
                 if ( powerSupply == null )  powerSupply = new MagnetMainSupply(this);
                 powerSupply.update(powerSupplyAdaptor);
-                magnetMainSupplies.put( powerSupply.getId(), powerSupply );
+				putMagnetMainSupply( powerSupply );
             }
             else if ( powerSupplyType.equals("trim") ) {
-                MagnetTrimSupply powerSupply = getMagnetTrimSupply(powerSupplyId);
+				MagnetTrimSupply powerSupply = getMagnetTrimSupply( powerSupplyId );
                 if ( powerSupply == null )  powerSupply = new MagnetTrimSupply(this);
                 powerSupply.update(powerSupplyAdaptor);
-                magnetTrimSupplies.put( powerSupply.getId(), powerSupply );
+				putMagnetTrimSupply( powerSupply );
             }
         }
     }
-    
-    
+
+
+	/** 
+	 * Programmatically add or replace a magnet main supply keyed by its ID. 
+	 * If a power supply has the same ID as another power supply in this accelerator then it will replace that one.
+	 * @param mainSupply main power supply to add or replace
+	 * @throws IllegalArgumentException if the power supply's accelerator does not match this accelerator to which it is being put
+	 */
+	public void putMagnetMainSupply( final MagnetMainSupply mainSupply ) throws IllegalArgumentException {
+		if ( mainSupply.getAccelerator() == this ) {	// make sure this supply belongs here
+			magnetMainSupplies.put( mainSupply.getId(), mainSupply );
+		} else {
+			throw new IllegalArgumentException( "Attempted to put Magnet Main Supply: " + mainSupply.getId() + " whose accelerator does not match the accelerator to which it is being put." );
+		}
+	}
+
+
+	/**
+	 * Programmatically add or replace a magnet trim supply keyed by its ID.
+	 * If a power supply has the same ID as another power supply in this accelerator then it will replace that one.
+	 * @param trimSupply trim power supply to add or replace
+	 * @throws IllegalArgumentException if the power supply's accelerator does not match this accelerator to which it is being put
+	 */
+	public void putMagnetTrimSupply( final MagnetTrimSupply trimSupply ) {
+		if ( trimSupply.getAccelerator() == this ) {	// make sure this supply belongs here
+			magnetTrimSupplies.put( trimSupply.getId(), trimSupply );
+		} else {
+			throw new IllegalArgumentException( "Attempted to put Magnet Trim Supply: " + trimSupply.getId() + " whose accelerator does not match the accelerator to which it is being put." );
+		}
+	}
+
+
     /**
      * Instructs the accelerator to write its data to the adaptor for external
      * storage.
