@@ -18,9 +18,9 @@ import java.util.*;
  * @author  tap
  */
 public abstract class MagnetPowerSupply implements DataListener {
-    protected Accelerator accelerator;
-    protected ChannelSuite channelSuite;
-    protected String strId;
+    final protected Accelerator accelerator;
+    final protected ChannelSuite channelSuite;
+	protected String strId;
 
     // cycle state constants
     public static final int CYCLE_INVALID = 0;
@@ -34,7 +34,7 @@ public abstract class MagnetPowerSupply implements DataListener {
         
     
     /** Creates a new instance of PowerSupply */
-    public MagnetPowerSupply(Accelerator anAccelerator) {
+    public MagnetPowerSupply( final Accelerator anAccelerator ) {
         channelSuite = new ChannelSuite();
         accelerator = anAccelerator;
     }
@@ -47,6 +47,15 @@ public abstract class MagnetPowerSupply implements DataListener {
     public String getId() {
         return strId;
     }
+
+
+	/** 
+	 * Get the associated accelerator
+	 * @return the accelerator
+	 */
+	public Accelerator getAccelerator() {
+		return accelerator;
+	}
     
     
     /**
