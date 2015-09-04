@@ -205,36 +205,22 @@ public class RealNumericIndexer<T> implements Iterable<T> {
 		double xmax = getLocation( nmax );
 		
 		int iterations = 0;
-		while ( true ) {
+		while ( nmax - nmin > 1 ) {
 			iterations += 1;
-			if ( xmin == xmax ) {
-				return location >= xmin ? nmax : nmin;
-			}
-			double index = estimateIndex( location, nmin, nmax, xmin, xmax );
-			if ( index < 0 )  return 0.0;
-			final int upperIndex = (int)Math.ceil( index );
-			if ( upperIndex > endIndex )  return endIndex;
-			final int lowerIndex = (int)Math.floor( index );
-			final double upperLocation = getLocation( upperIndex );
-			final double lowerLocation = getLocation( lowerIndex );
-			if ( location == upperLocation ) {
-				return upperIndex;
-			}
-			else if ( location == lowerLocation ) {
-				return lowerIndex;
-			}
-			else if ( location > upperLocation ) {
-				xmin = upperLocation;
-				nmin = upperIndex;
-			}
-			else if ( location < lowerLocation ) {
-				xmax = lowerLocation;
-				nmax = lowerIndex;
-			}
-			else {
-				return index;
+			int index = (int)Math.round(estimateIndex( location, nmin, nmax, xmin, xmax ));
+			if (index <= nmin) index = nmin+1; // this is needed to guarantee progress
+			else if (index >= nmax) index = nmax-1;
+			
+			final double middle = getLocation( index );
+			if ( location >= middle ) {
+				xmin = middle;
+				nmin = index;
+			} else {
+				xmax = middle;
+				nmax = index;
 			}
 		}
+		return location >= xmin ? nmax : nmin;
 	}
 	
 	
