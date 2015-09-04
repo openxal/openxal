@@ -1669,6 +1669,7 @@ public class MainWindow extends javax.swing.JFrame {
      * 
      * @return          <code>true</code> if update was successful and <code>false</code> otherwise
      *
+     * @author Mariano Ruiz
      * @author Christopher K. Allen
      * @since  Aug 23, 2011
      */
