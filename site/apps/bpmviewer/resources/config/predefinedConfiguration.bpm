@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined BPM Viewer configurations">
+    <TEST tree_name = "TEST" text="Predefined BPM Viewer configuration as a test.">
+           <conf tree_name = "Test BPM Viewer config." url="test1.bpm" text="The test configuration with data."/>
+    </TEST>
+
+    <MEBT tree_name = "MEBT" text="Predefined BPM Viewer configurations for MEBT.">
+           <conf tree_name = "MEBT BPM Viewer configuration" url="mebt.bpm" text="This BPM Viewer includes MEBT BPMs # 1, 4, 5, 10, 11, and 14."/>
+    </MEBT>
+</CONFIGURATIONS>

@@ -1,0 +1,54 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE timing SYSTEM "xdxf.dtd">
+<timing>
+	<channelsuite name="timingsuite">
+        <!-- beam trigger PV: 0=Trigger, 1=Counting -->
+		<channel handle="trigger" signal="ICS_Tim:Gate_BeamOn:SSTrigger"/>
+		<!-- beam trigger mode PV: 0=Continuous, 1=Single-shot -->
+		<channel handle="mode" signal="ICS_Tim:Gate_BeamOn:SSMode"/>
+		<!-- specify how many beam pulse(s) -->
+		<channel handle="countDown" signal="ICS_Tim:Gate_BeamOn:SSCountDown"/>
+		<!-- readback while it's counting down -->
+		<channel handle="count" signal="ICS_Tim:Gate_BeamOn:SSCount"/>
+		<!-- readback of overall rep rate -->
+		<channel handle="repRate" signal="ICS_Tim:Gate_BeamOn:RR"/>
+		<!-- beam on event -->
+		<channel handle="beamOnEvent" signal="ICS_Tim:Util:event36"/>
+		<!-- beam on event counter -->
+		<channel handle="beamOnEventCount" signal="ICS_Tim:Util:event36Count"/>
+		<!-- diagnostic demand event -->
+		<channel handle="diagnosticDemandEvent" signal="ICS_Tim:Util:event45"/>
+		<!-- diagnostic demand event counter -->
+		<channel handle="diagnosticDemandEventCount" signal="ICS_Tim:Util:event45Count"/>
+		<!-- slow (1 Hz) diagnostic event -->
+		<channel handle="slowDiagnosticEvent" signal="ICS_Tim:Util:event46"/>
+		<!-- slow (1 Hz) diagnostic event counter -->
+		<channel handle="slowDiagnosticEventCount" signal="ICS_Tim:Util:event46Count"/>
+		<!-- fast (6 Hz) diagnostic event -->
+		<channel handle="fastDiagnosticEvent" signal="ICS_Tim:Util:event47"/>
+		<!-- fast (6 Hz) diagnostic event counter -->
+		<channel handle="fastDiagnosticEventCount" signal="ICS_Tim:Util:event47Count"/>
+		<!-- ring frequency in MHz -->
+		<channel handle="ringFrequency" signal="ICS_Tim:RTDLGen:RingFrequency"/>
+		<!-- ring energy in MeV -->
+		<channel handle="ringEnergy" signal="ICS_Tim:SigG_ELClock:Energy"/>
+		<!-- number of stored turns in the ring -->
+		<channel handle="ringStoredTurns" signal="ICS_Tim:RTDLGen:StoredTurns"/>
+		<!-- Machine mode -->
+		<channel handle="machineMode" signal="ICS_Tim:MPS_Mode:MachMode"/>
+		<!-- Active Flavor -->
+		<channel handle="activeFlavor" signal="ICS_Tim:EventGen:ActiveFlavor"/>
+		<!-- beam reference gate width (Turns) -->
+		<channel handle="beamReferenceGateWidth" signal="ICS_Tim:Gate_BeamRef:GateWidth"/>
+		<!-- actual chopper delay (Turns) -->
+		<channel handle="chopperDelay" signal="ICS_Tim:Chop:actualChopperDelay"/>
+		<!-- actual chopper beam on (Turns) -->
+		<channel handle="chopperBeamOn" signal="ICS_Tim:Chop:actualChopperBeamOn"/>
+		
+		<!-- CKA 11/04/11: Beam mode specifying maximum pulse length --> 
+		<!--  String values = "Off", "Standby", "MPS Test", "10 uSec", "50 uSec", "100 uSec","1 mSec", "Full Power", "Unknown!" -->
+		 
+		<channel handle="beamMode" signal="ICS_Tim:MPS_Mode:BeamMode"/>
+
+	</channelsuite>
+</timing>

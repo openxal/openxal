@@ -1,0 +1,45 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri Aug 06 15:40:39 EDT 2010" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="173" tag="SnapshotCommitDialog" width="439">
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="title" value="Take Snapshot with Comment"/>
+            <BeanProperty name="modal" value="true"/>
+            <ViewNode tag="MainBox">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Comment Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="CommentScrollPane">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <ViewNode tag="CommentTextPane">
+                            <ViewProxy type="javax.swing.JTextArea"/>
+                            <BeanProperty name="text" value=""/>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="Control Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="Label">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="250 character limit"/>
+                        <BeanProperty alpha="255" blue="0" green="102" name="foreground" red="255"/>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="CancelButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Cancel"/>
+                        <BeanProperty name="toolTipText" value="Cancel the snapshot"/>
+                    </ViewNode>
+                    <ViewNode tag="SaveButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="enabled" value="false"/>
+                        <BeanProperty name="text" value="Save"/>
+                        <BeanProperty name="toolTipText" value="Save the snapshot"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

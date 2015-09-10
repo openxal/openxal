@@ -1,0 +1,38 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BPM_VIEWER title="/home/shishlo/SHISLO/SCAN_1_D_scripts/mebt.bpm">
+    <font name="Monospaced" size="10" style="0"/>
+    <PARAMS AutoUpdate="true" Frequency="5"/>
+    <PHASE_PANEL>
+        <PARAMS startInd="0" stopInd="20" useLimits="true"/>
+    </PHASE_PANEL>
+    <X_POSITION_PANEL>
+        <PARAMS startInd="0" stopInd="20" useLimits="true"/>
+    </X_POSITION_PANEL>
+    <Y_POSITION_PANEL>
+        <PARAMS startInd="0" stopInd="20" useLimits="true"/>
+    </Y_POSITION_PANEL>
+    <PHASE_PVs>
+        <BPM_PV chName="MEBT_Diag:BPM01:beamPA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM04:beamPA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM05:beamPA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM10:beamPA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM11:beamPA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM14:beamPA" nGraphPoints="0" switchOn="true"/>
+    </PHASE_PVs>
+    <X_POS_PVs>
+        <BPM_PV chName="MEBT_Diag:BPM01:hposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM04:hposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM05:hposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM10:hposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM11:hposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM14:hposA" nGraphPoints="0" switchOn="true"/>
+    </X_POS_PVs>
+    <Y_POS_PVs>
+        <BPM_PV chName="MEBT_Diag:BPM01:vposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM04:vposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM05:vposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM10:vposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM11:vposA" nGraphPoints="0" switchOn="true"/>
+        <BPM_PV chName="MEBT_Diag:BPM14:vposA" nGraphPoints="0" switchOn="true"/>
+    </Y_POS_PVs>
+</BPM_VIEWER>

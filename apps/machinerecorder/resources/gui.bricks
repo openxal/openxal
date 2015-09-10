@@ -1,0 +1,318 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Thu Mar 22 10:05:29 EDT 2012" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="911" tag="MainWindow" width="1372">
+            <ViewProxy type="javax.swing.JFrame" />
+            <BeanProperty name="title" value="Machine Recorder" />
+            <ViewNode tag="Main Split Pane">
+                <ViewProxy type="javax.swing.JSplitPane" />
+                <BeanProperty name="orientation" value="0" />
+                <BeanProperty name="enabled" value="false" />
+                <BeanProperty name="dividerLocation" value="75" />
+                <BeanProperty name="dividerSize" value="0" />
+                <ViewNode tag="Record Controls Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <BeanProperty height="50" name="minimumSize" width="249" />
+                    <BeanProperty height="75" name="preferredSize" width="1000" />
+                    <BeanProperty height="100" name="maximumSize" width="33016" />
+                    <BorderNode tag="Titled Border">
+                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                        <BeanProperty name="title" value="Recorder" />
+                    </BorderNode>
+                    <ViewNode tag="RecordButton">
+                        <ViewProxy type="javax.swing.JToggleButton" />
+                        <BeanProperty name="text" value="Record" />
+                        <BeanProperty name="toolTipText" value="Toggle recording of events" />
+                    </ViewNode>
+                    <ViewNode tag="PlayButton">
+                        <ViewProxy type="javax.swing.JToggleButton" />
+                        <BeanProperty name="text" value="Play" />
+                        <BeanProperty name="toolTipText" value="Toggle playing recorded events" />
+                    </ViewNode>
+                    <ViewNode tag="EventsScrubBar">
+                        <ViewProxy type="javax.swing.JSlider" />
+                        <BeanProperty name="majorTickSpacing" value="10" />
+                        <BeanProperty name="paintTicks" value="true" />
+                        <BeanProperty name="paintLabels" value="true" />
+                        <BeanProperty name="minorTickSpacing" value="1" />
+                        <BeanProperty name="toolTipText" value="Scrub through recorded events" />
+                    </ViewNode>
+                    <ViewNode tag="PrecedingFlagButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="&lt; Flag" />
+                        <BeanProperty name="toolTipText" value="Move play head to preceding flagged event" />
+                    </ViewNode>
+                    <ViewNode tag="PrecedingEventButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="&lt; Event" />
+                        <BeanProperty name="toolTipText" value="Move play head to preceding event" />
+                    </ViewNode>
+                    <ViewNode tag="TimePointerLabel">
+                        <ViewProxy type="javax.swing.JLabel" />
+                        <BeanProperty name="text" value="Time Pointer" />
+                        <BeanProperty name="toolTipText" value="Current play head time" />
+                    </ViewNode>
+                    <ViewNode tag="NextEventButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="Event >" />
+                        <BeanProperty name="toolTipText" value="Move play head to next event" />
+                    </ViewNode>
+                    <ViewNode tag="NextFlagButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="Flag >" />
+                        <BeanProperty name="toolTipText" value="Move play head to next flagged event" />
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                    </ViewNode>
+                    <BorderNode tag="Titled Border">
+                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                        <BeanProperty name="title" value="Recorder" />
+                    </BorderNode>
+                </ViewNode>
+                <ViewNode tag="Group - Common Tab Pane">
+                    <ViewProxy type="javax.swing.JTabbedPane" />
+                    <BeanProperty name="tabPlacement" value="2" />
+                    <ViewNode tag="Display Groups Split Pane">
+                        <ViewProxy type="javax.swing.JSplitPane" />
+                        <BeanProperty name="enabled" value="true" />
+                        <BeanProperty name="dividerLocation" value="275" />
+                        <BeanProperty name="name" value="Display Groups" />
+                        <BeanProperty name="dividerSize" value="9" />
+                        <BeanProperty name="debugGraphicsOptions" value="0" />
+                        <ViewNode tag="Display Groups Selection Box">
+                            <ViewProxy type="javax.swing.Box_Vertical" />
+                            <ViewNode tag="Display Groups Scroll Pane">
+                                <ViewProxy type="javax.swing.JScrollPane" />
+                                <ViewNode tag="Display Groups Table">
+                                    <ViewProxy type="javax.swing.JTable" />
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
+                                <ViewNode tag="AddGroupButton">
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty name="text" value="Add" />
+                                    <BeanProperty name="toolTipText" value="Add a new group" />
+                                </ViewNode>
+                                <ViewNode tag="DuplicateGroupButton">
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty name="text" value="Duplicate" />
+                                    <BeanProperty name="toolTipText" value="Duplicate the selected group" />
+                                </ViewNode>
+                                <ViewNode tag="RemoveGroupButton">
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty name="text" value="Remove" />
+                                    <BeanProperty name="toolTipText" value="Remove the selected group" />
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Display Group Tab Pane">
+                            <ViewProxy type="javax.swing.JTabbedPane" />
+                            <ViewNode tag="Group Configuration">
+                                <ViewProxy type="javax.swing.Box_Vertical" />
+                                <BeanProperty name="name" value="Configuration" />
+                                <ViewNode tag="Accelerator Sequence Selection">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <BeanProperty height="250" name="maximumSize" width="65664" />
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Accelerator Sequence" />
+                                    </BorderNode>
+                                    <ViewNode tag="GroupAcceleratorSequenceCheckbox">
+                                        <ViewProxy type="javax.swing.JCheckBox" />
+                                        <BeanProperty name="text" value="Use Sequence" />
+                                        <BeanProperty name="actionCommand" value="Use Sequence" />
+                                    </ViewNode>
+                                    <ViewNode tag="GroupAcceleratorSequenceMenu">
+                                        <ViewProxy type="javax.swing.JComboBox" />
+                                    </ViewNode>
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Accelerator Sequence" />
+                                    </BorderNode>
+                                </ViewNode>
+                                <ViewNode tag="Group Channel Configuration">
+                                    <ViewProxy type="javax.swing.Box_Vertical" />
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Group Channels" />
+                                    </BorderNode>
+                                    <ViewNode tag="Group Channels Scroll Pane">
+                                        <ViewProxy type="javax.swing.JScrollPane" />
+                                        <ViewNode tag="Group Channel Table">
+                                            <ViewProxy type="javax.swing.JTable" />
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="Group Channels Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal" />
+                                        <ViewNode tag="Horizontal Glue">
+                                            <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                        </ViewNode>
+                                        <ViewNode tag="AddGroupChannelButton">
+                                            <ViewProxy type="javax.swing.JButton" />
+                                            <BeanProperty name="text" value="Add..." />
+                                            <BeanProperty name="toolTipText" value="Add channels from a channel selector to the selected group" />
+                                            <BeanProperty name="verifyInputWhenFocusTarget" value="true" />
+                                        </ViewNode>
+                                        <ViewNode tag="DeleteGroupChannelButton">
+                                            <ViewProxy type="javax.swing.JButton" />
+                                            <BeanProperty name="text" value="Delete" />
+                                            <BeanProperty name="toolTipText" value="Delete a channel from the selected group" />
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Group Channels" />
+                                    </BorderNode>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Group Display Pane">
+                                <ViewProxy type="javax.swing.JSplitPane" />
+                                <BeanProperty name="orientation" value="0" />
+                                <BeanProperty name="dividerLocation" value="75" />
+                                <BeanProperty name="name" value="Display" />
+                                <BeanProperty name="oneTouchExpandable" value="true" />
+                                <ViewNode tag="Group Type Box">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Display Type" />
+                                    </BorderNode>
+                                    <ViewNode tag="PositionTypeRadioButton">
+                                        <ViewProxy type="javax.swing.JRadioButton" />
+                                        <BeanProperty name="text" value="Position" />
+                                        <BeanProperty name="selected" value="false" />
+                                        <BeanProperty name="toolTipText" value="Plot values versus position" />
+                                    </ViewNode>
+                                    <ViewNode tag="WaveformTypeRadioButton">
+                                        <ViewProxy type="javax.swing.JRadioButton" />
+                                        <BeanProperty name="text" value="Waveform" />
+                                        <BeanProperty name="toolTipText" value="Plot waveforms" />
+                                    </ViewNode>
+                                    <ViewNode tag="StripChartTypeRadioButton">
+                                        <ViewProxy type="javax.swing.JRadioButton" />
+                                        <BeanProperty name="text" value="Strip Chart" />
+                                        <BeanProperty name="toolTipText" value="Plot values on a strip chart" />
+                                    </ViewNode>
+                                    <ViewNode tag="BarChartTypeRadioButton">
+                                        <ViewProxy type="javax.swing.JRadioButton" />
+                                        <BeanProperty name="text" value="Bar Chart" />
+                                        <BeanProperty name="toolTipText" value="Plot values on a bar chart" />
+                                    </ViewNode>
+                                    <ViewNode tag="ParameterTypeRadioButton">
+                                        <ViewProxy type="javax.swing.JRadioButton" />
+                                        <BeanProperty name="text" value="Parameter:" />
+                                        <BeanProperty name="toolTipText" value="Plot channels versus the specified parameter channel" />
+                                    </ViewNode>
+                                    <ViewNode tag="ParameterMenu">
+                                        <ViewProxy type="javax.swing.JComboBox" />
+                                        <BeanProperty name="toolTipText" value="Select the channel against which to plot other channels" />
+                                    </ViewNode>
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Display Type" />
+                                    </BorderNode>
+                                </ViewNode>
+                                <ViewNode tag="Display Group Plot">
+                                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel" />
+                                    <BeanProperty name="name" value="Plot" />
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Common Configuration Box">
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty height="400" name="maximumSize" width="33369" />
+                        <BeanProperty name="name" value="Common Configuration" />
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder" />
+                            <BeanProperty name="title" value="Common Configuration" />
+                        </BorderNode>
+                        <ViewNode tag="Validation Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
+                            <BeanProperty height="200" name="maximumSize" width="33541" />
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Validation" />
+                            </BorderNode>
+                            <ViewNode tag="ValidationCheckBox">
+                                <ViewProxy type="javax.swing.JCheckBox" />
+                                <BeanProperty name="text" value="Validation" />
+                                <BeanProperty name="toolTipText" value="Select to validate using the selected channel" />
+                            </ViewNode>
+                            <ViewNode tag="ValidationChannelSetButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="Select..." />
+                                <BeanProperty name="toolTipText" value="Select the validation PV" />
+                            </ViewNode>
+                            <ViewNode tag="ValidationChannelLabel">
+                                <ViewProxy type="javax.swing.JLabel" />
+                                <BeanProperty name="text" value="Validation PV " />
+                                <BeanProperty name="toolTipText" value="Validation Channel" />
+                            </ViewNode>
+                            <ViewNode tag="ValidationOperationComboBox">
+                                <ViewProxy type="javax.swing.JComboBox" />
+                                <BeanProperty name="toolTipText" value="Validation operation" />
+                            </ViewNode>
+                            <ViewNode tag="ValidationValueTextField">
+                                <ViewProxy type="javax.swing.JTextField" />
+                                <BeanProperty height="28" name="minimumSize" width="100" />
+                                <BeanProperty height="28" name="preferredSize" width="300" />
+                                <BeanProperty height="50" name="maximumSize" width="500" />
+                                <BeanProperty name="toolTipText" value="Validation constraint value" />
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Validation" />
+                            </BorderNode>
+                        </ViewNode>
+                        <ViewNode tag="Event Flag Configuration">
+                            <ViewProxy type="javax.swing.Box_Vertical" />
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Event Flag Channels" />
+                            </BorderNode>
+                            <ViewNode tag="Event Flag Scroll Pane">
+                                <ViewProxy type="javax.swing.JScrollPane" />
+                                <ViewNode tag="EventFlagTable">
+                                    <ViewProxy type="javax.swing.JTable" />
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Event Flag Control Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
+                                <ViewNode tag="Horizontal Glue">
+                                    <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                </ViewNode>
+                                <ViewNode tag="FlagEventChannelAddButton">
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty name="text" value="Add..." />
+                                    <BeanProperty name="toolTipText" value="Add channels to flag events" />
+                                </ViewNode>
+                                <ViewNode tag="FlagEventChannelDeleteButton">
+                                    <ViewProxy type="javax.swing.JButton" />
+                                    <BeanProperty name="text" value="Delete" />
+                                    <BeanProperty name="toolTipText" value="Remove selected channels" />
+                                </ViewNode>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Event Flag Channels" />
+                            </BorderNode>
+                        </ViewNode>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder" />
+                            <BeanProperty name="title" value="Common Configuration" />
+                        </BorderNode>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

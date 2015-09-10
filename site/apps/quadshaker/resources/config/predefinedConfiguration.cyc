@@ -1,0 +1,6 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined Quad Shaker configurations">
+    <TEST tree_name = "ALL" text="Predefined Quad Shaker configurations">
+           <conf tree_name = "Test Quad Shaker  config." url="test.qsh" text="The Quad Shaker test configuration with data."/>
+    </TEST>
+</CONFIGURATIONS>

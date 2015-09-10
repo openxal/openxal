@@ -1,0 +1,22 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<ArchiveConfiguration date="Wed May 16 13:14:15 EDT 2007" version="1.0.0">
+	<PersistentStore>
+		<dbtable entity="TargetBeamArchive" table="oper.tgt_beam_parm">
+			<column attribute="timestamp" type="date" column="CREATE_DTE" description="Time Stamp" />
+			<column attribute="badgeNumber" type="string" column="BN" description="Badge Number" />
+			<column attribute="energy" type="double" column="BEAM_ENERGY" description="Beam Energy" units="MeV" format="#,###" />
+			<column attribute="protonsPerPulse" type="double" column="PROTON_PULSE" description="Protons Per Pulse" units="protons/pulse" format="0.00E0" />
+			<column attribute="repRate" type="double" column="REP_RATE" description="Rep Rate" units="Hz" format="0.0" />
+			<column attribute="peakTargetProtonDensity" type="double" column="PEAK_P_DEN_TGT" description="Peak Target Proton Density" units="protons/mm^2/pulse" format="0.00E0" />
+			<column attribute="peakBeamWindowProtonDensity" type="double" column="PEAK_P_DEN_BEAM_WIN" description="Peak Beam Window Proton Density" units="protons/mm^2/pulse" format="0.00E0" />
+			<column attribute="normTargetPeakingFactor" type="double" column="PEAK_FACTOR_TGT" description="Normalized Peaking Factor on Target" format="0.00" readonly="true" />
+			<column attribute="widthHarp" column="RMS_WD_HARP" type="double" description="RMS Width on Harp" units="mm" format="0.0" />
+			<column attribute="heightHarp" column="RMS_HGT_HARP" type="double" description="RMS Height on Harp" units="mm" format="0.0" />
+			<column attribute="widthTarget" column="RMS_WD_TGT" type="double" description="RMS Width on Target" units="mm" format="0.0" />
+			<column attribute="heightTarget" column="RMS_HGT_TGT" type="double" description="RMS Height on Target" units="mm" format="0.0" />
+			<column attribute="xTarget" column="HOR_CENT_TGT" type="double" description="Horizontal Center on Target" units="mm" format="0.0" />
+			<column attribute="yTarget" column="VERT_CENT_TGT" type="double" description="Vertical Center on Target" units="mm" format="0.0" />
+			<column attribute="comment" column="CMNT" type="string" description="Comment" width="2000" />
+		</dbtable>
+	</PersistentStore>
+</ArchiveConfiguration>

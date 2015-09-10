@@ -1,0 +1,215 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<MAGNETS_CYCLING title="/ade/xal/docs/Magnets Cycling/HEBT_Ring_ini.cyc">
+    <font name="Monospaced" size="10" style="1"/>
+    <shared_parameters update_time="1.0"/>
+    <RUNNER_CNTRL>
+        <PowerSupplyGroup group_name="HEBT PSs">
+            <PowerSupplyCycler>
+                <PV_Set pv_name="HEBT_Mag:PS_DH25:I_Set"/>
+                <PV_Rb pv_name="HEBT_Mag:PS_DH25:I"/>
+                <NeedCyclePV pv_name="HEBT_Mag:PS_DH25:needCycle"/>									
+                <Max_I_Ampers I="730.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>	
+            <PowerSupplyCycler>
+                <PV_Set pv_name="HEBT_Mag:PS_DH11:I_Set"/>
+                <PV_Rb pv_name="HEBT_Mag:PS_DH11:I"/>
+                <NeedCyclePV pv_name="HEBT_Mag:PS_DH11:needCycle"/>									
+                <Max_I_Ampers I="670.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="HEBT_Mag:PS_DH12t18:I_Set"/>
+                <PV_Rb pv_name="HEBT_Mag:PS_DH12t18:I"/>
+                <NeedCyclePV pv_name="HEBT_Mag:PS_DH12t18:needCycle"/>								
+                <Max_I_Ampers I="733.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="HEBT_Mag:PS_InjSptm:I_Set"/>
+                <PV_Rb pv_name="HEBT_Mag:PS_InjSptm:I"/>
+                <NeedCyclePV pv_name="HEBT_Mag:PS_InjSptm:needCycle"/>								
+                <Max_I_Ampers I="3700.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+        </PowerSupplyGroup>
+        <PowerSupplyGroup group_name="Ring Bend PSs">
+            <PowerSupplyCycler>
+                <PV_Set pv_name="Ring_Mag:PS_DH_A10:I_Set"/>
+                <PV_Rb pv_name="Ring_Mag:PS_DH_A10:I"/>
+                <NeedCyclePV pv_name="Ring_Mag:PS_DH_A10:needCycle"/>
+                <Max_I_Ampers I="4000.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="Ring_Mag:PS_DH_A11:I_Set"/>
+                <PV_Rb pv_name="Ring_Mag:PS_DH_A11:I"/>
+                <NeedCyclePV pv_name="Ring_Mag:PS_DH_A11:needCycle"/>								
+                <Max_I_Ampers I="2300.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="Ring_Mag:PS_DH_A12:I_Set"/>
+                <PV_Rb pv_name="Ring_Mag:PS_DH_A12:I"/>
+                <NeedCyclePV pv_name="Ring_Mag:PS_DH_A12:needCycle"/>								
+                <Max_I_Ampers I="2200.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="Ring_Mag:PS_DH_A13:I_Set"/>
+                <PV_Rb pv_name="Ring_Mag:PS_DH_A13:I"/>
+                <NeedCyclePV pv_name="Ring_Mag:PS_DH_A13:needCycle"/>									
+                <Max_I_Ampers I="2700.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="Ring_Mag:PS_DH_Main:I_Set"/>
+                <PV_Rb pv_name="Ring_Mag:PS_DH_Main:I"/>
+                <NeedCyclePV pv_name="Ring_Mag:PS_DH_Main:needCycle"/>									
+                <Max_I_Ampers I="4600.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+		</PowerSupplyGroup>
+		<PowerSupplyGroup group_name="Ring Quad PSs">
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QH10a13:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QH10a13:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QH10a13:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QH02a08:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QH02a08:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QH02a08:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QH04a06:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QH04a06:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QH04a06:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QV01a09:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QV01a09:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QV01a09:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QV11a12:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QV11a12:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QV11a12:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+			<PowerSupplyCycler>
+					<PV_Set pv_name="Ring_Mag:PS_QV03a05a07:I_Set"/>
+					<PV_Rb pv_name="Ring_Mag:PS_QV03a05a07:I"/>
+					<NeedCyclePV pv_name="Ring_Mag:PS_QV03a05a07:needCycle"/>									
+					<Max_I_Ampers I="1000.0"/>
+					<Number_of_Cycles n="1"/>
+					<Rate_Amper_per_sec rate="40.0"/>
+					<MinI_Time_sec time="60.0"/>
+					<MaxI_Time_sec time="60.0"/>
+					<Active isActive="true"/>
+			</PowerSupplyCycler>
+        </PowerSupplyGroup>
+        <PowerSupplyGroup group_name="IDump PSs">
+            <PowerSupplyCycler>
+                <PV_Set pv_name="IDmp_Mag:PS_Sptm:I_Set"/>
+                <PV_Rb pv_name="IDmp_Mag:PS_Sptm:I"/>
+                <NeedCyclePV pv_name="IDmp_Mag:PS_Sptm:needCycle"/>									
+                <Max_I_Ampers I="4000.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+        </PowerSupplyGroup>
+        <PowerSupplyGroup group_name="RTBT PSs">
+            <PowerSupplyCycler>
+                <PV_Set pv_name="RTBT_Mag:PS_DH13:I_Set"/>
+                <PV_Rb pv_name="RTBT_Mag:PS_DH13:I"/>
+                <NeedCyclePV pv_name="RTBT_Mag:PS_DH13:needCycle"/>									
+                <Max_I_Ampers I="2000.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+            <PowerSupplyCycler>
+                <PV_Set pv_name="RTBT_Mag:PS_ExSptm:I_Set"/>
+                <PV_Rb pv_name="RTBT_Mag:PS_ExSptm:I"/>
+                <NeedCyclePV pv_name="RTBT_Mag:PS_ExSptm:needCycle"/>									
+                <Max_I_Ampers I="2000.0"/>
+                <Number_of_Cycles n="1"/>
+                <Rate_Amper_per_sec rate="40.0"/>
+                <MinI_Time_sec time="10.0"/>
+                <MaxI_Time_sec time="10.0"/>
+                <Active isActive="true"/>
+            </PowerSupplyCycler>
+        </PowerSupplyGroup>
+    </RUNNER_CNTRL>
+</MAGNETS_CYCLING>

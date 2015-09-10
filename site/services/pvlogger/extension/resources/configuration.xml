@@ -1,0 +1,57 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Configuration date="Mon Jul 27 14:46:39 EDT 2009" version="1.0.0">
+	<publisher publishPeriod="600" />
+	<persistentStore>
+		<dbtable entity="SnapshotGroup" name="pvlog.mach_snapshot_type">
+			<column attribute="group" column="snapshot_type_nm" />
+			<column attribute="description" column="snapshot_type_desc" />
+			<column attribute="period" column="snapshot_per" />
+			<column attribute="retention" column="snapshot_retent" />
+			<column attribute="service" column="svc_id" />
+		</dbtable>
+		<dbtable entity="SnapshotGroupChannel" name="pvlog.mach_snapshot_type_sgnl">
+			<column attribute="group" column="snapshot_type_nm" />
+			<column attribute="channel" column="sgnl_id" />
+		</dbtable>
+		<dbtable entity="MachineSnapshot" name="pvlog.mach_snapshot">
+			<column attribute="primaryKey" column="snapshot_id" />
+			<column attribute="timestamp" column="snapshot_dte" />
+			<column attribute="type" column="snapshot_type_nm" />
+			<column attribute="comment" column="cmnt" />
+			<query name="nextPrimaryKey" sql="SELECT pvlog.mach_snapshot_id_seq.nextval FROM dual" />
+		</dbtable>
+		<service name="PHYSICS">
+			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl">
+				<column attribute="machineSnapshot" column="snapshot_id" />
+				<column attribute="pv" column="sgnl_id" />
+				<column attribute="timestamp" column="sgnl_timestp" />
+				<column attribute="value" column="sgnl_val" />
+				<column attribute="status" column="sgnl_stat" />
+				<column attribute="severity" column="sgnl_svrty" />
+				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+			</dbtable>
+		</service>
+		<service name="TESTFAC">
+			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl">
+				<column attribute="machineSnapshot" column="snapshot_id" />
+				<column attribute="pv" column="sgnl_id" />
+				<column attribute="timestamp" column="sgnl_timestp" />
+				<column attribute="value" column="sgnl_val" />
+				<column attribute="status" column="sgnl_stat" />
+				<column attribute="severity" column="sgnl_svrty" />
+				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+			</dbtable>
+		</service>
+		<service name="ES&amp;H">
+			<dbtable entity="ChannelSnapshot" name="pvlog.mach_snapshot_sgnl_perm_ret">
+				<column attribute="machineSnapshot" column="snapshot_id" />
+				<column attribute="pv" column="sgnl_id" />
+				<column attribute="timestamp" column="sgnl_timestp" />
+				<column attribute="value" column="sgnl_val" />
+				<column attribute="status" column="sgnl_stat" />
+				<column attribute="severity" column="sgnl_svrty" />
+				<datatype name="valueArray" type="PVLOG.SGNL_VAL_TYP" />
+			</dbtable>
+		</service>
+	</persistentStore>
+</Configuration>

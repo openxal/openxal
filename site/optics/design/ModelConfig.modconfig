@@ -1,0 +1,37 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
+	<elements>
+		<default type="xal.model.elem.Marker"/>
+		<drift type="xal.model.elem.IdealDrift"/>
+	</elements>
+
+	<associations>
+		<map smf="xal.smf.impl.Marker" model="xal.model.elem.Marker"/>
+
+		<map smf="dh" model="xal.model.elem.IdealMagWedgeDipole2"/>
+		<map smf="EDipole" model="xal.model.elem.IdealEDipole"/>
+		<map smf="QSC" model="xal.model.elem.IdealMagSkewQuad3"/>
+		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="EQuad" model="xal.model.elem.IdealEQuad"/>
+		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
+		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
+		<map smf="rfgap" model="xal.model.elem.IdealRfGap"/>
+
+		<map smf="bcm" model="xal.model.elem.Marker"/>
+
+		<map smf="dch" model="xal.model.elem.IdealMagSteeringDipole"/>
+		<map smf="dcv" model="xal.model.elem.IdealMagSteeringDipole"/>
+		<map smf="EKick" model="xal.model.elem.IdealMagSteeringDipole"/>
+
+		<map smf="bpm" model="xal.model.elem.Marker"/>
+		<map smf="bsm" model="xal.model.elem.Marker"/>
+		<map smf="blm" model="xal.model.elem.Marker"/>
+		<map smf="ws" model="xal.model.elem.Marker"/>
+		<map smf="harp" model="xal.model.elem.Marker"/>
+		<map smf="marker" model="xal.model.elem.Marker"/>
+	</associations>
+
+</configuration>

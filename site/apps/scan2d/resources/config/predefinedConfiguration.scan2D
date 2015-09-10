@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined scan configurations">
+    <TEST tree_name = "TEST" text="Predefined scan configuration as a test.">
+           <conf tree_name = "Test scan config." url="test1.scan1D" text="The test configuration with data."/>
+    </TEST>
+    <MEBT tree_name = "MEBT" text="Predefined scan configurations for MEBT">
+       <Phase tree_name = "Phase Scan" text="Predefined phase scan configurations for MEBT">
+        <conf tree_name = "MEBT Cavity #1 phase SCAN" url="MEBT_Cav1.scan2D" text="Configuration for the phase scan of the Cavity #1 in MEBT."/>
+        <conf tree_name = "MEBT Cavity #2 phase SCAN" url="MEBT_Cav2.scan2D" text="Configuration for the phase scan of the Cavity #2 in MEBT."/>
+        <conf tree_name = "MEBT Cavity #3 phase SCAN" url="MEBT_Cav3.scan2D" text="Configuration for the phase scan of the Cavity #3 in MEBT."/>
+        <conf tree_name = "MEBT Cavity #4 phase SCAN" url="MEBT_Cav4.scan2D" text="Configuration for the phase scan of the Cavity #4 in MEBT."/>
+       </Phase>
+    </MEBT>
+    <DTL tree_name = "DTL ACCEPTANCE SCAN" text="Predefined scan configurations for DTL tanks.">
+        <conf tree_name = "TANK #1 ACCEPTANCE SCAN" url="DTL_TANK_1_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #1 in DTL."/>
+        <conf tree_name = "TANK #2 ACCEPTANCE SCAN" url="DTL_TANK_2_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #2 in DTL."/>
+        <conf tree_name = "TANK #3 ACCEPTANCE SCAN" url="DTL_TANK_3_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #3 in DTL."/>
+        <conf tree_name = "TANK #4 ACCEPTANCE SCAN" url="DTL_TANK_4_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #4 in DTL."/>
+        <conf tree_name = "TANK #5 ACCEPTANCE SCAN" url="DTL_TANK_5_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #5 in DTL."/>
+        <conf tree_name = "TANK #6 ACCEPTANCE SCAN" url="DTL_TANK_6_CONF.scan2D" text="Configuration for the acceptance scan of the Tank #6 in DTL."/>
+    </DTL>
+    <CCL tree_name = "CCL" text="Predefined scan configurations for DTL tank 1">
+    </CCL>
+</CONFIGURATIONS>

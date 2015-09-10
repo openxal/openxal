@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf date="Tue Feb 7 10:22:16 EDT 2012" version="1.0.0">
+    <sequence id="SCLHigh">
+        <node id="SCL_Diag:BPM18">
+            <attributes>
+                <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+            </attributes>
+            <channelsuite name="bpmsuite">
+                <!-- Mike Plum recommends "SCL BPM 18 relative to a line drawn through the SCL quads is 0.2 mm left and 2.95 mm low" - Feb. 7, 2012 tap -->
+                <transform name="x-align" type="doubleTranslation" offset="0.20" />
+                <transform name="x-array-align" type="doubleArrayTranslation" offset="0.20" />
+                <transform name="y-align" type="doubleTranslation" offset="-2.95" />
+                <transform name="y-array-align" type="doubleArrayTranslation" offset="-2.95" />
+                <channel handle="xAvg" transform="x-align" />
+                <channel handle="yAvg" transform="y-align" />
+                <channel handle="xTBT" transform="x-array-align"  />
+                <channel handle="yTBT" transform="y-array-align" />
+            </channelsuite>
+        </node>
+    </sequence>
+</xdxf>

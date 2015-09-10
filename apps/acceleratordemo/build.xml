@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the application whose name matches that of the project. -->
+<project name="acceleratordemo" basedir="." default="all">
+	<property name="mainclass.base" value="Demo" />
+    <property name="exclude.install" value="true" />
+	<import file="../common.xml"/>
+</project>

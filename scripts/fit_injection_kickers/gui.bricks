@@ -1,0 +1,182 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri Mar 02 16:07:04 EST 2007" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="364" tag="MainWindow" width="680">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Injection Kicker Fitting"/>
+            <ViewNode tag="Main Tabs">
+                <ViewProxy type="javax.swing.JTabbedPane"/>
+                <ViewNode tag="Procedure">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="Procedure"/>
+                    <ViewNode tag="Kicker Selection">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="KickerSelectionStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="text" value="Select Kickers:"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="HorizontalSelector">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="label" value="Horizontal"/>
+                        </ViewNode>
+                        <ViewNode tag="VerticalSelector">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="label" value="Vertical"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="InitialKickerAmplitude">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="InitialKickerAmplitudeStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Initial Kicker Amplitude"/>
+                            <BeanProperty name="label" value="Will set Initial Kicker Amplitude (Volts):"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="InitialKickerVoltField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="debugGraphicsOptions" value="0"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="5.0"/>
+                            <BeanProperty name="toolTipText" value="First kicker amplitude in volts"/>
+                            <BeanProperty name="columns" value="8"/>
+                            <BeanProperty height="50" name="maximumSize" width="120"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="InitialBeamCirculation">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="InitialBeamCirculationStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Please circulate beam then press &quot;next&quot;"/>
+                            <BeanProperty name="label" value="Please circulate beam then press &quot;Run&quot;"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="FinalKickerAmplitude">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="FinalKickerAmplitudeStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Initial Kicker Amplitude"/>
+                            <BeanProperty name="label" value="Will set Final Kicker Amplitude (Volts):"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="FinalKickerVoltField">
+                            <ViewProxy type="javax.swing.JTextField"/>
+                            <BeanProperty name="debugGraphicsOptions" value="0"/>
+                            <BeanProperty name="horizontalAlignment" value="4"/>
+                            <BeanProperty name="text" value="15.0"/>
+                            <BeanProperty name="toolTipText" value="Final kicker amplitude in volts"/>
+                            <BeanProperty height="50" name="maximumSize" width="120"/>
+                            <BeanProperty name="columns" value="8"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="FinalBeamCirculation">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="FinalBeamCirculationStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Please circulate beam then press &quot;next&quot;"/>
+                            <BeanProperty name="label" value="Please circulate beam then press &quot;Run&quot;"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Cleanup">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="CleanupStage">
+                            <ViewProxy type="javax.swing.JRadioButton"/>
+                            <BeanProperty name="text" value="Please circulate beam then press &quot;next&quot;"/>
+                            <BeanProperty name="label" value="Please restore the kicker amplitudes."/>
+                            <BeanProperty name="toolTipText" value="Restore kicker amplitudes to production settings"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Vertical Glue">
+                        <ViewProxy type="javax.swing.Box_VerticalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="ButtonRow">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty name="name" value="Procedure"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="RunButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value="next"/>
+                            <BeanProperty name="label" value="Run"/>
+                            <BeanProperty name="name" value="Run"/>
+                        </ViewNode>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="RipplePlot">
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    <BeanProperty name="name" value="Ripple"/>
+                </ViewNode>
+                <ViewNode tag="Kickers">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="Kickers"/>
+                    <ViewNode tag="Summary">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="RippleRMSLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="RMS Ripple (mm):  "/>
+                        </ViewNode>
+                        <ViewNode tag="RippleRMSResult">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="?"/>
+                            <BeanProperty alpha="255" blue="204" green="0" name="foreground" red="0"/>
+                        </ViewNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="FitRMSLabel">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="RMS Fit (mm):  "/>
+                        </ViewNode>
+                        <ViewNode tag="FitRMSResult">
+                            <ViewProxy type="javax.swing.JLabel"/>
+                            <BeanProperty name="text" value="?"/>
+                            <BeanProperty alpha="255" blue="153" green="51" name="foreground" red="0"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="KickersScrollPane">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BeanProperty name="name" value="Results"/>
+                        <ViewNode tag="KickerTable">
+                            <ViewProxy type="javax.swing.JTable"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="CopyReportButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value="Copy Report"/>
+                            <BeanProperty name="toolTipText" value="Copy report to clipboard"/>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
