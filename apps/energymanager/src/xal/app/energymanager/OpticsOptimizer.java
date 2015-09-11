@@ -420,7 +420,7 @@ public class OpticsOptimizer implements ScoreBoardListener, SolverSessionListene
 		}
 		
 		final TrialPoint trialPoint = new TrialPoint( trialTable );
-		_bestSolution = new Trial( _activeSolverSession.getProblem(), trialPoint, null, null );
+		_bestSolution = new Trial( _activeSolverSession.getProblem(), trialPoint );
 		
 		report();	// report the best solution
 		_activeSolverSession.cleanup();
