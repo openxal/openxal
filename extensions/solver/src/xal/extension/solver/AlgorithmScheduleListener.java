@@ -12,6 +12,8 @@ package xal.extension.solver;
 
 import xal.extension.solver.market.*;
 
+import xal.extension.solver.algorithm.*;
+
 import java.util.*;
 
 
@@ -40,17 +42,17 @@ public interface AlgorithmScheduleListener {
 	/**
 	 * Handle an event where a new algorithm run stack will start.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy which will execute
+	 * @param algorithm the algorithm which will execute
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyWillExecute( AlgorithmSchedule schedule, AlgorithmStrategy strategy, ScoreBoard scoreBoard );
+	public void algorithmRunWillExecute( AlgorithmSchedule schedule, SearchAlgorithm algorithm, ScoreBoard scoreBoard );
 	 
 	 
 	/**
 	 * Handle an event where a new algorithm run stack has completed.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy that has executed
+	 * @param algorithm the algorithm that has executed
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyExecuted( AlgorithmSchedule schedule, AlgorithmStrategy strategy, ScoreBoard scoreBoard );
+	public void algorithmRunExecuted( AlgorithmSchedule schedule, SearchAlgorithm algorithm, ScoreBoard scoreBoard );
  }  

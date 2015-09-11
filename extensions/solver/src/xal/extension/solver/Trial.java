@@ -32,9 +32,6 @@ public class Trial {
 	/** the algorithm that generated this trial */
 	protected final SearchAlgorithm _searchAlgorithm;
 	
-	/** the strategy used to pick the algorithm which generated this trial */
-	protected final AlgorithmStrategy _algorithmStrategy;
-	
 	/** a veto if any */
 	protected TrialVeto _veto;
 	
@@ -53,13 +50,11 @@ public class Trial {
 	 * @param problem              the problem being solved
 	 * @param trialPoint           the trial point of variable values
 	 * @param algorithm            the algorithm that generated this trial
-	 * @param strategy             the strategy used to pick the algorithm which generated this trial
 	 */
-	public Trial( final Problem problem, final TrialPoint trialPoint, final SearchAlgorithm algorithm, final AlgorithmStrategy strategy ) {
+	public Trial( final Problem problem, final TrialPoint trialPoint, final SearchAlgorithm algorithm ) {
 		_problem = problem;
 		_trialPoint = trialPoint;
 		_searchAlgorithm = algorithm;
-		_algorithmStrategy = strategy;
 		OBJECTIVE_SCORES = new HashMap<Objective,Score>();
 		_veto = null;
 	}
@@ -71,7 +66,7 @@ public class Trial {
 	 * @param trialPoint           the trial point of variable values
 	 */
 	public Trial( final Problem problem, final TrialPoint trialPoint ) {
-		this( problem, trialPoint, null, null );
+		this( problem, trialPoint, null );
 	}
 	
 
@@ -201,15 +196,6 @@ public class Trial {
 	 */
 	public SearchAlgorithm getAlgorithm() {
 		return _searchAlgorithm;
-	}
-
-
-	/**
-	 * Get the algorithm strategy that generated this trial.
-	 * @return   The algorithm strategy.
-	 */
-	public AlgorithmStrategy getAlgorithmStrategy() {
-		return _algorithmStrategy;
 	}
 
 
