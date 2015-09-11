@@ -40,10 +40,10 @@ public class InitialAlgorithm extends SearchAlgorithm {
 	
 	/**
 	 * Calculate the next few trial points.
-	 * @param algorithmRun the algorithm run to perform the evaluation
+	 * @param schedule the schedule of runs
 	 */
-	public void performRun( final AlgorithmRun algorithmRun ) {
-		algorithmRun.evaluateTrialPoint( nextTrialPoint() );
+	public void performRun( final AlgorithmSchedule schedule ) {
+		evaluateTrialPoint( nextTrialPoint() );
 	}
 	
 	 

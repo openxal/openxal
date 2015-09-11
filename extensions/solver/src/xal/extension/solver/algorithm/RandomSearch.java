@@ -21,28 +21,28 @@ import java.util.*;
  * @author   ky6
  */
 public class RandomSearch extends SearchAlgorithm {
-	/** random number generator */
-	protected Random _randomGenerator;
-
-
-	/** Creates a new instance of RandomSearch */
-	public RandomSearch() {
-		_randomGenerator = new Random( 0 );
-	}
-
-
-	/**
-	 * Generate a random variable between the upper and lower limits.
-	 * @param variable  The variable whose limits we are using.
-	 * @return          A double random variable.
-	 */
-	private double generateRandomValue( final Variable variable ) {
-		double lowerLimit = variable.getLowerLimit();
-		double upperLimit = variable.getUpperLimit();
-
-		return lowerLimit + _randomGenerator.nextDouble() * ( upperLimit - lowerLimit );
-	}
-
+    /** random number generator */
+    private Random _randomGenerator;
+    
+    
+    /** Creates a new instance of RandomSearch */
+    public RandomSearch() {
+        _randomGenerator = new Random( 0 );
+    }
+    
+    
+    /**
+     * Generate a random variable between the upper and lower limits.
+     * @param variable  The variable whose limits we are using.
+     * @return          A double random variable.
+     */
+    private double generateRandomValue( final Variable variable ) {
+        double lowerLimit = variable.getLowerLimit();
+        double upperLimit = variable.getUpperLimit();
+        
+        return lowerLimit + _randomGenerator.nextDouble() * ( upperLimit - lowerLimit );
+    }
+    
 
 	/**
 	 * Return the label for a search algorithm.
@@ -55,11 +55,12 @@ public class RandomSearch extends SearchAlgorithm {
 	
 	/**
 	 * Calculate the next few trial points.
-	 * @param algorithmRun the algorithm run to perform the evaluation
 	 */
-	public void performRun( final AlgorithmRun algorithmRun ) {
+	public void performRun( final AlgorithmSchedule algorithmSchedule ) {
 		try {
-			algorithmRun.evaluateTrialPoint( nextTrialPoint() );
+            while( getEvaluationsLeft() > 0 && !algorithmSchedule.shouldStop() ){
+                evaluateTrialPoint( nextTrialPoint() );
+            }
 		}
 		catch ( RunTerminationException exception ) {}
 	}

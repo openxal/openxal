@@ -37,7 +37,7 @@ public class Solver implements AlgorithmPoolListener, AlgorithmMarketListener {
 	 * Primary Constructor
 	 * @param stopper        Determines when the solving is finished
 	 * @param solutionJudge  Decides if a solution is optimal.
-	 * @param market         The market of algorithms and strategies to use.
+	 * @param market         The market of algorithms to use
 	 */
 	public Solver( final AlgorithmMarket market, final Stopper stopper, final SolutionJudge solutionJudge ) {
 		_scoreboard = new ScoreBoard( solutionJudge );
@@ -287,5 +287,13 @@ public class Solver implements AlgorithmPoolListener, AlgorithmMarketListener {
 			}
 		}
 	}
+    
+    
+    // Same process above but defining the number of evaluations over which to average
+    public void recordEfficiency( final int evaluations ){
+        _scoreboard.recordEfficiency( evaluations );
+    }
+    
+    
 }
 

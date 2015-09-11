@@ -18,12 +18,12 @@ import java.util.*;
 
 
 /**
- * AlgorithmMarket keeps track of algorithm strategies.
+ * AlgorithmMarket keeps track of algorithms.
  * @author   ky6
  * @author   t6p
  */
 public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudgeListener {
-	/** the probability ratio for picking strategies sorted by efficiency */
+	/** the probability ratio for picking algorithms sorted by efficiency */
 	final static private double PROBABILITY_RATIO = 0.25;
 	
 	/** natural logarithm of the probability ratio  */
@@ -35,81 +35,45 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	/** the random number generator seed for reproducibility */
 	static final private long RANDOM_SEED = 12345678901234L;
 	
-	/** the list of strategies in the market sorted by efficiency so the most efficient strategies appear first */
-	protected List<AlgorithmStrategy> _strategies;
+	/** the list of algorithms in the market sorted by efficiency so the most efficient algorithms appear first */
+	private List<SearchAlgorithm> _algorithmsByEfficiency;
 	
 	/** the pool of algorithms from which to pick an algorithm */
-	protected AlgorithmPool _algorithmPool;
+	private AlgorithmPool _algorithmPool;
 	
 	/** message center which dispatches events to registered listeners */
-	protected MessageCenter _messageCenter;
+	final private MessageCenter MESSAGE_CENTER;
 	
 	/** proxy which forwards events to registered listeners */
-	protected AlgorithmMarketListener _eventProxy;
+	final private AlgorithmMarketListener EVENT_PROXY;
 
 	
 	/**
 	 * Primary Constructor
 	 * @param pool        the pool of algorithms
-	 * @param strategies  the list of strategies
-	 */
-	public AlgorithmMarket( final AlgorithmPool pool, final List<AlgorithmStrategy> strategies ) {
-		RANDOM_GENERATOR = new Random( RANDOM_SEED );
-		
-		_strategies = new ArrayList<AlgorithmStrategy>();
-		
-		_messageCenter = new MessageCenter("Algorithm Market");
-		_eventProxy = _messageCenter.registerSource( this, AlgorithmMarketListener.class );
-		
-		setAlgorithmPool( pool );
-		setAlgorithmStrategies( strategies );
-	}
-	
-	
-	/**
-	 * Constructor
-	 * @param pool the pool of algorithms
+	 * @param algorithms  the list of algorithms
 	 */
 	public AlgorithmMarket( final AlgorithmPool pool ) {
-		this( pool, Collections.<AlgorithmStrategy>emptyList() );
+		RANDOM_GENERATOR = new Random( RANDOM_SEED );		
 
-		// create a strategy for each algorithm
-		for ( final SearchAlgorithm algorithm : pool.getAlgorithms() ) {
-			addAlgorithmStrategy( new SingleAlgorithmStrategy( pool, algorithm ) );
-		}
-	}
-	
-
-	/**
-	 * Constructor
-	 * @param pool      the pool of algorithms
-	 * @param strategy  the only strategy to use in the market
-	 */
-	public AlgorithmMarket( final AlgorithmPool pool, final AlgorithmStrategy strategy ) {
-		this( pool, Collections.<AlgorithmStrategy>singletonList( strategy ) );
+		MESSAGE_CENTER = new MessageCenter("Algorithm Market");
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, AlgorithmMarketListener.class );
+		
+		_algorithmsByEfficiency = new ArrayList<SearchAlgorithm>();
+		setAlgorithmPool( pool );
 	}
 
 
 	/**
 	 * Constructor
-	 * @param algorithm  the only algorithm to use which also implies the single algorithm strategy
+	 * @param algorithm  the only algorithm to use which also implies the single algorithm
 	 */
 	public AlgorithmMarket( final SearchAlgorithm algorithm ) {
-		this( new AlgorithmPool( algorithm ), Collections.<AlgorithmStrategy>emptyList() );
-		setAlgorithmStrategy( new SingleAlgorithmStrategy( _algorithmPool, algorithm ) );
+		this( new AlgorithmPool( algorithm ) );
 	}
 
 
-	/**
-	 * Constructor
-	 * @param strategies  the list of strategies
-	 */
-	public AlgorithmMarket( final List<AlgorithmStrategy> strategies ) {
-		this( new AlgorithmPool(), strategies );
-	}
-
-
-	/** Constructor using the default algorithm pool and the default strategies. */
+	/** Constructor using the default algorithm pool and the default algorithms List. */
 	public AlgorithmMarket() {
 		this( new AlgorithmPool() );
 	}
@@ -127,7 +91,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param listener the listener to add for receiving algorithm market events
 	 */
 	public void addAlgorithmMarketListener( final AlgorithmMarketListener listener ) {
-		_messageCenter.registerTarget( listener, this, AlgorithmMarketListener.class );
+		MESSAGE_CENTER.registerTarget( listener, this, AlgorithmMarketListener.class );
 	}
 	
 	
@@ -136,7 +100,7 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	 * @param listener the listener to remove from receiving algorithm market events
 	 */
 	public void removeAlgorithmMarketListener( final AlgorithmMarketListener listener ) {
-		_messageCenter.removeTarget( listener, this, AlgorithmMarketListener.class );
+		MESSAGE_CENTER.removeTarget( listener, this, AlgorithmMarketListener.class );
 	}
 	
 	
@@ -160,39 +124,21 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 
 
 	/**
-	 * Get the algorithm strategies.
-	 * @return   The list of strategies.
+	 * Get the algorithm List.
+	 * @return   The list of algorithms.
 	 */
-	public List<AlgorithmStrategy> getStrategies() {
-		return _strategies;
+	public List<SearchAlgorithm> getAlgorithms() {
+		return _algorithmsByEfficiency;
 	}
 
 
 	/**
-	 * Set the list of strategies.
-	 * @param strategies  The list of strategies.
+	 * Set the list of algorithms.
+	 * @param algorithmsList  The list of algorithms.
 	 */
-	public void setAlgorithmStrategies( final List<AlgorithmStrategy> strategies ) {
-		_strategies.clear();
-		_strategies.addAll( strategies );
-	}
-
-
-	/**
-	 * Set the strategy.
-	 * @param strategy  The algorithm strategy to set the list with.
-	 */
-	public void setAlgorithmStrategy( final AlgorithmStrategy strategy ) {
-		setAlgorithmStrategies( Collections.<AlgorithmStrategy>singletonList( strategy ) );
-	}
-
-
-	/**
-	 * Add an algorithm strategy to the list of strategies.
-	 * @param strategy  The algorithm strategy to add.
-	 */
-	public void addAlgorithmStrategy( final AlgorithmStrategy strategy ) {
-		_strategies.add( strategy );
+	private void setAlgorithms( final List<SearchAlgorithm> algorithms ) {
+		_algorithmsByEfficiency.clear();
+		_algorithmsByEfficiency.addAll( algorithms );
 	}
 
 
@@ -203,39 +149,44 @@ public class AlgorithmMarket implements AlgorithmScheduleListener, SolutionJudge
 	public void setAlgorithmPool( final AlgorithmPool pool ) {
 		final AlgorithmPool oldPool = _algorithmPool;
 		_algorithmPool = pool;
-		_eventProxy.poolChanged( this, oldPool, pool );
+
+		// add algorithms
+		_algorithmsByEfficiency.clear();
+		_algorithmsByEfficiency.addAll( pool.getAlgorithms() );
+
+		EVENT_PROXY.poolChanged( this, oldPool, pool );
 	}
 	
 	
 	/**
-	 * Get the next strategy to execute by sorting strategies by efficiency and then picking a strategy randomly but weighted by
-	 * the probability ratio for each successive strategy.
-	 * @return the next strategy
+	 * Get the next algorithm to execute by sorting algorithms by efficiency and then picking a algorithm randomly but weighted by
+	 * the probability ratio for each successive algorithm.
+	 * @return the next algorithm
 	 */
-	public AlgorithmStrategy nextStrategy() {
-		Collections.sort( _strategies, AlgorithmStrategy.EFFICIENCY_COMPARATOR );
-		final int count = _strategies.size();
+	public SearchAlgorithm nextAlgorithm() {
+		Collections.sort( _algorithmsByEfficiency, SearchAlgorithm.EFFICIENCY_COMPARATOR );
+		final int count = _algorithmsByEfficiency.size();
 		final int selectedIndex = (int)( Math.log( 1.0 - RANDOM_GENERATOR.nextDouble() * ( 1.0 - Math.pow( PROBABILITY_RATIO, count ) ) ) / PROBABILITY_RATIO_LOG );
-		return _strategies.get( Math.min( selectedIndex, count - 1 ) );
+		return _algorithmsByEfficiency.get( Math.min( selectedIndex, count - 1 ) );
 	}
 	
 	
 	/**
 	 * Handle an event where a new algorithm run stack will start.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy which will execute
+	 * @param algorithm the algorithm which will execute
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyWillExecute( final AlgorithmSchedule schedule, final AlgorithmStrategy strategy, final ScoreBoard scoreBoard ) {}
+	public void algorithmRunWillExecute( final AlgorithmSchedule schedule, final SearchAlgorithm algorithm, final ScoreBoard scoreBoard ) {}
 	
 	
 	/**
 	 * Handle an event where a new algorithm run stack has completed.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy that has executed
+	 * @param algorithm the algorithm that has executed
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyExecuted( final AlgorithmSchedule schedule, final AlgorithmStrategy strategy, final ScoreBoard scoreBoard ) {}
+	public void algorithmRunExecuted( final AlgorithmSchedule schedule, final SearchAlgorithm algorithm, final ScoreBoard scoreBoard ) {}
 	
 
 	/**
