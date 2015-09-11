@@ -232,8 +232,8 @@ public class Problem {
 	
 	
 	/**
-	 * Generate a trial for the initial variable values without any associated algorithm strategy or algorithm
-	 * @return a trial without any associated algorithm strategy or algorithm
+	 * Generate a trial for the initial variable values without any associated algorithm
+	 * @return a trial without any associated algorithm
 	 */
 	private Trial generateInitialTrial() {
 		return new Trial( this, generateInitialTrialPoint() );

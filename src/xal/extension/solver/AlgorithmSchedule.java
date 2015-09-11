@@ -26,10 +26,10 @@ import java.util.*;
  */
 public class AlgorithmSchedule {
 	/** message center for dispatching messages */
-	protected MessageCenter _messageCenter;
+	final private MessageCenter MESSAGE_CENTER;
 	
 	/** proxy which forwarding messages to registered listeners */
-	protected AlgorithmScheduleListener _eventProxy;
+	final private AlgorithmScheduleListener EVENT_PROXY;
 	
 	/** determines when to stop the trials */
 	volatile protected Stopper _stopper;
@@ -42,6 +42,9 @@ public class AlgorithmSchedule {
 	
 	/** the solver running the schedule */
 	protected Solver _solver;
+    
+    /** the maximum proposed Evalautions defined by the largest minimumEvaluations of an algorithm */
+    private int _proposedEvaluations;
 	
 
 	/**
@@ -51,11 +54,13 @@ public class AlgorithmSchedule {
 	 * @param stopper The stopper which can terminate the schedule.
 	 */
 	public AlgorithmSchedule( final Solver solver, final AlgorithmMarket market, final Stopper stopper ) {
-		_messageCenter = new MessageCenter( "Algorithm Schedule" );
-		_eventProxy = _messageCenter.registerSource( this, AlgorithmScheduleListener.class );
+		MESSAGE_CENTER = new MessageCenter( "Algorithm Schedule" );
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, AlgorithmScheduleListener.class );
 		
 		_solver = solver;
 		_market = market;
+        
+        _proposedEvaluations = 1;
 		
 		setStopper( stopper );
 	}
@@ -72,7 +77,7 @@ public class AlgorithmSchedule {
 	 * @param aListener  The listener to add.
 	 */
 	public void addAlgorithmScheduleListener( AlgorithmScheduleListener aListener ) {
-		_messageCenter.registerTarget( aListener, this, AlgorithmScheduleListener.class );
+		MESSAGE_CENTER.registerTarget( aListener, this, AlgorithmScheduleListener.class );
 	}
 
 
@@ -81,7 +86,7 @@ public class AlgorithmSchedule {
 	 * @param aListener  The listener to remove.
 	 */
 	public void removeAlgorithmScheduleListener( AlgorithmScheduleListener aListener ) {
-		_messageCenter.removeTarget( aListener, this, AlgorithmScheduleListener.class );
+		MESSAGE_CENTER.removeTarget( aListener, this, AlgorithmScheduleListener.class );
 	}
 	
 	
@@ -92,6 +97,12 @@ public class AlgorithmSchedule {
 	public AlgorithmMarket getMarket() {
 		return _market;
 	}
+
+
+	/** get the score board */
+	public ScoreBoard getScoreBoard() {
+		return _solver.getScoreBoard();
+	}
 	
 	
 	/**
@@ -101,6 +112,7 @@ public class AlgorithmSchedule {
 	public void setProblem( final Problem problem ) {
 		_problem = problem;
 		_market.setProblem( problem );
+        computeMinimumEvaluations();
 	}
 	
 	
@@ -127,8 +139,35 @@ public class AlgorithmSchedule {
 	 * @return true if the stopper allows us to continue executing the schedule and false if not
 	 */
 	public boolean shouldExecute() {
-		return !_stopper.shouldStop( _solver );
+		return !shouldStop();
 	}
+
+
+	/**
+	 * Allows the algorithms to check when they should stop executing thier code
+	 */
+	public boolean shouldStop(){
+		return _stopper.shouldStop( _solver );
+	}
+
+
+    /**
+     * Going to get the largest minimumEvaluations that a program desires
+     * This will search through all the current algorithms in teh pool
+     */
+    private void computeMinimumEvaluations(){
+        final AlgorithmPool pool = _solver.getAlgorithmPool();
+
+		int proposedEvaluations = 1;
+        for( SearchAlgorithm algorithm: pool.getAlgorithms() ){
+            int algorithmMinEvals = algorithm.getMinEvaluationsPerRun();
+            if( algorithmMinEvals > proposedEvaluations ){
+                proposedEvaluations = algorithmMinEvals;
+            }
+        }
+
+		_proposedEvaluations = proposedEvaluations;
+    }
 
 
 	/** Execute the search schedule. */
@@ -136,12 +175,11 @@ public class AlgorithmSchedule {
 		try {
 			if ( shouldExecute() ) {
 				// the very first algorithm should be the InitialAlgorithm which generates a trial point from the variables' starting values
-				final AlgorithmStrategy initialStrategy = new SingleAlgorithmStrategy( _solver.getAlgorithmPool(), new InitialAlgorithm( _problem ) );
-				execute( initialStrategy );			
+				executeRun( new InitialAlgorithm( _problem ) );
 			}
 			
 			while ( shouldExecute() ) {
-				execute( _market.nextStrategy() );
+				executeRun( _market.nextAlgorithm() );
 			}			
 		}
 		catch ( RunTerminationException exception ) {
@@ -151,14 +189,16 @@ public class AlgorithmSchedule {
 	
 	
 	/**
-	 * Execute the specified strategy.
-	 * @param strategy the strategy to execute.
+	 * Execute a run for the specified algorithm.
+	 * @param algorithm the algorithm to execute.
 	 */
-	protected void execute( final AlgorithmStrategy strategy ) {
-		if ( strategy != null ) {
-			_eventProxy.strategyWillExecute( this, strategy, _solver.getScoreBoard() );
-			strategy.execute( this, _solver.getScoreBoard() );
-			_eventProxy.strategyExecuted( this, strategy, _solver.getScoreBoard() );			
+	private void executeRun( final SearchAlgorithm algorithm ) {
+		if ( algorithm != null ) {
+            algorithm.setProposedEvaluations( _proposedEvaluations );
+            
+			EVENT_PROXY.algorithmRunWillExecute( this, algorithm, _solver.getScoreBoard() );
+			algorithm.executeRun( this, _solver.getScoreBoard() );
+			EVENT_PROXY.algorithmRunExecuted( this, algorithm, _solver.getScoreBoard() );
 		}
 	}
 	
@@ -169,11 +209,11 @@ public class AlgorithmSchedule {
 	 * @return a scored trial corresponding to the specified trial point
 	 * @throws xal.extension.solver.RunTerminationException if the run has been terminated
 	 */
-	public Trial evaluateTrialPoint( final AlgorithmRun algorithmRun, final TrialPoint trialPoint ) {
+	public Trial evaluateTrialPoint( final SearchAlgorithm searchAlgorithm, final TrialPoint trialPoint ) {
 		if ( _stopper.shouldStop( _solver ) )  throw new RunTerminationException( "Run terminated by the stopper." );
-		else if ( algorithmRun.getCount() < 0 )  throw new RunTerminationException( "Run terminated due to overrun of scheduled evaluations." );
+		else if ( searchAlgorithm.getEvaluationsLeft() < 0 )  throw new RunTerminationException( "Run terminated due to overrun of scheduled evaluations." );
 		
-		final Trial trial = new Trial( _problem, trialPoint, algorithmRun.getAlgorithm(), algorithmRun.getAlgorithmStrategy() );
+		final Trial trial = new Trial( _problem, trialPoint, searchAlgorithm );
 		score( trial );
 		
 		return trial;
@@ -184,11 +224,11 @@ public class AlgorithmSchedule {
 	 * Score the trial.
 	 * @param trial  The trial to be scored.
 	 */
-	protected void score( final Trial trial ) {
+	private void score( final Trial trial ) {
 		final boolean isSuccessful = _problem.evaluate( trial );
-		if ( !isSuccessful )  _eventProxy.trialVetoed( this, trial );
+		if ( !isSuccessful )  EVENT_PROXY.trialVetoed( this, trial );
 		_solver.judge( trial );
-		_eventProxy.trialScored( this, trial );
+		EVENT_PROXY.trialScored( this, trial );
 	}
 }
 

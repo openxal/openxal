@@ -24,16 +24,16 @@ import java.util.*;
  */
 public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeListener, AlgorithmScheduleListener {
 	/** The list of all algorithms */
-	protected Collection<SearchAlgorithm> _algorithms;
+	private Collection<SearchAlgorithm> _algorithms;
 	
-	/** The list of algorithms available for scheduling */
-	protected Collection<SearchAlgorithm> _availableAlgorithms;
+	/** The collection of algorithms available for scheduling */
+	private Collection<SearchAlgorithm> _availableAlgorithms;
 	
 	/** Message center for dispatching events to registerd listeners */
-	protected MessageCenter _messageCenter;
+	final private MessageCenter MESSAGE_CENTER;
 	
 	/** Proxy which forwards events to registered listeners */
-	protected AlgorithmPoolListener _proxy;
+	final private AlgorithmPoolListener EVENT_PROXY;
 
 
 	/**
@@ -44,8 +44,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 		_algorithms = new HashSet<SearchAlgorithm>();
 		_availableAlgorithms = new HashSet<SearchAlgorithm>();
 
-		_messageCenter = new MessageCenter( "Algorithm Pool" );
-		_proxy = _messageCenter.registerSource( this, AlgorithmPoolListener.class );
+		MESSAGE_CENTER = new MessageCenter( "Algorithm Pool" );
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, AlgorithmPoolListener.class );
 
 		addAlgorithms( algorithms );
 	}
@@ -106,7 +106,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param listener  The listerner to add.
 	 */
 	public void addAlgorithmPoolListener( final AlgorithmPoolListener listener ) {
-		_messageCenter.registerTarget( listener, this, AlgorithmPoolListener.class );
+		MESSAGE_CENTER.registerTarget( listener, this, AlgorithmPoolListener.class );
 	}
 
 
@@ -115,7 +115,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 * @param listener  The listener to remove.
 	 */
 	public void removeAlgorithmPoolListener( final AlgorithmPoolListener listener ) {
-		_messageCenter.removeTarget( listener, this, AlgorithmPoolListener.class );
+		MESSAGE_CENTER.removeTarget( listener, this, AlgorithmPoolListener.class );
 	}
 	
 	
@@ -147,7 +147,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	public void addAlgorithm( final SearchAlgorithm algorithm ) {
 		_algorithms.add( algorithm );
 		algorithm.addSearchAlgorithmListener( this );
-		_proxy.algorithmAdded( this, algorithm );
+		EVENT_PROXY.algorithmAdded( this, algorithm );
 	}
 
 
@@ -159,7 +159,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 		algorithm.removeSearchAlgorithmListener( this );
 		_algorithms.remove( algorithm );
 		_availableAlgorithms.remove( algorithm );
-		_proxy.algorithmRemoved( this, algorithm );
+		EVENT_PROXY.algorithmRemoved( this, algorithm );
 	}
 
 	
@@ -180,9 +180,8 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	}
 
 
-
 	/**
-	 * Get the algorithm list.
+	 * Get a copy of the algorithms.
 	 * @return   The list of algorithms.
 	 */
 	public Collection<SearchAlgorithm> getAlgorithms() {
@@ -226,19 +225,19 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	/**
 	 * Handle an event where a new algorithm run stack will start.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy which will execute
+	 * @param algorithm the algorithm which will execute
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyWillExecute( final AlgorithmSchedule schedule, final AlgorithmStrategy strategy, final ScoreBoard scoreBoard ) {}
+	public void algorithmRunWillExecute( final AlgorithmSchedule schedule, final SearchAlgorithm algorithm, final ScoreBoard scoreBoard ) {}
 	
 	
 	/**
 	 * Handle an event where a new algorithm run stack has completed.
 	 * @param schedule the schedule posting the event
-	 * @param strategy the strategy that has executed
+	 * @param algorithm the algorithm that has executed
 	 * @param scoreBoard the scoreboard
 	 */
-	public void strategyExecuted( final AlgorithmSchedule schedule, final AlgorithmStrategy strategy, final ScoreBoard scoreBoard ) {}
+	public void algorithmRunExecuted( final AlgorithmSchedule schedule, final SearchAlgorithm algorithm, final ScoreBoard scoreBoard ) {}
 	
 
 	/**
@@ -248,7 +247,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 */
 	public void algorithmAvailable( final SearchAlgorithm source ) {
 		_availableAlgorithms.add( source );
-		_proxy.algorithmAvailable( this, source );
+		EVENT_PROXY.algorithmAvailable( this, source );
 	}
 
 
@@ -258,7 +257,7 @@ public class AlgorithmPool implements SearchAlgorithmListener, SolutionJudgeList
 	 */
 	public void algorithmUnavailable( SearchAlgorithm source ) {
 		_availableAlgorithms.remove( source );
-		_proxy.algorithmUnavailable( this, source );
+		EVENT_PROXY.algorithmUnavailable( this, source );
 	}
 	
 	
