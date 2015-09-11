@@ -34,15 +34,15 @@ public class SolveStopperFactory {
 
 	
 	/**
-	 * Stop the solver after the solver reaches max evaluations (or strategy executions to avoid a possible hang).
-	 * @param maxEvaluations  The maximum evaluations or strategy executions to run the solver.
+	 * Stop the solver after the solver reaches max evaluations (or algorithm executions to avoid a possible hang).
+	 * @param maxEvaluations  The maximum evaluations or algorithm executions to run the solver.
 	 * @return The stopper implementation.
 	 */
 	public static Stopper maxEvaluationsStopper( final int maxEvaluations ) {
 		return new Stopper() {
 				public boolean shouldStop( final Solver solver ) {
 					final ScoreBoard scoreboard = solver.getScoreBoard();
-					return scoreboard.getEvaluations() >= maxEvaluations || scoreboard.getStrategyExecutions() >= maxEvaluations;
+					return scoreboard.getEvaluations() >= maxEvaluations || scoreboard.getAlgorithmExecutions() >= maxEvaluations;
 				}
 			};
 	}
@@ -78,8 +78,8 @@ public class SolveStopperFactory {
 	
 	
 	/**
-	 * Stop the solver after the solver reaches max evaluations (or strategy executions to avoid a possible hang).
-	 * @param maxEvaluations  The maximum evaluations or strategy executions to run the solver.
+	 * Stop the solver after the solver reaches max evaluations (or algorithm executions to avoid a possible hang).
+	 * @param maxEvaluations  The maximum evaluations or algorithm executions to run the solver.
 	 * @param satisfactionTarget The satisfaction that must be reached by all objectives before stopping.
 	 * @return The stopper implementation.
 	 */
@@ -87,7 +87,7 @@ public class SolveStopperFactory {
 		return new Stopper() {
 			public boolean shouldStop( final Solver solver ) {
 				final ScoreBoard scoreboard = solver.getScoreBoard();
-				if ( scoreboard.getEvaluations() >= maxEvaluations || scoreboard.getStrategyExecutions() >= maxEvaluations )  return true;
+				if ( scoreboard.getEvaluations() >= maxEvaluations || scoreboard.getAlgorithmExecutions() >= maxEvaluations )  return true;
 				
 				return meetsSatisfaction( solver, satisfactionTarget );
 			}

@@ -30,7 +30,7 @@ public class SimplexSearchAlgorithm extends SearchAlgorithm {
 	 */
 	private TrialPoint _bestPoint;
 
-	private SimplexSearcher _searcher = new SimplexSearcher();
+	private SimplexSearcher _searcher = new SimplexSearcher(this);
 
 	private boolean algorithmChanged = false;
 
@@ -79,20 +79,27 @@ public class SimplexSearchAlgorithm extends SearchAlgorithm {
 
 	/**
 	 *  Calculate the next few trial points.
-	 *
-	 *@param  algorithmRun  the algorithm run to perform the evaluation
 	 */
-	public void performRun(AlgorithmRun algorithmRun) {
-		if (algorithmChanged) {
-			if (_bestPoint != null) {
-				_searcher.reset(_bestPoint);
-			}
-			algorithmChanged = false;
-		}
-
-		if (!_searcher.makeStep(algorithmRun)) {
-			_searcher.setWantToStop(true);
-		}
+	public void performRun(AlgorithmSchedule algorithmSchedule) {
+        int initialCount = getEvaluationsLeft();
+        while(getEvaluationsLeft() > 0){
+            if(algorithmSchedule.shouldStop()) return;
+            if (algorithmChanged) {
+                if (_bestPoint != null) {
+                    _searcher.reset(_bestPoint);
+                }
+                algorithmChanged = false;
+            }
+            
+            if (!_searcher.makeStep()) {
+                _searcher.setWantToStop(true);
+            }
+            
+            if(getEvaluationsLeft() == initialCount){
+                break;
+            }
+            initialCount = getEvaluationsLeft();
+        }
 	}
 
 
@@ -103,7 +110,7 @@ public class SimplexSearchAlgorithm extends SearchAlgorithm {
 	 */
 	public int getMinEvaluationsPerRun() {
 		if (_problem != null && !_searcher.getWantToStop()) {
-			return (_problem.getVariables().size() + 1);
+			return 5*(_problem.getVariables().size() + 1) + 40;
 		}
 		return 0;
 	}
@@ -116,7 +123,7 @@ public class SimplexSearchAlgorithm extends SearchAlgorithm {
 	 */
 	public int getMaxEvaluationsPerRun() {
 		if (_problem != null && !_searcher.getWantToStop()) {
-			return 2 * (_problem.getVariables().size() + 1);
+			return 8 * (_problem.getVariables().size() + 40);
 		}
 		return 0;
 	}
@@ -233,6 +240,8 @@ class SimplexSearcher {
 	private volatile boolean shouldStop = true;
 
 	private CompareVertex comparator = new CompareVertex();
+    
+    private SearchAlgorithm _simplexAlgorithm;
 
 	//dimension
 	private int nD = 0;
@@ -273,7 +282,9 @@ class SimplexSearcher {
 	/**
 	 *  Creates a new instance of SimplexSearcher
 	 */
-	public SimplexSearcher() { }
+	public SimplexSearcher(SearchAlgorithm algorithm) {
+        _simplexAlgorithm = algorithm;
+    }
 
 
 	/**
@@ -409,10 +420,9 @@ class SimplexSearcher {
 	/**
 	 *  Makes one step in the search. It returns ShouldStop boolean.
 	 *
-	 *@param  algorithmRun  Description of the Parameter
 	 *@return               The ShouldStop boolean.
 	 */
-	protected boolean makeStep(AlgorithmRun algorithmRun) {
+	protected boolean makeStep() {
 
 		if (getWantToStop()) {
 			return false;
@@ -421,7 +431,7 @@ class SimplexSearcher {
 		//prepare scores for the initial simplex
 		if (!iniSimplexReady) {
 			//find score for vertexes and sort them
-			if (!findScores(algorithmRun)) {
+			if (!findScores()) {
 				setWantToStop(true);
 				return false;
 			}
@@ -441,7 +451,7 @@ class SimplexSearcher {
 		reflectVertex(rho, coord_r);
 		vt_r.setCoords(coord_r);
 
-		if (!findScore(vt_r, algorithmRun)) {
+		if (!findScore(vt_r)) {
 			//for debug purposes only
 			//printVertex(vt_r, "vt_r");
 			return false;
@@ -454,7 +464,7 @@ class SimplexSearcher {
 			reflectVertex(rho * chi, coord_e);
 			vt_e.setCoords(coord_e);
 
-			if (!findScore(vt_e, algorithmRun)) {
+			if (!findScore(vt_e)) {
 				return false;
 			}
 			double score_e = vt_e.getScore();
@@ -475,7 +485,7 @@ class SimplexSearcher {
 				reflectVertex(rho * gamma, coord_oc);
 				vt_oc.setCoords(coord_oc);
 
-				if (!findScore(vt_oc, algorithmRun)) {
+				if (!findScore(vt_oc)) {
 					return false;
 				}
 				double score_oc = vt_oc.getScore();
@@ -491,7 +501,7 @@ class SimplexSearcher {
 				reflectVertex(-gamma, coord_ic);
 				vt_ic.setCoords(coord_ic);
 
-				if (!findScore(vt_ic, algorithmRun)) {
+				if (!findScore(vt_ic)) {
 					return false;
 				}
 				double score_ic = vt_ic.getScore();
@@ -507,7 +517,7 @@ class SimplexSearcher {
 				shrinkSimplex();
 				//System.out.println("debug  ==Stage Shrink");
 				shrinkCount++;
-				if (getWantToStop() || !findScores0(algorithmRun)) {
+				if (getWantToStop() || !findScores0()) {
 					return false;
 				}
 			}
@@ -548,14 +558,13 @@ class SimplexSearcher {
 	 *  Description of the Method
 	 *
 	 *@param  vr            Description of the Parameter
-	 *@param  algorithmRun  Description of the Parameter
 	 *@return               Description of the Return Value
 	 */
-	private boolean findScore(Vertex vr, AlgorithmRun algorithmRun) {
+	private boolean findScore(Vertex vr) {
 		if (getWantToStop()) {
 			return false;
 		}
-		boolean res = vr.findScore(algorithmRun);
+		boolean res = vr.findScore(_simplexAlgorithm);
 		if (getWantToStop()) {
 			return false;
 		}
@@ -569,13 +578,12 @@ class SimplexSearcher {
 	/**
 	 *  Description of the Method
 	 *
-	 *@param  algorithmRun  Description of the Parameter
 	 *@return               Description of the Return Value
 	 */
-	private boolean findScores(AlgorithmRun algorithmRun) {
+	private boolean findScores() {
 		for (int iv = 0; iv <= nD; iv++) {
 			Vertex vr = vertexesV.get(iv);
-			if (getWantToStop() || !findScore(vr, algorithmRun)) {
+			if (getWantToStop() || !findScore(vr)) {
 				return false;
 			}
 		}
@@ -588,13 +596,12 @@ class SimplexSearcher {
 	/**
 	 *  Description of the Method
 	 *
-	 *@param  algorithmRun  Description of the Parameter
 	 *@return               Description of the Return Value
 	 */
-	private boolean findScores0(AlgorithmRun algorithmRun) {
+	private boolean findScores0() {
 		for (int iv = 1; iv <= nD; iv++) {
 			Vertex vr = vertexesV.get(iv);
-			if (getWantToStop() || !findScore(vr, algorithmRun)) {
+			if (getWantToStop() || !findScore(vr)) {
 				return false;
 			}
 		}
@@ -888,10 +895,9 @@ class SimplexSearcher {
 		/**
 		 *  Sets the score value for this vertex
 		 *
-		 *@param  algorithmRun  Description of the Parameter
 		 *@return               Description of the Return Value
 		 */
-		protected boolean findScore(AlgorithmRun algorithmRun) {
+		protected boolean findScore(SearchAlgorithm algorithm) {
 			score = Double.MAX_VALUE;
 			if (_problem == null) {
 				return false;
@@ -914,7 +920,7 @@ class SimplexSearcher {
 				double satisfaction = 0.;
 
 				try {
-					Trial trial = algorithmRun.evaluateTrialPoint(trialPoint.getTrialPoint());
+					Trial trial = algorithm.evaluateTrialPoint(trialPoint.getTrialPoint());
 					satisfaction = trial.getSatisfaction();
 				} catch (RunTerminationException exept) {
 				}

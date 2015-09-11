@@ -40,11 +40,16 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	/** The active search technique (random or shrink). */
 	protected Searcher _searcher;
 
+    /** keeps track of internal best Satisfaction */
+    protected double _bestSatisfaction;
+
+	/** keeps track if the last run is being executed */
+	protected boolean _isLastEvaluation = false;
 
 	/** Empty constructor. */
 	public RandomShrinkSearch() {
 	}
-	
+
 	
 	/**
 	 * Set the specified problem to solve.  Override the inherited method to look for hints.
@@ -68,6 +73,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	public void reset() {
 		_searcher = new ComboSearcher();
 		resetBestPoint();
+        _isLastEvaluation = false;
 	}
 
 
@@ -82,6 +88,7 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		}
 
 		_bestPoint = trialPoint.getTrialPoint();
+        _bestSatisfaction = 0;
 	}
 	
 	
@@ -89,9 +96,18 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	 * Calculate the next few trial points.
 	 * @param algorithmRun the algorithm run to perform the evaluation
 	 */
-	public void performRun( final AlgorithmRun algorithmRun ) {
+	public void performRun(AlgorithmSchedule algorithmSchedule) {
 		try {
-			algorithmRun.evaluateTrialPoint( nextTrialPoint() );
+			_isLastEvaluation = false;		// reset this flag for the new run
+            int runCount = getEvaluationsLeft();
+            while( runCount > 0 && !algorithmSchedule.shouldStop() ){
+                if(runCount == 1){
+                    _isLastEvaluation = true;
+                }
+                evaluateTrialPoint( nextTrialPoint() );
+                runCount = getEvaluationsLeft();
+            }
+			_isLastEvaluation = false;		// clear the flag to avoid side effects
 		}
 		catch ( RunTerminationException exception ) {}
 	}
@@ -140,31 +156,75 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	public void algorithmUnavailable( final SearchAlgorithm source ) { }
 
 
+    /**
+     * Handle a message that a trial has been scored.
+     * @param schedule              Description of the Parameter
+     * @param trial                 Description of the Parameter
+     *
+     * This is for operating this algorithm completely independently of any other algorithm
+     */
+    public void trialScored( final AlgorithmSchedule schedule, final Trial trial ) {
+        if(_bestPoint == null){
+            _bestPoint = trial.getTrialPoint();
+            _bestSatisfaction = trial.getSatisfaction();
+        }
+        
+        double satisfaction = trial.getSatisfaction();
+		// if the source algorithm is this algorithm or the initial algorithm then update
+		// the internal search window if we have a better solution (initial algorithm is always best
+		// since it is run exactly once and is our starting point).
+        if ( trial.getAlgorithm() == this || trial.getAlgorithm() instanceof InitialAlgorithm ) {
+            if ( satisfaction >= _bestSatisfaction ) {
+                internalNewOptimalSolution( trial.getTrialPoint(), satisfaction );
+            }
+
+			// wait until the last evaluation to avoid being trapped in a local extremum by another algorithm
+			// during the last evaluation of this algorithm, check whether we still lag the best solution significantly
+			if ( _isLastEvaluation && trial.getAlgorithm() == this ) {
+				// check the score board for the best solution found so far by any algorithm
+				// adopt that solution if that solution's satisfaction is better than this algorithm's best satisfaction by more than 10% of the possible remaining satisfaction to achieve
+				final Trial bestSolution = schedule.getScoreBoard().getBestSolution();
+				if ( bestSolution != null && bestSolution.getSatisfaction() > (_bestSatisfaction + 0.1 * (1 - _bestSatisfaction))  ) {
+					_searcher.shouldShift();
+					internalNewOptimalSolution( bestSolution.getTrialPoint(), bestSolution.getSatisfaction() );
+				}
+			}
+        }
+    }
+
+
 	/**
 	 * Handle a message that a new optimal solution has been found.
 	 * @param source     The source of the new optimal solution.
 	 * @param solutions  The list of solutions.
 	 * @param solution   The new optimal solution.
 	 */
-	public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {
-		final TrialPoint newPoint = solution.getTrialPoint();
+    public void foundNewOptimalSolution( final SolutionJudge source, final List<Trial> solutions, final Trial solution ) {}
 
-		if ( _bestPoint == null ) {
-			_bestPoint = newPoint;
-			return;
-		}
-		
-		final TrialPoint oldPoint = _bestPoint;
-		_searcher.newTopSolution( oldPoint, newPoint );
-		
-		_bestPoint = newPoint;
-	}
+
+    /**
+     * This is going to keep track of its own solutions. 
+     * Basically it will run alongside other programs if the option is chosen, but
+     * it will not changed based on their results
+     */
+    private void internalNewOptimalSolution( final TrialPoint newPoint, final double satisfaction ){
+        _bestSatisfaction = satisfaction;
+        TrialPoint oldPoint = _bestPoint;
+        _searcher.newTopSolution( oldPoint, newPoint );
+        _bestPoint = newPoint;
+    }
 
 
 	/** Interface for classes that search for solutions.  */
 	protected interface Searcher {
 		/** reset for searching from scratch; forget history */
 		public void reset();
+        
+        /** tells the ShrinkSearcher to only shift the window */
+        public boolean _shouldShift = false;
+        
+        /** turns shouldShift on */
+        public void shouldShift();
 
 
 		/**
@@ -200,6 +260,13 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		/** Map of values keyed by variable */
 		protected Map<Variable,Number> _values;
 
+        
+        /** tells the ShrinkSearcher to only shift the window */
+        public boolean _shouldShift = false;
+        
+        /** turns shouldShift on */
+        public void shouldShift(){};
+        
 
 		/** Constructor  */
 		public RandomSearcher() {
@@ -305,6 +372,14 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 	protected class ShrinkSearcher extends RandomSearcher {
 		/** Description of the Field */
 		protected Map<Variable,VariableWindow> _variableWindows;
+        
+        /** tells the ShrinkSearcher to only shift the window */
+        public boolean _shouldShift = false;
+        
+        /** turns shouldShift on */
+        public void shouldShift(){
+            _shouldShift = true;
+        }
 
 
 		/** Constructor  */
@@ -354,26 +429,47 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		 * @param newPoint  The new best point.
 		 */
 		public void newTopSolution( final TrialPoint oldPoint, final TrialPoint newPoint ) {
-			for ( final Variable variable : _problem.getVariables() ) {
-				final double newValue = newPoint.getValue( variable );
-				final double oldValue = oldPoint.getValue( variable );
-
-				if ( oldValue == newValue ) {
-					continue;
-				}
-				
-				final double lowerLimit = variable.getLowerLimit();
-				final double upperLimit = variable.getUpperLimit();
-
-				final double change = newValue - oldValue;
-				final double lowerRange = 3 * Math.abs( change );
-				final double upperRange = 3 * Math.abs( change );
-
-				VariableWindow window = getSearchWindow( variable );
-				window.setLowerLimit( Math.max( lowerLimit, newValue - lowerRange ) );
-				window.setUpperLimit( Math.min( upperLimit, newValue + upperRange ) );
-			}
+            if(_shouldShift){
+                shiftWindow(newPoint);
+            }
+            else{
+                for ( final Variable variable : _problem.getVariables() ) {
+                    final double newValue = newPoint.getValue( variable );
+                    final double oldValue = oldPoint.getValue( variable );
+                    
+                    if ( oldValue == newValue ) {
+                        continue;
+                    }
+                    
+                    final double lowerLimit = variable.getLowerLimit();
+                    final double upperLimit = variable.getUpperLimit();
+                    
+                    final double change = newValue - oldValue;
+                    final double lowerRange = 3 * Math.abs( change );
+                    final double upperRange = 3 * Math.abs( change );
+                    
+                    VariableWindow window = getSearchWindow( variable );
+                    window.setLowerLimit( Math.max( lowerLimit, newValue - lowerRange ) );
+                    window.setUpperLimit( Math.min( upperLimit, newValue + upperRange ) );
+                }
+            }
+            _shouldShift = false;
 		}
+        
+        public void shiftWindow(TrialPoint newPoint){
+            for(final Variable variable: _problem.getVariables()){
+                double newValue = newPoint.getValue(variable);
+                
+                VariableWindow window = getSearchWindow(variable);
+                double windowLower = window.getLowerLimit();
+                double windowUpper = window.getUpperLimit();
+                
+                double windowHalfRange = (windowUpper - windowLower)/2.0;
+                
+                window.setLowerLimit(Math.max(variable.getLowerLimit(), newValue - windowHalfRange));
+                window.setUpperLimit(Math.min(variable.getUpperLimit(), newValue + windowHalfRange));
+            }
+        }
 
 
 		/**
@@ -432,6 +528,14 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		protected RandomSearcher _randomSearcher;
 		/** Description of the Field */
 		protected final static double SHRINK_THRESHOLD = 0.9;
+        
+        /** tells the ShrinkSearcher to only shift the window */
+        public boolean _shouldShift = false;
+        
+        /** turns shouldShift on */
+        public void shouldShift(){
+            _shouldShift = true;
+        }
 
 
 		/** Constructor  */
@@ -455,7 +559,11 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 		 * @param newPoint  The new best point.
 		 */
 		public void newTopSolution( final TrialPoint oldPoint, final TrialPoint newPoint ) {
-			_shrinkSearcher.newTopSolution( oldPoint, newPoint );
+            if(_shouldShift){
+                _shrinkSearcher.shouldShift();
+            }
+            _shrinkSearcher.newTopSolution( oldPoint, newPoint );
+            _shouldShift = false;
 		}
 
 

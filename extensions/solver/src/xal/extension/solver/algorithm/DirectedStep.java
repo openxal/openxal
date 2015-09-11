@@ -54,16 +54,16 @@ public class DirectedStep extends SearchAlgorithm {
 
 	/**
 	 * Calculate the next few trial points.
-	 * @param algorithmRun the algorithm run to perform the evaluation
 	 */
-	public void performRun( final AlgorithmRun algorithmRun ) {
+	public void performRun( final AlgorithmSchedule algorithmSchedule ) {
+        if(algorithmSchedule.shouldStop()) return;
 		try {
-			//System.out.println( "initial solution:  " + _bestSolution );
-			if ( _lastOriginTrial != _bestSolution ) {		// no point in repeating the same result
-				_lastOriginTrial = _bestSolution;
-				final Trial bestTrial = performAcceleratedSearch( _bestSolution, algorithmRun );
-			}
-			//System.out.println( "best solution:  " + bestTrial + "\n\n" );
+			//System.out.println( "initial solution:  " + _bestSolution );sx
+            if ( _lastOriginTrial != _bestSolution ) {		// no point in repeating the same result
+                _lastOriginTrial = _bestSolution;
+                final Trial bestTrial = performAcceleratedSearch( _bestSolution );
+            }
+            //System.out.println( "best solution:  " + bestTrial + "\n\n" );
 		}
 		catch( RunTerminationException exception ) {}
 	}
@@ -72,15 +72,15 @@ public class DirectedStep extends SearchAlgorithm {
 	/**
 	 * Perform an accelerated search.
 	 */
-	protected Trial performAcceleratedSearch( final Trial originTrial, final AlgorithmRun algorithmRun ) {
-		final Trial secondTrial = performGradientAndLinearSearch( originTrial, algorithmRun );
+	protected Trial performAcceleratedSearch( final Trial originTrial ) {
+		final Trial secondTrial = performGradientAndLinearSearch( originTrial );
 		//System.out.println( "second trial:  " + secondTrial );
 		if ( secondTrial != originTrial ) {
-			final Trial thirdTrial = performGradientAndLinearSearch( secondTrial, algorithmRun );
+			final Trial thirdTrial = performGradientAndLinearSearch( secondTrial );
 			//System.out.println( "third trial:  " + thirdTrial );
 			if ( thirdTrial != secondTrial ) {
 				double[] vector = calculateVector( thirdTrial.getTrialPoint(), originTrial.getTrialPoint() );
-				return searchAlongGradient( vector, thirdTrial, algorithmRun );
+				return searchAlongGradient( vector, thirdTrial );
 			}
 			else {
 				return secondTrial;
@@ -95,9 +95,9 @@ public class DirectedStep extends SearchAlgorithm {
 	/**
 	 * Perform a gradient calculation followed by a linear search along the gradient.
 	 */
-	protected Trial performGradientAndLinearSearch( final Trial originTrial, final AlgorithmRun algorithmRun ) {
-		final double[] gradient = calculateGradient( originTrial, algorithmRun );
-		return searchAlongGradient( gradient, originTrial, algorithmRun );
+	protected Trial performGradientAndLinearSearch( final Trial originTrial ) {
+		final double[] gradient = calculateGradient( originTrial );
+		return searchAlongGradient( gradient, originTrial );
 	}
 
 
@@ -105,7 +105,7 @@ public class DirectedStep extends SearchAlgorithm {
 	 * Calculate the gradient for the specified point
 	 * @return the gradient at the specified point
 	 */
-	protected double[] calculateGradient( final Trial originTrial, final AlgorithmRun algorithmRun ) {
+	protected double[] calculateGradient( final Trial originTrial ) {
 		final List<Variable> variables = _problem.getVariables();
 		final Map<Variable,Number> valueMap = new HashMap<Variable,Number>( originTrial.getTrialPoint().getValueMap() );
 		final double[] gradient = new double[variables.size()];
@@ -117,12 +117,12 @@ public class DirectedStep extends SearchAlgorithm {
 
 			final double lowerValue = trialRange[0];
 			valueMap.put( variable, lowerValue );
-			final Trial lowerTrial = algorithmRun.evaluateTrialPoint( new TrialPoint( valueMap ) );
+			final Trial lowerTrial = evaluateTrialPoint( new TrialPoint( valueMap ) );
 			final double lowerSatisfaction = getSatisfaction( lowerTrial );
 
 			final double upperValue = trialRange[1];
 			valueMap.put( variable, upperValue );
-			final Trial upperTrial = algorithmRun.evaluateTrialPoint( new TrialPoint( valueMap ) );
+			final Trial upperTrial = evaluateTrialPoint( new TrialPoint( valueMap ) );
 			final double upperSatisfaction = getSatisfaction( upperTrial );
 
 			gradient[index++] = ( upperSatisfaction - lowerSatisfaction ) / ( upperValue - lowerValue );
@@ -156,7 +156,7 @@ public class DirectedStep extends SearchAlgorithm {
 	/**
 	 * Search along the gradient from the origin point.
 	 */
-	protected Trial searchAlongGradient( final double[] gradient, final Trial originTrial, final AlgorithmRun algorithmRun ) {
+	protected Trial searchAlongGradient( final double[] gradient, final Trial originTrial ) {
 		final List<Variable> variables = _problem.getVariables();
 
 		final TrialPoint originPoint = originTrial.getTrialPoint();
@@ -179,7 +179,7 @@ public class DirectedStep extends SearchAlgorithm {
 			if ( minScale != bestScale ) {
 				final double scale = ( minScale + 7 * bestScale ) / 8;
 				final TrialPoint trialPoint = trialPointAlongGradient( gradient, originPoint, scale, variables );
-				final Trial trial = algorithmRun.evaluateTrialPoint( trialPoint );
+				final Trial trial = evaluateTrialPoint( trialPoint );
 				final double satisfaction = getSatisfaction( trial );
 				//System.out.println( "scale:  " + scale + ", trialPoint:  " + trialPoint + ", satisfaction:  " + satisfaction );
 				finder.add( scale, satisfaction );
@@ -196,7 +196,7 @@ public class DirectedStep extends SearchAlgorithm {
 			if ( maxScale != bestScale ) {
 				final double scale = ( maxScale + 7 * bestScale ) / 8;
 				final TrialPoint trialPoint = trialPointAlongGradient( gradient, originPoint, scale, variables );
-				final Trial trial = algorithmRun.evaluateTrialPoint( trialPoint );
+				final Trial trial = evaluateTrialPoint( trialPoint );
 				final double satisfaction = getSatisfaction( trial );
 				finder.add( scale, satisfaction );
 				//System.out.println( "scale:  " + scale + ", trialPoint:  " + trialPoint + ", satisfaction:  " + satisfaction );
@@ -215,7 +215,7 @@ public class DirectedStep extends SearchAlgorithm {
 				//System.out.println( "Finder maximum:  " + scale + ", minScale:  " + minScale + ", maxScale:  " + maxScale );
 				if ( scale < maxScale && scale > minScale ) {
 					final TrialPoint trialPoint = trialPointAlongGradient( gradient, originPoint, scale, variables );
-					final Trial trial = algorithmRun.evaluateTrialPoint( trialPoint );
+					final Trial trial = evaluateTrialPoint( trialPoint );
 					final double satisfaction = getSatisfaction( trial );
 					if ( satisfaction > bestSatisfaction ) {
 						//System.out.println( "Got a better point with the quadratic fit:  " + satisfaction );
@@ -270,9 +270,10 @@ public class DirectedStep extends SearchAlgorithm {
 	 * @return the minimum number of evaluation per run.
 	 */
 	public int getMinEvaluationsPerRun() {
-		return _problem != null ? 4 * _problem.getVariables().size() + 3 * 2 * NUM_SCALE_STEPS : 0;
+        int minEvals = _problem != null ? 4 * _problem.getVariables().size() + 3 * 2 * NUM_SCALE_STEPS : 0;
+        return minEvals;
 	}
-
+    
 
 	/**
 	 * Returns the global rating which in an integer between 0 and 10.
@@ -329,7 +330,7 @@ public class DirectedStep extends SearchAlgorithm {
 	 * @param solution   The new optimal solution.
 	 */
 	public void foundNewOptimalSolution( SolutionJudge source, List<Trial> solutions, Trial solution ) {
-		_bestSolution = solution;
+            _bestSolution = solution;
 	}
 
 
