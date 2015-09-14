@@ -182,9 +182,9 @@ public class RandomShrinkSearch extends SearchAlgorithm {
 			// during the last evaluation of this algorithm, check whether we still lag the best solution significantly
 			if ( _isLastEvaluation && trial.getAlgorithm() == this ) {
 				// check the score board for the best solution found so far by any algorithm
-				// adopt that solution if that solution's satisfaction is better than this algorithm's best satisfaction by more than 10% of the possible remaining satisfaction to achieve
+				// adopt that solution if that solution's satisfaction is better than this algorithm's best satisfaction by more than 25% of the possible remaining satisfaction to achieve
 				final Trial bestSolution = schedule.getScoreBoard().getBestSolution();
-				if ( bestSolution != null && bestSolution.getSatisfaction() > (_bestSatisfaction + 0.1 * (1 - _bestSatisfaction))  ) {
+				if ( bestSolution != null && bestSolution.getSatisfaction() > (_bestSatisfaction + 0.25 * (1 - _bestSatisfaction))  ) {
 					_searcher.shouldShift();
 					internalNewOptimalSolution( bestSolution.getTrialPoint(), bestSolution.getSatisfaction() );
 				}
