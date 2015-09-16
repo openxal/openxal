@@ -1,8 +1,14 @@
 package xal.app.emittanceanalysis.analysis;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.util.*;
+import java.util.List;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.event.*;
@@ -11,6 +17,7 @@ import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 import xal.app.emittanceanalysis.phasespaceanalysis.*;
 import xal.extension.solver.*;
+import xal.extension.solver.hint.*;
 
 /**
  *  This analysis finds parameters of a Gaussian phase space density by using
@@ -116,7 +123,8 @@ class AnalysisGaussFit extends AnalysisBasic {
 
 	//scorer and solver for fitting
 	private GaussScorer scorer = new GaussScorer();
-	private Solver solver = new Solver();
+	private Solver solver;
+	private Problem problem;
 
 
 	/**
@@ -126,7 +134,8 @@ class AnalysisGaussFit extends AnalysisBasic {
 	 *@param  analysisTypeIndex_In  The type index of the analysis
 	 */
 	AnalysisGaussFit(int analysisTypeIndex_In, HashMap crossParamMap) {
-		super(analysisTypeIndex_In, crossParamMap);
+		super( analysisTypeIndex_In, crossParamMap );
+
 		analysisDescriptionString = " GAUSS FITTING" +
 				System.getProperties().getProperty("line.separator").toString() +
 				"RED - phase density measured" +
@@ -240,8 +249,7 @@ class AnalysisGaussFit extends AnalysisBasic {
 		fitParPanel.add(fitParPanel_1, BorderLayout.CENTER);
 		fitParPanel.setBorder(etchedBorder);
 
-		JPanel calcFitPanel =
-				new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
+		JPanel calcFitPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
 		calcFitPanel.add(fit_Button);
 
 		fit_Button.setForeground(Color.blue.darker());
@@ -359,18 +367,15 @@ class AnalysisGaussFit extends AnalysisBasic {
 					}
 
 					//set initial values
-					gaussianDensity.setEmtAlphaBeta(
-							emtLocal_Text.getValue() / betaGamma,
-							alphaLocal_Text.getValue(),
-							betaLocal_Text.getValue());
+					gaussianDensity.setEmtAlphaBeta( emtLocal_Text.getValue() / betaGamma, alphaLocal_Text.getValue(), betaLocal_Text.getValue() );
 
 					scorer.init(emittance3Da, phasePlaneEllipse, gaussianDensity);
 
 					int seconds = ((Integer) fitTime_Spinner.getValue()).intValue();
 					solver.setStopper(SolveStopperFactory.maxElapsedTimeStopper((double) seconds));
 
-					//place to fitting
-					solver.solve();
+					//perform fitting
+					solver.solve( problem );
 
 					is_ready_gau = true;
 					getParamsHashMap().put("IS_READY_GAU", new Boolean(is_ready_gau));
@@ -392,7 +397,7 @@ class AnalysisGaussFit extends AnalysisBasic {
 					GP_ep.refreshGraphJPanel();
 
 					System.out.println("===RESULTS of GAUSSIAN EMITTANCE FITTING===");
-					Scoreboard scoreBoard = solver.getScoreboard();
+					ScoreBoard scoreBoard = solver.getScoreBoard();
 					System.out.println(scoreBoard.toString());
 
 					plotSectionGraph(getScrollBarTypeIndex());
@@ -426,13 +431,37 @@ class AnalysisGaussFit extends AnalysisBasic {
 					initialize();
 				}
 			};
+	}
 
-		//fitting solver definition
-		SearchAlgorithm algorithm = new SimplexSearchAlgorithm();
-		solver.setScorer(scorer);
-		solver.setSearchAlgorithm(algorithm);
-		solver.setVariables(gaussianDensity.getProxiesVector());
 
+	// generate a new problem
+	private Problem makeProblem() {
+		final Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<>(), scorer, 0.1 );
+
+		final InitialDelta initialDeltaHint = new InitialDelta();
+		problem.addHint( initialDeltaHint );
+
+		final Variable emtVariable = new Variable( "emt", gaussianDensity.getEmt(), 0.0, Double.MAX_VALUE );
+		problem.addVariable( emtVariable );
+		initialDeltaHint.addInitialDelta( emtVariable, 0.01 );
+
+		final Variable alphaVariable = new Variable( "alpha", gaussianDensity.getAlpha(), -Double.MAX_VALUE, Double.MAX_VALUE );
+		problem.addVariable( alphaVariable );
+		initialDeltaHint.addInitialDelta( alphaVariable, 0.05 );
+
+		final Variable betaVariable = new Variable( "beta", gaussianDensity.getBeta(), 0.0, Double.MAX_VALUE );
+		problem.addVariable( betaVariable );
+		initialDeltaHint.addInitialDelta( betaVariable, 0.05 );
+
+		//correction of the possible non-normalization in the experimental data
+		final Variable maxValVariable = new Variable( "maxVal", gaussianDensity.getMaxVal(), -Double.MAX_VALUE, Double.MAX_VALUE );
+		problem.addVariable( maxValVariable );
+		initialDeltaHint.addInitialDelta( maxValVariable, 0.01 );
+
+		// set the variables on the scorer
+		scorer.setVariables( emtVariable, alphaVariable, betaVariable, maxValVariable );
+
+		return problem;
 	}
 
 
@@ -765,6 +794,8 @@ class AnalysisGaussFit extends AnalysisBasic {
 
 }
 
+
+
 /**
  *  This class calculates a Gaussian phase space density.
  *
@@ -772,36 +803,20 @@ class AnalysisGaussFit extends AnalysisBasic {
  *@version    1.0
  */
 class GaussianDensity {
-
-
-	private ParameterProxy emtProxy = new ParameterProxy("emt", 0.1, 0.01);
-	private ParameterProxy alphaProxy = new ParameterProxy("alpha", 1.0, 0.05);
-	private ParameterProxy betaProxy = new ParameterProxy("beta", 2.0, 0.05);
-
-	//correction of the possible non-normalization in the experimental data
-	private ParameterProxy maxValProxy = new ParameterProxy("maxVal", 1.0, 0.01);
-
-	private Vector proxyV = new Vector();
+	private double emt;
+	private double alpha;
+	private double beta;
+	private double maxVal;
 
 
 	/**
 	 *  Constructor for the GaussianDensity object
 	 */
 	GaussianDensity() {
-		proxyV.add(emtProxy);
-		proxyV.add(alphaProxy);
-		proxyV.add(betaProxy);
-		proxyV.add(maxValProxy);
-	}
-
-
-	/**
-	 *  Returns the Vector object with all proxies for parameters
-	 *
-	 *@return    TheVector object with all proxies for parameters
-	 */
-	public Vector getProxiesVector() {
-		return new Vector(proxyV);
+		this.emt = 0.1;
+		this.alpha = 1.0;
+		this.beta = 2.0;
+		this.maxVal = 1.0;
 	}
 
 
@@ -811,7 +826,7 @@ class GaussianDensity {
 	 *@return    The emittance parameter of the Gaussian phase space density
 	 */
 	double getEmt() {
-		return emtProxy.getValue();
+		return emt;
 	}
 
 
@@ -821,7 +836,7 @@ class GaussianDensity {
 	 *@return    The alpha parameter of the Gaussian phase space density
 	 */
 	double getAlpha() {
-		return alphaProxy.getValue();
+		return alpha;
 	}
 
 
@@ -831,48 +846,53 @@ class GaussianDensity {
 	 *@return    The beta parameter of the Gaussian phase space density
 	 */
 	double getBeta() {
-		return betaProxy.getValue();
+		return beta;
+	}
+
+
+	/** get the max val */
+	double getMaxVal() {
+		return this.maxVal;
 	}
 
 
 	/**
-	 *  Sets the parameters of the Gaussian density
-	 *
-	 *@param  emt    The emittance parameter of the Gaussian phase space density
-	 *@param  alpha  The alpha parameter of the Gaussian phase space density
-	 *@param  beta   The beta parameter of the Gaussian phase space density
+	 * Sets the parameters of the Gaussian density with maxVal set to 1.0
+	 * @param  emt    The emittance parameter of the Gaussian phase space density
+	 * @param  alpha  The alpha parameter of the Gaussian phase space density
+	 * @param  beta   The beta parameter of the Gaussian phase space density
 	 */
-	void setEmtAlphaBeta(double emt, double alpha, double beta) {
-		emtProxy.setValue(emt);
-		alphaProxy.setValue(alpha);
-		betaProxy.setValue(beta);
-		maxValProxy.setValue(1.0);
-
-		emtProxy.setStep(Math.abs(emt) * 0.05);
-		alphaProxy.setStep(Math.abs(alpha) * 0.05);
-		betaProxy.setStep(Math.abs(beta) * 0.05);
-		maxValProxy.setStep(0.01);
+	void setEmtAlphaBeta( double emt, double alpha, double beta ) {
+		setEmtAlphaBetaMaxVal( emt, alpha, beta, 1.0 );
 	}
 
 
 	/**
-	 *  Returns the Gaussian density value at particular point of the phase space
-	 *  plane
-	 *
+	 * Sets the parameters of the Gaussian density
+	 * @param  emt    The emittance parameter of the Gaussian phase space density
+	 * @param  alpha  The alpha parameter of the Gaussian phase space density
+	 * @param  beta   The beta parameter of the Gaussian phase space density
+	 * @param  maxVal Correction of the possible non-normalization in the experimental data
+	 */
+	void setEmtAlphaBetaMaxVal( final double emt, final double alpha, final double beta, final double maxVal ) {
+		this.emt = emt;
+		this.alpha = alpha;
+		this.beta = beta;
+		this.maxVal = maxVal;
+	}
+
+
+	/**
+	 *  Returns the Gaussian density value at particular point of the phase space plane
 	 *@param  x   The coordinate on the phase space plane
 	 *@param  xp  The momentum on the phase space plane
 	 *@return     The density value
 	 */
 	double getDensity(double x, double xp) {
-
-		double emt = emtProxy.getValue();
-		double alpha = alphaProxy.getValue();
-		double beta = betaProxy.getValue();
-
 		double val = alpha * x + beta * xp;
 		val = val * val + x * x;
 		val = Math.exp(-val / (2 * beta * emt));
-		val *= maxValProxy.getValue();
+		val *= maxVal;
 		return val;
 	}
 }
@@ -884,8 +904,6 @@ class GaussianDensity {
  *@version    August 23, 2004
  */
 class GaussScorer implements Scorer {
-
-
 	//curve data for ellipse on the color surface
 	//it is used to define the area on the phase space
 	private PhasePlaneEllipse phasePlaneEllipse = null;
@@ -904,11 +922,19 @@ class GaussScorer implements Scorer {
 
 	private double z_max = 0.;
 
+	// problem variables
+	private Variable emtVariable;
+	private Variable alphaVariable;
+	private Variable betaVariable;
+	private Variable maxValVariable;
 
-	/**
-	 *  Constructor for the GaussScorer object
-	 */
-	GaussScorer() {
+
+	/** set the variables */
+	void setVariables( final Variable emtVariable, final Variable alphaVariable, final Variable betaVariable, final Variable maxValVariable ) {
+		this.emtVariable = emtVariable;
+		this.alphaVariable = alphaVariable;
+		this.betaVariable = betaVariable;
+		this.maxValVariable = maxValVariable;
 	}
 
 
@@ -920,9 +946,7 @@ class GaussScorer implements Scorer {
 	 *@param  phasePlaneEllipse  The ellipse on the phase space
 	 *@param  gaussianDensity    The theoretical phase space density
 	 */
-	void init(ColorSurfaceData emittance3Da,
-			PhasePlaneEllipse phasePlaneEllipse,
-			GaussianDensity gaussianDensity) {
+	void init(ColorSurfaceData emittance3Da, PhasePlaneEllipse phasePlaneEllipse, GaussianDensity gaussianDensity) {
 		this.emittance3Da = emittance3Da;
 		this.phasePlaneEllipse = phasePlaneEllipse;
 		this.gaussianDensity = gaussianDensity;
@@ -987,13 +1011,19 @@ class GaussScorer implements Scorer {
 	 *
 	 *@return    The score
 	 */
-	public double score() {
-
+	public double score( final Trial trial, final List<Variable> variables ) {
 		double sum2 = 0.;
 		double x = 0.;
 		double xp = 0.;
 		double val_exp = 0.;
 		double val_th = 0.;
+
+		final TrialPoint trialPoint = trial.getTrialPoint();
+		final double emt = trialPoint.getValue( emtVariable );
+		final double alpha = trialPoint.getValue( alphaVariable );
+		final double beta = trialPoint.getValue( betaVariable );
+		final double maxVal = trialPoint.getValue( maxValVariable );
+		gaussianDensity.setEmtAlphaBetaMaxVal( emt, alpha, beta, maxVal	);
 
 		for (int ix = i_x_min; ix <= i_x_max; ix++) {
 			x = emittance3Da.getX(ix);
