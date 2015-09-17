@@ -9,6 +9,8 @@ import java.util.regex.*;
 import java.text.*;
 
 /**
+ * @deprecated due to compatibility problems with Java 8. The advertised formatting is not satisfied under Java 8. Use ScientificNumberFormat instead.
+ * This class is around temporarily for backward compatibility but will be removed in the near future.
  *  FortranNumberFormat is the subclass of the DecimalFormat class. It formats
  *  the double numbers and integers according to GN.F format specification in
  *  the FORTRAN programming language. Usually N = F + 7, because an exponential
@@ -23,6 +25,7 @@ import java.text.*;
  *@author     shishlo
  *@version    1.0
  */
+@Deprecated
 public class FortranNumberFormat extends DecimalFormat {
     /** serialization ID */
     private static final long serialVersionUID = 1L;

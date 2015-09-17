@@ -62,7 +62,7 @@ public class FilterRawDataPanel {
     public FilterRawDataPanel( FunctionGraphsJPanel GP_in ) {
         GP = GP_in;
 
-        par_0_Text.setDecimalFormat( int_Format );
+        par_0_Text.setNumberFormat( int_Format );
 
         par_0_Text.setHorizontalAlignment( JTextField.CENTER );
 

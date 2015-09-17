@@ -60,8 +60,8 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	private Color nameYColor = Color.black;
 	private Color numberColor = Color.black;
 
-	private DecimalFormat numberFormatX = new DecimalFormat("0.00E0");
-	private DecimalFormat numberFormatY = new DecimalFormat("0.00E0");
+	private NumberFormat numberFormatX = new DecimalFormat("0.00E0");
+	private NumberFormat numberFormatY = new DecimalFormat("0.00E0");
 
 	private boolean gridLineOnX = true;
 	private boolean gridLineOnY = true;
@@ -1662,7 +1662,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  df  The new numberFormatX value
 	 */
-	public void setNumberFormatX(DecimalFormat df) {
+	public void setNumberFormatX(NumberFormat df) {
 		glPanel.setNumberFormatX(df);
 		numberFormatX = df;
 		if (externalGridLimits != null) {
@@ -1680,7 +1680,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 	 *
 	 *@param  df  The new numberFormatY value
 	 */
-	public void setNumberFormatY(DecimalFormat df) {
+	public void setNumberFormatY(NumberFormat df) {
 		glPanel.setNumberFormatY(df);
 		numberFormatY = df;
 		if (externalGridLimits != null) {
@@ -3875,15 +3875,15 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		/**
 		 *  Description of the Field
 		 */
-		public DecimalFormat xValueFormat = new DecimalFormat("0.00E0");
+		public NumberFormat xValueFormat = new DecimalFormat("0.00E0");
 		/**
 		 *  Description of the Field
 		 */
-		public DecimalFormat yValueFormat = new DecimalFormat("0.00E0");
+		public NumberFormat yValueFormat = new DecimalFormat("0.00E0");
 		/**
 		 *  Description of the Field
 		 */
-		public DecimalFormat zValueFormat = new DecimalFormat("0.00E0");
+		public NumberFormat zValueFormat = new DecimalFormat("0.00E0");
 
 		/**
 		 *  Description of the Field
@@ -3927,6 +3927,42 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 			xValueText.setText(null);
 			yValueText.setText(null);
 			zValueText.setText(null);
+		}
+
+
+		/** Set the specified decimal format for the X value label */
+		@SuppressWarnings("cast")		// suppress cast warning as we check for it explitly before casting
+		public void setDecimalFormatX( final String pattern ) {
+			// if the format is already a DecimalFormat just apply the pattern
+			if ( xValueFormat instanceof DecimalFormat ) {
+				((DecimalFormat)xValueFormat).applyPattern( pattern );
+			} else {	// create a new DecimalFormat wit the specified pattern
+				xValueFormat = new DecimalFormat( pattern );
+			}
+		}
+
+
+		/** Set the specified decimal format for the Y value label */
+		@SuppressWarnings("cast")		// suppress cast warning as we check for it explitly before casting
+		public void setDecimalFormatY( final String pattern ) {
+			// if the format is already a DecimalFormat just apply the pattern
+			if ( yValueFormat instanceof DecimalFormat ) {
+				((DecimalFormat)yValueFormat).applyPattern( pattern );
+			} else {	// create a new DecimalFormat wit the specified pattern
+				yValueFormat = new DecimalFormat( pattern );
+			}
+		}
+
+
+		/** Set the specified decimal format for the Z value label */
+		@SuppressWarnings("cast")		// suppress cast warning as we check for it explitly before casting
+		public void setDecimalFormatZ( final String pattern ) {
+			// if the format is already a DecimalFormat just apply the pattern
+			if ( zValueFormat instanceof DecimalFormat ) {
+				((DecimalFormat)zValueFormat).applyPattern( pattern );
+			} else {	// create a new DecimalFormat wit the specified pattern
+				zValueFormat = new DecimalFormat( pattern );
+			}
 		}
 
 
@@ -4066,14 +4102,14 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		/**
 		 *  Description of the Field
 		 */
-		private DecimalFormat numbFormatX = new DecimalFormat("0.00E0");
+		private NumberFormat numbFormatX = new DecimalFormat("0.00E0");
 		/**
 		 *  Description of the Field
 		 */
-		private DecimalFormat numbFormatY = new DecimalFormat("0.00E0");
+		private NumberFormat numbFormatY = new DecimalFormat("0.00E0");
 
-		private DecimalFormat defaultDoubleNumbFormat = new DecimalFormat("0.000E0");
-		private DecimalFormat defaultIntNumbFormat = new DecimalFormat("###");
+		private NumberFormat defaultDoubleNumbFormat = new DecimalFormat("0.000E0");
+		private NumberFormat defaultIntNumbFormat = new DecimalFormat("###");
 
 		private JButton applyButton = new JButton("APPLY");
 
@@ -4322,7 +4358,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		 *
 		 *@param  df  The new numberFormatX value
 		 */
-		private void setNumberFormatX(DecimalFormat df) {
+		private void setNumberFormatX(NumberFormat df) {
 			numbFormatX = df;
 		}
 
@@ -4332,7 +4368,7 @@ public class FunctionGraphsJPanel extends JPanel implements MouseListener, Mouse
 		 *
 		 *@param  df  The new numberFormatY value
 		 */
-		private void setNumberFormatY(DecimalFormat df) {
+		private void setNumberFormatY(NumberFormat df) {
 			numbFormatY = df;
 		}
 

@@ -30,7 +30,7 @@ class AnalysisFindEmitByFit extends AnalysisBasic {
 	private DoubleInputTextField threshold_Text = null;
 
 	//double values format
-	private DecimalFormat dbl_Format = new FortranNumberFormat("G10.4");
+	private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 
 	//bottom panel. It includes the graph panel (bottom left)
 	//and the controll panel (bottom right)
@@ -273,9 +273,9 @@ class AnalysisFindEmitByFit extends AnalysisBasic {
 		thresholdScanPanel.add(emtParamPanel, BorderLayout.NORTH);
 		thresholdScanPanel.add(emtScanSubPanel_2, BorderLayout.SOUTH);
 
-		alphaLocal_Text.setDecimalFormat(dbl_Format);
-		betaLocal_Text.setDecimalFormat(dbl_Format);
-		emtLocal_Text.setDecimalFormat(dbl_Format);
+		alphaLocal_Text.setNumberFormat(dbl_Format);
+		betaLocal_Text.setNumberFormat(dbl_Format);
+		emtLocal_Text.setNumberFormat(dbl_Format);
 
 		//set init emittance param from RMS or GAU listeners
 		copyEmtFromRMS_Button.addActionListener(

@@ -66,7 +66,7 @@ class AnalysisProfileFit extends AnalysisBasic {
     private DoubleInputTextField centerValue_Text = new DoubleInputTextField( 14 );
     private DoubleInputTextField widthValue_Text = new DoubleInputTextField( 14 );
 
-    private DecimalFormat dbl_Format = new FortranNumberFormat( "G10.4" );
+	private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 
     private JButton plotAndFitButton =
         new JButton( "PLOT & FIT PROFILE" );
@@ -116,13 +116,13 @@ class AnalysisProfileFit extends AnalysisBasic {
         plotAndFitButton.setForeground( Color.blue.darker() );
         //plotAndFitButton.setBackground( Color.cyan );
 
-        centerValue_Text.setDecimalFormat( dbl_Format );
+        centerValue_Text.setNumberFormat( dbl_Format );
         centerValue_Text.setHorizontalAlignment( JTextField.CENTER );
         centerValue_Text.setEditable( false );
         centerValue_Text.setText( null );
         centerValue_Text.setBackground( Color.white );
 
-        widthValue_Text.setDecimalFormat( dbl_Format );
+        widthValue_Text.setNumberFormat( dbl_Format );
         widthValue_Text.setHorizontalAlignment( JTextField.CENTER );
         widthValue_Text.setEditable( false );
         widthValue_Text.setText( null );

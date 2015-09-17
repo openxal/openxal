@@ -56,7 +56,7 @@ public class MakeRawToEmittancePanel {
 
 	//format for numbers of rows and channels
 	//private DecimalFormat dbl_Format = new DecimalFormat("###0.0##");
-	private DecimalFormat dbl_Format = new FortranNumberFormat("G10.4");
+	private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 	private DecimalFormat int_Format = new DecimalFormat("###0");
 
 	//emittance data as ColorSurfaceData instance
@@ -217,8 +217,8 @@ public class MakeRawToEmittancePanel {
 		posY_Text = GP_sp.getClickedPointObject().yValueText;
 		value_Text = GP_sp.getClickedPointObject().zValueText;
 
-		GP_sp.getClickedPointObject().xValueFormat.applyPattern(int_Format.toPattern());
-		GP_sp.getClickedPointObject().yValueFormat = new FortranNumberFormat("G5.1");
+		GP_sp.getClickedPointObject().xValueFormat = new DecimalFormat(int_Format.toPattern());
+		GP_sp.getClickedPointObject().yValueFormat = new ScientificNumberFormat(2);
 		//GP_sp.getClickedPointObject().zValueFormat.applyPattern(dbl_Format.toPattern());
 		GP_sp.getClickedPointObject().zValueFormat = dbl_Format;
 		GP_sp.getClickedPointObject().pointColor = Color.white;
@@ -259,9 +259,9 @@ public class MakeRawToEmittancePanel {
 		energy_Label.setHorizontalAlignment(SwingConstants.CENTER);
 		distWW_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		distHS_Text.setDecimalFormat(dbl_Format);
-		energy_Text.setDecimalFormat(dbl_Format);
-		distWW_Text.setDecimalFormat(dbl_Format);
+		distHS_Text.setNumberFormat(dbl_Format);
+		energy_Text.setNumberFormat(dbl_Format);
+		distWW_Text.setNumberFormat(dbl_Format);
 
 		distHS_Text.setHorizontalAlignment(JTextField.CENTER);
 		energy_Text.setHorizontalAlignment(JTextField.CENTER);
@@ -279,11 +279,11 @@ public class MakeRawToEmittancePanel {
 		gaussWidth_Label.setHorizontalAlignment(SwingConstants.CENTER);
 		threshold_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		gaussAmp_Text.setDecimalFormat(dbl_Format);
-		gaussWidth_Text.setDecimalFormat(dbl_Format);
+		gaussAmp_Text.setNumberFormat(dbl_Format);
+		gaussWidth_Text.setNumberFormat(dbl_Format);
 		gaussWidth_Text.setEditable(false);
 		gaussWidth_Text.setBackground(Color.white);
-		threshold_Text.setDecimalFormat(dbl_Format);
+		threshold_Text.setNumberFormat(dbl_Format);
 
 		gaussAmp_Text.setHorizontalAlignment(JTextField.CENTER);
 		gaussWidth_Text.setHorizontalAlignment(JTextField.CENTER);
@@ -321,8 +321,8 @@ public class MakeRawToEmittancePanel {
 		posCenterX_Text.setBackground(Color.white);
 		posCenterXP_Text.setBackground(Color.white);
 
-		posCenterX_Text.setDecimalFormat(dbl_Format);
-		posCenterXP_Text.setDecimalFormat(dbl_Format);
+		posCenterX_Text.setNumberFormat(dbl_Format);
+		posCenterXP_Text.setNumberFormat(dbl_Format);
 
 		emScrResX_Spinner.setAlignmentX(JSpinner.CENTER_ALIGNMENT);
 		emScrResY_Spinner.setAlignmentX(JSpinner.CENTER_ALIGNMENT);
@@ -333,9 +333,9 @@ public class MakeRawToEmittancePanel {
 		betaEm_Label.setHorizontalAlignment(SwingConstants.CENTER);
 		rmsEm_Label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		alphaEm_Text.setDecimalFormat(dbl_Format);
-		betaEm_Text.setDecimalFormat(dbl_Format);
-		rmsEm_Text.setDecimalFormat(dbl_Format);
+		alphaEm_Text.setNumberFormat(dbl_Format);
+		betaEm_Text.setNumberFormat(dbl_Format);
+		rmsEm_Text.setNumberFormat(dbl_Format);
 
 		alphaEm_Text.setHorizontalAlignment(JTextField.CENTER);
 		betaEm_Text.setHorizontalAlignment(JTextField.CENTER);

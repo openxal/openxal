@@ -90,10 +90,10 @@ public class ReadRawDataPanel {
 	public ReadRawDataPanel(WireRawData rawDataIn) {
 		rawData = rawDataIn;
 
-		nWires_Text.setDecimalFormat(numb_Format);
-		nChannels_Text.setDecimalFormat(numb_Format);
-		nPositionsSlit_Text.setDecimalFormat(numb_Format);
-		nPositionsHarp_Text.setDecimalFormat(numb_Format);
+		nWires_Text.setNumberFormat(numb_Format);
+		nChannels_Text.setNumberFormat(numb_Format);
+		nPositionsSlit_Text.setNumberFormat(numb_Format);
+		nPositionsHarp_Text.setNumberFormat(numb_Format);
 
 		nWires_Text.setHorizontalAlignment(JTextField.CENTER);
 		nChannels_Text.setHorizontalAlignment(JTextField.CENTER);

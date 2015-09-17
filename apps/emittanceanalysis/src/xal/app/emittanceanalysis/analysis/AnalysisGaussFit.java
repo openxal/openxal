@@ -738,9 +738,9 @@ class AnalysisGaussFit extends AnalysisBasic {
 		betaGAU_Text = (DoubleInputTextField) getParamsHashMap().get("BETA_GAU");
 		emtGAU_Text = (DoubleInputTextField) getParamsHashMap().get("EMT_GAU");
 
-		alphaLocal_Text.setDecimalFormat(alphaGAU_Text.getDecimalFormat());
-		betaLocal_Text.setDecimalFormat(betaGAU_Text.getDecimalFormat());
-		emtLocal_Text.setDecimalFormat(emtGAU_Text.getDecimalFormat());
+		alphaLocal_Text.setNumberFormat(alphaGAU_Text.getNumberFormat());
+		betaLocal_Text.setNumberFormat(betaGAU_Text.getNumberFormat());
+		emtLocal_Text.setNumberFormat(emtGAU_Text.getNumberFormat());
 
 		alphaLocal_Text.setText(null);
 		betaLocal_Text.setText(null);

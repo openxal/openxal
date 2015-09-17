@@ -102,7 +102,7 @@ class AnalysisCommonPart extends AnalysisBasic {
 
 	private DoubleInputTextField[] dblTextArr = new DoubleInputTextField[9];
 
-	private DecimalFormat dbl_Format = new FortranNumberFormat("G10.4");
+	private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 
 
 	/**
@@ -119,7 +119,7 @@ class AnalysisCommonPart extends AnalysisBasic {
 
 		Border etchedBorder = BorderFactory.createEtchedBorder();
 
-		threshold_Text.setDecimalFormat(threshold_Format);
+		threshold_Text.setNumberFormat(threshold_Format);
 		threshold_Text.setHorizontalAlignment(JTextField.CENTER);
 		threshold_Text.setValue(-100.0);
 		threshold_Text.setEditable(false);
@@ -182,7 +182,7 @@ class AnalysisCommonPart extends AnalysisBasic {
 		dblTextArr[8] = emtGAU_Text;
 
 		for (int i = 0; i < dblTextArr.length; i++) {
-			dblTextArr[i].setDecimalFormat(dbl_Format);
+			dblTextArr[i].setNumberFormat(dbl_Format);
 		}
 
 		for (int i = 0; i < dblTextArr.length; i++) {

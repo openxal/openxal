@@ -69,7 +69,7 @@ class AnalysisThresholdIndependentFit extends AnalysisBasic {
     private DoubleInputTextField emtLocal_Text = new DoubleInputTextField( 14 );
     private JLabel fittedEmt_Label = new JLabel( "Fitted emittance :", JLabel.RIGHT );
 
-    private DecimalFormat dbl_Format = new FortranNumberFormat( "G10.4" );
+    private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 
     //boolean variable indicating that data are not empty
     private boolean isDataExist = false;
@@ -108,7 +108,7 @@ class AnalysisThresholdIndependentFit extends AnalysisBasic {
         calcEmitButton.setForeground( Color.blue.darker() );
         //calcEmitButton.setBackground( Color.cyan );
 
-        emtLocal_Text.setDecimalFormat( dbl_Format );
+        emtLocal_Text.setNumberFormat( dbl_Format );
         emtLocal_Text.setHorizontalAlignment( JTextField.CENTER );
         emtLocal_Text.setEditable( false );
         emtLocal_Text.setText( null );

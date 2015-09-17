@@ -87,9 +87,9 @@ public class PlotRawDataPanel {
 		rawData = rawDataIn;
 		GP = GP_in;
 
-		noiseInd_Text.setDecimalFormat(int_Format);
-		sampleStart_Text.setDecimalFormat(int_Format);
-		sampleStop_Text.setDecimalFormat(int_Format);
+		noiseInd_Text.setNumberFormat(int_Format);
+		sampleStart_Text.setNumberFormat(int_Format);
+		sampleStop_Text.setNumberFormat(int_Format);
 
 		noiseInd_Text.setHorizontalAlignment(JTextField.CENTER);
 		sampleStart_Text.setHorizontalAlignment(JTextField.CENTER);

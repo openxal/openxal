@@ -33,7 +33,7 @@ class AnalysisRotationAngle extends AnalysisBasic {
 	private DoubleInputTextField threshold_Text = null;
 
 	//double values format
-	private DecimalFormat dbl_Format = new FortranNumberFormat("G10.4");
+	private NumberFormat dbl_Format = new ScientificNumberFormat(5);
 
 	//bottom panel. It includes the graph panel (bottom left)
 	//and the controll panel (bottom right)
@@ -238,9 +238,9 @@ class AnalysisRotationAngle extends AnalysisBasic {
 		graphPanel.setBorder(etchedBorder);
 		graphPanel.add(GP, BorderLayout.CENTER);
 
-		alphaLocal_Text.setDecimalFormat(dbl_Format);
-		betaLocal_Text.setDecimalFormat(dbl_Format);
-		emtLocal_Text.setDecimalFormat(dbl_Format);
+		alphaLocal_Text.setNumberFormat(dbl_Format);
+		betaLocal_Text.setNumberFormat(dbl_Format);
+		emtLocal_Text.setNumberFormat(dbl_Format);
 
 		//define sliders (scroll bars' listener)
 		angle_slider.setEnabled(true);
@@ -548,7 +548,7 @@ class AnalysisRotationAngle extends AnalysisBasic {
 		betaGAU_Text = (DoubleInputTextField) getParamsHashMap().get("BETA_GAU");
 		emtGAU_Text = (DoubleInputTextField) getParamsHashMap().get("EMT_GAU");
 
-		angleOfRot_Text.setDecimalFormat(threshold_Text.getDecimalFormat());
+		angleOfRot_Text.setNumberFormat(threshold_Text.getNumberFormat());
 
 		alphaLocal_Text.setText(null);
 		betaLocal_Text.setText(null);
