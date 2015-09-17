@@ -372,7 +372,8 @@ class AnalysisGaussFit extends AnalysisBasic {
 					scorer.init(emittance3Da, phasePlaneEllipse, gaussianDensity);
 
 					int seconds = ((Integer) fitTime_Spinner.getValue()).intValue();
-					solver.setStopper(SolveStopperFactory.maxElapsedTimeStopper((double) seconds));
+					solver = new Solver( SolveStopperFactory.maxElapsedTimeStopper((double) seconds) );
+					problem = makeProblem( gaussianDensity, scorer );
 
 					//perform fitting
 					solver.solve( problem );
@@ -434,8 +435,13 @@ class AnalysisGaussFit extends AnalysisBasic {
 	}
 
 
-	// generate a new problem
-	private Problem makeProblem() {
+	/** 
+	 * Generate a new problem.
+	 * @param gaussianDensity density from which to get the initial problem parameters
+	 * @param scorer the scorer to which to assign the variables
+	 * @return the new problem
+	 */
+	private Problem makeProblem( final GaussianDensity gaussianDensity, final GaussScorer scorer ) {
 		final Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<>(), scorer, 0.1 );
 
 		final InitialDelta initialDeltaHint = new InitialDelta();
