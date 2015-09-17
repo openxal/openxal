@@ -261,23 +261,20 @@ class AnalysisProfileFit extends AnalysisBasic {
 		final InitialDelta initialDeltaHint = new InitialDelta();
 		problem.addHint( initialDeltaHint );
 
-		final Variable cntrVariable = new Variable( "cntr", scorer.cntrStart, -Double.MAX_VALUE, Double.MAX_VALUE );
+		final Variable cntrVariable = new Variable( "cntr", scorer.cntr, -Double.MAX_VALUE, Double.MAX_VALUE );
 		problem.addVariable( cntrVariable );
 		initialDeltaHint.addInitialDelta( cntrVariable, scorer.cntrStep );
-		final ValueRef cntrValueRef = problem.getValueReference( cntrVariable );
 
-		final Variable widthVariable = new Variable( "width", scorer.widthStart, 0.0, Double.MAX_VALUE );
+		final Variable widthVariable = new Variable( "width", scorer.width, 0.0, Double.MAX_VALUE );
 		problem.addVariable( widthVariable );
-		initialDeltaHint.addInitialDelta( widthVariable, scorer.widthStep );
-		final ValueRef widthValueRef = problem.getValueReference( widthVariable );
+		initialDeltaHint.addInitialDelta( widthVariable, scorer.width );
 
-		final Variable ampVariable = new Variable( "amp", scorer.ampStart, 0.0, Double.MAX_VALUE );
+		final Variable ampVariable = new Variable( "amp", scorer.amp, 0.0, Double.MAX_VALUE );
 		problem.addVariable( ampVariable );
-		initialDeltaHint.addInitialDelta( ampVariable, scorer.ampStep );
-		final ValueRef ampValueRef = problem.getValueReference( ampVariable );
+		initialDeltaHint.addInitialDelta( ampVariable, scorer.amp );
 
 		// set the variables on the scorer
-		scorer.setValueReferences( cntrValueRef, widthValueRef, ampValueRef );
+		scorer.setVariables( cntrVariable, widthVariable, ampVariable );
 
 		return problem;
 	}
@@ -422,8 +419,11 @@ class AnalysisProfileFit extends AnalysisBasic {
         
         //printing the fitting results
         System.out.println( "===RESULTS of PROFILE FITTING=====" );
-        ScoreBoard scoreBoard = solver.getScoreBoard();
+        final ScoreBoard scoreBoard = solver.getScoreBoard();
         System.out.println( scoreBoard.toString() );
+
+		final Trial bestSolution = scoreBoard.getBestSolution();
+		profileGaussScorer.applyTrialPoint( bestSolution.getTrialPoint() );
 
         profileGaussScorer.makeFittedGraph();
 
@@ -450,15 +450,15 @@ class ProfileGaussScorer implements Scorer {
     private BasicGraphData gdProfile = null;
 
 	// starting values, step sizes and value references
-	double cntrStart = 0.0;
+	double cntr = 0.0;
 	double cntrStep = 1.0;
-	private ValueRef cntrRef;
-	double widthStart = 10.0;
+	private Variable cntrVariable;
+	double width = 10.0;
 	double widthStep = 1.0;
-	private ValueRef widthRef;
-	double ampStart = 1.0;
+	private Variable widthVariable;
+	double amp = 1.0;
 	double ampStep = 0.01;
-	private ValueRef ampRef;
+	private Variable ampVariable;
 
     //temporary array for measured profile
     private double[] x_arr = new double[0];
@@ -475,10 +475,26 @@ class ProfileGaussScorer implements Scorer {
 
 
 	/** Set the value references for the variables */
-	public void setValueReferences( final ValueRef cntrRef, final ValueRef widthRef, final ValueRef ampRef ) {
-		this.cntrRef = cntrRef;
-		this.widthRef = widthRef;
-		this.ampRef = ampRef;
+	public void setVariables( final Variable cntrVariable, final Variable widthVariable, final Variable ampVariable ) {
+		this.cntrVariable = cntrVariable;
+		this.widthVariable = widthVariable;
+		this.ampVariable = ampVariable;
+	}
+
+
+
+	/** apply the trial point values */
+	void applyTrialPoint( final TrialPoint trialPoint ) {
+		this.cntr = trialPoint.getValue( cntrVariable );
+		this.width = trialPoint.getValue( widthVariable );
+		this.amp = trialPoint.getValue( ampVariable );
+	}
+
+
+	void setValues( final double cntr, final double width, final double amp ) {
+		this.cntr = cntr;
+		this.width = width;
+		this.amp = amp;
 	}
 
 
@@ -488,7 +504,7 @@ class ProfileGaussScorer implements Scorer {
      *@return    The center position
      */
     public double getCenterValue() {
-        return cntrRef.getValue();
+        return cntr;
     }
 
 
@@ -498,7 +514,7 @@ class ProfileGaussScorer implements Scorer {
      *@return    The width value
      */
     double getWidthValue() {
-        return widthRef.getValue();
+        return width;
     }
 
 
@@ -513,10 +529,10 @@ class ProfileGaussScorer implements Scorer {
     public void makeFittedArray() {
         double x = 0.;
         for ( int i = 0, n = x_arr.length; i < n; i++ ) {
-            x = x_arr[i] - cntrRef.getValue();
+            x = x_arr[i] - this.cntr;
             x = x * x;
-            x /= 2. * widthRef.getValue() * widthRef.getValue();
-            y_fit_arr[i] = ampRef.getValue() * Math.exp( -x );
+            x /= 2. * this.width * this.width;
+            y_fit_arr[i] = this.amp * Math.exp( -x );
         }
     }
 
@@ -613,9 +629,9 @@ class ProfileGaussScorer implements Scorer {
             x_rms = Math.sqrt( x_rms );
         }
 
-		cntrStart = x_cnt;
-		widthStart = x_rms;
-		ampStart = 1.0;
+		this.cntr = x_cnt;
+		this.width = x_rms;
+		this.amp = 1.0;
 
         cntrStep = Math.abs( x_cnt ) * 0.05;
         widthStep = Math.abs( x_rms ) * 0.05;
@@ -635,6 +651,8 @@ class ProfileGaussScorer implements Scorer {
      *@return    The score
      */
     public double score( final Trial trial, final List<Variable> variables ) {
+		applyTrialPoint( trial.getTrialPoint() );
+
         double sum2 = 0.;
         double diff = 0.;
         makeFittedArray();
@@ -642,6 +660,12 @@ class ProfileGaussScorer implements Scorer {
             diff = y_arr[i] - y_fit_arr[i];
             sum2 += diff * diff;
         }
+
+		if ( Double.isNaN(sum2 ) ) {
+			sum2 = Double.POSITIVE_INFINITY;
+		}
+
+		//System.out.println( "sum2: " + sum2 );
 
         return sum2;
     }
