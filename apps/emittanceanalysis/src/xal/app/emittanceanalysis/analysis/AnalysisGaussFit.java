@@ -377,6 +377,9 @@ class AnalysisGaussFit extends AnalysisBasic {
 
 					//perform fitting
 					solver.solve( problem );
+					final ScoreBoard scoreBoard = solver.getScoreBoard();
+					final Trial bestSolution = scoreBoard.getBestSolution();
+					scorer.applyTrialPoint( bestSolution.getTrialPoint() );
 
 					is_ready_gau = true;
 					getParamsHashMap().put("IS_READY_GAU", new Boolean(is_ready_gau));
@@ -398,7 +401,6 @@ class AnalysisGaussFit extends AnalysisBasic {
 					GP_ep.refreshGraphJPanel();
 
 					System.out.println("===RESULTS of GAUSSIAN EMITTANCE FITTING===");
-					ScoreBoard scoreBoard = solver.getScoreBoard();
 					System.out.println(scoreBoard.toString());
 
 					plotSectionGraph(getScrollBarTypeIndex());
@@ -1012,6 +1014,16 @@ class GaussScorer implements Scorer {
 	}
 
 
+	/** apply the trial point to configure the model */
+	void applyTrialPoint( final TrialPoint trialPoint ) {
+		final double emt = trialPoint.getValue( emtVariable );
+		final double alpha = trialPoint.getValue( alphaVariable );
+		final double beta = trialPoint.getValue( betaVariable );
+		final double maxVal = trialPoint.getValue( maxValVariable );
+		gaussianDensity.setEmtAlphaBetaMaxVal( emt, alpha, beta, maxVal	);
+	}
+
+
 	/**
 	 *  The score method implementation of the Scorer interface
 	 *
@@ -1024,12 +1036,7 @@ class GaussScorer implements Scorer {
 		double val_exp = 0.;
 		double val_th = 0.;
 
-		final TrialPoint trialPoint = trial.getTrialPoint();
-		final double emt = trialPoint.getValue( emtVariable );
-		final double alpha = trialPoint.getValue( alphaVariable );
-		final double beta = trialPoint.getValue( betaVariable );
-		final double maxVal = trialPoint.getValue( maxValVariable );
-		gaussianDensity.setEmtAlphaBetaMaxVal( emt, alpha, beta, maxVal	);
+		applyTrialPoint( trial.getTrialPoint() );
 
 		for (int ix = i_x_min; ix <= i_x_max; ix++) {
 			x = emittance3Da.getX(ix);
