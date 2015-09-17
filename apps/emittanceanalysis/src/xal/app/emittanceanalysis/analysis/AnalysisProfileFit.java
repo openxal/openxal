@@ -1,8 +1,14 @@
 package xal.app.emittanceanalysis.analysis;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.util.*;
+import java.util.List;
 import java.text.*;
 import javax.swing.border.*;
 import java.awt.event.*;
@@ -11,6 +17,8 @@ import xal.extension.widgets.plot.*;
 import xal.extension.widgets.swing.*;
 import xal.tools.text.*;
 import xal.extension.solver.*;
+import xal.extension.solver.hint.*;
+
 
 /**
  *  This analysis displays a one-dimensional transverse profile of the beam and
@@ -74,7 +82,8 @@ class AnalysisProfileFit extends AnalysisBasic {
     private ProfileGaussScorer profileGaussScorer = new ProfileGaussScorer();
 
     //solver for fitting
-    private Solver solver = new Solver();
+    private Solver solver;
+	private Problem problem;
 
 
     /**
@@ -236,14 +245,42 @@ class AnalysisProfileFit extends AnalysisBasic {
             };       
         
 
-        //solver stopper definition
-        SearchAlgorithm algorithm = new SimplexSearchAlgorithm();
-        solver.setScorer( profileGaussScorer );
-        solver.setSearchAlgorithm( algorithm );
-        solver.setVariables( profileGaussScorer.getProxiesVector() );
-        solver.setStopper( SolveStopperFactory.maxElapsedTimeStopper( 2.0 ) );
-
+        //solver problem definition
+		problem = makeProblem( profileGaussScorer );
     }
+
+
+	/**
+	 * Generate a new problem.
+	 * @param scorer the Profile Gauss Scorer from which to configure the problem and for which to set the variables
+	 * @return the new problem
+	 */
+	private Problem makeProblem( final ProfileGaussScorer scorer ) {
+		final Problem problem = ProblemFactory.getInverseSquareMinimizerProblem( new ArrayList<>(), scorer, 0.1 );
+
+		final InitialDelta initialDeltaHint = new InitialDelta();
+		problem.addHint( initialDeltaHint );
+
+		final Variable cntrVariable = new Variable( "cntr", scorer.cntrStart, -Double.MAX_VALUE, Double.MAX_VALUE );
+		problem.addVariable( cntrVariable );
+		initialDeltaHint.addInitialDelta( cntrVariable, scorer.cntrStep );
+		final ValueRef cntrValueRef = problem.getValueReference( cntrVariable );
+
+		final Variable widthVariable = new Variable( "width", scorer.widthStart, 0.0, Double.MAX_VALUE );
+		problem.addVariable( widthVariable );
+		initialDeltaHint.addInitialDelta( widthVariable, scorer.widthStep );
+		final ValueRef widthValueRef = problem.getValueReference( widthVariable );
+
+		final Variable ampVariable = new Variable( "amp", scorer.ampStart, 0.0, Double.MAX_VALUE );
+		problem.addVariable( ampVariable );
+		initialDeltaHint.addInitialDelta( ampVariable, scorer.ampStep );
+		final ValueRef ampValueRef = problem.getValueReference( ampVariable );
+
+		// set the variables on the scorer
+		scorer.setValueReferences( cntrValueRef, widthValueRef, ampValueRef );
+
+		return problem;
+	}
 
 
     /**  Performs actions before show the panel */
@@ -263,8 +300,7 @@ class AnalysisProfileFit extends AnalysisBasic {
 
         if ( !isDataExist ) {
             getTextMessage().setText( null );
-            getTextMessage().setText( "The data for analysis" +
-                " do not exist." );
+            getTextMessage().setText( "The data for analysis" + " do not exist." );
             Toolkit.getDefaultToolkit().beep();
 
             plotAndFitButton.setEnabled( false );
@@ -381,11 +417,12 @@ class AnalysisProfileFit extends AnalysisBasic {
             gdFitted );
 
         //fitting
-        solver.solve();
+		solver = new Solver( SolveStopperFactory.maxElapsedTimeStopper( 2.0 ) );
+        solver.solve( problem );
         
         //printing the fitting results
         System.out.println( "===RESULTS of PROFILE FITTING=====" );
-        Scoreboard scoreBoard = solver.getScoreboard();
+        ScoreBoard scoreBoard = solver.getScoreBoard();
         System.out.println( scoreBoard.toString() );
 
         profileGaussScorer.makeFittedGraph();
@@ -412,9 +449,16 @@ class ProfileGaussScorer implements Scorer {
     private BasicGraphData gdFitted = null;
     private BasicGraphData gdProfile = null;
 
-    private ParameterProxy cntrProxy = new ParameterProxy( "cntr", 0.0, 1.0 );
-    private ParameterProxy widthProxy = new ParameterProxy( "width", 10.0, 1.0 );
-    private ParameterProxy amplProxy = new ParameterProxy( "amp", 1.0, 0.01 );
+	// starting values, step sizes and value references
+	double cntrStart = 0.0;
+	double cntrStep = 1.0;
+	private ValueRef cntrRef;
+	double widthStart = 10.0;
+	double widthStep = 1.0;
+	private ValueRef widthRef;
+	double ampStart = 1.0;
+	double ampStep = 0.01;
+	private ValueRef ampRef;
 
     //temporary array for measured profile
     private double[] x_arr = new double[0];
@@ -423,15 +467,19 @@ class ProfileGaussScorer implements Scorer {
     //temporary array for fitted profile
     private double[] y_fit_arr = new double[0];
 
-    private Vector proxyV = new Vector();
 
 
     /**  Constructor for the ProfileGaussScorer object */
     ProfileGaussScorer() {
-        proxyV.add( cntrProxy );
-        proxyV.add( widthProxy );
-        proxyV.add( amplProxy );
     }
+
+
+	/** Set the value references for the variables */
+	public void setValueReferences( final ValueRef cntrRef, final ValueRef widthRef, final ValueRef ampRef ) {
+		this.cntrRef = cntrRef;
+		this.widthRef = widthRef;
+		this.ampRef = ampRef;
+	}
 
 
     /**
@@ -440,7 +488,7 @@ class ProfileGaussScorer implements Scorer {
      *@return    The center position
      */
     public double getCenterValue() {
-        return cntrProxy.getValue();
+        return cntrRef.getValue();
     }
 
 
@@ -450,17 +498,7 @@ class ProfileGaussScorer implements Scorer {
      *@return    The width value
      */
     double getWidthValue() {
-        return widthProxy.getValue();
-    }
-
-
-    /**
-     *  Returns the Vector object with all proxies for parameters
-     *
-     *@return    TheVector object with all proxies for parameters
-     */
-    Vector getProxiesVector() {
-        return new Vector( proxyV );
+        return widthRef.getValue();
     }
 
 
@@ -475,10 +513,10 @@ class ProfileGaussScorer implements Scorer {
     public void makeFittedArray() {
         double x = 0.;
         for ( int i = 0, n = x_arr.length; i < n; i++ ) {
-            x = x_arr[i] - cntrProxy.getValue();
+            x = x_arr[i] - cntrRef.getValue();
             x = x * x;
-            x /= 2. * widthProxy.getValue() * widthProxy.getValue();
-            y_fit_arr[i] = amplProxy.getValue() * Math.exp( -x );
+            x /= 2. * widthRef.getValue() * widthRef.getValue();
+            y_fit_arr[i] = ampRef.getValue() * Math.exp( -x );
         }
     }
 
@@ -575,20 +613,19 @@ class ProfileGaussScorer implements Scorer {
             x_rms = Math.sqrt( x_rms );
         }
 
-        cntrProxy.setValue( x_cnt );
-        widthProxy.setValue( x_rms );
-        amplProxy.setValue( 1.0 );
+		cntrStart = x_cnt;
+		widthStart = x_rms;
+		ampStart = 1.0;
 
-        cntrProxy.setStep( Math.abs( x_cnt ) * 0.05 );
-        widthProxy.setStep( Math.abs( x_rms ) * 0.05 );
-        amplProxy.setStep( 0.01 );
+        cntrStep = Math.abs( x_cnt ) * 0.05;
+        widthStep = Math.abs( x_rms ) * 0.05;
+        ampStep = 0.01;
 
         if ( y_fit_arr.length != x_arr.length ) {
             y_fit_arr = new double[x_arr.length];
         }
 
         makeFittedGraph();
-
     }
 
 
@@ -597,8 +634,7 @@ class ProfileGaussScorer implements Scorer {
      *
      *@return    The score
      */
-    public double score() {
-
+    public double score( final Trial trial, final List<Variable> variables ) {
         double sum2 = 0.;
         double diff = 0.;
         makeFittedArray();
