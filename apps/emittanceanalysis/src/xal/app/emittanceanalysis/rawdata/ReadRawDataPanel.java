@@ -54,10 +54,10 @@ public class ReadRawDataPanel {
 	private DecimalFormat numb_Format = new DecimalFormat("###0");
 
 	//listeners for completion of the data reading
-	private Vector readDataListenersV = new Vector();
+	private Vector<ActionListener> readDataListenersV = new Vector<>();
 
 	//listeners for the type index setting completion
-	private Vector setIndexListenersV = new Vector();
+	private Vector<ActionListener> setIndexListenersV = new Vector<>();
 
 	//listeners for completion of the data reading
 
@@ -77,7 +77,7 @@ public class ReadRawDataPanel {
 	private DoubleInputTextField nPositionsSlit_Text = new DoubleInputTextField(5);
 	private DoubleInputTextField nPositionsHarp_Text = new DoubleInputTextField(5);
 
-	private JComboBox typeChooser = null;
+	private JComboBox<String> typeChooser = null;
 
 	//default raw data directory
 	private String rawDataDirectoryLocation = "";
@@ -120,7 +120,7 @@ public class ReadRawDataPanel {
 		//read_Button.setBackground( Color.cyan );
 		read_Button.setBorder(BorderFactory.createRaisedBevelBorder());
 
-		typeChooser = new JComboBox(typeNames_arr);
+		typeChooser = new JComboBox<>(typeNames_arr);
 		typeChooser.setBackground(Color.cyan);
 		typeChooser.addActionListener(
 			new ActionListener() {
@@ -297,7 +297,7 @@ public class ReadRawDataPanel {
 	private void makeReadDataActions() {
 		ActionEvent e = new ActionEvent(this, 0, "data_ready");
 		for (int i = 0; i < readDataListenersV.size(); i++) {
-			((ActionListener) readDataListenersV.get(i)).actionPerformed(e);
+			readDataListenersV.get(i).actionPerformed(e);
 		}
 	}
 
@@ -329,7 +329,7 @@ public class ReadRawDataPanel {
 	 *
 	 *@return    The vector with ActionListeners
 	 */
-	public Vector getReadDataActionListeners() {
+	public Vector<ActionListener> getReadDataActionListeners() {
 		return readDataListenersV;
 	}
 
@@ -341,7 +341,7 @@ public class ReadRawDataPanel {
 	private void makeSetIndexActions() {
 		ActionEvent e = new ActionEvent(this, 0, "index set");
 		for (int i = 0; i < setIndexListenersV.size(); i++) {
-			((ActionListener) setIndexListenersV.get(i)).actionPerformed(e);
+			setIndexListenersV.get(i).actionPerformed(e);
 		}
 	}
 
@@ -372,7 +372,7 @@ public class ReadRawDataPanel {
 	 *
 	 *@return    The vector with ActionListeners
 	 */
-	public Vector getSetIndexActionListeners() {
+	public Vector<ActionListener> getSetIndexActionListeners() {
 		return setIndexListenersV;
 	}
 

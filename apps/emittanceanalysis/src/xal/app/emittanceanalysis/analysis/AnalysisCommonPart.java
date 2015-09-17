@@ -36,13 +36,13 @@ class AnalysisCommonPart extends AnalysisBasic {
 	private TitledBorder leftTopBborder = null;
 
 	//external listeners for change of type of analysis
-	private Vector typeChangeListenerV = new Vector();
+	private Vector<ActionListener> typeChangeListenerV = new Vector<>();
 
 	//analysis controller reference
 	private AnalysisController analysisController = null;
 
 	//combo-box for choosing the type of nalysis
-	private JComboBox analysisTypeChooser = null;
+	private JComboBox<String> analysisTypeChooser = null;
 
 	//emittance plot graph panel
 	private FunctionGraphsJPanel GP_ep = new FunctionGraphsJPanel();
@@ -112,7 +112,7 @@ class AnalysisCommonPart extends AnalysisBasic {
 	 *@param  analysisTypeIndex_In  The type index of the analysis
 	 *@param  typeNames_arr         Description of the Parameter
 	 */
-	AnalysisCommonPart(String[] typeNames_arr, int analysisTypeIndex_In, HashMap crossParamMap) {
+	AnalysisCommonPart(String[] typeNames_arr, int analysisTypeIndex_In, HashMap<String,Object> crossParamMap) {
 		super(analysisTypeIndex_In, crossParamMap);
 
 		analysisDescriptionString = "The common part of all analyses.";
@@ -134,12 +134,12 @@ class AnalysisCommonPart extends AnalysisBasic {
 					ActionEvent changeAnalysisType =
 							new ActionEvent(analysisController, ID, "type_changed");
 					for (int i = 0; i < typeChangeListenerV.size(); i++) {
-						((ActionListener) typeChangeListenerV.get(i)).actionPerformed(changeAnalysisType);
+						typeChangeListenerV.get(i).actionPerformed(changeAnalysisType);
 					}
 				}
 			};
 
-		analysisTypeChooser = new JComboBox(typeNames_arr);
+		analysisTypeChooser = new JComboBox<>(typeNames_arr);
 		analysisTypeChooser.setBackground(Color.cyan);
 		analysisTypeChooser.addActionListener(typeChangeListener);
 		analysisTypeChooser.setSelectedIndex(0);

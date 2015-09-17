@@ -162,12 +162,12 @@ public class FilterRawDataPanel {
      *  Executes filtering data that currently displayed on the graph panel
      */
     public void filterGraphRawData() {
-        Vector cdV = GP.getAllCurveData();
+        Vector<CurveData> cdV = GP.getAllCurveData();
         if ( cdV.size() == 0 ) {
             return;
         }
         for ( int i = 0; i < cdV.size(); i++ ) {
-            filterCurveData( (CurveData) cdV.get( i ) );
+            filterCurveData( cdV.get( i ) );
         }
         GP.refreshGraphJPanel();
     }

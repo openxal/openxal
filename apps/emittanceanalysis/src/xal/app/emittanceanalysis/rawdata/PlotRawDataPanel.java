@@ -40,7 +40,7 @@ public class PlotRawDataPanel {
 	private DecimalFormat int_Format = new DecimalFormat("##0");
 
 	//vectors that keeps already created CurveData instances
-	private Vector cdStoreV = new Vector();
+	private Vector<CurveData> cdStoreV = new Vector<>();
 
 	//-----------------------------------
 	//GUI elements
@@ -370,7 +370,7 @@ public class PlotRawDataPanel {
 		//create graphs
 		int nSamples = rawData.getSamplesNumber();
 
-		Vector cdV = new Vector();
+		Vector<CurveData> cdV = new Vector<>();
 
 		int index = 0;
 
@@ -378,7 +378,7 @@ public class PlotRawDataPanel {
 			for (int posInd = posStart; (posInd <= posMax && posInd <= posStop); posInd += posStep) {
 				for (int posHInd = posHStart; (posHInd <= posHMax && posHInd <= posHStop); posHInd += posHStep) {
 
-					CurveData cd = (CurveData) cdStoreV.get((chInd - 1) +
+					CurveData cd = cdStoreV.get((chInd - 1) +
 							chMax * (posInd - 1) +
 							chMax * posMax * (posHInd - 1));
 					cd.clear();
@@ -487,7 +487,7 @@ public class PlotRawDataPanel {
 	 *
 	 *@return    The vectotr with curveData objects
 	 */
-	public Vector getCurveDataVector() {
+	public Vector<CurveData> getCurveDataVector() {
 		return cdStoreV;
 	}
 

@@ -924,7 +924,7 @@ public class MakeRawToEmittancePanel {
 
 		//return case - use data from graph panel
 		if (useFilter_Button.isSelected() == false && useGraphData_Button.isSelected() == true) {
-			Vector cdV = GP.getAllCurveData();
+			Vector<CurveData> cdV = GP.getAllCurveData();
 			if (cdV.size() != chMax * posMax * posHMax) {
 				messageTextLocal.setText(null);
 				messageTextLocal.setText("You have to plot all raw data if you want to use this feature.");
@@ -1045,7 +1045,7 @@ public class MakeRawToEmittancePanel {
 
 		//case - use data from graph panel
 		if (useFilter_Button.isSelected() == false && useGraphData_Button.isSelected() == true) {
-			Vector cdV = GP.getAllCurveData();
+			Vector<CurveData> cdV = GP.getAllCurveData();
 			if (cdV.size() != chMax * posMax * posHMax) {
 				messageTextLocal.setText(null);
 				messageTextLocal.setText("You have to plot all raw data if you want to use this feature.");
@@ -1060,7 +1060,7 @@ public class MakeRawToEmittancePanel {
 				for (int ih = 0; ih < posHMax; ih++) {
 					for (int ic = 0; ic < chMax; ic++) {
 						ind = ip + posMax * ih + posMax * posHMax * ic;
-						cd = (CurveData) cdV.get(ind);
+						cd = cdV.get(ind);
 
 						sum = 0.;
 						sum_bckg = 0.;
@@ -1609,7 +1609,7 @@ public class MakeRawToEmittancePanel {
 	 *
 	 *@author    shishlo
 	 */
-	public class SortObject implements Comparable {
+	public class SortObject implements Comparable<SortObject> {
 
 		private double value = 0.;
 		private double angle = 0.;
@@ -1659,8 +1659,7 @@ public class MakeRawToEmittancePanel {
 		 *@param  o  Description of the Parameter
 		 *@return    Description of the Return Value
 		 */
-		public int compareTo(Object o) {
-			SortObject ob = (SortObject) o;
+		public int compareTo( final SortObject ob ) {
 			if (angle < ob.getAngle()) {
 				return -1;
 			} else if (angle > ob.getAngle()) {
