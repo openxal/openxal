@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined emittance analysis configurations">
+    <TEST tree_name = "TEST" text="Predefined emittance analysis configuration as a test.">
+           <conf tree_name = "A perfect gauss distribution." url="test_gauss.emt" text="The phase space data with gauss distribution. Parameters are alpha = 1.0, beta = 2.0, emittance = 0.1 [mm mrad]. "/>
+           <conf tree_name = "A real distribution." url="test.emt" text="The real non perfect phase space data.  "/>
+    </TEST>
+</CONFIGURATIONS>
