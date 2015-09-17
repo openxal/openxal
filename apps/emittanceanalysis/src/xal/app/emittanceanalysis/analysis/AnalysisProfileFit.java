@@ -92,7 +92,7 @@ class AnalysisProfileFit extends AnalysisBasic {
      *@param  crossParamMap         The HashMap with Parameters of the analyses
      *@param  analysisTypeIndex_In  The type index of the analysis
      */
-    AnalysisProfileFit( int analysisTypeIndex_In, HashMap crossParamMap ) {
+    AnalysisProfileFit( int analysisTypeIndex_In, HashMap<String,Object> crossParamMap ) {
         super( analysisTypeIndex_In, crossParamMap );
 
         analysisDescriptionString =
@@ -375,7 +375,7 @@ class AnalysisProfileFit extends AnalysisBasic {
 
     /**  Creates objects for the global HashMap using put method only */
     void createHashMapObjects() {
-                getParamsHashMap().put( "INIT_LISTENER_PROFILE", init_listener_profile );
+		getParamsHashMap().put( "INIT_LISTENER_PROFILE", init_listener_profile );
     }
 
 

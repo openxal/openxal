@@ -26,7 +26,7 @@ public class AnalysisController {
     //analysis panel. All GUI elements should be there
     //-------------------------------------------------
     private JPanel analysisPanel = new JPanel();
-    private HashMap crossParamMap = new HashMap();
+    private HashMap<String,Object> crossParamMap = new HashMap<>();
 
     //panels for custom GUI elements for the common part of analyses
     private JPanel leftTopPanel = new JPanel();
@@ -229,7 +229,7 @@ public class AnalysisController {
      *
      *@return    The HashMap with global parameters
      */
-    public HashMap getParamsHashMap() {
+    public HashMap<String,Object> getParamsHashMap() {
         return crossParamMap;
     }
 

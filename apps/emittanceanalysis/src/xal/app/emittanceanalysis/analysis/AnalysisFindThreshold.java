@@ -131,7 +131,7 @@ class AnalysisFindThreshold extends AnalysisBasic {
      *@param  crossParamMap         The HashMap with Parameters of the analyses
      *@param  analysisTypeIndex_In  The type index of the analysis
      */
-    AnalysisFindThreshold( int analysisTypeIndex_In, HashMap crossParamMap ) {
+    AnalysisFindThreshold( int analysisTypeIndex_In, HashMap<String,Object> crossParamMap ) {
         super( analysisTypeIndex_In, crossParamMap );
 
         colorArr[3] = new Color( 128, 128, 255 );

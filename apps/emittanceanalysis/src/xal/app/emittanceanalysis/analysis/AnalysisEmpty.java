@@ -70,7 +70,7 @@ class AnalysisEmpty extends AnalysisBasic {
      *@param  crossParamMap         The HashMap with Parameters of the analyses
      *@param  analysisTypeIndex_In  The type index of the analysis
      */
-    AnalysisEmpty( int analysisTypeIndex_In, HashMap crossParamMap ) {
+    AnalysisEmpty( int analysisTypeIndex_In, HashMap<String,Object> crossParamMap ) {
         super( analysisTypeIndex_In, crossParamMap );
         analysisDescriptionString = " PHASE DENSITY VIEWER" +
             System.getProperties().getProperty( "line.separator" ).toString() +

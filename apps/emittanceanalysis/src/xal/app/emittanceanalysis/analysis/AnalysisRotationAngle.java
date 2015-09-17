@@ -113,7 +113,7 @@ class AnalysisRotationAngle extends AnalysisBasic {
 	 *@param  crossParamMap         The HashMap with Parameters of the analyses
 	 *@param  analysisTypeIndex_In  The type index of the analysis
 	 */
-	AnalysisRotationAngle(int analysisTypeIndex_In, HashMap crossParamMap) {
+	AnalysisRotationAngle(int analysisTypeIndex_In, HashMap<String,Object> crossParamMap) {
 		super(analysisTypeIndex_In, crossParamMap);
 		analysisDescriptionString = " PHASE SPACE ROTATION " +
 				System.getProperties().getProperty("line.separator").toString() +

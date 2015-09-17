@@ -157,7 +157,7 @@ class AnalysisFindEmitByFit extends AnalysisBasic {
 	 *@param  crossParamMap         The HashMap with Parameters of the analyses
 	 *@param  analysisTypeIndex_In  The type index of the analysis
 	 */
-	AnalysisFindEmitByFit(int analysisTypeIndex_In, HashMap crossParamMap) {
+	AnalysisFindEmitByFit(int analysisTypeIndex_In, HashMap<String,Object> crossParamMap) {
 		super(analysisTypeIndex_In, crossParamMap);
 
 		colorArr[2] = new Color(128, 128, 255);
@@ -792,7 +792,7 @@ class AnalysisFindEmitByFit extends AnalysisBasic {
 
 		for (int i = start; i < stop; i += step) {
 
-			double emt = (double) emt_rms * i / 100.;
+			double emt = emt_rms * i / 100.;
 			emittanceEquation.setPrams(emt, alpha_rms, beta_rms);
 			resArr = EmtCalculations.getFracEmtAlphaBetaGamma(
 					thresh,

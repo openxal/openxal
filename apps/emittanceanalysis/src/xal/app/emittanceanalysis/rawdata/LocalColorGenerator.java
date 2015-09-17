@@ -51,7 +51,7 @@ public class LocalColorGenerator implements ColorGenerator {
      */
 
     public Color getColor(float value) {
-        return rainbowC.getColor(Math.min((float) value / upperLim, 1.0f));
+        return rainbowC.getColor(Math.min(value / upperLim, 1.0f));
     }
 
 

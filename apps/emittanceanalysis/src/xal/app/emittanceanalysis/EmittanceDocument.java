@@ -175,7 +175,7 @@ public class EmittanceDocument extends XalDocument {
 		predefinedConfController.setMessageTextField(getEmittanceWindow().getMessageTextField());
 
 		//set timer
-		JToolBar toolbar = (JToolBar) getEmittanceWindow().getToolBar();
+		JToolBar toolbar = getEmittanceWindow().getToolBar();
 		JTextField timeTxt_temp = dateAndTime.getNewTimeTextField();
 		timeTxt_temp.setHorizontalAlignment(JTextField.CENTER);
 		toolbar.add(timeTxt_temp);
@@ -304,6 +304,7 @@ public class EmittanceDocument extends XalDocument {
 		// define the "show-raw-emitt-panel" set raw emittance panel action action
 		setRawEmittancePanelAction =
 			new AbstractAction("show-raw-emitt-panel") {
+				private static final long serialVersionUID = 1L;
 				public void actionPerformed(ActionEvent event) {
 					setActivePanel(RAW_EMITTANCE_PANEL);
 				}
@@ -313,6 +314,7 @@ public class EmittanceDocument extends XalDocument {
 		// define the "show-analysis-panel" set raw emittance appearance panel action
 		setAnalysisPanelAction =
 			new AbstractAction("show-analysis-panel") {
+				private static final long serialVersionUID = 1L;
 				public void actionPerformed(ActionEvent event) {
 					setActivePanel(ANALYSIS_PANEL);
 				}
@@ -321,6 +323,7 @@ public class EmittanceDocument extends XalDocument {
 
 		setPredefConfigAction =
 			new AbstractAction("set-predef-config") {
+				private static final long serialVersionUID = 1L;
 				public void actionPerformed(ActionEvent event) {
 					setActivePanel(PREDEF_CONF_PANEL);
 				}

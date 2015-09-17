@@ -20,6 +20,7 @@ import xal.extension.application.*;
  */
 
 public class EmittanceWindow extends XalWindow {
+	private static final long serialVersionUID = 1L;
 
     private JPanel mainPanel = new JPanel( new BorderLayout() );
 

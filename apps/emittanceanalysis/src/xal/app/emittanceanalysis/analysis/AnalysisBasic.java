@@ -21,8 +21,8 @@ abstract class AnalysisBasic {
     private JPanel rightTopPanel = new JPanel();    
     private JPanel bottomPanel = new JPanel();
 
-    /**  Parameters of the analyses across all instances */
-    private HashMap crossParamMap = null;
+    /**  Parameters (various types) of the analyses across all instances keyed by parameter name */
+    private HashMap<String,Object> crossParamMap = null;
 
     /**  The type index of the analysis */
     protected int analysisTypeIndex = -1;
@@ -37,7 +37,7 @@ abstract class AnalysisBasic {
      *@param  crossParamMap_In      The HashMap with Parameters of the analyses
      *@param  analysisTypeIndex_In  The type index of the analysis
      */
-    AnalysisBasic( int analysisTypeIndex_In, HashMap crossParamMap_In ) {
+    AnalysisBasic( int analysisTypeIndex_In, HashMap<String,Object> crossParamMap_In ) {
         analysisTypeIndex = analysisTypeIndex_In;
         crossParamMap = crossParamMap_In;
     }
@@ -102,9 +102,9 @@ abstract class AnalysisBasic {
     /**
      *  Returns the hash map table with global parameters of the analysis
      *
-     *@return    The HashMap with global parameters
+     *@return    The HashMap with global parameters keyed by parameter name
      */
-    HashMap getParamsHashMap() {
+    HashMap<String,Object> getParamsHashMap() {
         return crossParamMap;
     }
 

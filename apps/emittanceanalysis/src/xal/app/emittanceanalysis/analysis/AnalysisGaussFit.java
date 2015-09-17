@@ -133,7 +133,7 @@ class AnalysisGaussFit extends AnalysisBasic {
 	 *@param  crossParamMap         The HashMap with Parameters of the analyses
 	 *@param  analysisTypeIndex_In  The type index of the analysis
 	 */
-	AnalysisGaussFit(int analysisTypeIndex_In, HashMap crossParamMap) {
+	AnalysisGaussFit(int analysisTypeIndex_In, HashMap<String,Object> crossParamMap) {
 		super( analysisTypeIndex_In, crossParamMap );
 
 		analysisDescriptionString = " GAUSS FITTING" +

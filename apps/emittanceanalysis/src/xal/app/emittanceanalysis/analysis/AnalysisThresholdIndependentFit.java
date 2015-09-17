@@ -81,7 +81,7 @@ class AnalysisThresholdIndependentFit extends AnalysisBasic {
      *@param  crossParamMap         The HashMap with Parameters of the analyses
      *@param  analysisTypeIndex_In  The type index of the analysis
      */
-    AnalysisThresholdIndependentFit( int analysisTypeIndex_In, HashMap crossParamMap ) {
+    AnalysisThresholdIndependentFit( int analysisTypeIndex_In, HashMap<String,Object> crossParamMap ) {
         super( analysisTypeIndex_In, crossParamMap );
 
         analysisDescriptionString =
