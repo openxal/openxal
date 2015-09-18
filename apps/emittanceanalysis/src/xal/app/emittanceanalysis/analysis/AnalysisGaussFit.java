@@ -371,8 +371,8 @@ class AnalysisGaussFit extends AnalysisBasic {
 
 					scorer.init(emittance3Da, phasePlaneEllipse, gaussianDensity);
 
-					int seconds = ((Integer) fitTime_Spinner.getValue()).intValue();
-					solver = new Solver( SolveStopperFactory.maxElapsedTimeStopper((double) seconds) );
+					final double maxSolveTime = ((Integer)fitTime_Spinner.getValue()).doubleValue();
+					solver = new Solver( SolveStopperFactory.minMaxTimeSatisfactionStopper( 0.5, maxSolveTime, 0.99 ) );
 					problem = makeProblem( gaussianDensity, scorer );
 
 					//perform fitting
@@ -1046,6 +1046,10 @@ class GaussScorer implements Scorer {
 				val_th = gaussianDensity.getDensity(x, xp);
 				sum2 += (val_th - val_exp) * (val_th - val_exp);
 			}
+		}
+
+		if ( Double.isNaN( sum2 ) ) {
+			sum2 = Double.POSITIVE_INFINITY;
 		}
 
 		return sum2;

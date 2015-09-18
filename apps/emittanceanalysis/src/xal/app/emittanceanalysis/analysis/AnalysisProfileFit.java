@@ -414,7 +414,7 @@ class AnalysisProfileFit extends AnalysisBasic {
             gdFitted );
 
         //fitting
-		solver = new Solver( SolveStopperFactory.maxElapsedTimeStopper( 2.0 ) );
+		solver = new Solver( SolveStopperFactory.minMaxTimeSatisfactionStopper( 0.5, 2.0, 0.99 ) );
         solver.solve( problem );
         
         //printing the fitting results
@@ -661,7 +661,7 @@ class ProfileGaussScorer implements Scorer {
             sum2 += diff * diff;
         }
 
-		if ( Double.isNaN(sum2 ) ) {
+		if ( Double.isNaN( sum2 ) ) {
 			sum2 = Double.POSITIVE_INFINITY;
 		}
 
