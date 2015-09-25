@@ -17,7 +17,7 @@ import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 /**
  *  <p>
@@ -340,22 +340,22 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     /**
      *  fit of the TTF vs. beta
      */
-    private UnivariateRealPolynomial fitTTF;
+    private RealUnivariatePolynomial fitTTF;
 
     /**
      *  fit of the TTF-prime vs. beta
      */
-    private UnivariateRealPolynomial fitTTFPrime;
+    private RealUnivariatePolynomial fitTTFPrime;
 
     /**
      *  fit of the S factor vs. beta
      */
-    private UnivariateRealPolynomial fitSTF;
+    private RealUnivariatePolynomial fitSTF;
 
     /**
      *  fit of the S-prime vs. beta
      */
-    private UnivariateRealPolynomial fitSTFPrime;
+    private RealUnivariatePolynomial fitSTFPrime;
     
     
     //
@@ -1721,13 +1721,16 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
 //        double ttf = this.fitTTF.evaluateAt(bi);        // cosine transit time factor
 //        double stf = this.fitSTF.evaluateAt(bi);        // sine transit time factor
-        double ttf = this.T(bi);        // cosine transit time factor
-        double stf = this.S(bi);        // sine transit time factor
+        double T = this.T(bi);        // cosine transit time factor
+        double S = this.S(bi);        // sine transit time factor
+        
+        double Tq = this.Tq(bi);
+        double Sq = this.Sq(bi);
         //
         // TODO CKA - I BELIEVE T and S in the XDXF files are in centimeters!!!!
         //            That is they are dT(b)/dk and dS(b)/dk NEED TO DEAL WITH THIS!!!
 
-        // CKA - Now I believe the object is to compute the mid-gap wave number k_mid
+        // CKA - Now I believe the objective is to compute the mid-gap wave number k_mid
         //       and phase change d_phi. All other gap parameters can be computed
         //       from these values.
 
@@ -1739,7 +1742,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 //          starting energy gain (mid-gap) uses initial phase and beta
         double phi = phi0;
 //        double dW  = qEL*(ttf*Math.cos(phi0) - stf*Math.sin(phi0))/2.0;
-        double dW  = qAEL*( ttf*Math.cos(phi0) - stf*Math.sin(phi0) );
+        double dW  = qAEL*( T*Math.cos(phi0) - S*Math.sin(phi0) );
         
         // CKA - If we are using the standard definition of S(k) it should be negative
         //      double dE_gap = qEL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0; 
@@ -1768,11 +1771,11 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             double db = 0.01*bi;
 //            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
 //            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
-            double dT = (this.T(bi + db) - ttf)/db;
-            double dS = (this.S(bi + db) - stf)/db;
+            double dT = (this.T(bi + db) - T)/db;
+            double dS = (this.S(bi + db) - S)/db;
             System.out.println("IdealRfGap#compEnergyGainIndirect: " + this.getId());
             System.out.println("    phi=" + phi*(180/Math.PI) + ", cos(phi)=" + Math.cos(phi) + ", Acos(phi)=" + A*Math.cos(phi));
-            System.out.println("    T(b)=" + ttf + ", T'=" + d_T + ", S(b)=" + stf + ", S'=" + d_S);
+            System.out.println("    T(b)=" + T + ", T'=" + d_T + ", S(b)=" + S + ", S'=" + d_S);
             System.out.println("    dT/dk=" + d_T*(bi/ki) + ", dS/dk=" + d_S*(bi/ki));
             System.out.println("    Numeric: T'=" + dT + ", S'=" + dS);
             System.out.println("    ki=" + ki);
@@ -1788,10 +1791,10 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             phi = phi0 + d_phi/2.0; 
 //            ttf = this.fitTTF.evaluateAt(b_mid);
 //            stf = this.fitSTF.evaluateAt(b_mid);
-            ttf = this.T(b_mid);
-            stf = this.S(b_mid);
+            T = this.T(b_mid);
+            S = this.S(b_mid);
 
-            dW = qAEL*( ttf*Math.cos(phi) - stf*Math.sin(phi) );
+            dW = qAEL*( T*Math.cos(phi) - S*Math.sin(phi) );
 
             // Now that we have the new mid-gap energy gain we compute the new energy parameters
             W_mid = Wi + dW/2.0;
@@ -1824,7 +1827,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             double  bf = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW, Er);
             double  kf = DBL_2PI /(bf*IElement.LightSpeed/this.getFrequency());
             System.out.println("    kf=" + kf);
-            System.out.println("    Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi)-stf*Math.sin(phi)) + ", dphi=" + d_phi + ", dW=" + dW + ", W=" + Wi+dW);
+            System.out.println("    Tcos(phi)-Ssin(phi)=" + (T*Math.cos(phi)-S*Math.sin(phi)) + ", dphi=" + d_phi + ", dW=" + dW + ", W=" + Wi+dW);
             System.out.println();
             
             this.bolMethodCalled = true;
@@ -2031,11 +2034,11 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * <br/>
          * <br/>
          * &nbsp; &nbsp; <i>T</i>'(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'<sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> 
-         *                                 - <i>S</i>(&beta;) &Delta;<i>z</i> ,
+         *                                 - &Delta;<i>z</i> <i>T</i><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i>,
          * <br/>
          * <br/>
          * where <i>T</i>'<sub>0</sub> is the derivative of the symmetric cosine transit time factor, 
-         * <i>S</i>(&beta;) is the (asymmetric) sine transit time factor, 
+         * <i>T</i><sub>0</sub>(&beta;) is the symmetric cosine transit time factor, 
          * <i>k</i> &trie; 2&pi;/&beta;&lambda; 
          * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
          * symmetry from the origin.
@@ -2043,7 +2046,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * 
          * @param beta      normalized probe velocity
          * 
-         * @return          the derivate of cosine transit time factor w.r.t. velocity &beta;
+         * @return          the derivative of cosine transit time factor w.r.t. velocity &beta;
          *
          * @since  Feb 16, 2015   by Christopher K. Allen
          * @version July 29, 2015: Modified to assume 
@@ -2068,6 +2071,100 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         
         /**
          * <p>
+         * Compute and return the conjugate transit time factor <i>T<sub>q</sub></i>(&beta;) which
+         * includes any gap "offsets", from the given particle velocity.  The value
+         * is computed from the conjugate symmetric transit time factor <i>S</i><sub><i>q</i>,0</sub> which
+         * is evaluated with the coordinate origin at the point of field symmetry.
+         * </p>
+         * <p>
+         * The returned value <i>T<sub>q</sub></i>(&beta;) has the expression
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T<sub>q</sub></i>(&beta;) = -<i>S</i><sub><i>q</i>,0</sub>(&beta;) sin(<i>k</i>&Delta;<i>z</i>) ,
+         * <br/>
+         * <br/>
+         * where <i>S</i><sub><i>q</i>,0</sub> is the conjugate sine transit time factor taken with 
+         * origin at point of field symmetry, <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the transit time factor (conjugate Fourier cosine transform) evaluated at <code>beta</code>
+         *
+         * @since  Sept 23, 2015   by Christopher K. Allen
+         */
+        private double  Tq(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = - this.getGapOffset();
+            double sin = Math.sin(k*dz);
+
+            double Sq0 = this.fitSTF.evaluateAt(beta);
+            double Tq  = -Sq0*sin;
+            
+            return Tq;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the derivative of the conjugate transit time factor 
+         * <i>T<sub>q</sub>'</i>(&beta;) with respect to &beta; including any gap "offsets." 
+         * The value is given by
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T<sub>q</sub></i>'(&beta;) = -<i>S'</i><sub><i>q</i>,0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+         *                                 - &Delta;<i>z</i> <i>S</i><sub><i>q</i>,0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i>,
+         * <br/>
+         * <br/>
+         * where <i>S'</i><sub><i>q</i>,0</sub> is the derivative of the conjugate sine transit time factor
+         * for the symmetric field, 
+         * <i>S</i><sub><i>q</i></sub>(&beta;) is the conjugate sine transit time factor, 
+         * <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * <p>
+         * <h4>NOTE</h4>
+         * &middot;  I am unsure of whether the polynomial stored is for <i>dT<sub>q</sub></i>(&beta;)/<i>d</i>&beta; or for
+         * d<i>T<sub>q</sub></i>(&beta;)/<i>dk</i>.  If it is the former we need <i>d</i>&beta;/<i>dk</i> = -&beta;/<i>k</i> and 
+         * the value of <i>T'<sub>q</sub></i> becomes
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>T<sub>q</sub></i>'(&beta;) = -(-&beta;/<i>k</i>)<i>S</i>'<sub><i>q</i>,0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+         *                                 - &Delta;<i>z</i> <i>S</i><sub><i>q</i>,0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the derivative of conjugate sine transit time factor w.r.t. velocity &beta; or wave number <i>k</i> (unknown)
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         * @version July 29, 2015: Modified to assume <code>fitTTFPrime</code> = <i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
+         *          <br/>
+         *          Sept 23, 2015: Modified to assume <code>fitSTF</code> actually contains <i>S<sub>q</i></sub>(&beta;)
+         */
+        private double  Tqp(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = - this.getGapOffset();
+            double cos = Math.cos(k*dz);
+            double sin = Math.sin(k*dz);
+            
+//            double T0p = this.fitTTF.derivativeAt(beta);
+//            double S   = this.S(beta);
+//            double Tp  = (-beta/k)*T0p*cos - S*dz;
+            
+            double Sq0p = this.fitSTFPrime.evaluateAt(beta);
+            double Sq0  = this.fitSTF.evaluateAt(beta);
+            double Tqp  = -Sq0p*sin - Sq0*dz*cos;
+            
+            return Tqp;
+        }
+        
+        /**
+         * <p>
          * Compute and return the standard transit time factor <i>S</i>(&beta;) which
          * includes any gap "offsets", from the given particle velocity.  The value
          * is computed from the symmetric transit time factor <i>S</i><sub>0</sub> which
@@ -2077,7 +2174,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * The returned value <i>S</i>(&beta;) has the expression
          * <br/>
          * <br/>
-         * &nbsp; &nbsp; <i>T</i>(&beta;) = <i>T</i><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> ,
+         * &nbsp; &nbsp; <i>S</i>(&beta;) = <i>T</i><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> ,
          * <br/>
          * <br/>
          * where <i>T</i><sub>0</sub> is the cosine transit time factor taken with 
@@ -2111,8 +2208,8 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * The value is given by
          * <br/>
          * <br/>
-         * &nbsp; &nbsp; <i>S</i>'(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'<sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
-         *                                 + <i>T</i>(&beta;) &Delta;<i>z</i> ,
+         * &nbsp; &nbsp; <i>S</i>'(&beta;) = <i>T</i>'<sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+         *                                 + &Delta;<i>z</i> <i>T</i><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i>,
          * <br/>
          * <br/>
          * where <i>T</i>'<sub>0</sub> is the derivative of the symmetric cosine transit time factor, 
@@ -2121,6 +2218,17 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
          * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
          * symmetry from the origin.
          * </p>
+         * <p>
+         * <h4>NOTE</h4>
+         * &middot; I am unsure whether or not the approximation for <i>dS</i>(&beta;)/<i>dk</i> or 
+         * <i>dS</i>(&beta)/<i>d</i>&beta; is stored.  If it is the later then the returned value should be
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>S</i>'(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'<sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+         *                                 + &Delta;<i>z</i> <i>T</i><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i>,
+         * <br/>
+         * <br/>
+         * </p> 
          * 
          * @param beta      normalized probe velocity
          * 
@@ -2139,11 +2247,103 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 //            double T   = this.T(beta);
 //            double Tp  = (-beta/k)*T0p*sin + T*dz;
             
-            double T0p = this.fitSTFPrime.evaluateAt(beta);
+            double T0p = this.fitTTFPrime.evaluateAt(beta);
             double T0  = this.fitTTF.evaluateAt(beta);
             double Tp  = T0p*sin + T0*dz*cos;
             
             return Tp;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the conjugate transit time factor <i>S<sub>q</sub></i>(&beta;) which
+         * includes any gap "offsets", from the given particle velocity.  The value
+         * is computed from the transit time factor <i>S</i><sub><i>q</i>,0</sub> for the 
+         * symmetric field .
+         * </p>
+         * <p>
+         * The returned value <i>S<sub>q</sub></i>(&beta;) has the expression
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>S<sub>q</sub></i>(&beta;) = <i>S</i><sub><i>q</i>,0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>S</i><sub><i>q</i>,0</sub> is the conjugate sine transit time factor taken with 
+         * origin at point of field symmetry, <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin. Note that the transit time factor <i>T</i><sub><i>q</i>,0</sub>
+         * is zero since it is taken about the point of field symmetric.
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          conjugate transit time factor <i>S</i><sub><i>q</i></sub> evaluated at <code>beta</code>
+         *
+         * @since  Sep 23, 2015   by Christopher K. Allen
+         */
+        private double  Sq(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = - this.getGapOffset();
+            double cos = Math.cos(k*dz);
+
+            double Sq0  = this.fitSTF.evaluateAt(beta);
+            double Sq   = Sq0*cos;
+            
+            return Sq;
+        }
+        
+        /**
+         * <p>
+         * Compute and return the derivative of the conjugate transit time factor 
+         * <i>S<sub>q</sub></i>(&beta;) with respect to <i>k</i> (or &beta; ?) 
+         * including any gap "offsets." That is, compute the value <i>S'</i><sub><i>q</i></sub>(&beta;).
+         * The value is given by
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>S'<sub>q</sub></i>(&beta;) = <i>S'</i><sub><i>q</i>,0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> 
+         *                                 - &Delta;<i>z</i> <i>S</i><sub><i>q</i>,0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * where <i>S</i>'<sub><i>q</i>,0</sub> is the derivative of the conjugate sine transit time factor, 
+         * <i>k</i> &trie; 2&pi;/&beta;&lambda; 
+         * is the wave number, and &Delta;<i>z</i> is the offset of the point of field
+         * symmetry from the origin.
+         * </p>
+         * <p>
+         * <h4>NOTE</h4>
+         * &middot;  I am unsure of whether the polynomial stored is for <i>dS<sub>q</sub></i>(&beta;)/<i>d</i>&beta; or for
+         * d<i>S<sub>q</sub></i>(&beta;)/<i>dk</i>.  If it is the former we need <i>d</i>&beta;/<i>dk</i> = -&beta;/<i>k</i> and 
+         * the value of <i>S'<sub>q</sub></i> becomes
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>S'<sub>q</sub></i>(&beta;) = (-&beta;/<i>k</i>)<i>S</i>'<sub><i>q</i>,0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> 
+         *                                 - &Delta;<i>z</i> <i>S</i><sub><i>q</i>,0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> ,
+         * <br/>
+         * <br/>
+         * </p>
+         * 
+         * @param beta      normalized probe velocity
+         * 
+         * @return          the derivative of sine transit time factor w.r.t. velocity &beta;
+         *
+         * @since  Feb 16, 2015   by Christopher K. Allen
+         * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
+         */
+        private double  Sqp(double beta) {
+            double k   = this.waveNumber(beta);
+            double dz  = - this.getGapOffset();
+            double sin = Math.sin(k*dz);
+            double cos = Math.cos(k*dz);
+            
+//            double T0p = this.fitTTF.derivativeAt(beta);
+//            double T   = this.T(beta);
+//            double Tp  = (-beta/k)*T0p*sin + T*dz;
+            
+            double Sq0p = this.fitSTFPrime.evaluateAt(beta);
+            double Sq0  = this.fitSTF.evaluateAt(beta);
+            double Sqp  = Sq0p*cos - Sq0*dz*sin;
+            
+            return Sqp;
         }
         
         /**
@@ -2170,6 +2370,208 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
             return k;
         }
+        
+        
+        /*
+         * STORAGE
+         */
+        
+        
+        /**
+         * <p>
+         * Computes and returns the longitudinal phase change &delta;&phi; energy 
+         * gain &Delta;<i>W</i> through 
+         * the gap due to acceleration.  Although this is a thin lens the longitudinal
+         * phase must have a impulsive change symplectically conjugate to the change
+         * &Delta;<i>W</i> in longitudinal energy. 
+         * </p>
+         * <p>
+         * The calculation is done using a fixed-point search on formulas for the gap
+         * phase change &delta;&phi; and energy gain &Delta;<i>W</i> which are taking
+         * from Lapostolle and Weiss's <i>Formulae for Linear Accelerators</i> 
+         * CERN PS-2000-01. 
+         * </p>
+         * <p>
+         * <h4>CKA NOTES</h4>
+         * &middot; The strategy is to compute the mid-gap velocity &beta;<i><sub>mid</sub></i>
+         * and phase change &delta;&phi;<i><sub>mid</sub></i>. All other gap parameters can be computed
+         * from these values.
+         * <br/>
+         * <br/>
+         * &middot; We start with the phase of the probe at the entrance of the gap, call
+         * it &phi;<sub>0</sub>, see <code>{@link #compGapEntrancePhase(IProbe)}</code>.
+         * Then all the initial parameters for the loop,
+         * i.e., &Delta;<i>W</i><sub>0</sub>, &beta;<sub>0</sub>, <i>T</i>(&beta;<sub>0</sub>),
+         * <i>S</i>(&beta;<sub>0</sub>), etc., are computed from that value.
+         * <br/>
+         * <br/>
+         * &middot; The values are computed with the (maybe naive) assumption that the mid-gap
+         * phase change &delta;&phi;<i><sub>mid</sub></i> is equal to half the total
+         * gap phase change &delta;&phi;, or &delta;&phi;<i><sub>mid</sub></i> = &delta;&phi;/2.
+         * <br/>
+         * <br/>
+         * &middot; We also assume (perhaps more accurately) that the mid-gap energy gain
+         * &Delta;<i>W</i><sub><i>mid</i></sub> is half the total energy gain &Delta;<i>W</i>,
+         * or &Delta;<i>W</i><sub><i>mid</i></sub> = &Delta;<i>W</i>/2.
+         * <br/>
+         * <br/>
+         * &middot; I am avoiding the use of <code>fitTTFprime</code> and <code>fitSTFPrime</code>
+         * because I do not know what values they represent.  That is, are they 
+         * <i>dT</i>(&beta;)</i>/<i>d</i>&beta; or <i>dT</i>(&beta;)/<i>dk</i>?
+         * </p>
+         * 
+         * @param probe     probe propagating through gap, we use its phase and energy parameters
+         * 
+         * @return          the change in phase &delta;&phi; and energy &Delta; <i>W</i> of the 
+         *                  give probe through the gap 
+         *
+         * @author Christopher K. Allen
+         * @since  Nov 26, 2014
+         */
+        private EnergyVariables compGapPhaseAndEnergyGainIndirect_ThePreviousWay(IProbe probe) {
+
+            // Initial probe parameters
+            double Q  = Math.abs(probe.getSpeciesCharge());
+            double Er = probe.getSpeciesRestEnergy();       
+            double bi = probe.getBeta();
+            double Wi = probe.getKineticEnergy();
+
+            //
+            //  IMPORTANT!!!!
+            //
+            //  TODO: We need to check that the probe is giving the correct phase here.
+            //        The phase must be set with respect to the first gap 
+            //
+            double phi0 = this.compGapEntrancePhase(probe); // phase at gap "electrical" entrance
+
+            // phase change from center correction factor for future time calculations
+            // in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
+            //  CKA - I will try to eliminate these quantities because I cannot
+            //        determine that they are correct
+            //        double ttf_prime = 0.01*this.fitTTFPrime.evaluateAt(bi);
+            //        double stf_prime = 0.01*this.fitSTFPrime.evaluateAt(bi);
+
+            // Gap parameters
+            double E0   = this.getE0();
+            double A    = this.compCavModeFieldCoeff();
+            double L    = this.getGapLength();
+            double qAEL = Q * A * E0 * L;
+
+//            double ttf = this.fitTTF.evaluateAt(bi);        // cosine transit time factor
+//            double stf = this.fitSTF.evaluateAt(bi);        // sine transit time factor
+            double ttf = this.T(bi);        // cosine transit time factor
+            double stf = this.S(bi);        // sine transit time factor
+            //
+            // TODO CKA - I BELIEVE T and S in the XDXF files are in centimeters!!!!
+            //            That is they are dT(b)/dk and dS(b)/dk NEED TO DEAL WITH THIS!!!
+
+            // CKA - Now I believe the object is to compute the mid-gap wave number k_mid
+            //       and phase change d_phi. All other gap parameters can be computed
+            //       from these values.
+
+            // Initialize the search 
+            //
+
+            // Starting phase is the phase at gap entrance and
+            //  starting energy gain  uses initial phase and beta
+//              starting energy gain (mid-gap) uses initial phase and beta
+            double phi = phi0;
+//            double dW  = qEL*(ttf*Math.cos(phi0) - stf*Math.sin(phi0))/2.0;
+            double dW  = qAEL*( ttf*Math.cos(phi0) - stf*Math.sin(phi0) );
+            
+            // CKA - If we are using the standard definition of S(k) it should be negative
+            //      double dE_gap = qEL*(ttf*Math.cos(phi0) + stf*Math.sin(phi0))/2.0; 
+
+            double W_mid = Wi + dW/2.0; 
+            double g_mid = W_mid/Er + 1.0;
+            double b_mid = Math.sqrt(1.0 - 1.0/(g_mid*g_mid));
+
+            double r_mid = (1.0/(b_mid*b_mid*g_mid*g_mid*g_mid)); // relativistic effects (energy)
+
+            // The derivative dT(k)/dk occures in Lapostolle's formula, we have T(b)
+            //  Thus, we must use dT(k)/dk = db(k)/dk dT[b(k)]/db = -(b/k)T'(b)
+//            double d_T   = this.fitTTF.derivativeAt(b_mid);
+//            double d_S   = this.fitSTF.derivativeAt(b_mid);
+            double d_T   = this.Tp(b_mid);
+            double d_S   = this.Sp(b_mid);
+            double d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
+            
+            // TODO Remove this
+            double k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
+            double d_phi_new = -(qAEL/Er)*r_mid*k_mid*(this.getGapOffset() - this.getGapLength()/2.0);
+
+            // TODO Remove type out
+            if (!this.bolMethodCalled) {
+                double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
+                double db = 0.01*bi;
+//                double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
+//                double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+                double dT = (this.T(bi + db) - ttf)/db;
+                double dS = (this.S(bi + db) - stf)/db;
+                System.out.println("IdealRfGap#compEnergyGainIndirect: " + this.getId());
+                System.out.println("    phi=" + phi*(180/Math.PI) + ", cos(phi)=" + Math.cos(phi) + ", Acos(phi)=" + A*Math.cos(phi));
+                System.out.println("    T(b)=" + ttf + ", T'=" + d_T + ", S(b)=" + stf + ", S'=" + d_S);
+                System.out.println("    dT/dk=" + d_T*(bi/ki) + ", dS/dk=" + d_S*(bi/ki));
+                System.out.println("    Numeric: T'=" + dT + ", S'=" + dS);
+                System.out.println("    ki=" + ki);
+            }
+
+            // Initialize serach variables
+            int         cntIter   = 0;
+            double      dblCnvErr = 10.0 * DBL_PHASECALC_CNVERR;
+            while ( dblCnvErr > DBL_PHASECALC_CNVERR && cntIter < INT_PHASECALC_MAXITER) {
+
+                // Use the newly computed transit time factors and mid gap phase
+                //  We use the previous mid-gap beta as an approximation
+                phi = phi0 + d_phi/2.0; 
+//                ttf = this.fitTTF.evaluateAt(b_mid);
+//                stf = this.fitSTF.evaluateAt(b_mid);
+                ttf = this.T(b_mid);
+                stf = this.S(b_mid);
+
+                dW = qAEL*( ttf*Math.cos(phi) - stf*Math.sin(phi) );
+
+                // Now that we have the new mid-gap energy gain we compute the new energy parameters
+                W_mid = Wi + dW/2.0;
+                g_mid = W_mid/Er + 1.0;
+                b_mid = Math.sqrt(1.0 - 1.0/(g_mid*g_mid));
+
+                r_mid = (1/(b_mid*b_mid*g_mid*g_mid*g_mid)); // relativistic effects (energy)
+
+                // Update the value for phase change to the gap center
+//                d_T   = this.fitTTF.derivativeAt(b_mid);
+//                d_S   = this.fitSTF.derivativeAt(b_mid);
+                d_T   = this.Tp(b_mid);
+                d_S   = this.Sp(b_mid);
+                
+                d_phi = -(qAEL/Er)*r_mid*b_mid*( d_T*Math.sin(phi) - d_S*Math.cos(phi) );
+
+                // TODO Remove type outs
+                if (!this.bolMethodCalled) 
+                    System.out.println("    iter#" + cntIter + ": b_mid=" + b_mid + ", d_phi=" + d_phi + ", dW=" + dW);
+                
+                dblCnvErr = Math.abs( d_phi - 2.0*(phi - phi0) );
+                cntIter++;
+            }
+
+            if (dblCnvErr > DBL_PHASECALC_CNVERR) 
+                System.err.println("WARNING! IdealRfGap#compGapPhaseChange() did not converge for element " + this.getId());
+
+            // TODO Remove type out
+            if (!this.bolMethodCalled) {
+                double  bf = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW, Er);
+                double  kf = DBL_2PI /(bf*IElement.LightSpeed/this.getFrequency());
+                System.out.println("    kf=" + kf);
+                System.out.println("    Tcos(phi)-Ssin(phi)=" + (ttf*Math.cos(phi)-stf*Math.sin(phi)) + ", dphi=" + d_phi + ", dW=" + dW + ", W=" + Wi+dW);
+                System.out.println();
+                
+                this.bolMethodCalled = true;
+            }
+            
+            return new EnergyVariables(d_phi, dW);
+        }
+
+        
         
 //    /**
 //     *  <p> 

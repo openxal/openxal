@@ -8,7 +8,7 @@ import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.RfCavityBucket;
 import xal.smf.attr.RfGapBucket;
 import xal.smf.impl.qualify.ElementTypeManager;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 
 /**
@@ -338,7 +338,7 @@ public class RfGap extends AcceleratorNode {
     * </p>
     * 
     */  
-    public UnivariateRealPolynomial getTTFFit() { 
+    public RealUnivariatePolynomial getTTFFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
 	if(isEndCell()) {
 		return rfCav.getTTFFitEnd();
@@ -372,7 +372,7 @@ public class RfGap extends AcceleratorNode {
      * </p>
      * 
      */  
-    public UnivariateRealPolynomial getTTFPrimeFit() { 
+    public RealUnivariatePolynomial getTTFPrimeFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
         if (isEndCell())
             return rfCav.getTTFPrimeFitEnd();
@@ -400,7 +400,7 @@ public class RfGap extends AcceleratorNode {
      * </p>
      * 
      */  
-    public UnivariateRealPolynomial getSFit() { 
+    public RealUnivariatePolynomial getSFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
         if (isEndCell())
             return rfCav.getSTFFitEnd();
@@ -428,7 +428,7 @@ public class RfGap extends AcceleratorNode {
      * </p>
      * 
      */  
-    public UnivariateRealPolynomial getSPrimeFit() { 
+    public RealUnivariatePolynomial getSPrimeFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
         if (isEndCell()) 
             return rfCav.getSTFPrimeFitEnd();
