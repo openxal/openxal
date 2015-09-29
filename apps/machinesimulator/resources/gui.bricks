@@ -14,7 +14,7 @@
                     </ViewNode>
                     <ViewNode tag="Phase Slip Checkbox">
                         <ViewProxy type="javax.swing.JCheckBox"/>
-                        <BeanProperty name="selected" value="true"/>
+                        <BeanProperty name="selected" value="false"/>
                         <BeanProperty name="text" value="Calculate Phase Slip"/>
                         <BeanProperty name="toolTipText" value="Perform the full RF gap phase slip calculation"/>
                     </ViewNode>
@@ -73,7 +73,7 @@
                                     <BeanProperty name="selected" value="true"/>
                                     <BeanProperty name="text" value="Y"/>
                                     <BeanProperty name="toolTipText" value="Display Vertical Component"/>
-                                </ViewNode>
+                                </ViewNode>	
                                 <ViewNode tag="Z Selection Checkbox">
                                     <ViewProxy type="javax.swing.JCheckBox"/>
                                     <BeanProperty name="selected" value="true"/>
@@ -138,6 +138,96 @@
                     <ViewNode tag="States Plot View">
                         <ViewProxy type="javax.swing.Box_Vertical"/>
                         <BeanProperty name="name" value="States Plot"/>
+                        <ViewNode tag="Table Filter Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                            </ViewNode>
+                            <ViewNode tag="Scalar Parameter Selection Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Scalars"/>
+                                </BorderNode>
+                                <ViewNode tag="Kinetic Energy Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="text" value="Kinetic Energy"/>
+                                    <BeanProperty name="toolTipText" value="Display Kinetic Energy"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Plane Selection Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Plane"/>
+                                </BorderNode>
+                                <ViewNode tag="X Selection Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="text" value="X"/>
+                                    <BeanProperty name="toolTipText" value="Display Horizontal Component"/>
+                                </ViewNode>
+                                <ViewNode tag="Y Selection Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="text" value="Y"/>
+                                    <BeanProperty name="toolTipText" value="Display Vertical Component"/>
+                                </ViewNode>	
+                                <ViewNode tag="Z Selection Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="text" value="Z"/>
+                                    <BeanProperty name="toolTipText" value="Display Longitudinal Component"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Vector Parameter Selection Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Vector Parameters"/>
+                                </BorderNode>
+                                <ViewNode tag="Beta Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;beta;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Beta Function"/>
+                                </ViewNode>
+                                <ViewNode tag="Alpha Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;alpha;&lt;/html>"/>
+                                    <BeanProperty name="toolTipText" value="Display the Twiss Alpha"/>
+                                </ViewNode>
+                                <ViewNode tag="Gamma Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;gamma;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Twiss Gamma"/>
+                                </ViewNode>
+                                <ViewNode tag="Emittance Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;epsilon;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Emittance"/>
+                                </ViewNode>
+                                <ViewNode tag="Beam Size Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;sigma;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Envelope Radius"/>
+                                </ViewNode>
+                                <ViewNode tag="Betatron Phase Checkbox">
+                                    <ViewProxy type="javax.swing.JCheckBox"/>
+                                    <BeanProperty name="text" value="&lt;html>&amp;phi;&lt;/html>"/>
+                                    <BeanProperty name="selected" value="true"/>
+                                    <BeanProperty name="toolTipText" value="Display the Betatron Phase"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                            </ViewNode>
+                        </ViewNode>
                         <ViewNode tag="States Plot">
                             <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         </ViewNode>
