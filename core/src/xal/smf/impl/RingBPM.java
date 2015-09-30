@@ -159,12 +159,22 @@ public class RingBPM extends BPM {
 
 	private Channel stage4MethodRBC = null;
 
+
 	/**
 	 * RingBPM constructor.
 	 */
-	public RingBPM(String strId) {
-		super(strId);
+	public RingBPM( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
 	}
+
+
+	/**
+	 * RingBPM constructor.
+	 */
+	public RingBPM( final String strId ) {
+		this( strId, null );
+	}
+
 
 	static {
 		registerType();
@@ -178,9 +188,7 @@ public class RingBPM extends BPM {
 	 * @see #isKindOf
 	 */
 	private static void registerType() {
-		ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-		typeManager.registerType(RingBPM.class, s_strType);
-		typeManager.registerType(RingBPM.class, "BPM");
+		ElementTypeManager.defaultManager().registerTypes( RingBPM.class, s_strType, "BPM" );
 	}
 
 	/**

@@ -14,16 +14,12 @@ import xal.smf.impl.qualify.*;
  * 
  * @author  J. Galambos (jdg@ornl.gov)
  */
-
 public class NeutronDetector extends BLM {
-      
-    /*
-     *  Constants
-     */
-    
-    public static final String      s_strType   = "ND";
+	/** standard type for instances of this class */
+    public static final String s_strType   = "ND";
   
 
+	// static initialization
     static {
         registerType();
     }
@@ -38,26 +34,20 @@ public class NeutronDetector extends BLM {
     }
 
 
-    /*
-     *  Local Attributes
-     */
-        
-    
-    
     /** Override to provide type signature */
-    public String getType()   { return s_strType; };
+    public String getType()   { return s_strType; }
   
-  
-  
-    /*
-     *  User Interface
-     */
-    
-    
-    public NeutronDetector(String strId)     { 
-        super(strId); 
+
+	/** Constructor */
+    public NeutronDetector( final String strId, final ChannelFactory channelFactory ) {
+        super( strId, channelFactory );
         
-    };
+    }
 
 
+	/** Constructor */
+	public NeutronDetector( final String strId ) {
+		this( strId, null );
+
+	}
 }

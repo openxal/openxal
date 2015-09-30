@@ -40,19 +40,26 @@ public class ChannelSuite implements DataListener {
     final private SignalSuite SIGNAL_SUITE;
     
     
-    /** Creates a new instance of ChannelSuite */
+    /** Creates a new instance of ChannelSuite using the default channel factory */
     public ChannelSuite() {
-		this( ChannelFactory.defaultFactory() );
+		this( null );
     }
 	
 	
 	/**
 	 * Primary constructor for creating an instance of channel suite
+	 * @param channelFactory channel factory (or null for default factory) for generating channels
 	 */
 	public ChannelSuite( final ChannelFactory channelFactory ) {
-		CHANNEL_FACTORY = channelFactory;
+		CHANNEL_FACTORY = channelFactory != null ? channelFactory : ChannelFactory.defaultFactory();
         CHANNEL_HANDLE_MAP = new HashMap<String,Channel>();
         SIGNAL_SUITE = new SignalSuite();
+	}
+
+
+	/** get the channel factory */
+	public ChannelFactory getChannelFactory() {
+		return CHANNEL_FACTORY;
 	}
     
     

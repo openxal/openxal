@@ -15,55 +15,38 @@ import xal.ca.*;
  */
 
 public class HDipoleCorr extends Dipole {
+	/** standard type for nodes of this class */
+    public static final String s_strType   = "DCH";
   
-    
-    /*
-     *  Constants
-     */
-    
-    public static final String      s_strType   = "DCH";
 
-  
-    
+	// static initialization
     static {
         registerType();
     }
 
     
-    /*
+    /**
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( HDipoleCorr.class, s_strType );
-        typeManager.registerType( HDipoleCorr.class, "horzcorr" );
-        typeManager.registerType( HDipoleCorr.class, "hcorr" );
+		ElementTypeManager.defaultManager().registerTypes( HDipoleCorr.class, s_strType, "horzcorr", "hcorr" );
     }
- 
-    
-    /*
-     *  Local Attributes
-     */
-    
-    
-//    static  {
-//        AcceleratorNodeFactory.registerClass(s_strType, HDipoleCorr.class);
-//    };
-    
-    
-    /** Override to provide type signature */
-    public String getType()   { return s_strType; };
 
     
-    /*
-     *  User Interface
-     */
-        
-    
-    public HDipoleCorr(String strId)     { 
-        super(strId); 
-        
-    };
+    /** Override to provide type signature */
+    public String getType()   { return s_strType; }
+
+
+	/** Primary Constructor */
+	public HDipoleCorr( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
+
+	/** Constructor */
+    public HDipoleCorr( final String strId )     {
+        this( strId, null );
+    }
     
     
     /**
@@ -83,5 +66,5 @@ public class HDipoleCorr extends Dipole {
     public boolean isCorrector() {
         return true;
     }
-};
+}
 

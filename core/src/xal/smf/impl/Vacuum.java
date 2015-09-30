@@ -14,19 +14,17 @@ import xal.ca.*;
  */
 
 public abstract class Vacuum extends AcceleratorNode  {
-  
-    
+	// static initializer
     static {
         registerType();
     }
     
-   /*
-     *  Constants
-     */
-    
+
+	/** Standard type for instances of this class */
     public static final String      s_strType   = "vacuum";
-    
-    /*
+
+
+    /**
      * Register type for qualification
      */
     private static void registerType() {
@@ -42,38 +40,35 @@ public abstract class Vacuum extends AcceleratorNode  {
     public static final String PRESS_HANDLE = "P";
     private Channel pressC = null;
 
+
     /** Override to provide type signature */
     public String getType()   { return s_strType; };
-      
- 
-    /*
-     *  Local Attributes
-     */
 
 
-    /*
-     *  User Interface
-     */
+	/** Primary Constructor */
+	public Vacuum( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
 
-    public Vacuum(String strId)     { 
-        super(strId); 
-        
+
+	/** Constructor */
+    public Vacuum( final String strId )     {
+        this( strId, null );
     }
 
     
     public boolean isVacuum() {
         return true;
     }
-    
+
+
     /**
      * returns pressure (Torr)    
      */
-
     public double   getPressure()  throws ConnectionException, GetException {
-	pressC = lazilyGetAndConnect(PRESS_HANDLE, pressC);
-	return pressC.getValDbl();
+		pressC = lazilyGetAndConnect(PRESS_HANDLE, pressC);
+		return pressC.getValDbl();
     }
-
 }
 
 
