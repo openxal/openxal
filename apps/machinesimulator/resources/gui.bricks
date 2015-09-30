@@ -140,9 +140,6 @@
                         <BeanProperty name="name" value="States Plot"/>
                         <ViewNode tag="Table Filter Box">
                             <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
-                            </ViewNode>
                             <ViewNode tag="Scalar Parameter Selection Box">
                                 <ViewProxy type="javax.swing.Box_Horizontal"/>
                                 <BorderNode tag="Titled Border">

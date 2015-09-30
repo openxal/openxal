@@ -47,6 +47,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     /** Empty Constructor */
     public MachineSimulatorDocument() {
         this( null );
+        System.out.println("in MachineSimulatorDocument 1");
     }
     
     
@@ -56,8 +57,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
      */
     public MachineSimulatorDocument( final java.net.URL url ) {
         setSource( url );
+        System.out.println("in MachineSimulatorDocument 2");
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
+		System.out.println("in MachineSimulatorDocument 3");
         
 //        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
         STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
@@ -71,7 +74,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             update( documentAdaptor.childAdaptor( dataLabel() ) );
         }		
 		
-		configureWindow( WINDOW_REFERENCE );		
+	//	configureWindow( WINDOW_REFERENCE );		
 		
 		setHasChanges( false );
     }
@@ -84,7 +87,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     }
     
     
-    /** configure the main window */
+    /** configure the main window 
     private void configureWindow( final WindowReference windowReference ) {
         STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "probeState.kineticEnergy" );
 
@@ -235,7 +238,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     }
     
     
-    /**
+    
      * Save the document to the specified URL.
      * @param url The URL to which the document should be saved.
      */

@@ -73,6 +73,7 @@ abstract public class XalDocument extends XalAbstractDocument {
 	
 	/** Get the window reference from the resource if any */
 	static public WindowReference getDefaultWindowReference( final String tag, final Object... parameters ) {
+		System.out.println("in XalDocument getDefaul");
 		return Application.getAdaptor().getDefaultWindowReference( tag, parameters );
 	}
 	

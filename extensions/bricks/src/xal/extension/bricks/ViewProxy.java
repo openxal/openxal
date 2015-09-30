@@ -41,6 +41,7 @@ abstract public class ViewProxy<ViewType extends Component> extends BeanProxy<Vi
 	
 	/** generator */
 	static public ViewProxy<?> getInstance( final DataAdaptor adaptor ) {
+		System.out.println("in ViewProxy befroe ViewProxyFactory");
 		return ViewProxyFactory.getViewProxy( adaptor.stringValue( "type" ) );
 	}
 	

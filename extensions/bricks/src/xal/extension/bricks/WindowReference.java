@@ -39,6 +39,7 @@ public class WindowReference {
 	
 	/** Constructor */
 	public WindowReference( final URL url, final String tag, Object... windowParameters ) {
+		System.out.println("in WindowReference constructor");
 		CONTEXT = new BricksContext( url );
 		VIEW_TABLE = new HashMap<String,List<Object>>();
 		WINDOW = loadWindow( url, tag, windowParameters );
@@ -86,6 +87,7 @@ public class WindowReference {
 	
 	/** load the window from the resource */
 	protected Window loadWindow( final URL url, final String tag, final Object[] windowParameters ) {
+		System.out.println("in WindowReference loadWindow");
 		final DataAdaptor windowAdaptor = getWindowAdaptor( url, tag );
 		if ( windowAdaptor != null ) {
 			final Window window = (Window)getView( windowAdaptor, windowParameters );
@@ -126,6 +128,7 @@ public class WindowReference {
     @SuppressWarnings( { "unchecked", "rawtypes" } )
 	protected Component getView( final DataAdaptor adaptor, final Object... viewParameters ) {
 		final DataAdaptor proxyAdaptor = adaptor.childAdaptor( ViewProxy.DATA_LABEL );
+		System.out.println("in the Windworeference getView");
 		final ViewProxy viewProxy = ViewProxy.getInstance( proxyAdaptor );
 		final String tag = adaptor.stringValue( "tag" );
 		

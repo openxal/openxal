@@ -472,7 +472,8 @@ public class ViewProxyFactory {
 		return new ViewProxy<FunctionGraphsJPanel>( FunctionGraphsJPanel.class, false, false ) {
 			/** Create an instance of the specified view */
 			public void setup( final FunctionGraphsJPanel plot ) {
-				plot.setName( "Demo" );
+				System.out.println("in ViewProxyFactory setup before Demolu");
+				plot.setName( "Demolu" );
 				plot.setAxisNameX( "x" );
 				plot.setAxisNameY( "y" );
 				plot.setNumberFormatX( new DecimalFormat( "0.00E0" ) );
