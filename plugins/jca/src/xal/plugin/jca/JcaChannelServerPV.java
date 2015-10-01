@@ -15,6 +15,7 @@ import com.cosylab.epics.caj.cas.util.MemoryProcessVariable;
  * Concrete JcaChannelServerPV wraps MemoryProcessVariable
  * @author  tap
  */
+@Deprecated
 public class JcaChannelServerPV extends ChannelServerPV {
 	/** native process variable wrapped by this instance */
 	final private MemoryProcessVariable NATIVE_PROCESS_VARIABLE;
