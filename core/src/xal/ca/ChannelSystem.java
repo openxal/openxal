@@ -32,6 +32,7 @@ abstract public class ChannelSystem {
 	 * @return new channel server
 	 * @throws java.lang.Exception as appropriate
 	 */
+	@Deprecated
 	abstract public ChannelServer newChannelServer() throws Exception;
 	
 	
