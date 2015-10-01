@@ -53,6 +53,7 @@ class JcaSystem extends ChannelSystem {
 
 
 	/** Create a new channel server */
+	@Deprecated
 	public JcaChannelServer newChannelServer() throws Exception {
 		return new JcaChannelServer();
 	}
