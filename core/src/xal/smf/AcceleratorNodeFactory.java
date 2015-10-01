@@ -64,12 +64,12 @@ public final class AcceleratorNodeFactory {
 	 *  @param  nodeType    fully qualified node type (e.g. deviceType.softType)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
-	@SuppressWarnings( "rawtypes" )
     private <T extends AcceleratorNode> void registerNodeClass( final String nodeType, final Class<T> nodeClass )   {
         _classTable.put( nodeType, nodeClass );
 		
         try {
-            final Constructor<T> constructor = nodeClass.getConstructor( new Class[] { String.class } );
+			@SuppressWarnings( "rawtypes" )
+            final Constructor<T> constructor = nodeClass.getConstructor( new Class[] { String.class, ChannelFactory.class } );
             _constructors.put( nodeType, constructor );
         }
 		catch ( NoSuchMethodException exception ) {
@@ -96,15 +96,14 @@ public final class AcceleratorNodeFactory {
 			final String message = "Unknown AcceleratorNode type : \"" + nodeType + "\" for ID: " + nodeID + ".  Will substitute a GenericNode!";
             System.err.println( message );
 			Logger.getLogger("global").log( Level.WARNING, message );
-			//TODO: need to account for custom channel factory
-            final AcceleratorNode node = new GenericNode( nodeType, nodeID );
+            final AcceleratorNode node = new GenericNode( nodeType, nodeID, CHANNEL_FACTORY );
             _classTable.put( nodeType, GenericNode.class );
             return node;
         }
         
         final Constructor<?> constructor = _constructors.get( nodeType );
 		//TODO: need to account for custom channel factory
-        final Object[] args = new Object[] { nodeID };
+        final Object[] args = new Object[] { nodeID, CHANNEL_FACTORY };
         
         try {
             return (AcceleratorNode)constructor.newInstance( args );
