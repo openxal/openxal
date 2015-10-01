@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
@@ -72,9 +73,22 @@ public class RfCavity extends AcceleratorSeq {
     static {
         registerType();
     }
-    
-	
-    /** Constructor */    
+
+
+	/** Primary Constructor */
+	public RfCavity( final String strId, final ChannelFactory channelFactory, final int intReserve ) {
+		super( strId, channelFactory, intReserve );
+		setRfField( new RfCavityBucket() );
+	}
+
+
+	/** Constructor */
+	public RfCavity( final String strId, final ChannelFactory channelFactory ) {
+		this( strId, channelFactory, 0 );
+	}
+
+
+    /** Constructor */
     public RfCavity( final String strId ) {
         this( strId, 0 );
     }
@@ -82,16 +96,13 @@ public class RfCavity extends AcceleratorSeq {
     
     /** Constructor */    
     public RfCavity( final String strId, final int intReserve ) {
-        super( strId, intReserve );
-        setRfField( new RfCavityBucket() );
+        this( strId, null, intReserve );
     }
 	
     
     /** Register accelerator node type for qualification */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( RfCavity.class, s_strType );
-        typeManager.registerType( RfCavity.class, "rfcavity" );
+        ElementTypeManager.defaultManager().registerTypes( RfCavity.class, s_strType, "rfcavity" );
     }
     
     

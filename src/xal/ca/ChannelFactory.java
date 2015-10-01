@@ -148,8 +148,26 @@ abstract public class ChannelFactory {
 			throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
 		}
     }
-    
-    
+
+	
+	/**
+	 * Instantiate a new server ChannelFactory
+	 * @return a new server channel factory
+	 */
+	public static ChannelFactory newServerFactory() {
+		try {
+			// effectively returns ChannelFactoryPlugin.getServerChannelFactoryInstance()
+			final Class<?> pluginClass = Class.forName( "xal.ca.ChannelFactoryPlugin" );
+			final Method creatorMethod = pluginClass.getMethod( "getServerChannelFactoryInstance" );
+			return (ChannelFactory)creatorMethod.invoke( null );
+		}
+		catch( Exception exception ) {
+			exception.printStackTrace();
+			throw new RuntimeException( "Failed to load the ChannelFactoryPlugin: " + exception.getMessage() );
+		}
+	}
+
+
     /** Print information about this factory */
     abstract public void printInfo();
 }

@@ -2,6 +2,7 @@ package xal.smf.impl;
 
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.tools.data.DataAdaptor;
+import xal.ca.ChannelFactory;
 
 public class EQuad extends Electrostatic {
 
@@ -27,14 +28,21 @@ public class EQuad extends Electrostatic {
      * Register type for qualification
      */
     private static void registerType() {
-//        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-//        typeManager.registerType(EQuad.class, "EQuad");
+		ElementTypeManager.defaultManager().registerTypes( EQuad.class, s_strType );
     }
-    
-    public EQuad(String strId) {
-		super(strId);
-		// TODO Auto-generated constructor stub
+
+
+	/** Primary Constructor */
+	public EQuad( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
 	}
+
+
+	/** Constructor */
+    public EQuad( final String strId ) {
+		this( strId, null );
+	}
+
 
 	@Override
 	public String getType() {

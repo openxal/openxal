@@ -1,14 +1,19 @@
 package xal.smf.impl;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.tools.data.DataAdaptor;
 import xal.smf.AcceleratorNode;
 import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.MagnetBucket;
+import xal.smf.impl.qualify.ElementTypeManager;
+
 
 public class Electrostatic extends AcceleratorNode {
+	/** standard type for instances of this class */
+	public static final String s_strType   = "estat";
 
     // orientation constants
     public final static int NO_ORIENTATION = 0;
@@ -29,11 +34,31 @@ public class Electrostatic extends AcceleratorNode {
     
     /** the ID of this magnet's main power supply */
     protected String mainSupplyId;
-    
-	public Electrostatic(String strId) {
-		super(strId);
-		// TODO Auto-generated constructor stub
+
+
+	// static initialization
+	static {
+		registerType();
 	}
+
+
+	// Register types for qualification
+	private static void registerType() {
+		ElementTypeManager.defaultManager().registerTypes( Electromagnet.class, s_strType, "electrostatic" );
+	}
+
+
+	/** Primary Constructor */
+	public Electrostatic( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+	}
+
+
+	/** Constructor */
+	public Electrostatic( final String strId ) {
+		this( strId, null );
+	}
+
 
     /**
      *  
@@ -66,8 +91,7 @@ public class Electrostatic extends AcceleratorNode {
     
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return s_strType;
 	}
 
     /**

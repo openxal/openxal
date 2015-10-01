@@ -14,32 +14,37 @@ import xal.ca.*;
  */
 
 public class IonGauge extends Vacuum  {
-  
-    
+	/** standard type for nodes of this class */
+	public static final String s_strType   = "IG";
+
+
+    // static initialization
     static {
         registerType();
     }
-    
-   /*
-     *  Constants
-     */
-    
-    public static final String      s_strType   = "IG";
-    
+
+
     /*
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(IonGauge.class, s_strType);
+		ElementTypeManager.defaultManager().registerTypes( IonGauge.class, s_strType );
     }
+
 
     /** Override to provide type signature */
     public String getType()   { return s_strType; };
-      
- 
-    public IonGauge(String strId)     { 
-        super(strId);    
+
+
+	/** Constructor */
+	public IonGauge( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
+
+	/** Constructor */
+    public IonGauge( final String strId )     {
+        this( strId, null );
     }
 }
 

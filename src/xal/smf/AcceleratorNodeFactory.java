@@ -1,5 +1,6 @@
 package xal.smf;
 
+import xal.ca.ChannelFactory;
 import xal.smf.impl.*;
 import xal.tools.data.*;
 
@@ -21,19 +22,30 @@ import java.lang.reflect.Constructor;
  */
 
 public final class AcceleratorNodeFactory {
+	/** channel factory from which the nodes will generate channels */
+	final private ChannelFactory CHANNEL_FACTORY;
+
 	/** map of constructors keyed by node type */
 	private Map<String,Constructor<? extends Object>> _constructors = new HashMap<String,Constructor<? extends Object>>();
 	
 	/** map of classes keyed by node type */
 	private Map<String,Class<?>> _classTable;
-	
-	
+
+
 	/** Constructor */
-	public AcceleratorNodeFactory() {
+	public AcceleratorNodeFactory( final ChannelFactory channelFactory ) {
+		this.CHANNEL_FACTORY = channelFactory != null ? channelFactory : ChannelFactory.defaultFactory();
+
 		_constructors = new HashMap<String,Constructor<? extends Object>>();
 		_classTable = new HashMap<String,Class<?>>();
 	}
-	
+
+
+	/** Constructor */
+	public AcceleratorNodeFactory() {
+		this( null );
+	}
+
 	
     /**
      *  Associate the specified AcceleratorNode class with the specified node type
@@ -41,7 +53,7 @@ public final class AcceleratorNodeFactory {
 	 *  @param  softType    software type (null indicates there is no software type)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
-    public <T> void registerNodeClass( final String deviceType, final String softType, final Class<T> nodeClass )   {
+    public <T extends AcceleratorNode> void registerNodeClass( final String deviceType, final String softType, final Class<T> nodeClass )   {
 		final String nodeType = softType != null ? deviceType + "." + softType : deviceType;
 		registerNodeClass( nodeType, nodeClass );
     }
@@ -52,12 +64,12 @@ public final class AcceleratorNodeFactory {
 	 *  @param  nodeType    fully qualified node type (e.g. deviceType.softType)
      *  @param  nodeClass   Class class for the AcceleratorNode
      */
-	@SuppressWarnings( "rawtypes" )
-    private <T> void registerNodeClass( final String nodeType, final Class<T> nodeClass )   {
+    private <T extends AcceleratorNode> void registerNodeClass( final String nodeType, final Class<T> nodeClass )   {
         _classTable.put( nodeType, nodeClass );
 		
         try {
-            final Constructor<T> constructor = nodeClass.getConstructor( new Class[] { String.class } );
+			@SuppressWarnings( "rawtypes" )
+            final Constructor<T> constructor = nodeClass.getConstructor( new Class[] { String.class, ChannelFactory.class } );
             _constructors.put( nodeType, constructor );
         }
 		catch ( NoSuchMethodException exception ) {
@@ -84,13 +96,14 @@ public final class AcceleratorNodeFactory {
 			final String message = "Unknown AcceleratorNode type : \"" + nodeType + "\" for ID: " + nodeID + ".  Will substitute a GenericNode!";
             System.err.println( message );
 			Logger.getLogger("global").log( Level.WARNING, message );
-            AcceleratorNode node = GenericNode.newNode( nodeType, nodeID );
+            final AcceleratorNode node = new GenericNode( nodeType, nodeID, CHANNEL_FACTORY );
             _classTable.put( nodeType, GenericNode.class );
             return node;
         }
         
         final Constructor<?> constructor = _constructors.get( nodeType );
-        final Object[] args = new Object[] { nodeID };
+		//TODO: need to account for custom channel factory
+        final Object[] args = new Object[] { nodeID, CHANNEL_FACTORY };
         
         try {
             return (AcceleratorNode)constructor.newInstance( args );

@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import xal.ca.BadChannelException;
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.IEventSinkValue;
@@ -739,6 +740,22 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * Initialization
      */
 
+	/**
+	 * Primary Constructor for ProfileDevice.
+	 *
+	 * @param strId
+	 * @param channelFactory factory for generating channels
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Mar 21, 2014
+	 */
+	public ProfileDevice( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+
+		this.tstConnect = new BatchConnectionTest(this);
+	}
+
+
     /**
      * Constructor for ProfileDevice.
      *
@@ -747,10 +764,8 @@ public abstract class ProfileDevice extends AcceleratorNode {
      * @author Christopher K. Allen
      * @since  Mar 21, 2014
      */
-    public ProfileDevice(String strId) {
-        super(strId);
-        
-        this.tstConnect = new BatchConnectionTest(this);
+    public ProfileDevice( final String strId ) {
+		this( strId, null );
     }
 
 

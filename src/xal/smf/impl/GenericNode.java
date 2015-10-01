@@ -9,6 +9,7 @@ package xal.smf.impl;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
+import xal.ca.ChannelFactory;
 
 /**
  * GenericNode represents a node whose properties are defined by the data input.
@@ -23,32 +24,44 @@ import xal.tools.data.*;
  */
 public class GenericNode extends AcceleratorNode {
     protected String m_strType;
-    
-    
-    /** 
-     * Creates a new instance of GenericNode.  Use the static "newNode()" 
-     * method instead to instantiate a new GenericNode.
-     */
-    protected GenericNode(String strId) {
-        super(strId);
-    }
-    
+
+
+	/**
+	 * Primary Constructor.
+	 * @param strType type of this node (since it is Generic and there is no default type)
+	 * @param strId ID for this node
+	 * @param channelFactory fractory from which to generate channels
+	 */
+	public GenericNode( final String strType, final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+
+		this.m_strType = strType;
+		ElementTypeManager.defaultManager().registerType( GenericNode.class, strType );
+	}
+
+
+	/**
+	 * Constructor using default channel factory.
+	 * @param strType type of this node (since it is Generic and there is no default type)
+	 * @param strId ID for this node
+	 */
+	public GenericNode( final String strType, final String strId ) {
+		this( strType, strId, null );
+	}
+
     
     /** Overriden to provide type signature */
     public String getType()   { return m_strType; }
-    
-    
-    /** Instantiate a new GenericNode */
-    static public GenericNode newNode(String strType, String strId) {
-        GenericNode node = new GenericNode(strId);
-        node.m_strType = strType;
-        ElementTypeManager.defaultManager().registerType(GenericNode.class, strType);
-        
-        return node;
-    }
-    
-    
-    /** 
+
+
+	/** Instantiate a new GenericNode */
+	@Deprecated
+	static public GenericNode newNode( final String strType, final String strId ) {
+		return new GenericNode( strType, strId, null );
+	}
+
+
+    /**
      * Determine if this node is of the specified type.  Override the inherited
      * method since the types of generic nodes are not associated with the 
      * class unlike typical nodes.

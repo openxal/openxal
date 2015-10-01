@@ -10,52 +10,62 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.tools.data.DataAdaptor;
 
+
 /**
  * TrimmedQuadrupole is a subclass of Quadrupole that has a trim power supply in addition to a main power supply.
  * @author  tap
  */
 public class TrimmedQuadrupole extends Quadrupole implements TrimmedMagnet {
-    public static final String s_strType   = "QT";
-    public static final String HORIZONTAL_TYPE = "QTH";
-    public static final String VERTICAL_TYPE = "QTV";
+	public static final String s_strType   = "QT";
+	public static final String HORIZONTAL_TYPE = "QTH";
+	public static final String VERTICAL_TYPE = "QTV";
 
-    /** unique ID for this magnet's trim supply */
-    protected String _trimSupplyID;
-    
-    
+	/** unique ID for this magnet's trim supply */
+	protected String _trimSupplyID;
+
+
 	// static initializer
-    static {
-        registerType();
-    }
+	static {
+		registerType();
+	}
 
-    
-    /**
-     * Register type for qualification.  These are the types that are common to all instances.  The <code>isKindOf</code> method handles the 
-     * type qualification specific to an instance.
-     * @see #isKindOf
-     */
-     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(TrimmedQuadrupole.class, s_strType);
-        typeManager.registerType(TrimmedQuadrupole.class, "trimmedquad");
-    }
-    
-    
-    /**
-     * Constructor
+
+	/**
+	 * Register type for qualification.  These are the types that are common to all instances.  The <code>isKindOf</code> method handles the
+	 * type qualification specific to an instance.
+	 * @see #isKindOf
+	 */
+	private static void registerType() {
+		ElementTypeManager.defaultManager().registerTypes( TrimmedQuadrupole.class, s_strType, "trimmedquad" );
+	}
+
+
+	/**
+	 * Constructor
 	 * @param strID this magnet's unique node ID
-     */
-    public TrimmedQuadrupole( final String strID ) {
-        super( strID );
-    }
+	 * @param channelFactory factory for generating this node's channels
+	 */
+	public TrimmedQuadrupole( final String strID, final ChannelFactory channelFactory ) {
+		super( strID, channelFactory );
+	}
 
-    
+
+	/**
+	 * Constructor
+	 * @param strID this magnet's unique node ID
+	 */
+	public TrimmedQuadrupole( final String strID ) {
+		this( strID, null );
+	}
+
+
     /**
      * Update data from the power supply data adaptor.
      * @param powerSupplyAdaptor The data provider of power supply information.

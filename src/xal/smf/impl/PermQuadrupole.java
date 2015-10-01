@@ -34,6 +34,7 @@ public class PermQuadrupole extends PermanentMagnet {
     protected String type;
 
 
+	// static initializer
     static {
         registerType();
     }
@@ -46,22 +47,25 @@ public class PermQuadrupole extends PermanentMagnet {
      * @see #isKindOf
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(PermQuadrupole.class, s_strType);
-        typeManager.registerType(PermQuadrupole.class, "permquad");
-        typeManager.registerType(PermQuadrupole.class, MagnetType.QUADRUPOLE);
+		ElementTypeManager.defaultManager().registerTypes( PermQuadrupole.class, s_strType, "permquad", MagnetType.QUADRUPOLE );
     }
- 
+
+
+	/**
+	 * PermQuadrupole constructor
+	 */
+	public PermQuadrupole( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
 
     /**
      * PermQuadrupole constructor
      */
     public PermQuadrupole(String strId)     {
-        super(strId);
+        this( strId, null );
     }
-    
 
-    
     
     /** 
      * Override to provide the correct type signature per instance.  This is 

@@ -9,7 +9,8 @@
 package xal.smf.impl;
 
 import xal.smf.impl.qualify.ElementTypeManager;
-//import xal.smf.impl.sclcavity.DriftBeam;
+import xal.ca.ChannelFactory;
+
 
 /**
  * SCLCavity class is used to represent an SCL RF cavity.
@@ -27,19 +28,33 @@ public class SCLCavity extends RfCavity {
 	 * Register SCLCavity's type for qualification
 	 */
 	private static void registerType() {
-		ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-		typeManager.registerType(SCLCavity.class, s_strType);
+		ElementTypeManager.defaultManager().registerTypes( SCLCavity.class, s_strType );
 	}
+
 
 	/** Primary Constructor */
-	public SCLCavity(final String strID, final int arrayReserve) {
-		super(strID, arrayReserve);
+	public SCLCavity( final String strId, final ChannelFactory channelFactory, final int intReserve ) {
+		super( strId, channelFactory, intReserve );
 	}
 
+
 	/** Constructor */
-	public SCLCavity(final String strID) {
-		this(strID, 0);
+	public SCLCavity( final String strId, final ChannelFactory channelFactory ) {
+		this( strId, channelFactory, 0 );
 	}
+
+
+	/** Primary Constructor */
+	public SCLCavity( final String strID, final int arrayReserve ) {
+		this( strID, null, arrayReserve );
+	}
+
+
+	/** Constructor */
+	public SCLCavity( final String strID ) {
+		this( strID, 0 );
+	}
+
 
 	/**
 	 * Get this node's type.

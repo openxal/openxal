@@ -51,8 +51,7 @@ public class BLM extends AcceleratorNode {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(BLM.class, s_strType);
+        ElementTypeManager.defaultManager().registerTypes( BLM.class, s_strType );
     }
 
 
@@ -66,20 +65,22 @@ public class BLM extends AcceleratorNode {
     public String getType()   { return s_strType; };
   
   
-  
-    /*
-     *  User Interface
-     */
-    
-    
-    public BLM(String strId)     { 
-        super(strId); 
-        
-    };
 
-    
+	/** Constructor */
+    public BLM( final String strId, final ChannelFactory channelFactory ) {
+        super( strId, channelFactory );
+    }
+
+
+
+	/** Constructor */
+	public BLM( final String strId ) {
+		this( strId, null );
+	}
+
+
     /*
-     *  Process variable Gets 
+     *  Process variable Gets
      */
 
     /**
