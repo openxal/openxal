@@ -141,7 +141,7 @@ public class AcceleratorActionFactory {
 						case JFileChooser.APPROVE_OPTION:
 							final File fileSelection = fileChooser.getSelectedFile();
 							final String filePath = fileSelection.getAbsolutePath();
-							final Accelerator accelerator = XMLDataManager.acceleratorWithPath( filePath );
+							final Accelerator accelerator = XMLDataManager.acceleratorWithPath( filePath, document.nextChannelFactory() );
 							document.setAccelerator( accelerator, filePath );
 							break;
 						case JFileChooser.ERROR_OPTION:

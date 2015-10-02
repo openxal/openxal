@@ -6,9 +6,10 @@
 
 package xal.extension.application.smf;
 
+import xal.ca.ChannelFactory;
 import xal.smf.*;
-import xal.extension.application.*;
 import xal.smf.data.*;
+import xal.extension.application.*;
 
 import java.io.*;
 import java.util.*;
@@ -33,7 +34,19 @@ abstract public class AcceleratorDocument extends XalDocument {
         accelerator = null;
 		acceleratorFilePath = null;
 		selectedSequenceList = new ArrayList<AcceleratorSeq>();
-     }
+	}
+
+
+	/**
+	 * Get the channel factory which is used to instantiate the NEXT accelerator within this document.
+	 * Note that this channel factory does not necessarily match the channel factory of the current accelerator in this document.
+	 * The base AcceleratorDocument class returns ChannelFactory.defaultFactory().
+	 * Subclasses may override this method to provide a custom channel factory if desired.
+	 * @return the channel factory to initialize a new accelerator
+	 */
+	public ChannelFactory nextChannelFactory() {
+		return ChannelFactory.defaultFactory();
+	}
 	
 	
 	/**
@@ -136,7 +149,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 	
 	/** Set the accelerator given the file path */
 	private void setAcceleratorWithPath( final String filePath ) {
-		final Accelerator theAccelerator = XMLDataManager.acceleratorWithPath( filePath );
+		final Accelerator theAccelerator = XMLDataManager.acceleratorWithPath( filePath, nextChannelFactory() );
 		setAccelerator( theAccelerator, filePath );
 	}
     
@@ -178,7 +191,7 @@ abstract public class AcceleratorDocument extends XalDocument {
 		Accelerator defaultAccelerator = null;
 		
 		try {
-			defaultAccelerator = XMLDataManager.loadDefaultAccelerator();
+			defaultAccelerator = XMLDataManager.loadDefaultAccelerator( nextChannelFactory() );
 		}
 		catch( Exception exception ) {
             exception.printStackTrace();
