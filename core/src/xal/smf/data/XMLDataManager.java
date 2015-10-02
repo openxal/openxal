@@ -197,11 +197,21 @@ public class XMLDataManager {
 	 * @return the accelerator built from the default data source or null if no default accelerator is specified
 	 */
     static public Accelerator loadDefaultAccelerator() {
-        String path = defaultPath();
-        return (path != null) ? acceleratorWithUrlSpec(URLUtil.urlSpecForFilePath(path)) : null;
+		return loadDefaultAccelerator( ChannelFactory.defaultFactory() );
     }
-    
-    
+
+
+	/**
+	 * Load the accelerator corresponding to the default accelerator data source specified in the user's preferences.
+	 * @param channelFactory the channel factory to use to generate the channels for the accelerator
+	 * @return the accelerator built from the default data source or null if no default accelerator is specified
+	 */
+	static public Accelerator loadDefaultAccelerator( final ChannelFactory channelFactory ) {
+		String path = defaultPath();
+		return (path != null) ? acceleratorWithUrlSpec( URLUtil.urlSpecForFilePath(path), channelFactory ) : null;
+	}
+
+
 	/**
 	 * Get the path to the default main data source specified in the user's preferences.
 	 * @return the file path to the default accelerator data source or null if a default hasn't been specified
