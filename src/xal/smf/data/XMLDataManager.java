@@ -67,7 +67,7 @@ public class XMLDataManager {
     public XMLDataManager( final String urlPath, final ChannelFactory channelFactory ) {
 		DEVICE_MANAGER = new DeviceManager( channelFactory );
 		TIMING_MANAGER = new TimingDataManager( channelFactory );
-        acceleratorManager = new AcceleratorManager();
+        acceleratorManager = new AcceleratorManager( channelFactory );
         tableManager = new TableManager();
         mainManager = new MainManager( urlPath );
         try {
@@ -670,6 +670,7 @@ public class XMLDataManager {
      * Handle read/write for the Accelerator XML source (the optics file).
      */
     private class AcceleratorManager {
+		private final ChannelFactory CHANNEL_FACTORY;
         private String dtdUrlSpec;
         private String opticsUrlSpec;
         private List<String> extraUrlSpecs;
@@ -678,7 +679,8 @@ public class XMLDataManager {
         public static final String acceleratorTag = "xdxf";
         
 		/** Constructor */
-        public AcceleratorManager() {
+        public AcceleratorManager( final ChannelFactory channelFactory ) {
+			CHANNEL_FACTORY = channelFactory;
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
 			_hardwareStatusURLSpec = null;			
@@ -737,7 +739,7 @@ public class XMLDataManager {
 			if (docType != null) dtdUrlSpec = docType.getSystemId();                        
             
             DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
-            Accelerator accelerator = new Accelerator();
+            Accelerator accelerator = new Accelerator( CHANNEL_FACTORY );
 			
 			accelerator.setNodeFactory( DEVICE_MANAGER.getNodeFactory() );
 			
