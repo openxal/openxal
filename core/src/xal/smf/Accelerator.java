@@ -229,8 +229,16 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
 
 
 	/** Primary constructor */
+	public Accelerator( final ChannelFactory channelFactory ) {
+		this( "", channelFactory );
+	}
+
+
+	/** Primary constructor */
 	public Accelerator( final String sysId, final ChannelFactory channelFactory ) {
 		super( sysId, channelFactory );
+
+		System.out.println( "Instantiating Accelerator with channel factory: " + channelFactory );
 
 		m_strSysId = sysId;
 		_comboSequences = new HashMap<String,AcceleratorSeqCombo>();
