@@ -134,13 +134,40 @@ public class RelativisticParameterConverter {
      *
      * @param  W       kinetic energy of the particle (eV)
      * @param  Er      rest energy of particle (eV)
-     * @return         particle momentum in eV/c where c is the speed of light
+     * @return         particle momentum in eV where is the speed of light
      */ 
     static public double computeMomentumFromEnergies(double W, double Er) {
        double gamma = computeGammaFromEnergies(W, Er);
        double beta = computeBetaFromGamma(gamma);
        
        return beta*gamma*Er;
+    }
+    
+    /**
+     * Computes and returns the momentum of a particle with the given rest and
+     * kinetic energies.  This method returns the rest the the standard beam physics
+     * units of electron-volts/<i>c</i> where <i>c</i> is the speed of light.  The
+     * returned value is given by the formula
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>p</i> = &beta;&gamma;<i>mc</i>
+     * <br/>
+     * <br/>
+     * where &beta; is the normalized particle velocity, &gamma; is the relativistic factor,
+     * <i>m</i> is the mass of the particle, and <i>c</i> is the speed of light.
+     * 
+     * @param  W       kinetic energy of the particle (eV)
+     * @param  Er      rest energy of particle (eV)
+     * 
+     * @return         particle momentum in <i>eV</i>/<i>c</i> where <i>c</i> is the speed of light
+     *
+     * @since  Oct 1, 2015,   Christopher K. Allen
+     */
+    static public double    computeStandardMomentumFromEnergies(double W, double Er) {
+        double gamma = computeGammaFromEnergies(W, Er);
+        double beta = computeBetaFromGamma(gamma);
+        
+        return beta*gamma*Er/DBL_LGHT_SPD;
     }
     
     

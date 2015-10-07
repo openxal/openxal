@@ -30,12 +30,24 @@ package xal.tools.math;
 public class Complex {
     
 
-    /*
-     * Global Operations
-     */
     
     /*
-     * Complex Operations
+     * Global Constants
+     */
+    
+    /** The complex value zero */
+    public static final Complex         ZERO = new Complex(0.0, 0.0);
+    
+    /** the real unit */
+    public static final Complex         ONE = new Complex(1.0, 0.0);
+    
+    /** the imaginary unit */
+    public static final Complex         IUNIT = new Complex(0.0, 1.0);
+
+    
+    
+    /*
+     * Global Operations
      */
     
     /**
@@ -132,6 +144,29 @@ public class Complex {
         Complex cpxPhs = new Complex( Math.cos(s.imaginary()), Math.sin(s.imaginary())); 
         
         return cpxPhs.times(dblMag);
+    }
+    
+    /**
+     * Computes and returns the complex number <i>z</i> on the unit circle corresponding
+     * to the mapping of the given real number by the Euler formula.  The returned
+     * values is given by 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>z</i> = cos &theta; + <i>i</i> sin &theta; ,
+     * <br/>
+     * <br/>
+     * where &theta; is the real number given in the argument.
+     * 
+     * @param ang       the real number &theta; (in radians)
+     * 
+     * @return          the value of <i>z</i> described above
+     *
+     * @since  Oct 7, 2015,   Christopher K. Allen
+     */
+    public static Complex   euler(final double ang) {
+        Complex cpxAng = new Complex(Math.cos(ang), Math.sin(ang));
+        
+        return cpxAng;
     }
     
     /**

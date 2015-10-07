@@ -52,7 +52,7 @@ import xal.tools.math.fnc.IRealFunction;
  * all the field information is kept, no offsets are necessary, and there is information
  * enough to compute the post gap energy gain and phase jump.  (In the above model the
  * post gap quantities are assumed to be equal to the pre-gap quantities.)
- * When polynomial approximations are provided for all four transit time factors this class
+ * When function objects are provided for all four transit time factors this class
  * assumes that the new model is being used.  When only <i>T</i> and <i>S</i> are provided
  * the class assumes that the old model is being used.  Further assumptions are
  * <br/>
@@ -68,16 +68,28 @@ import xal.tools.math.fnc.IRealFunction;
  * (<i>T,T',T<sub>q</sub>,T'<sub>q</sub>,S,S',S<sub>q</sub>,S'<sub>q</sub></i>).  Of course the
  * later set is incomplete.
  * </p>   
- * <p>  
- * <h4>Transit Time Factors</h4>  
- * There are four (4) transit time factors.  Let the longitudinal electric field 
+ * <p>
+ * <h4>Axial Electric Fields</h4>
+ * Let the longitudinal electric field 
  * along the beam axis <i>z</i> be denoted <i>E<sub>z</sub></i>(<i>z</i>).  Let the total voltage
- * drop long the field be denoted <i>V</i><sub>0</sub>, that is,
+ * gain long the field be denoted <i>V</i><sub>0</sub>, that is,
  * <br/>
  * <br/>
  * &nbsp; &nbsp; <i>V</i><sub>0</sub> &trie; &int;<i>E<sub>z</sub></i>(<i>z</i>) <i>dz</i> .
  * <br/>
  * <br/>
+ * Note then that the total available energy gain &Delta;<i>W</i><sub>0</sub> 
+ * for a particle falling through
+ * the field <i>E<sub>z</sub></i>(<i>z</i>) is <i>qV</i><sub>0</sub>.  The value <i>V</i><sub>0</sub>
+ * is used to create the normalized electric field <i>e<sub>z</sub></i>(<i>z</i>) given by
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <i>e</i><sub><i>z</i></sub>(<i>z</i>) &trie; (1/<i>V</i><sub>0</sub>)<i>E<sub>z</sub></i>(<i>z</i>) .
+ * <br/>
+ * <br/>
+ * All spectral quantities in this class are with respect to this normalized field. 
+ * </p> 
+ * <p>
  * Next, let sgn(<i>z</i>) denote the signum function, that is,
  * <br/>
  * <pre>
@@ -90,7 +102,18 @@ import xal.tools.math.fnc.IRealFunction;
  * &nbsp; &nbsp; <i>E<sub>q</sub></i>(<i>z</i>) &trie; sgn(<i>z</i>) <i>E<sub>z</sub></i>(<i>z</i>) .
  * <br/>
  * <br/>
- * Then the 
+ * Of course the quantities here will be with respect to the normalized quadrature field
+ * <i>e</sub>q</sub></i>(<i>z</i>) defined as 
+ * <br/>
+ * <pre>
+ *     <i>e</i><sub><i>z</i></sub>(<i>z</i>) &trie; (1/<i>V</i><sub>0</sub>)<i>E<sub>q</sub></i>(<i>z</i>) ,
+ *           = sgn(<i>z</i>)<i>e<sub>z</sub></i>(</i>z</i>) .
+ * </pre>
+ * </p>
+ * <p>  
+ * <h4>Transit Time Factors</h4>  
+ * There are four (4) transit time factors.  
+ * These 
  * transit time factors are described as follows:
  * <br/>
  * <br/>
@@ -149,79 +172,77 @@ import xal.tools.math.fnc.IRealFunction;
  * <p>
  * <h4>Field Spectra</h4>
  * Denote
- * by &epsi;<sub><i>z</i></sub>(<i>k</i>) and &epsi;<sub><i>q</i></sub>(<i>k</i>) 
+ * by &Escr;<sub><i>z</i></sub>(<i>k</i>) and &Escr;<sub><i>q</i></sub>(<i>k</i>) 
  * the Fourier transforms of
- * the axial field <i>E<sub>z</i>(<i>z</i>) and its conjugate <i>E<sub>q</i></i>(<i>z</i>), 
+ * the axial field <i>e<sub>z</i>(<i>z</i>) and its conjugate <i>e<sub>q</i></i>(<i>z</i>), 
  * respectively.  That is, the field spectra are
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &epsi;<sub><i>z</i></sub>(k) &trie; &Fscr;[<i>E<sub>z</sub></i>](<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<sub><i>z</i></sub>(k) &trie; &Fscr;[<i>e<sub>z</sub></i>](<i>k</i>) ,
  * <br/>
- * &nbsp; &nbsp; &epsi;<sub><i>q</i></sub>(k) &trie; &Fscr;[<i>E<sub>q</sub></i>](<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<sub><i>q</i></sub>(k) &trie; &Fscr;[<i>e<sub>q</sub></i>](<i>k</i>) ,
  * <br/>
  * <br/>
  * where &Fscr;[&middot;] is the Fourier transform operator.  The Fourier transforms of the fields have
  * the decomposition
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &epsi;<sub><i>z</i></sub>(<i>k</i>) = <i>V</i><sub>0</sub><i>T</i>(<i>k</i>) 
- *                                                  - <i>iV</i><sub>0</sub><i>S</i>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<sub><i>z</i></sub>(<i>k</i>) = T</i>(<i>k</i>) - <i>i</i><i>S</i>(<i>k</i>) ,
  * <br/>                                                 
- * &nbsp; &nbsp; &epsi;<i><sub>q</sub></i>(<i>k</i>) = <i>V</i><sub>0</sub><i>T<sub>q</sub></i>(<i>k</i>) 
- *                                                  - <i>iV</i><sub>0</sub><i>S<sub>q</sub></i>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<i><sub>q</sub></i>(<i>k</i>) = T<sub>q</sub></i>(<i>k</i>) - <i>i</i><i>S<sub>q</sub></i>(<i>k</i>) ,
  * <br/>
  * <br/>
  * where <i>i</i> is the imaginary unit.  The spectra are then related by the Hilbert transforms
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &Hscr;[&epsi;<sub><i>z</i></sub>(<i>k</i>)] = i&epsi;<i><sub>q</sub></i>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Hscr;[&Escr;<sub><i>z</i></sub>(<i>k</i>)] = i&Escr;<i><sub>q</sub></i>(<i>k</i>) ,
  * <br/>                                                 
- * &nbsp; &nbsp; &Hscr;[&epsi;<sub><i>q</i></sub>(<i>k</i>)] = i&epsi;<i><sub>z</sub></i>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Hscr;[&Escr;<sub><i>q</i></sub>(<i>k</i>)] = i&Escr;<i><sub>z</sub></i>(<i>k</i>) ,
  * <br/>
  * <br/>
- * Thus, we see &epsi;<sub><i>z</i></sub>(<i>k</i>) and &epsi;<sub><i>q</i></sub>(<i>k</i>) are 
+ * Thus, we see &Escr;<sub><i>z</i></sub>(<i>k</i>) and &Escr;<sub><i>q</i></sub>(<i>k</i>) are 
  * conjugates of each other.
  * </p>
  * <p>
  * <h4>Pre- and Post-Envelope Spectra</h4>
  * The pre- and post-envelope spectra can be formed from the field spectra.  First, denote
- * by &epsi;<sup>-</sup>(<i>k</i>) and &epsi;<sup>+</sup>(<i>k</i>) the pre- and post-envelope
+ * by &Escr;<sup>-</sup>(<i>k</i>) and &Escr;<sup>+</sup>(<i>k</i>) the pre- and post-envelope
  * spectra, respectively.  They are defined
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &epsi;<sub><i>z</i></sub>(k) &trie; &epsi;<sub><i>z</i></sub>(<i>k</i>) - i&Hscr;[&epsi;<sub><i>z</i></sub>(<i>k</i>] 
- *                                            =  &epsi;<sub><i>z</i></sub>(<i>k</i>) -  &epsi;<sub><i>q</i></sub>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<sup>-</sup>(k) &trie; (1/2)[ &Escr;<sub><i>z</i></sub>(<i>k</i>) + i&Hscr;[&Escr;<sub><i>z</i></sub>(<i>k</i>] ] 
+ *                                            =  (1/2)[ &Escr;<sub><i>z</i></sub>(<i>k</i>) -  &Escr;<sub><i>q</i></sub>(<i>k</i>) ],
  * <br/>
- * &nbsp; &nbsp; &epsi;<sub><i>z</i></sub>(k) &trie; &epsi;<sub><i>z</i></sub>(<i>k</i>) + i&Hscr;[&epsi;<sub><i>z</i></sub>(<i>k</i>] 
- *                                            =  &epsi;<sub><i>z</i></sub>(<i>k</i>) +  &epsi;<sub><i>q</i></sub>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Escr;<sup>+</sup>(k) &trie; (1/2)[ &Escr;<sub><i>z</i></sub>(<i>k</i>) + i&Hscr;[&Escr;<sub><i>z</i></sub>(<i>k</i>] ] 
+ *                                            =  (1/2)[ &Escr;<sub><i>z</i></sub>(<i>k</i>) +  &Escr;<sub><i>q</i></sub>(<i>k</i>) ] ,
  * <br/>
  * <br/>
  * Let &phi; be the synchronous particle phase at the gap center.  Then the quantities 
- * <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) and <i>e<sup>-i&phi;</sup></i>&epsi;<sup>+</sup>(<i>k</i>)
+ * <i>e<sup>-i&phi;</sup></i>&Escr;<sup>-</sup>(<i>k</i>) and <i>e<sup>-i&phi;</sup></i>&Escr;<sup>+</sup>(<i>k</i>)
  * contain the pre- and post-gap energy gain &Delta;<i>W</i><sup>-</sup>, &Delta;<i>W</i><sup>+</sup> and 
  * phase jump &Delta;&phi;<sup>-</sup>, &Delta;&phi;<sup>+</sup>, respectively.  For example,
- * the real part of <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) tracks the pre-gap 
+ * the real part of <i>e<sup>-i&phi;</sup></i>&Escr;<sup>-</sup>(<i>k</i>) tracks the pre-gap 
  * energy gain while the imaginary part tracks the phase jump.  We have
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &Delta;<i>W</i><sup>-</sup>(<i>k</i>,&phi;) = (<i>q</i>/2) Re <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Delta;<i>W</i><sup>-</sup>(&phi;,<i>k</i>) = <i>qV</i><sub>0</sub> Re &Escr;<sup>-</sup>(<i>k</i>)<i>e<sup>-i&phi;</sup></i> ,
  * <br/>
- * &nbsp; &nbsp; &Delta;&phi;<sup>-</sup>(<i>k</i>,&phi;) = (<i>K<sub>i</sub></i>/2) Im <i>d</i>/<i>dk</i> <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Delta;&phi;<sup>-</sup>(&phi;,<i>k</i>) = <i>d</i>/<i>dk</i> Im <i>K<sub>i</sub></i>&Escr;<sup>-</sup>(<i>k</i>)<i>e<sup>-i&phi;</sup></i> ,
  * <br/>
  * <br/>
  * where <i>q</i> is the unit charge and <i>K<sub>i</sub></i> is the quantity
  * <br/>
  * <br/>
- * &nbsp; &nbsp; <i>K<sub>i</sub></i> &trie; (<i>qk</i><sub>0</sub>/<i>mc</i><sup>2</sup>)(1/&beta;<sub><i>i</i></sub><sup>3</sup>&gamma;<sub><i>i</i></sub><sup>3</sup>) .
+ * &nbsp; &nbsp; <i>K<sub>i</sub></i> &trie; <i>k</i><sub>0</sub>(<i>qV</i><sub>0</sub>/<i>mc</i><sup>2</sup>)(1/&beta;<sub><i>i</i></sub><sup>3</sup>&gamma;<sub><i>i</i></sub><sup>3</sup>) .
  * <br/>
  * <br/>
  * The subscript <i>i</i> indicates initial, pre-gap values.  The post-gap quantities have 
  * analogous expressions
  * <br/>
  * <br/>
- * &nbsp; &nbsp; &Delta;<i>W</i><sup>+</sup>(<i>k</i>,&phi;) = (<i>q</i>/2) Re <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Delta;<i>W</i><sup>+</sup>(<i>k</i>,&phi;) = (<i>q</i>/2) Re <i>e<sup>-i&phi;</sup></i>&Escr;<sup>-</sup>(<i>k</i>) ,
  * <br/>
- * &nbsp; &nbsp; &Delta;&phi;<sup>+</sup>(<i>k</i>,&phi;) = (<i>K<sub>f</sub></i>/2) Im <i>d</i>/<i>dk</i> <i>e<sup>-i&phi;</sup></i>&epsi;<sup>-</sup>(<i>k</i>) ,
+ * &nbsp; &nbsp; &Delta;&phi;<sup>+</sup>(<i>k</i>,&phi;) = (<i>K<sub>f</sub></i>/2) Im <i>d</i>/<i>dk</i> <i>e<sup>-i&phi;</sup></i>&Escr;<sup>-</sup>(<i>k</i>) ,
  * <br/>
  * <br/>
  * The subscript <i>f</i> indicates final, post-gap quantities.  Methods to compute these 
@@ -273,7 +294,7 @@ public class AxialFieldSpectrum {
 
 
     /** the offset between the field center and the geometric center */
-    private final double      dblFldOSet;
+    private final double    dblFldOSet;
 
     /** the time harmonic frequency of the field */ 
     private final double    dblFrq;
@@ -546,7 +567,7 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
-    public Complex  dFldSpectrum(double k) {
+    public Complex  dkFldSpectrum(double k) {
         double  dblReal = +this.dT(k);
         double  dblImag = -this.dS(k);
         
@@ -619,7 +640,7 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
-    public Complex  dCnjSpectrum(double k) {
+    public Complex  dkCnjSpectrum(double k) {
         double  dblReal = +this.dTq(k);
         double  dblImag = -this.dSq(k);
         
@@ -642,9 +663,9 @@ public class AxialFieldSpectrum {
      * given by
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; &Escr;<sup>-</sup>(<i>k</i>) = &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ,
+     * &nbsp; &nbsp; &Escr;<sup>-</sup>(<i>k</i>) = (1/2)[ &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ] ,
      * <br/>
-     * &nbsp; &nbsp; &Escr;<sup>+</sup>(<i>k</i>) = &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ,
+     * &nbsp; &nbsp; &Escr;<sup>+</sup>(<i>k</i>) = (1/2)[ &Escr;<sub>z</sub>(<i>k</i>) + &Escr;<sub>q</sub>(<i>k</i>) ] ,
      * <br/>
      * <br/>
      * where &Escr;<sub>z</sub>(<i>k</i>) is the Fourier spectrum of the axial field and
@@ -668,7 +689,7 @@ public class AxialFieldSpectrum {
         Complex     cpxCnjSpc = this.cnjSpectrum(k);
         Complex     cpxPreEnv = cpxFldSpc.minus(cpxCnjSpc);
         
-        return cpxPreEnv;
+        return cpxPreEnv.divide(2.0);
     }
     
     /**
@@ -693,12 +714,12 @@ public class AxialFieldSpectrum {
      * 
      * @see #preEnvSpectrum(double)
      */
-    public Complex  dPreEnvSpectrum(double k) {
-        Complex     cpxDFldSpc = this.dFldSpectrum(k);
-        Complex     cpxDCnjSpc = this.dCnjSpectrum(k);
+    public Complex  dkPreEnvSpectrum(double k) {
+        Complex     cpxDFldSpc = this.dkFldSpectrum(k);
+        Complex     cpxDCnjSpc = this.dkCnjSpectrum(k);
         Complex     cpxDPreEnv = cpxDFldSpc.minus(cpxDCnjSpc);
         
-        return cpxDPreEnv;
+        return cpxDPreEnv.divide(2.0);
     }
     
     /**
@@ -710,9 +731,9 @@ public class AxialFieldSpectrum {
      * given by
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; &Escr;<sup>-</sup>(<i>k</i>) = &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ,
+     * &nbsp; &nbsp; &Escr;<sup>-</sup>(<i>k</i>) = (1/2)[ &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ] ,
      * <br/>
-     * &nbsp; &nbsp; &Escr;<sup>+</sup>(<i>k</i>) = &Escr;<sub>z</sub>(<i>k</i>) - &Escr;<sub>q</sub>(<i>k</i>) ,
+     * &nbsp; &nbsp; &Escr;<sup>+</sup>(<i>k</i>) = (1/2)[ &Escr;<sub>z</sub>(<i>k</i>) + &Escr;<sub>q</sub>(<i>k</i>) ] ,
      * <br/>
      * <br/>
      * where &Escr;<sub>z</sub>(<i>k</i>) is the Fourier spectrum of the axial field and
@@ -736,7 +757,7 @@ public class AxialFieldSpectrum {
         Complex     cpxCnjSpc = this.cnjSpectrum(k);
         Complex     cpxPstEnv = cpxFldSpc.plus(cpxCnjSpc);
         
-        return cpxPstEnv;
+        return cpxPstEnv.divide(2.0);
     }
     
     /**
@@ -761,12 +782,12 @@ public class AxialFieldSpectrum {
      * 
      * @see #postEnvSpectrum(double)
      */
-    public Complex  dPostEnvSpectrum(double k) {
-        Complex     cpxDFldSpc = this.dFldSpectrum(k);
-        Complex     cpxDCnjSpc = this.dCnjSpectrum(k);
+    public Complex  dkPostEnvSpectrum(double k) {
+        Complex     cpxDFldSpc = this.dkFldSpectrum(k);
+        Complex     cpxDCnjSpc = this.dkCnjSpectrum(k);
         Complex     cpxDPstEnv = cpxDFldSpc.plus(cpxDCnjSpc);
         
-        return cpxDPstEnv;
+        return cpxDPstEnv.divide(2.0);
     }
     
     
