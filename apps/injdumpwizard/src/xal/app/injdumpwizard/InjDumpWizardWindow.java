@@ -5,11 +5,17 @@
  */
 package xal.app.injdumpwizard;
 
-import javax.swing.*;
-import java.util.*;
-import java.awt.*;
 
-import xal.extension.application.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import xal.extension.application.XalDocument;
+import xal.extension.application.XalWindow;
+
 
 /**
  *  InjDumpWizardWindow is a subclass of XalWindow used in the Quadshaker
