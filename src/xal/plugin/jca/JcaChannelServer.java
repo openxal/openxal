@@ -20,7 +20,6 @@ import gov.aps.jca.dbr.DBRType;
  * Concrete implementation of ChannelServer backed by JCA.
  * @author  tap
  */
-@Deprecated
 public class JcaChannelServer extends ChannelServer {
 	/** JCA channel system */
 	final private JcaSystem JCA_SYSTEM;
