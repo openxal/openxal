@@ -1,19 +1,27 @@
 package xal.app.injdumpwizard.utils;
 
 
-import java.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
-import xal.ca.*;
-import xal.tools.xml.*;
-import xal.extension.widgets.swing.*;
+import xal.ca.ConnectionException;
+import xal.ca.GetException;
+import xal.ca.PutException;
+import xal.extension.widgets.swing.DoubleInputTextField;
 import xal.smf.impl.ProfileMonitor;
 
 /**

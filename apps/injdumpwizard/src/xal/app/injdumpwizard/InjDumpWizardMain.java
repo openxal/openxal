@@ -5,12 +5,13 @@
  */
 package xal.app.injdumpwizard;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.net.*;
 
-import xal.extension.application.*;
+import javax.swing.JOptionPane;
+
+import xal.extension.application.Application;
+import xal.extension.application.ApplicationAdaptor;
+import xal.extension.application.XalDocument;
+
 
 /**
  *  InjDumpWizardMain is a concrete subclass of ApplicationAdaptor for the
