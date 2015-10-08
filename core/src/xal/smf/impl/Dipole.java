@@ -27,18 +27,22 @@ abstract public class Dipole extends Electromagnet {
     
     /** Register type for qualification */
     private static void registerType() {
-        final ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( Dipole.class, Dipole.s_strType );
-        typeManager.registerType( Dipole.class, "dipole" );
+		ElementTypeManager.defaultManager().registerTypes( Dipole.class, s_strType, "dipole" );
     }
-  
+
+
+	/** Primary Constructor */
+	public Dipole( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
     
     /**
      * Constructor
 	 * @param strID the dipole's unique ID
      */    
     public Dipole( final String strID )     { 
-        super( strID );
+        this( strID, null );
         
     }
 

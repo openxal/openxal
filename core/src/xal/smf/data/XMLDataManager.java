@@ -18,10 +18,12 @@ import java.util.prefs.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 
+import xal.ca.ChannelFactory;
 import xal.sim.scenario.DefaultElementMapping;
 import xal.sim.scenario.ElementMapping;
 import xal.sim.scenario.FileBasedElementMapping;
 import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorNodeFactory;
 import xal.smf.TimingCenter;
 import xal.tools.URLUtil;
@@ -51,20 +53,21 @@ public class XMLDataManager {
 	
 	/** manage the bindings of device types to AcceleratorNode subclasses */
 	final private DeviceManager DEVICE_MANAGER;
-		
-	
+
+	/** manage the timing center */
+	final private TimingDataManager TIMING_MANAGER;
+
     private MainManager mainManager;
     private AcceleratorManager acceleratorManager;
     private TableManager tableManager;
-	private TimingDataManager _timingManager;	
 	private ElementMapping elementMapping;
 	
 	
     /** Primary Constructor */
-    public XMLDataManager( final String urlPath ) {
-		DEVICE_MANAGER = new DeviceManager();		
-		_timingManager = new TimingDataManager();
-        acceleratorManager = new AcceleratorManager();
+    public XMLDataManager( final String urlPath, final ChannelFactory channelFactory ) {
+		DEVICE_MANAGER = new DeviceManager( channelFactory );
+		TIMING_MANAGER = new TimingDataManager( channelFactory );
+        acceleratorManager = new AcceleratorManager( channelFactory );
         tableManager = new TableManager();
         mainManager = new MainManager( urlPath );
         try {
@@ -76,8 +79,14 @@ public class XMLDataManager {
             exception.printStackTrace();
         }
     }
-	
-	
+
+
+	/** Constructor */
+	public XMLDataManager( final String urlPath ) {
+		this( urlPath, ChannelFactory.defaultFactory() );
+	}
+
+
 	/** factory method given a URL to the main optics source */
 	static public XMLDataManager getInstance( final URL url ) {
 		return new XMLDataManager( url.toString() );
@@ -87,14 +96,25 @@ public class XMLDataManager {
 	/**
 	 * Create and return a new XMLDataManager with its source given by the specified file path.
 	 * @param filePath The file path of the accelerator data source.
+	 * @param channelFactory the channel factory for generating channels within the accelerator (nodes, timing, etc.)
 	 * @return The new XMLDataManager
 	 */
-    static public XMLDataManager managerWithFilePath( final String filePath ) throws URLUtil.FilePathException {
-        String urlSpec = URLUtil.urlSpecForFilePath( filePath );
-        return new XMLDataManager( urlSpec );
+    static public XMLDataManager managerWithFilePath( final String filePath, final ChannelFactory channelFactory ) throws URLUtil.FilePathException {
+        final String urlSpec = URLUtil.urlSpecForFilePath( filePath );
+        return new XMLDataManager( urlSpec, channelFactory );
     }
-	
-	
+
+
+	/**
+	 * Create and return a new XMLDataManager with its source given by the specified file path.
+	 * @param filePath The file path of the accelerator data source.
+	 * @return The new XMLDataManager
+	 */
+	static public XMLDataManager managerWithFilePath( final String filePath ) throws URLUtil.FilePathException {
+		return managerWithFilePath( filePath, ChannelFactory.defaultFactory() );
+	}
+
+
 	/**
 	 * Get the default XMLDataManager based on the user's preferred path to the Main data source
 	 * @return A new instance of the XMLDataManager with the user's preferred data source or null if no default has been specified
@@ -111,40 +131,62 @@ public class XMLDataManager {
 	 * @throws xal.tools.xml.XmlDataAdaptor.ParseException if the TimingCenter cannot be generated
      */    
     public TimingCenter getTimingCenter() throws XmlDataAdaptor.ParseException {
-        return _timingManager.getTimingCenter();
+        return TIMING_MANAGER.getTimingCenter();
     }
     
     
 	/**
 	 * Read the accelerator from the data source at the URL path.
 	 * @param urlPath The URL spec of the data source.
+	 * @param channelFactory the channel factory from which items (e.g. nodes, timing center, etc.) generate their channels
 	 * @return the new accelerator read from the data source.
 	 */
-    static public Accelerator acceleratorWithUrlSpec(String urlPath) {
-        XMLDataManager dataManager = new XMLDataManager(urlPath);
+    static public Accelerator acceleratorWithUrlSpec( final String urlPath, final ChannelFactory channelFactory ) {
+        final XMLDataManager dataManager = new XMLDataManager( urlPath, channelFactory );
         return dataManager.getAccelerator();
     }
-    
-    
+
+
+	/**
+	 * Read the accelerator from the data source at the URL path.
+	 * @param urlPath The URL spec of the data source.
+	 * @return the new accelerator read from the data source.
+	 */
+	static public Accelerator acceleratorWithUrlSpec( final String urlPath ) {
+		return acceleratorWithUrlSpec( urlPath, ChannelFactory.defaultFactory() );
+	}
+
+
+	/**
+	 * Read the accelerator from the data source at the file path.
+	 * @param filePath The file path of the data source.
+	 * @param channelFactory the channel factory from which items (e.g. nodes, timing center, etc.) generate their channels
+	 * @return the new accelerator read from the data source.
+	 */
+    static public Accelerator acceleratorWithPath( final String filePath, ChannelFactory channelFactory ) throws URLUtil.FilePathException {
+        final XMLDataManager dataManager = managerWithFilePath( filePath, channelFactory );
+        return dataManager.getAccelerator();
+    }
+
+
 	/**
 	 * Read the accelerator from the data source at the file path.
 	 * @param filePath The file path of the data source.
 	 * @return the new accelerator read from the data source.
 	 */
-    static public Accelerator acceleratorWithPath(String filePath) throws URLUtil.FilePathException {
-        XMLDataManager dataManager = managerWithFilePath(filePath);
-        return dataManager.getAccelerator();
-    }
-    
-    
+	static public Accelerator acceleratorWithPath( final String filePath ) throws URLUtil.FilePathException {
+		return acceleratorWithPath( filePath, ChannelFactory.defaultFactory() );
+	}
+
+
 	/**
-	 * Read the accelerator from the data source at the file path and using DTD validation if 
+	 * Read the accelerator from the data source at the file path and using DTD validation if
 	 * if the user specifies.
 	 * @param filePath The file path of the data source.
 	 * @param isValidating enable DTD validation if true and disable DTD validation if false
 	 * @return the new accelerator read from the data source
 	 */
-    static public Accelerator acceleratorWithPath(String filePath, boolean isValidating) throws URLUtil.FilePathException {
+    static public Accelerator acceleratorWithPath( final String filePath, final boolean isValidating ) throws URLUtil.FilePathException {
         XMLDataManager dataManager = managerWithFilePath(filePath);
         return dataManager.getAccelerator(isValidating);
     }
@@ -155,11 +197,21 @@ public class XMLDataManager {
 	 * @return the accelerator built from the default data source or null if no default accelerator is specified
 	 */
     static public Accelerator loadDefaultAccelerator() {
-        String path = defaultPath();
-        return (path != null) ? acceleratorWithUrlSpec(URLUtil.urlSpecForFilePath(path)) : null;
+		return loadDefaultAccelerator( ChannelFactory.defaultFactory() );
     }
-    
-    
+
+
+	/**
+	 * Load the accelerator corresponding to the default accelerator data source specified in the user's preferences.
+	 * @param channelFactory the channel factory to use to generate the channels for the accelerator
+	 * @return the accelerator built from the default data source or null if no default accelerator is specified
+	 */
+	static public Accelerator loadDefaultAccelerator( final ChannelFactory channelFactory ) {
+		String path = defaultPath();
+		return (path != null) ? acceleratorWithUrlSpec( URLUtil.urlSpecForFilePath(path), channelFactory ) : null;
+	}
+
+
 	/**
 	 * Get the path to the default main data source specified in the user's preferences.
 	 * @return the file path to the default accelerator data source or null if a default hasn't been specified
@@ -542,7 +594,7 @@ public class XMLDataManager {
 			if ( timingReferenceAdaptor != null ) {
 				final String timingRelativeURL = timingReferenceAdaptor.stringValue( TIMING_URL_KEY );
 				final String timingURL = absoluteUrlSpec( timingRelativeURL );
-				_timingManager.setURLSpec( timingURL, acceleratorManager.xdxfSchema );				
+				TIMING_MANAGER.setURLSpec( timingURL, acceleratorManager.xdxfSchema );				
 			}
 			
 			// fetch the device mapping
@@ -618,6 +670,7 @@ public class XMLDataManager {
      * Handle read/write for the Accelerator XML source (the optics file).
      */
     private class AcceleratorManager {
+		private final ChannelFactory CHANNEL_FACTORY;
         private String dtdUrlSpec;
         private String opticsUrlSpec;
         private List<String> extraUrlSpecs;
@@ -626,7 +679,8 @@ public class XMLDataManager {
         public static final String acceleratorTag = "xdxf";
         
 		/** Constructor */
-        public AcceleratorManager() {
+        public AcceleratorManager( final ChannelFactory channelFactory ) {
+			CHANNEL_FACTORY = channelFactory;
             dtdUrlSpec = "xdxf.dtd";     // default DTD file
             extraUrlSpecs = new ArrayList<String>();
 			_hardwareStatusURLSpec = null;			
@@ -685,7 +739,7 @@ public class XMLDataManager {
 			if (docType != null) dtdUrlSpec = docType.getSystemId();                        
             
             DataAdaptor accelAdaptor = adaptor.childAdaptor( acceleratorTag );
-            Accelerator accelerator = new Accelerator();
+            Accelerator accelerator = new Accelerator( CHANNEL_FACTORY );
 			
 			accelerator.setNodeFactory( DEVICE_MANAGER.getNodeFactory() );
 			
@@ -761,18 +815,19 @@ public class XMLDataManager {
     	final private HashMap<String, String> _deviceMap;
 		
 		/** factory for generating accelerator nodes */
-		private AcceleratorNodeFactory _nodeFactory;
+		final private AcceleratorNodeFactory NODE_FACTORY;
     	
 		
 		/** Constructor */
-    	public DeviceManager() {
+    	public DeviceManager( final ChannelFactory channelFactory ) {
+			NODE_FACTORY = new AcceleratorNodeFactory( channelFactory );
     		_deviceMap = new HashMap<String, String>();
     	}
 		
 		
 		/** get the accelerator node factory */
 		public AcceleratorNodeFactory getNodeFactory() {
-			return _nodeFactory;
+			return NODE_FACTORY;
 		}
     	
 		
@@ -786,21 +841,20 @@ public class XMLDataManager {
 			
 			final List<DataAdaptor> deviceAdaptors = deviceMappingAdaptor.childAdaptors( DEVICE_TAG );
 			
-			final AcceleratorNodeFactory nodeFactory = new AcceleratorNodeFactory();
 			for ( final DataAdaptor deviceAdaptor : deviceAdaptors ) {
 				try {
 					final String deviceType = deviceAdaptor.stringValue( "type" );
 					final String softType = deviceAdaptor.hasAttribute( "softType" ) ? deviceAdaptor.stringValue( "softType" ) : null;
 					final String deviceClassName = deviceAdaptor.stringValue( "class" );
-					final Class<?> deviceClass = Class.forName( deviceClassName );
-					nodeFactory.registerNodeClass( deviceType, softType, deviceClass );
+					@SuppressWarnings("unchecked")	// cast to AcceleratorNode class
+					final Class<AcceleratorNode> deviceClass = (Class<AcceleratorNode>)Class.forName( deviceClassName );
+					NODE_FACTORY.registerNodeClass( deviceType, softType, deviceClass );
 					_deviceMap.put( deviceType, deviceClassName );
 				}
 				catch( ClassNotFoundException exception ) {
 					exception.printStackTrace();
 				}
 			}
-			_nodeFactory = nodeFactory;
     	}
     }
     

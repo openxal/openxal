@@ -33,10 +33,10 @@ public abstract class MagnetPowerSupply implements DataListener {
     public static final String CURRENT_RB_HANDLE = "I"; 
         
     
-    /** Creates a new instance of PowerSupply */
+    /** Creates a new instance of PowerSupply using the same channel factory as the provided accelerator */
     public MagnetPowerSupply( final Accelerator anAccelerator ) {
-        channelSuite = new ChannelSuite();
-        accelerator = anAccelerator;
+		this.accelerator = anAccelerator;
+		this.channelSuite = anAccelerator != null ? new ChannelSuite( anAccelerator.channelSuite().getChannelFactory() ) : new ChannelSuite();
     }
     
     

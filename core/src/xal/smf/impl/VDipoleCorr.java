@@ -15,16 +15,11 @@ import xal.ca.*;
  */
 
 public class VDipoleCorr extends Dipole {
-  
-    
-    /*
-     *  Constants
-     */
-    
+	/** standard type for nodes of this class */
     public static final String      s_strType   = "DCV";
-
   
-    
+
+	// static initialization
     static {
         registerType();
     }
@@ -34,37 +29,25 @@ public class VDipoleCorr extends Dipole {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(VDipoleCorr.class, s_strType);
-        typeManager.registerType(VDipoleCorr.class, "vertcorr");
-        typeManager.registerType(VDipoleCorr.class, "vcorr");
+		ElementTypeManager.defaultManager().registerTypes( VDipoleCorr.class, s_strType, "vertcorr", "vcorr" );
     }
- 
 
-     /*
-     *  Local Attributes
-     */
-    
     
     /** Override to provide type signature */
-    public String getType()   { return s_strType; };
-  
-  
-//    static  {
-//        AcceleratorNodeFactory.registerClass(s_strType, VDipoleCorr.class);
-//    };
-    
-    
-  
-    /*
-     *  User Interface
-     */
+    public String getType()   { return s_strType; }
 
-    
-    public VDipoleCorr(String strId)     { 
-        super(strId); 
+
+	/** Constructor */
+	public VDipoleCorr( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+
+	}
+
+	/** Constructor */
+    public VDipoleCorr( final String strId )     {
+        this( strId, null );
         
-    };
+    }
 
     
     /**

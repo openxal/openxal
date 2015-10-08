@@ -2,6 +2,7 @@ package xal.smf.impl;
 
 
 import xal.smf.impl.qualify.ElementTypeManager;
+import xal.ca.ChannelFactory;
 
 
 
@@ -19,21 +20,11 @@ import xal.smf.impl.qualify.ElementTypeManager;
  */
 
 public class DTLTank extends RfCavity {
-  
-  
-  
-    /*
-     *  Constants
-     */
+	/** standard type for instances of this class */
     public static final String    s_strType = "DTLTank";
 
 
-
-    /*
-     * Static setup
-     */
-    
-    
+	// static initialization
     static {
         registerType();
     }
@@ -43,17 +34,22 @@ public class DTLTank extends RfCavity {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(DTLTank.class, s_strType);
+		ElementTypeManager.defaultManager().registerTypes( DTLTank.class, s_strType );
     }
 
 
-    /*
-     * Local Attributes
-     */
-    
-    
-    
+	/** Primary Constructor */
+	public DTLTank( final String strId, final ChannelFactory channelFactory, final int intReserve ) {
+		super( strId, channelFactory, intReserve );
+	}
+
+
+	/** Constructor */
+	public DTLTank( final String strId, final ChannelFactory channelFactory ) {
+		this( strId, channelFactory, 0 );
+	}
+
+
     /**
      * I just added this comment - didn't do any work.
      * 
@@ -62,10 +58,11 @@ public class DTLTank extends RfCavity {
      * @author  Christopher K. Allen
      * @since   May 3, 2011
      */
-    public DTLTank(String strId) {
-        this(strId, 0);
+    public DTLTank( final String strId ) {
+        this( strId, 0 );
     }
-   
+
+
     /**
      * I just added this comment - didn't do any work.
      * 
@@ -76,22 +73,12 @@ public class DTLTank extends RfCavity {
      * @author  Christopher K. Allen
      * @since   May 3, 2011
      */
-    public DTLTank(String strId, int intReserve) {
-        super(strId, intReserve);
+    public DTLTank( final String strId, int intReserve) {
+        this( strId, null, intReserve );
     }
-    
-    
     
     
     /** Support the node type */
     public String getType() { return s_strType; };
-
-
-    /** The RFCavity for this DTLTank 
-     * This is the connection to the klystron
-    */
-    //protected RfCavity mainRfCavity;
-   
-  
 }
 

@@ -10,6 +10,7 @@
 
 package xal.smf.impl;
 
+import xal.ca.ChannelFactory;
 import xal.smf.impl.qualify.ElementTypeManager;
 
 
@@ -33,24 +34,39 @@ public class CCL extends RfCavity {
      * Register CCL's type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(CCL.class, s_strType);
+        ElementTypeManager.defaultManager().registerTypes( CCL.class, s_strType );
     }
-	
-	
+
+
+	/**
+	 * Primary Constructor for CCL
+	 */
+	public CCL( final String strId, final ChannelFactory channelFactory, final int intReserve) {
+		super( strId, channelFactory, intReserve );
+	}
+
+
 	/**
 	 * Constructor for CCL
 	 */
-    public CCL(String strId) {
-        this(strId, 0);
+	public CCL( final String strId, final ChannelFactory channelFactory ) {
+		this( strId, channelFactory, 0 );
+	}
+
+
+	/**
+	 * Constructor for CCL
+	 */
+    public CCL( final String strId ) {
+        this( strId, 0 );
     }
 	
     
 	/**
 	 * Constructor for CCL
 	 */
-	public CCL(String strId, int intReserve) {
-		super(strId, intReserve);
+	public CCL( final String strId, final int intReserve ) {
+		this( strId, null, intReserve );
 	}
     
         

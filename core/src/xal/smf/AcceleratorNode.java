@@ -81,26 +81,34 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
 		return null;
 	}
 
-    
-    /** 
-	 * base constructor for an Accelector Node
-     * @param strId the string ID for this node 
+
+	/**
+	 * Designated constructor
+	 * @param strId the string ID for this node
+	 * @param channelFactory channel factory (null for default) for generating this node's channels
 	 */
-    public AcceleratorNode(String strId) {
-//        initTM();
-        
-        m_strId = strId;
-        
-        m_bolStatus = true;
-        m_bolValid = true;
-        
-        m_mapAttrs = new HashMap<String,AttributeBucket>();
-        
-        setAlign(new AlignmentBucket());
-        setAper(new ApertureBucket());
-        setTwiss(new TwissBucket());
-        
-        channelSuite = new ChannelSuite();
+	public AcceleratorNode( final String strId, final ChannelFactory channelFactory ) {
+		m_strId = strId;
+
+		m_bolStatus = true;
+		m_bolValid = true;
+
+		m_mapAttrs = new HashMap<String,AttributeBucket>();
+
+		setAlign(new AlignmentBucket());
+		setAper(new ApertureBucket());
+		setTwiss(new TwissBucket());
+
+		channelSuite = new ChannelSuite( channelFactory );
+	}
+
+
+    /**
+	 * Convenience constructor using the default channel factory
+     * @param strId the string ID for this node
+	 */
+    public AcceleratorNode( final String strId ) {
+		this( strId, ChannelFactory.defaultFactory() );
     }
     
     

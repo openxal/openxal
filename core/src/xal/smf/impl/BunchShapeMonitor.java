@@ -1,5 +1,6 @@
 package xal.smf.impl;
 
+import xal.ca.ChannelFactory;
 import xal.smf.*;
 import xal.smf.impl.qualify.*;
 
@@ -21,7 +22,7 @@ public class BunchShapeMonitor extends AcceleratorNode {
 	
 	/* Register type for qualification */
 	private static void registerType() {
-		ElementTypeManager.defaultManager().registerType( BunchShapeMonitor.class, s_strType );
+		ElementTypeManager.defaultManager().registerTypes( BunchShapeMonitor.class, s_strType );
 	}
 	
 	
@@ -31,8 +32,14 @@ public class BunchShapeMonitor extends AcceleratorNode {
 	}
 	
 	
+	/** Primary Constructor */
+	public BunchShapeMonitor( final String deviceID, final ChannelFactory channelFactory ) {
+		super( deviceID, channelFactory );
+	}
+
+
 	/** Constructor */
 	public BunchShapeMonitor( final String deviceID ) {
-		super( deviceID );
+		this( deviceID, null );
 	}
 }

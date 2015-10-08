@@ -14,70 +14,40 @@ import xal.smf.impl.qualify.*;
  */
 
 public class CurrentMonitor extends AcceleratorNode {
-
-	/*
-	 * Constants
-	 */
-
+	/** standard type for instances of this class */
 	public static final String s_strType = "BCM";
 
 	static {
 		registerType();
 	}
 
+
 	/*
 	 * Register type for qualification
 	 */
 	private static void registerType() {
-		ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-		typeManager.registerType(CurrentMonitor.class, s_strType);
+		ElementTypeManager.defaultManager().registerTypes( CurrentMonitor.class, s_strType );
 	}
 
-	/*
-	 * Local Attributes
-	 */
 
-	// static {
-	// AcceleratorNodeFactory.registerClass(s_strType, CurrentMonitor.class);
-	// };
+
 	/** Override to provide type signature */
 	public String getType() {
 		return s_strType;
-	};
+	}
 
-	/*
-	 * User Interface
-	 */
 
-	public CurrentMonitor(String strId) {
-		super(strId);
+	/** Primary Constructor */
+	public CurrentMonitor( final String strId, final ChannelFactory channeFactory ) {
+		super( strId, channeFactory );
+	}
 
-	};
 
-	/*
-	 * Attributes (none yet)
-	 */
+	/** Constructor */
+	public CurrentMonitor( final String strId ) {
+		this( strId, null );
+	}
 
-	/*
-	 * ElementType interface
-	 */
-
-	/*
-	 * public boolean isKindOf(String compName) { boolean match =
-	 * compName.equalsIgnoreCase( s_strType ) || super.isKindOf(compName);
-	 * return match; }
-	 */
-
-	/*
-	 * /** the measured current averaged over the entire macropulse (mA) public
-	 * double [] iAvg;
-	 * 
-	 * /** the measured current array holding the average over each minipulse
-	 * (mA) public double [] iTBT;
-	 * 
-	 * /** the measured current array holding the raw data for macropulse (mA)
-	 * public double [] iRaw;
-	 */
 
 	public static final String Q_INTEGRAL_HANDLE = "Particles";
 
@@ -103,9 +73,6 @@ public class CurrentMonitor extends AcceleratorNode {
 
 	private Channel iMaxC = null;
 
-	/*
-	 * Process variable Gets
-	 */
 
 	/**
 	 * Integrated current over macropulse

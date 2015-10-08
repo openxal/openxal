@@ -83,31 +83,25 @@ public class BPM extends AcceleratorNode {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(BPM.class, s_strType);
+		ElementTypeManager.defaultManager().registerTypes( BPM.class, s_strType );
     }
 
 
-    /*
-     *  Local Attributes
-     */
-        
-    
-    
     /** Override to provide type signature */
-    public String getType()   { return s_strType; };
-  
-  
-  
-    /*
-     *  User Interface
-     */
-    
-    
-    public BPM(String strId)     { 
-        super(strId); 
-        setBPMBucket(new BPMBucket());       
-    };
+    public String getType()   { return s_strType; }
+
+
+	/** Constructor */
+	public BPM( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+		setBPMBucket( new BPMBucket() );
+	}
+
+
+	/** Constructor */
+    public BPM( final String strId )     {
+        this( strId, null );
+    }
 
     /** returnthe BPM Bucket */
     public BPMBucket  getBPMBucket()   { return bpmBucket; };   

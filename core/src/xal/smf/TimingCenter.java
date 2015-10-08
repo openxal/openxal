@@ -198,10 +198,18 @@ public class TimingCenter implements DataListener {
 	/**
 	 * Create an empty TimingCenter
 	 */
-	public TimingCenter() {
-		_channelSuite = new ChannelSuite();
+	public TimingCenter( final ChannelFactory channelFactory ) {
+		_channelSuite = channelFactory != null ? new ChannelSuite( channelFactory ) : new ChannelSuite();
 	}
-	
+
+
+	/**
+	 * Create an empty TimingCenter
+	 */
+	public TimingCenter() {
+		this( null );
+	}
+
 	
 	/**
 	 * Get the default TimingCenter corresponding to the user's default main optics source
