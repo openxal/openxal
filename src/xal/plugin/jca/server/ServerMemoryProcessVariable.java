@@ -96,6 +96,7 @@ public class ServerMemoryProcessVariable extends MemoryProcessVariable {
      */
     public synchronized void setValue(Object value) {
     	try {
+    		type = getType(value);
 			super.write(new DBR(value) {		// calling write method, so that all monitors are called
 					@Override
 					public DBR convert(DBRType convertType) throws CAStatusException {	return null; }
