@@ -14,8 +14,7 @@ import xal.ca.*;
  */
 
 public abstract class Magnet extends AcceleratorNode implements MagnetType {
-  
-    
+	// static initialization
     static {
         registerType();
     }
@@ -25,47 +24,34 @@ public abstract class Magnet extends AcceleratorNode implements MagnetType {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(Magnet.class, "magnet");
+		ElementTypeManager.defaultManager().registerTypes( Magnet.class, "magnet" );
     }
     
  
-    /*
-     *  Local Attributes
-     */
-
-    
     /**
      * The effective magnetic length (m)
-     *
      */
     public double leff;
  
     /**
      * The container for the magnet information
-     *
      */
-   
     protected MagnetBucket       m_bucMagnet; 
 
- 
 
-    /*
-     *  User Interface
-     */
+	/** Primary Constructor */
+	public Magnet( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+		setMagBucket( new MagnetBucket() );
+	}
 
-    public Magnet(String strId)     { 
-        super(strId); 
-        
-        setMagBucket(new MagnetBucket());
+
+	/** Constructor */
+    public Magnet( final String strId )     {
+        this( strId, ChannelFactory.defaultFactory() );
     }
 
     
-    
-    /*
-     *  Attributes
-     */
-
     /**
      *  
      * @return    the attribute bucket containing the machine multipole fields

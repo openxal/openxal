@@ -42,10 +42,18 @@ public class ElementTypeManager {
     public static ElementTypeManager defaultManager() {
         return DEFAULT_MANAGER;
     }
-    
-    
+
+	
+	/** Register the specified types to the specified class */
+	public void registerTypes( final Class<? extends AcceleratorNode> theClass, final String... types ) {
+		for ( final String type : types ) {
+			registerType( theClass, type );
+		}
+	}
+
+
     /** Register the type to specified class to be of the specified type */
-    public void registerType( final Class<?> theClass, final String type ) {
+    public void registerType( final Class<? extends AcceleratorNode> theClass, final String type ) {
         final String lowerType = type.toLowerCase();
         Collection<Class<?>> classSet = getClassSet( lowerType );
         if ( classSet == null ) {

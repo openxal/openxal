@@ -11,16 +11,17 @@ import xal.smf.attr.*;
 import xal.smf.impl.qualify.*;
 import xal.ca.*;
 
+
 /**
  * PermanentMagnet is the superclass of all permanent magnet classes.
- *
  * @author  tap
  */
 abstract public class PermanentMagnet extends Magnet {
 	/** accessible properties */
 	public enum Property { FIELD }
 
-	
+
+	// static initializer
     static {
         registerType();
     }
@@ -30,15 +31,19 @@ abstract public class PermanentMagnet extends Magnet {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(PermanentMagnet.class, "pmag");
-        typeManager.registerType(PermanentMagnet.class, "permanentmagnet");
+		ElementTypeManager.defaultManager().registerTypes( PermanentMagnet.class, "pmag", "permanentmagnet" );
     }
-    
-    
+
+
+	/** Creates new PermanentMagnet */
+	public PermanentMagnet( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+	}
+
+
     /** Creates new PermanentMagnet */
-    public PermanentMagnet(String strId) {
-        super(strId);
+    public PermanentMagnet( final String strId ) {
+        this( strId, null );
     }
       
          

@@ -10,7 +10,6 @@ package xal.smf.impl;
 
 import xal.smf.*;
 import xal.smf.attr.*;
-import xal.ca.*;
 import xal.smf.impl.qualify.*;
 import xal.ca.correlator.*;
 import xal.ca.*;
@@ -43,18 +42,10 @@ public class ProfileMonitor extends AcceleratorNode {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( ProfileMonitor.class, s_strType );
-        typeManager.registerType( ProfileMonitor.class, "wirescanner" );
-        typeManager.registerType( ProfileMonitor.class, PROFILE_MONITOR_TYPE );
+		ElementTypeManager.defaultManager().registerTypes( ProfileMonitor.class, s_strType, "wirescanner", PROFILE_MONITOR_TYPE );
     }
     
 
-    /*
-     *  Local Attributes
-     */
-    
-    
     /** Override to provide type signature */
     public String getType()         { return s_strType; };
 	
@@ -63,11 +54,20 @@ public class ProfileMonitor extends AcceleratorNode {
 	public String getSoftType() {
 		return SOFTWARE_TYPE;
 	}
-    
-    
-    public ProfileMonitor(String strId)   { 
-        super(strId); 
+
+
+	/** Primary Constructor */
+	public ProfileMonitor( final String strId, final ChannelFactory channelFactory )   {
+		super( strId, channelFactory );
+	}
+
+
+	/** Constructor */
+    public ProfileMonitor( final String strId )   {
+        this( strId, null );
     }
+
+
     // real time readback signals     
     public static final String POS_HANDLE =    "position"; 
     public Channel PosC = null;

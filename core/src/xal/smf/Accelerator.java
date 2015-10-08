@@ -5,6 +5,7 @@ import xal.sim.scenario.ElementMapping;
 import xal.smf.impl.*;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
+import xal.ca.ChannelFactory;
 
 import java.util.*;
 import java.lang.reflect.*;
@@ -223,24 +224,38 @@ public class Accelerator extends AcceleratorSeq implements /* IElement, */ DataL
     
     /** Primary constructor */
     public Accelerator( final String sysId ) {
-        super( sysId );
-        
-        m_strSysId = sysId;
+		this( sysId, ChannelFactory.defaultFactory() );
+    }
+
+
+	/** Primary constructor */
+	public Accelerator( final ChannelFactory channelFactory ) {
+		this( "", channelFactory );
+	}
+
+
+	/** Primary constructor */
+	public Accelerator( final String sysId, final ChannelFactory channelFactory ) {
+		super( sysId, channelFactory );
+
+		System.out.println( "Instantiating Accelerator with channel factory: " + channelFactory );
+
+		m_strSysId = sysId;
 		_comboSequences = new HashMap<String,AcceleratorSeqCombo>();
 
-        // Create hash maps to hold the main and trim power supplies
-        magnetMainSupplies = new HashMap<String,MagnetMainSupply>();
-        magnetTrimSupplies = new HashMap<String,MagnetTrimSupply>();
-        
-        // Create an edit context to hold dynamic data -tap 6/7/2002
-        editContext = new EditContext();
-		
+		// Create hash maps to hold the main and trim power supplies
+		magnetMainSupplies = new HashMap<String,MagnetMainSupply>();
+		magnetTrimSupplies = new HashMap<String,MagnetTrimSupply>();
+
+		// Create an edit context to hold dynamic data -tap 6/7/2002
+		editContext = new EditContext();
+
 		// initialize the timing center
 		_timingCenter = new TimingCenter();
-    }
-	
-	
-	/** 
+	}
+
+
+	/**
 	 * Handle the event indicating that a node has been added.
 	 * @param p_node the node that has been added
 	 */

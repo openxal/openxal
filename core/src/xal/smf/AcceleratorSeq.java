@@ -3,6 +3,7 @@ package xal.smf;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
 import xal.smf.attr.*;
+import xal.ca.ChannelFactory;
 
 import java.util.*;
 import java.util.logging.*;
@@ -188,13 +189,26 @@ public class AcceleratorSeq extends AcceleratorNode implements DataListener {
 	
     /** constructor that sets aside some space for nodes to come */   
     public AcceleratorSeq( final String strId, int intReserve ) {
-        super( strId );
-        m_arrNodes = new ArrayList<AcceleratorNode>( intReserve );
+        this( strId, ChannelFactory.defaultFactory(), intReserve );
+    }
+
+
+	/** constructor that sets aside some space for nodes to come */
+	public AcceleratorSeq( final String strId, final ChannelFactory channelFactory ) {
+		this( strId, channelFactory, 0 );
+	}
+
+
+	/** designated constructor that sets aside some space for nodes to come */
+	public AcceleratorSeq( final String strId, final ChannelFactory channelFactory, int intReserve ) {
+		super( strId, channelFactory );
+
+		m_arrNodes = new ArrayList<AcceleratorNode>( intReserve );
 		_sequences = new ArrayList<AcceleratorSeq>();
 		nodeTable = new HashMap<String, AcceleratorNode>( intReserve );
-    }
-    
-	
+	}
+
+
     /** Support the node type */
     public String getType() { return s_strType; };
 	

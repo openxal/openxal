@@ -9,6 +9,7 @@
 package xal.smf.impl;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
@@ -1356,16 +1357,22 @@ public class WireHarp extends ProfileDevice {
      * recognizes.
      */
     static {
-
-        final ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( WireHarp.class, STR_TYPE_ID );
-        typeManager.registerType( WireHarp.class, HARDWARE_TYPE ); 
+		ElementTypeManager.defaultManager().registerTypes( WireHarp.class, STR_TYPE_ID, HARDWARE_TYPE );
     }
 
 
     /*
      * Initialization
      */
+
+	/**
+	 * Primary Constructor
+	 * @param strId unique identifier of this node
+	 * @param channelFactory factory for generating channels for this node
+	 */
+	public WireHarp( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+	}
 
     /**
      * Creates a new instance of <code>WireHarp</code>.
@@ -1375,8 +1382,8 @@ public class WireHarp extends ProfileDevice {
      * @author Christopher K. Allen
      * @since  Feb 13, 2013
      */
-    public WireHarp(String strId) {
-        super(strId);
+    public WireHarp( final String strId ) {
+        this( strId, null );
     }
 
 

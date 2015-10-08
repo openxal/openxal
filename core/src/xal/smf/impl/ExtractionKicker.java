@@ -29,21 +29,23 @@ public class ExtractionKicker extends Dipole {
     static {
         registerType();
     }
-	
-	
+
+
+	/** Primary Constructor */
+	public ExtractionKicker( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
+
 	/** Constructor */
     public ExtractionKicker( final String strId )     { 
-        super( strId );
+        this( strId, null );
     }
 	
     
     /** Register type for qualification */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( ExtractionKicker.class, s_strType );
-        typeManager.registerType( ExtractionKicker.class, "kicker" );
-        typeManager.registerType( ExtractionKicker.class, "vertkicker" );
-        typeManager.registerType( ExtractionKicker.class, "extractionkicker" );
+		ElementTypeManager.defaultManager().registerTypes( ExtractionKicker.class, s_strType, "kicker", "vertkicker", "extractionkicker" );
     }
 	
 	

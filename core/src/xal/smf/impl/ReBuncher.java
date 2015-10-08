@@ -6,6 +6,7 @@
 
 package xal.smf.impl;
 
+import xal.ca.ChannelFactory;
 import xal.smf.impl.qualify.ElementTypeManager;
 
 
@@ -30,28 +31,26 @@ public class ReBuncher extends RfCavity {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(ReBuncher.class, s_strType);
-        typeManager.registerType(ReBuncher.class, "rebuncher");
+		ElementTypeManager.defaultManager().registerTypes( ReBuncher.class, s_strType, "rebuncher" );
     }
     
 
-    /*
-     *  Local Attributes
-     */
-    
-   
     /** Override to provide type signature */
     public String getType() { 
         return s_strType; 
     }
-       
-    
-    /*
-     *  User Interface
-     */
-    
-    
+
+
+	/**
+	 * Primary Constructor.
+	 * @param strId node identifier
+	 * @param channelFactory factory for generating channels
+	 */
+	public ReBuncher( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+	}
+
+
     /**
      * I just added this comment - didn't do any work.
      * 
@@ -60,8 +59,8 @@ public class ReBuncher extends RfCavity {
      * @author  Christopher K. Allen
      * @since   May 3, 2011
      */
-    public ReBuncher(String strId)   { 
-        super(strId); 
+    public ReBuncher( final String strId ) {
+        this( strId, null );
     }
     
     

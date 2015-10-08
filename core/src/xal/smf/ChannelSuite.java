@@ -40,19 +40,26 @@ public class ChannelSuite implements DataListener {
     final private SignalSuite SIGNAL_SUITE;
     
     
-    /** Creates a new instance of ChannelSuite */
+    /** Creates a new instance of ChannelSuite using the default channel factory */
     public ChannelSuite() {
-		this( ChannelFactory.defaultFactory() );
+		this( null );
     }
 	
 	
 	/**
 	 * Primary constructor for creating an instance of channel suite
+	 * @param channelFactory channel factory (or null for default factory) for generating channels
 	 */
 	public ChannelSuite( final ChannelFactory channelFactory ) {
-		CHANNEL_FACTORY = channelFactory;
+		CHANNEL_FACTORY = channelFactory != null ? channelFactory : ChannelFactory.defaultFactory();
         CHANNEL_HANDLE_MAP = new HashMap<String,Channel>();
         SIGNAL_SUITE = new SignalSuite();
+	}
+
+
+	/** get the channel factory */
+	public ChannelFactory getChannelFactory() {
+		return CHANNEL_FACTORY;
 	}
     
     
@@ -208,6 +215,11 @@ public class ChannelSuite implements DataListener {
                 }
 
 				channel.setValid( isValid( handle ) );
+
+				if (channel instanceof IServerChannel) {
+					((IServerChannel)channel).setSettable( SIGNAL_SUITE.isSettable(handle) );
+				}
+
             }
             
             // if we have a channel, cache it for future access
@@ -230,6 +242,18 @@ public class ChannelSuite implements DataListener {
  * @author  tap
  */
 class SignalSuite {
+	/** hash set of handles that are settable by default */
+	final static private Set<String> SETTABLE_CHANNEL_HANDLES = new HashSet<>();
+
+	// assign the settable handles
+	static {
+		final String[] HANDLES = { "I_Set", "fieldSet", "cycleEnable", "cavAmpSet", "cavPhaseSet", "deltaTRFStart", "deltaTRFEnd", "tDelay", "blankBeam" };
+
+		for ( final String handle : HANDLES ) {
+			SETTABLE_CHANNEL_HANDLES.add( handle );
+		}
+	}
+
 	/** map of signal entries keyed by handle */
 	final private Map<String,SignalEntry> SIGNAL_MAP;        // handle-PV name table
 
@@ -241,6 +265,12 @@ class SignalSuite {
 	public SignalSuite() {
 		SIGNAL_MAP = new HashMap<String,SignalEntry>();
 		TRANSFORM_MAP = new HashMap<String,ValueTransform>();
+	}
+
+
+	/** determine if the handle is a settable handle (fixed time lookup since using a Hash Set) */
+    private boolean isHandleSettable( final String handle ) {
+		return SETTABLE_CHANNEL_HANDLES.contains( handle );
 	}
 
 
@@ -261,9 +291,12 @@ class SignalSuite {
 			final String signal = channelAdaptor.stringValue( "signal" );
 			if ( signal != null )  signalEntry.setSignal( signal );
 
+			// if the settable attribute is specified, then use its value otherwise fallback to the default settable handles lookup
 			if ( channelAdaptor.hasAttribute( "settable" ) ) {
 				final boolean settable = channelAdaptor.booleanValue( "settable" );
 				signalEntry.setSettable( settable );
+			} else if ( isHandleSettable( handle ) ) {		// if settable is not explicitly specified, determine if the handle is settable by default
+				signalEntry.setSettable( true );
 			}
 
 			if ( channelAdaptor.hasAttribute( "valid" ) ) {
@@ -407,6 +440,17 @@ class SignalSuite {
 	public boolean isValid( final String handle ) {
 		final SignalEntry signalEntry = getSignalEntry( handle );
 		return signalEntry != null ? signalEntry.isValid() : false;
+	}
+
+
+	/**
+	 * Determine whether the handle's corresponding PV is valid.
+	 * @param handle The handle for which to get the validity.
+	 * @return validity state of the PV or false if there is no entry for the handle
+	 */
+	public boolean isSettable( final String handle ) {
+		final SignalEntry signalEntry = getSignalEntry( handle );
+		return signalEntry != null ? signalEntry.settable() : false;
 	}
 
 

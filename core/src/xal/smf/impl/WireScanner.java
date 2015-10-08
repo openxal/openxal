@@ -12,6 +12,7 @@ package xal.smf.impl;
 
 import xal.ca.BadChannelException;
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.IEventSinkValue;
@@ -550,12 +551,8 @@ public class WireScanner extends ProfileDevice {
      * recognizes.
      */
     static {
-        
-        final ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( WireScanner.class, s_strType );
-        typeManager.registerType( WireScanner.class, HARDWARE_TYPE ); 
+		ElementTypeManager.defaultManager().registerTypes( WireScanner.class, s_strType, HARDWARE_TYPE );
     }
-
 
 
     
@@ -2799,6 +2796,16 @@ public class WireScanner extends ProfileDevice {
      * Initialization
      */
 
+	/**
+	 * Primary Constructor.
+	 * @param nodeID unique identifier for this node
+	 * @param channelFactory factory for generating channels for this node
+	 */
+	public WireScanner( final String nodeID, final ChannelFactory channelFactory )   {
+		super( nodeID, channelFactory );
+	}
+
+
     /**
      * Create a new <code>WireScanner</code> object.
      *
@@ -2808,7 +2815,7 @@ public class WireScanner extends ProfileDevice {
      * @author    Christopher K. Allen
      */
     public WireScanner( final String nodeID )   { 
-        super( nodeID ); 
+        this( nodeID, null );
     }   
 
 

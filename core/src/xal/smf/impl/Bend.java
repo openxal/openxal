@@ -9,6 +9,7 @@ package xal.smf.impl;
 import xal.smf.*;
 import xal.smf.attr.*;
 import xal.smf.impl.qualify.*;
+import xal.ca.ChannelFactory;
 
 
 /**
@@ -34,33 +35,23 @@ public class Bend extends Dipole {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(Bend.class, s_strType);
-        typeManager.registerType(Bend.class, "bend");
+		ElementTypeManager.defaultManager().registerTypes( Bend.class, s_strType, "bend" );
     }
   
-    
-    /*
-     *  Local Attributes
-     */
-    
-    /** the design bend angle */
 
-    //public double bendAngle;
-
-    
     /** Override to provide type signature */
     public String getType()   { return s_strType; }
-  
-  
-  
-    /*
-     *  User Interface
-     */
-    
-    public Bend(String strId)     { 
-        super(strId); 
-        
+
+
+	/** Constructor */
+	public Bend( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+	}
+
+
+	/** Constructor */
+    public Bend( final String strId )     {
+        this( strId, null );
     }
 
         

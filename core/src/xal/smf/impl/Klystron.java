@@ -1,6 +1,7 @@
 package xal.smf.impl;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
@@ -30,15 +31,17 @@ public class Klystron implements DataListener {
     private int[] powerFact;
     private int[] controlFlag;
     private boolean stat = false;
-    
+
+
     /**
-     * Constructor for Klystron.
+     * Constructor for Klystron using the same channel factory as the provided accelerator.
      * @param anAccelerator the accelerator object this klystron belongs to
      */
-    public Klystron(Accelerator anAccelerator) {
-        channelSuite = new ChannelSuite();
-        accelerator = anAccelerator; 	
+    public Klystron( final Accelerator anAccelerator ) {
+		this.accelerator = anAccelerator;
+		this.channelSuite = anAccelerator != null ? new ChannelSuite( anAccelerator.channelSuite().getChannelFactory() ) : new ChannelSuite();
     }
+
     
 //    @Override
 	public String dataLabel() {

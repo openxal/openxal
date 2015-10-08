@@ -1,6 +1,7 @@
 package xal.smf.impl;
 
 import xal.ca.Channel;
+import xal.ca.ChannelFactory;
 import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.smf.AcceleratorNode;
@@ -44,9 +45,7 @@ public class RfGap extends AcceleratorNode {
      * Register type for qualification
      */
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(RfGap.class, s_strType);
-        typeManager.registerType(RfGap.class, "rfgap");
+		ElementTypeManager.defaultManager().registerTypes( RfGap.class, s_strType, "rfgap" );
     }
     
 
@@ -69,20 +68,21 @@ public class RfGap extends AcceleratorNode {
     
     /** Override to provide type signature */
     public String getType()         { return s_strType; };
-    
 
-    /*
-     *  User Interface
-     */
 
-    
-    public RfGap(String strId)   { 
-        super(strId); 
-    
-        setRfGap(new RfGapBucket());
+	/** Primary Constructor */
+	public RfGap( final String strId, final ChannelFactory channelFactory ) {
+		super( strId, channelFactory );
+		setRfGap(new RfGapBucket());
+	}
 
-    }  
-    
+
+	/** Constructor */
+    public RfGap( final String strId ) {
+        this( strId, null );
+    }
+
+	
     /*
      *  Attributes
      */

@@ -45,16 +45,20 @@ abstract public class Electromagnet extends Magnet {
     
     // Register types for qualification
     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType( Electromagnet.class, s_strType );
-        typeManager.registerType( Electromagnet.class, "electromagnet" );
+		ElementTypeManager.defaultManager().registerTypes( Electromagnet.class, s_strType, "electromagnet" );
     }
 
-    
+
+	/** Primary Constructor */
+	public Electromagnet( final String strId, final ChannelFactory channelFactory )     {
+		super( strId, channelFactory );
+		_useFieldReadback = true;		// by default use the field readback
+	}
+
+
     /** Constructor */
     public Electromagnet( final String strId ) {
-        super(strId);
-		_useFieldReadback = true;		// by default use the field readback
+        this( strId, null );
     }
 
     

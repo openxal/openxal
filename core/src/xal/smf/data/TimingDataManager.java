@@ -10,6 +10,7 @@
 
 package xal.smf.data;
 
+import xal.ca.ChannelFactory;
 import xal.tools.data.*;
 import xal.tools.xml.*;
 import xal.smf.*;
@@ -22,17 +23,41 @@ import xal.smf.*;
  * @author  tap
  */
 class TimingDataManager {
+	/** factory from which to generate the channels */
+	final private ChannelFactory CHANNEL_FACTORY;
+
 	protected String _urlSpec;
 	protected TimingCenter _timingCenter;
 	protected String timingSchema = "/xal/schemas/xdxf.xsd";
+
+
+	/**
+	 * TimingDataManager constructor
+	 * @param urlSpec The URL spec of the timing data source
+	 * @param channelFactory factory from which to generate channels
+	 */
+	public TimingDataManager( final String urlSpec, final ChannelFactory channelFactory ) {
+		CHANNEL_FACTORY = channelFactory;
+		_urlSpec = urlSpec;
+		_timingCenter = null;
+	}
+
+
+	/**
+	 * TimingDataManager constructor
+	 * @param channelFactory factory from which to generate channels
+	 */
+	public TimingDataManager( final ChannelFactory channelFactory ) {
+		this( null, channelFactory );
+	}
+
 	
 	/**
 	 * TimingDataManager constructor
 	 * @param urlSpec The URL spec of the timing data source
 	 */
-	public TimingDataManager(String urlSpec) {
-		_urlSpec = urlSpec;
-		_timingCenter = null;
+	public TimingDataManager( final String urlSpec ) {
+		this( urlSpec, ChannelFactory.defaultFactory() );
 	}
 	
 	
@@ -40,7 +65,7 @@ class TimingDataManager {
 	 * TimingDataManager constructor
 	 */
 	public TimingDataManager() {
-		this(null);
+		this( null, ChannelFactory.defaultFactory() );
 	}
 	
 	
@@ -69,8 +94,8 @@ class TimingDataManager {
 	 * @return The timing center parsed from this manager's timing data source
 	 */
 	protected TimingCenter parseTimingCenter() {
-		TimingCenter timingCenter = new TimingCenter();
-		updateTimingCenter(timingCenter);
+		final TimingCenter timingCenter = new TimingCenter( CHANNEL_FACTORY );
+		updateTimingCenter( timingCenter );
 		return timingCenter;
 	}
 	
@@ -79,7 +104,7 @@ class TimingDataManager {
 	 * Update the specified timing center with data from the timing data source
 	 * @param timingCenter The timing center to update
 	 */
-	protected void updateTimingCenter(TimingCenter timingCenter) {
+	protected void updateTimingCenter( final TimingCenter timingCenter ) {
 		if ( _urlSpec != null ) {
 			XmlDataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl(_urlSpec, false, timingSchema);
 			DataAdaptor timingAdaptor = documentAdaptor.childAdaptor(TimingCenter.DATA_LABEL);

@@ -3,7 +3,10 @@ package xal.smf.impl;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.qualify.*;
 import xal.tools.data.*;
+import xal.ca.ChannelFactory;
 
+
+/** node representing a simple marker */
 public class Marker extends AcceleratorNode {
 	/** for generaic marker */
     public static final String s_strType   = "marker";
@@ -28,35 +31,49 @@ public class Marker extends AcceleratorNode {
 	
     /** the type of quadrupole (horizontal or vertical) */
     protected String _type;
-    
-	
+
+
+	/**
+	 * Primary Constructor
+	 * @param strID the unique node identifier
+	 * @param channelFactory factory for generating channels
+	 */
+	public Marker( final String strID, final ChannelFactory channelFactory ) {
+		super( strID, channelFactory );
+	}
+
+
     /**
      * Constructor
 	 * @param strID the unique node identifier
      */
     public Marker( final String strID ) {
-        super( strID ); 
+        this( strID, null );
     }
-    
+
+
     /** Overriden to provide type signature */
     public String getType()   { return s_strType; }
-    
+
+
+	// static initializer
 	static {
 		registerType();
 	}
 
-   /**
-     * Register type for qualification.  These are the types that are common to all instances.  
+
+	/**
+	 * Register type for qualification.  These are the types that are common to all instances.
 	 * The <code>isKindOf</code> method handles the type qualification specific to an instance.
-     * @see #isKindOf
-     */
-     private static void registerType() {
-        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
-        typeManager.registerType(Marker.class, s_strType);        
-    }
-     
+	 * @see #isKindOf
+	 */
+	private static void registerType() {
+		ElementTypeManager.defaultManager().registerTypes( Marker.class, s_strType );
+	}
+
+
      /**
-      * Update the instance with data from the data adaptor.  Overrides the default implementation to 
+      * Update the instance with data from the data adaptor.  Overrides the default implementation to
  	 * set the marker type since a marker type can be "Foil", "VIW" "Tgt", etc.
       * @param adaptor The data provider.
       */
