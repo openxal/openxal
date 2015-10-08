@@ -13,7 +13,7 @@ import xal.plugin.jca.server.JcaServerChannelFactory;
 /**
  * Concrete implementation of ChannelFactory that uses JCA.
  * @author  tap
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class ChannelFactoryPlugin {
     /**
