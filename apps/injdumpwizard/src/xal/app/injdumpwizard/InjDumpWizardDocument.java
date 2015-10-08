@@ -5,43 +5,55 @@
  */
 package xal.app.injdumpwizard;
 
-import java.net.*;
-import java.io.*;
-import java.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.util.*;
-import javax.swing.tree.DefaultTreeModel;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 
-import xal.extension.application.*;
-import xal.extension.application.smf.*;
-import xal.ca.*;
-import xal.extension.widgets.plot.*;
-import xal.extension.widgets.swing.*;
-import xal.tools.xml.*;
-import xal.tools.apputils.*;
 
-import xal.smf.*;
-import xal.extension.application.*;
-import xal.smf.impl.qualify.*;
-import xal.smf.impl.ProfileMonitor;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import xal.ca.ChannelFactory;
+
+import xal.extension.application.Application;
+import xal.extension.application.Commander;
+import xal.extension.application.smf.AcceleratorDocument;
+
+import xal.tools.xml.XmlDataAdaptor;
+import xal.smf.impl.qualify.KindQualifier;
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorSeq;
 import xal.smf.impl.BPM;
 import xal.smf.impl.Electromagnet;
-import xal.model.probe.Probe;
+import xal.smf.impl.WireScanner;
 import xal.model.probe.ParticleProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.model.alg.ParticleTracker;
 
-
-
-
 //local packages
-import xal.app.injdumpwizard.utils.*;
+import xal.app.injdumpwizard.utils.IDmpBPM_Wrapper;
+import xal.app.injdumpwizard.utils.IDmpMagnets_Wrapper;
+import xal.app.injdumpwizard.utils.IDmpPositionCalculator;
+import xal.app.injdumpwizard.utils.IDmpWS_Wrapper;
+import xal.app.injdumpwizard.utils.SwitcherToSimulatedH0;
 
 /**
  *  InjDumpWizardDocument is a custom XalDocument for Injection Dump Wizard
@@ -230,8 +242,10 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 		AcceleratorSeq seq = acc.findSequence("IDmp+");
 
 		//wire scaner
-		java.util.List<ProfileMonitor> wss = seq.<ProfileMonitor>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, ProfileMonitor.s_strType ) );
-		ProfileMonitor ws = wss.get(1);
+        java.util.List<WireScanner> wss = seq.getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, WireScanner.s_strType ) );
+        WireScanner ws = wss.get(1);
+//		java.util.List<ProfileMonitor> wss = seq.<ProfileMonitor>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, ProfileMonitor.s_strType ) );
+//		ProfileMonitor ws = wss.get(1);
 		wsWrapper.setWS(ws);
 
 		java.util.List<BPM> bpms = seq.<BPM>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, BPM.s_strType ) );
@@ -304,7 +318,8 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 				fontSize_PrefPanel_Spinner.setValue(new Integer(font_size));
 				setFontForAll(globalFont);
 
-				XmlDataAdaptor params_da = (XmlDataAdaptor) quadshakerData_Adaptor.childAdaptor("shared_parameters");
+				// CKA - not used
+//				XmlDataAdaptor params_da = (XmlDataAdaptor) quadshakerData_Adaptor.childAdaptor("shared_parameters");
 
 				//read the application specific data
 				//from quadshakerData_Adaptor
@@ -332,7 +347,8 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 		params_font.setValue("style", globalFont.getStyle());
 		params_font.setValue("size", globalFont.getSize());
 
-		XmlDataAdaptor params_da = (XmlDataAdaptor) quadshakerData_Adaptor.createChild("shared_parameters");
+		// CKA - not used
+//		XmlDataAdaptor params_da = (XmlDataAdaptor) quadshakerData_Adaptor.createChild("shared_parameters");
 
 		//write the application specific data
 		//into the quadshakerData_Adaptor XmlDataAdaptor
@@ -448,8 +464,10 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 					int fnt_size = ((Integer) fontSize_PrefPanel_Spinner.getValue()).intValue();
 					globalFont = new Font(globalFont.getFamily(), globalFont.getStyle(), fnt_size);
 					setFontForAll(globalFont);
-					int h = getInjDumpWizardWindow().getHeight();
-					int w = getInjDumpWizardWindow().getWidth();
+					
+					// CKA - not used
+//					int h = getInjDumpWizardWindow().getHeight();
+//					int w = getInjDumpWizardWindow().getWidth();
 					getInjDumpWizardWindow().validate();
 				}
 			});
