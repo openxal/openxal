@@ -8,37 +8,61 @@
 
 package xal.app.virtualaccelerator;
 
-import xal.ca.*;
-import xal.smf.*;
-import xal.smf.impl.qualify.*;
-import xal.smf.impl.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import java.io.*;
-import java.util.*;
+import xal.ca.Channel;
+import xal.ca.IServerChannel;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
+import xal.smf.TimingCenter;
+import xal.smf.impl.BLM;
+import xal.smf.impl.BPM;
+import xal.smf.impl.Bend;
+import xal.smf.impl.CurrentMonitor;
+import xal.smf.impl.Electromagnet;
+import xal.smf.impl.ExtractionKicker;
+import xal.smf.impl.HDipoleCorr;
+import xal.smf.impl.MagnetMainSupply;
+import xal.smf.impl.MagnetTrimSupply;
+import xal.smf.impl.ProfileMonitor;
+import xal.smf.impl.Quadrupole;
+import xal.smf.impl.RfCavity;
+import xal.smf.impl.Sextupole;
+import xal.smf.impl.Solenoid;
+import xal.smf.impl.TrimmedQuadrupole;
+import xal.smf.impl.VDipoleCorr;
+import xal.smf.impl.qualify.AndTypeQualifier;
+import xal.smf.impl.qualify.KindQualifier;
+import xal.smf.impl.qualify.NotTypeQualifier;
+import xal.smf.impl.qualify.QualifierFactory;
+import xal.smf.impl.qualify.TypeQualifier;
 
 
-/** Server channel access */
+/**
+ * Server channel access
+ * 
+ * @version 0.2 13 Jul 2015
+ * @author unkwnon
+ * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ */
 public class VAServer {	
-	/** size for array PVs */
-	static final int DEFAULT_ARRAY_SIZE = 1024;
-    
 	/** The sequence for which to server channels */
 	final private AcceleratorSeq SEQUENCE;
-
-	/** Server to process channel requests */
-	final private ChannelServer CHANNEL_SERVER;
-
 	
+	
+	final protected static int DEFAULT_ARRAY_SIZE = 1024;
 	/**
 	 * Constructor
 	 * @param sequence The sequence for which to serve channels
 	 */
 	public VAServer( final AcceleratorSeq sequence ) throws Exception {
 		SEQUENCE = sequence;
-
-		/** Create a new instance of the channel server */
-		CHANNEL_SERVER = ChannelServer.getInstance();
-
+		
 		/** register channels for the sequence's nodes */
 		registerNodeChannels();
 	}
@@ -46,9 +70,7 @@ public class VAServer {
 	
 	/** dispose of the context */
 	public void destroy() throws Exception {
-		if ( CHANNEL_SERVER != null ) {
-			CHANNEL_SERVER.destroy();
-		}
+	    //Nothing to do here.
 	}
 	
 	
@@ -114,15 +136,13 @@ public class VAServer {
 					final SignalEntry entry = new SignalEntry( signal, handle );
 					if ( !signals.contains( entry ) ) {
 						signals.add( entry );
+						if (channel instanceof IServerChannel)
+							processor.appendLimits( entry, (IServerChannel)channel);
 					}
 				} else {
 					System.err.println( "Warning! No valid channel for handle: " + handle );
 				}
 			}
-		}
-		
-		for ( SignalEntry entry : signals ) {
-			processor.makePV( CHANNEL_SERVER, entry );
 		}
 	}
 	
@@ -145,12 +165,10 @@ public class VAServer {
 				final SignalEntry entry = new SignalEntry( signal, handle );
 				if ( !signals.contains( entry ) ) {
 					signals.add( entry );
+					if (channel instanceof IServerChannel)
+						processor.appendLimits( entry, (IServerChannel)channel);
 				}
 			}
-		}
-		
-		for ( SignalEntry entry : signals ) {
-			processor.makePV( CHANNEL_SERVER, entry );
 		}
 	}
 }
@@ -158,56 +176,22 @@ public class VAServer {
 
 
 /** Default processor for a signal */
-class SignalProcessor {
-	/** size for array PVs */
-	static final private int DEFAULT_ARRAY_SIZE = VAServer.DEFAULT_ARRAY_SIZE;
-
-	/** process the signal entry */
-	public ChannelServerPV makePV( final ChannelServer server, final SignalEntry entry ) {
-		final String signalName = entry.getSignal();
-		final int size = entry.getSignal().matches( ".*(TBT|A)" ) ? DEFAULT_ARRAY_SIZE : 1;
-		final ChannelServerPV serverPV = server.registerPV( signalName, new double[size] );
-		serverPV.setUnits( "units" );
-
-		appendLimits( entry, serverPV );
-        
-        if ( size == 1 ) {
-            final String[] warningPVs = ChannelFactory.defaultFactory().getChannel( signalName ).getWarningLimitPVs();
-            server.registerPV( warningPVs[0], 0 );
-            server.registerPV( warningPVs[1], 0 );
-            
-            final String[] alarmPVs = ChannelFactory.defaultFactory().getChannel( signalName ).getAlarmLimitPVs();
-            server.registerPV( alarmPVs[0], 0 );
-            server.registerPV( alarmPVs[1], 0 );
-
-            final String[] operationLimitPVs = ChannelFactory.defaultFactory().getChannel( signalName ).getOperationLimitPVs();
-            server.registerPV( operationLimitPVs[0], serverPV.getLowerDispLimit().doubleValue() );
-            server.registerPV( operationLimitPVs[1], serverPV.getUpperDispLimit().doubleValue() );
-
-            final String[] driveLimitPVs = ChannelFactory.defaultFactory().getChannel( signalName ).getDriveLimitPVs();
-            server.registerPV( driveLimitPVs[0], serverPV.getLowerCtrlLimit().doubleValue() );
-            server.registerPV( driveLimitPVs[1], serverPV.getUpperCtrlLimit().doubleValue() );
-        }
-
-		return serverPV;
-	}
+abstract class SignalProcessor {
+	protected abstract void appendLimits( final SignalEntry entry, final IServerChannel pv );
 	
 	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {}
-	
-	
-	protected void setLimits( final ChannelServerPV mpv, final double lowerLimit, final double upperLimit ) {
-		mpv.setLowerDispLimit( lowerLimit );
-		mpv.setUpperDispLimit( upperLimit );
+	protected void setLimits( final IServerChannel pv, final double lowerLimit, final double upperLimit ) {
+		pv.setLowerDispLimit( lowerLimit );
+		pv.setUpperDispLimit( upperLimit );
 		
-		mpv.setLowerAlarmLimit( lowerLimit );
-		mpv.setUpperAlarmLimit( upperLimit );
+		pv.setLowerAlarmLimit( lowerLimit );
+		pv.setUpperAlarmLimit( upperLimit );
 		
-		mpv.setLowerCtrlLimit( lowerLimit );
-		mpv.setUpperCtrlLimit( upperLimit );
+		pv.setLowerCtrlLimit( lowerLimit );
+		pv.setUpperCtrlLimit( upperLimit );
 		
-		mpv.setLowerWarningLimit( lowerLimit );
-		mpv.setUpperWarningLimit( upperLimit );
+		pv.setLowerWarningLimit( lowerLimit );
+		pv.setUpperWarningLimit( upperLimit );
 	}
 }
 
@@ -243,6 +227,11 @@ class NodeSignalProcessor extends SignalProcessor {
 	 */
 	public Collection<String> getHandlesToProcess( final AcceleratorNode node ) {
 		return node.getHandles();
+	}
+
+
+	@Override
+	protected void appendLimits(SignalEntry entry, IServerChannel pv) {		
 	}
 }
 
@@ -333,9 +322,9 @@ class SextupoleProcessor extends NodeSignalProcessor {
 	}
 	
 	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		if ( LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, -10.0, 10.0 );
+			setLimits( pv, -10.0, 10.0 );
 		}
 	}
 }
@@ -356,10 +345,10 @@ class UnipolarEMProcessor extends NodeSignalProcessor {
 		LIMIT_HANDLES.add( MagnetMainSupply.FIELD_BOOK_HANDLE );
 	}
 	
-	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	@Override
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		if ( LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, 0.0, 50.0 );
+			setLimits( pv, 0.0, 50.0 );
 		}
 	}
 }
@@ -386,12 +375,12 @@ class TrimmedQuadrupoleProcessor extends NodeSignalProcessor {
 	}
 	
 	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		if ( MAIN_LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, 0.0, 50.0 );
+			setLimits( pv, 0.0, 50.0 );
 		}
 		else if ( TRIM_LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, -1.0, 1.0 );
+			setLimits( pv, -1.0, 1.0 );
 		}
 	}
 }
@@ -400,13 +389,13 @@ class TrimmedQuadrupoleProcessor extends NodeSignalProcessor {
 
 /** Signal processor appropriate for processing BPMs */
 class BPMProcessor extends NodeSignalProcessor {
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		final String handle = entry.getHandle();
 		if ( BPM.AMP_AVG_HANDLE.equals( handle ) ) {
-			setLimits( mpv, 0.0, 50.0 );
+			setLimits( pv, 0.0, 50.0 );
 		}
 		else {
-			setLimits( mpv, -1000.0, 1000.0 );
+			setLimits( pv, -1000.0, 1000.0 );
 		}
 	}	
 }
@@ -430,9 +419,9 @@ class BendProcessor extends NodeSignalProcessor {
 	
 	
 	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		if ( LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, -1.5, 1.5 );
+			setLimits( pv, -1.5, 1.5 );
 		}
 	}
 }
@@ -455,9 +444,9 @@ class DipoleCorrectorProcessor extends NodeSignalProcessor {
 	}
 	
 	
-	protected void appendLimits( final SignalEntry entry, final ChannelServerPV mpv ) {
+	protected void appendLimits( final SignalEntry entry, final IServerChannel pv ) {
 		if ( LIMIT_HANDLES.contains( entry.getHandle() ) ) {
-			setLimits( mpv, -0.01, 0.01 );
+			setLimits( pv, -0.01, 0.01 );
 		}
 	}
 }
@@ -473,6 +462,10 @@ class TimingCenterProcessor extends SignalProcessor {
 	 */
 	public Collection<String> getHandlesToProcess( final TimingCenter timingCenter ) {
 		return timingCenter.getHandles();
+	}
+
+	@Override
+	protected void appendLimits(SignalEntry entry, IServerChannel pv) {
 	}
 }
 
