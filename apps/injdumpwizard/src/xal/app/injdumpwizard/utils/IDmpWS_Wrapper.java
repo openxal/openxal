@@ -22,18 +22,24 @@ import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.ca.PutException;
 import xal.extension.widgets.swing.DoubleInputTextField;
-import xal.smf.impl.ProfileMonitor;
+import xal.smf.impl.WireScanner;
+
+//import xal.smf.impl.ProfileMonitor;
 
 /**
  * This class creates a JPanel with control elements to start and to stop
  * the wire scanner WS01 in the Injection Dump.
  *
- *@author     shishlo
+ * @author Andrei Shislo
+ * @author Christopher K Allen
+ * 
+ * @since   Unknown
+ * @version Oct 8, 2015  CKA: Retro-fitted for new WireScanner class
  */
 public class  IDmpWS_Wrapper {
 
 	//Profile Monitor - WireScanner - WS
-	private ProfileMonitor ws = null;
+	private WireScanner ws = null;
 
 	private double scanLength = 0.;
 
@@ -117,18 +123,24 @@ public class  IDmpWS_Wrapper {
 			 public void actionPerformed(ActionEvent e) {
 				 hasToStop = true;
 				 try{
-					 ws.stopScan();
+//					 ws.stopScan();
+					 ws.runCommand(WireScanner.CMD.ABORT);
 				 }
 				 catch(ConnectionException ce){
 					 wsProgressBar.setValue(0);
 					 hasToStop = true;
-					 messageTextLocal.setText("Cannot scan! Cannot start WS!");
+					 messageTextLocal.setText("Unable to find WS command channel. Cannot start WS!");
 				 }
 				 catch(PutException ge){
 					 wsProgressBar.setValue(0);
 					 hasToStop = true;						
-					 messageTextLocal.setText("Cannot scan! Cannot start WS!");
-				 }				 
+					 messageTextLocal.setText("Unable to set WS command channel value. Cannot start WS!");
+				 } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                    wsProgressBar.setValue(0);
+                    hasToStop = true;                      
+                    messageTextLocal.setText("WS command buffer reset thread interrupted. Cannot start WS!");
+                }				 
 			 }
 		 });
 
@@ -143,9 +155,18 @@ public class  IDmpWS_Wrapper {
 		 new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
 
+			     // Get the mean values of the fitted data
 				 try{
-					 xPositionTextField.setValue(ws.getHMeanF());
-					 yPositionTextField.setValue(ws.getVMeanF());
+				     WireScanner.GaussFitAttrSet fitAttrs = WireScanner.GaussFitAttrSet.acquire(ws);
+				     
+				     double dblHorMean = fitAttrs.hor.mean;
+				     double dblVerMean = fitAttrs.ver.mean;
+				     
+				     xPositionTextField.setValue(dblHorMean);
+				     yPositionTextField.setValue(dblVerMean);
+				     
+//					 xPositionTextField.setValue(ws.getHMeanF());
+//					 yPositionTextField.setValue(ws.getVMeanF());
 					 scanSuccess = true;
 				 }
 				 catch(ConnectionException ce){
@@ -163,13 +184,19 @@ public class  IDmpWS_Wrapper {
 
 	/**
 	* Sets the profile monitor (WS)
+	* 
+	* @version Oct 8, 2015  Retro-fitted for new WireScanner class
 	*/
-	public void setWS(ProfileMonitor ws){
+	public void setWS(WireScanner ws){
 		this.ws = ws;
 		wsLabel.setText("  " + ws.getId() + "    Progress: ");
 
 		try{
-			scanLength = ws.getScanLength();
+		    WireScanner.ScanConfig cfgScan = WireScanner.ScanConfig.acquire(ws);
+            scanLength = cfgScan.getScanlLength();
+
+//		    scanLength = ws.getScanLength();
+            
 			if(scanLength <= 0.){
 				messageTextLocal.setText("The scan length should be > 0, length= " + scanLength);
 				System.out.println("The scan length should be > 0, length= " + scanLength);
@@ -189,6 +216,34 @@ public class  IDmpWS_Wrapper {
 		}
 
 	}
+//    /**
+//    * Sets the profile monitor (WS)
+//    */
+//    public void setWS(ProfileMonitor ws){
+//        this.ws = ws;
+//        wsLabel.setText("  " + ws.getId() + "    Progress: ");
+//
+//        try{
+//            scanLength = ws.getScanLength();
+//            if(scanLength <= 0.){
+//                messageTextLocal.setText("The scan length should be > 0, length= " + scanLength);
+//                System.out.println("The scan length should be > 0, length= " + scanLength);
+//            }
+//        }
+//        catch(ConnectionException ce){
+//            messageTextLocal.setText("Could not connect to " + ws.getId());
+//            System.out.println("Could not connect to " + ws.getId());
+//            System.err.println( ce.getMessage() );
+//            ce.printStackTrace();
+//        }
+//        catch(GetException ge){
+//            messageTextLocal.setText("Could not get data from " + ws.getId());
+//            System.out.println("Could not get data from " + ws.getId());
+//            System.err.println( ge.getMessage() );
+//            ge.printStackTrace();
+//        }
+//
+//    }
 
 	/**
 	* Returns the panel with all GUI elements
@@ -215,18 +270,25 @@ public class  IDmpWS_Wrapper {
 				startActions();
 				
 				try{
-					ws.doScan();
+//					ws.doScan();
+					
+					ws.runCommand(WireScanner.CMD.ACQUIRE);
 				} 
 				catch(ConnectionException ce){
 					wsProgressBar.setValue(0);
 					hasToStop = true;
-					messageTextLocal.setText("Cannot scan! Cannot start WS!");
+                    messageTextLocal.setText("Unable to find WS command channel. Cannot start WS!");
 				}
 				catch(PutException ge){
 					wsProgressBar.setValue(0);
 					hasToStop = true;						
-					messageTextLocal.setText("Cannot scan! Cannot start WS!");
-				}
+                    messageTextLocal.setText("Unable to set WS command channel value. Cannot start WS!");
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                    wsProgressBar.setValue(0);
+                    hasToStop = true;                      
+                    messageTextLocal.setText("WS command buffer reset thread interrupted. Cannot start WS!");
+                }                
 			
 		    scanSuccess = false;
 				double x_parkPos = 1.0;
@@ -235,11 +297,19 @@ public class  IDmpWS_Wrapper {
 
 				while(hasToStop == false){
 					try{
-						if(ws.getPos() < x_parkPos){
+					    WireScanner.DevStatus statDev = WireScanner.DevStatus.acquire(ws);
+					    
+					    double dblPos = statDev.wirePos;
+					    
+//                      if(ws.getPos() < x_parkPos){
+						if(dblPos < x_parkPos){
 							//let's start the scan
 							int try_limit = 10;
 							int i_try = 0;
-							while(ws.getPos() <= x_parkPos && hasToStop == false){
+							
+							statDev = WireScanner.DevStatus.acquire(ws);
+                            while(statDev.wirePos <= x_parkPos && hasToStop == false){
+//							while(ws.getPos() <= x_parkPos && hasToStop == false){
 					      //sleep for a while
 								try{
 									Thread.sleep((long) (1000*time_step));
@@ -256,7 +326,10 @@ public class  IDmpWS_Wrapper {
 							}
 							if(hasToStop == false){
 								//scan has been started and we will waight until it is done
-                while(ws.getPos() > x_parkPos && hasToStop == false){
+							    statDev = WireScanner.DevStatus.acquire(ws);
+							    
+				                while(statDev.wirePos > x_parkPos && hasToStop == false){
+//                while(ws.getPos() > x_parkPos && hasToStop == false){
 									updateProgressBar();
 									//sleep for a while
 									try{
@@ -327,8 +400,12 @@ public class  IDmpWS_Wrapper {
 		hasToStop = false;
 		if(scanSuccess == true){
 			try{
-				xPositionTextField.setValue(ws.getHMeanF());
-				yPositionTextField.setValue(ws.getVMeanF());
+			    WireScanner.GaussFitAttrSet attrFit = WireScanner.GaussFitAttrSet.acquire(ws);
+			    
+				xPositionTextField.setValue(attrFit.hor.mean);
+				yPositionTextField.setValue(attrFit.ver.mean);
+//                xPositionTextField.setValue(ws.getHMeanF());
+//                yPositionTextField.setValue(ws.getVMeanF());
 			}
 			catch(ConnectionException ce){
 				scanSuccess = false;
@@ -349,7 +426,9 @@ public class  IDmpWS_Wrapper {
 	*/
 	private void updateProgressBar(){
 		try{
-			int progress = (int) (100.0*ws.getPos()/scanLength);
+		    WireScanner.DevStatus    statCfg = WireScanner.DevStatus.acquire(ws);
+            int progress = (int) (100.0*statCfg.wirePos/scanLength);
+//			int progress = (int) (100.0*ws.getPos()/scanLength);
 			wsProgressBar.setValue(progress);
 		}
 		catch(ConnectionException ce){

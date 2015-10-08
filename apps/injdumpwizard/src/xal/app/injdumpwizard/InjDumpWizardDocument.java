@@ -37,12 +37,12 @@ import xal.extension.application.Commander;
 import xal.extension.application.smf.AcceleratorDocument;
 
 import xal.tools.xml.XmlDataAdaptor;
-import xal.smf.impl.ProfileMonitor;
 import xal.smf.impl.qualify.KindQualifier;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.BPM;
 import xal.smf.impl.Electromagnet;
+import xal.smf.impl.WireScanner;
 import xal.model.probe.ParticleProbe;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.AlgorithmFactory;
@@ -242,8 +242,10 @@ public class InjDumpWizardDocument extends AcceleratorDocument {
 		AcceleratorSeq seq = acc.findSequence("IDmp+");
 
 		//wire scaner
-		java.util.List<ProfileMonitor> wss = seq.<ProfileMonitor>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, ProfileMonitor.s_strType ) );
-		ProfileMonitor ws = wss.get(1);
+        java.util.List<WireScanner> wss = seq.getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, WireScanner.s_strType ) );
+        WireScanner ws = wss.get(1);
+//		java.util.List<ProfileMonitor> wss = seq.<ProfileMonitor>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, ProfileMonitor.s_strType ) );
+//		ProfileMonitor ws = wss.get(1);
 		wsWrapper.setWS(ws);
 
 		java.util.List<BPM> bpms = seq.<BPM>getAllNodesWithQualifier( KindQualifier.qualifierWithStatusAndType( true, BPM.s_strType ) );
