@@ -1131,6 +1131,36 @@ public class WireScanner extends ProfileDevice {
             super(ws);
         }
 
+        /*
+         * Convenience Methods
+         */
+        
+        /**
+         * Returns the stroke length of the actuator arm for a scan.  This is the
+         * total physical distances traveled by the actuator arm during a scan
+         * and is <b>not</b> necessarily the abscissa of the measured data.  
+         * This value, <i>L</i>, is typically given by the formula
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>L</i> = <i>N</i><sub>steps</sub> &Delta;<i>L</i>
+         * <br/>
+         * <br/>
+         * where <i>N</i><sub>steps</sub> is the number
+         * of scan steps and &Delta;<i>L</i> is the step length.  
+         * 
+         * @return      movement distance <i>L</i> of scan actuator
+         *
+         * @author Christopher K. Allen
+         * @since  Oct 8, 2015
+         */
+        public double getScanlLength() {
+
+            // Get the total stroke length of the actuator arm
+            double  dblLen = this.stepCount * this.stepLength;
+
+            return dblLen;
+        }
+        
         
         /*
          * IProfileDomain Interface
@@ -1203,7 +1233,7 @@ public class WireScanner extends ProfileDevice {
         @Override
         public double getIntervalLength(ANGLE angle) {
             
-            // Get the total stroke length of the accuator arm
+            // Get the total stroke length of the actuator arm
             double  dblLen = this.stepCount * this.stepLength;
             
             switch (angle) {
