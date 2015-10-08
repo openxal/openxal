@@ -12,7 +12,7 @@ import xal.ca.ChannelSystem;
  * Concrete implementation of ChannelFactory that uses JCA.
  * 
  * @version 0.1 13 Jul 2015
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class JcaServerChannelFactory extends ChannelFactory {
     /** JCA channel system */

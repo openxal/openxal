@@ -23,7 +23,7 @@ import com.cosylab.epics.caj.cas.util.MemoryProcessVariable;
  * method, to disable writing to read-only channels.
  * 
  * @version 0.1 13 Jul 2015
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class ServerMemoryRecord extends ServerMemoryProcessVariable {
 	protected ServerMemoryProcessVariable lowerWarningLimitPV, upperWarningLimitPV;
