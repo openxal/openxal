@@ -189,7 +189,7 @@ public class MonitorController {
 			_channel.addConnectionListener( _connectionListener );		// listen for connection events
 		}
 		
-		if ( !_channel.isConnected() ) {		// request a new connection if the channel is not already connected
+		if ( !_channel.isConnected() && _channel.isValid() ) {		// request a new connection if the channel is not already connected
 			_channel.requestConnection();
 		}
 	}
