@@ -32,7 +32,7 @@ import com.cosylab.epics.caj.cas.util.DefaultServerImpl;
  * JcaServerChannel imitiating client channel, so it is instatiate directly in SMF layer.
  * 
  * @version 0.1 13 Jul 2015
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 
 public class JcaServerChannel extends Channel implements IServerChannel {
