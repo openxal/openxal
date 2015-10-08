@@ -28,7 +28,7 @@ import xal.extension.application.smf.AcceleratorApplication;
  * 
  * @version 0.2 13 Jul 2015
  * @author Paul Chu
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class Main extends ApplicationAdaptor {
     /**

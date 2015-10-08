@@ -8,7 +8,7 @@ import xal.ca.ChannelServer;
  * JcaServerChannelSystem is the same as JcaSystem
  * 
  * @version 0.1 13 Jul 2015
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 class JcaServerChannelSystem extends ChannelSystem {
 
