@@ -44,19 +44,23 @@ public class JcaServerChannel extends Channel implements IServerChannel {
 
     private final int size;
 
-    JcaServerChannel(String signal, DefaultServerImpl channelServer) {
+    JcaServerChannel( final String signal, final DefaultServerImpl channelServer ) {
         super(signal);
         m_strId = signal;
-        size = signal.matches(".*(TBT|A)") ? DEFAULT_ARRAY_SIZE : 1;
-       
-        pv = new ServerMemoryRecord(signal, null, new double[size], channelServer);
-       
-        pv.setUnits("units");
-        
-        pved = new ProcessVariableEventDispatcher(pv);
-        pv.setEventCallback(pved);
-        
-        connectionFlag = true;
+
+		if ( signal.length() > 0 ) {
+			size = signal.matches(".*(TBT|A)") ? DEFAULT_ARRAY_SIZE : 1;
+			pv = new ServerMemoryRecord(signal, null, new double[size], channelServer);
+			pv.setUnits("units");
+
+			pved = new ProcessVariableEventDispatcher(pv);
+			pv.setEventCallback(pved);
+			connectionFlag = true;
+		} else {
+			size = 0;
+			setValid( false );
+			connectionFlag = false;
+		}
     }
 
     @Override
@@ -446,8 +450,9 @@ public class JcaServerChannel extends Channel implements IServerChannel {
 		pv.setUpperWarningLimit(upperWarningLimit);
 	}    
 	
-	public void setSettable(boolean settable)
-	{
-		pv.setSettable(settable);
+	public void setSettable(boolean settable) {
+		if ( pv != null ) {
+			pv.setSettable(settable);
+		}
 	}
 }
