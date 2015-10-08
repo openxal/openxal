@@ -11,7 +11,6 @@ package xal.ca;
  * Abstract ChannelServer.
  * @author  tap
  */
-@Deprecated
 abstract public class ChannelServer {
 	/** 
 	 * Constructor 
