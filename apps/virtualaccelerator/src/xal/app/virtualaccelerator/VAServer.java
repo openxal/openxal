@@ -48,7 +48,7 @@ import xal.smf.impl.qualify.TypeQualifier;
  * 
  * @version 0.2 13 Jul 2015
  * @author unkwnon
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class VAServer {	
 	/** The sequence for which to server channels */

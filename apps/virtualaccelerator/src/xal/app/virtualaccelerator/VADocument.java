@@ -116,7 +116,7 @@ import xal.tools.xml.XmlDataAdaptor;
  * VADocument is a custom AcceleratorDocument for virtual accelerator application.
  * @version 1.6 13 Jul 2015
  * @author Paul Chu
- * @author Blaž Kranjc <blaz.kranjc@cosylab.com>
+ * @author Blaz Kranjc <blaz.kranjc@cosylab.com>
  */
 public class VADocument extends AcceleratorDocument implements ActionListener, PutListener {
     /** default BPM waveform size */
