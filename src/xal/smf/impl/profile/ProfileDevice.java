@@ -114,8 +114,19 @@ public abstract class ProfileDevice extends AcceleratorNode {
         
         /**
          * Return the length of the real interval containing the projection data.
-         * That is, return the measure of the smallest real interval containing the
-         * projection data.
+         * That is, return the length of the smallest interval containing the
+         * projection data. Note that this value may be different than the
+         * "scan length" as it may depend upon the measurement plane.
+         * The value, <i>L</i>, is typically given by the formula
+         * <br/>
+         * <br/>
+         * &nbsp; &nbsp; <i>L</i> = &alpha; <i>N</i><sub>steps</sub> &Delta;<i>L</i>
+         * <br/>
+         * <br/>
+         * where &alpha; is the correction factor, <i>N</i><sub>steps</sub> is the number
+         * of scan steps, and &Delta;<i>L</i> is the step length.  For example, if the
+         * scan actuator arm is physically at a 45 &deg; angle to the given measurement
+         * plane then &alpha; = 1/&radic;2. 
          *  
          * @param angle     the projection angle of the data set
          * 
