@@ -11,10 +11,10 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 
 /**
  * @author luxiaohan
- *
+ * plot the parameters 
  */
 public class MachineSimulatorPlotter {
-	
+	/** */
 	public FunctionGraphsJPanel _twissParametersplot;
 	
 	public String[] _parameterName=new String[]{ "kineticenery","betax","betay","betaz","alphax",
@@ -31,35 +31,42 @@ public class MachineSimulatorPlotter {
 	 //  setupPlot(twissParametersplot);
 		
 	}
-	
-	public void showtwissplot(List<Double> p,List<Double> x,int i){
+	//show the Graphs 
+	public void showtwissplot(List<Double> p,List<Double> x,String a){
 		double[] p1=new double[p.size()];
 		double[] x1=new double[x.size()];
 		for(int j=0;j<p.size();j++){
 			p1[j]=p.get(j);
 			x1[j]=x.get(j);
 		}
-		
+		int i=0;
+		for(int k=0;k<_parameterName.length;k++){if(_parameterName[k].equals(a)) i=k;}
 	_twissParameterplotdata[i].updateValues(p1, x1);
 	}
 	
      /**setup twissplot*/	
 	public void setupPlot(FunctionGraphsJPanel twissParametersplot){
 		
+		//labels
 		twissParametersplot.setName("");
 		twissParametersplot.setAxisNameX("Position(m)");
 		twissParametersplot.setAxisNameY("");
 		
+		//add legend support
+		twissParametersplot.setLegendButtonVisible(true);
+		twissParametersplot.setLegendBackground(Color.white);
+		//initialize all the BasicGraphData
 		for(int i=0;i<19;i++){
 		   	_twissParameterplotdata[i]=new BasicGraphData();
 				}
-		_twissParameterplotdata[0].setGraphColor(new Color(0, 0, 0));
+		// configure the graphic color
+		_twissParameterplotdata[0].setGraphColor(new Color(0, 0, 0));   //kineticenery
 		_twissParameterplotdata[1].setGraphColor(new Color(148, 0, 211));//betax
 		_twissParameterplotdata[2].setGraphColor(new Color(255, 69, 0)); //betay
 		_twissParameterplotdata[3].setGraphColor(new Color(0, 255, 0));    //betaz
 		_twissParameterplotdata[4].setGraphColor(new Color(0, 70, 70));//alphax
 		_twissParameterplotdata[5].setGraphColor(new Color(0, 255, 255)); //alphay
-		_twissParameterplotdata[6].setGraphColor(new Color(255, 255, 0)); // alphaz
+		_twissParameterplotdata[6].setGraphColor(new Color(180, 255, 0)); // alphaz
 		_twissParameterplotdata[7].setGraphColor(new Color(255, 0, 0));// gammax
 		_twissParameterplotdata[8].setGraphColor(new Color(255, 165, 0));//gammay
 		_twissParameterplotdata[9].setGraphColor(new Color(0, 0, 255));//gammaz
