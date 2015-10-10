@@ -22,26 +22,36 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 public class MachineSimulation {
     /** states for every element */
     final List<MachineSimulationRecord> SIMULATION_RECORDS;;
-    
+    public int RecordsSize=0;
+    public double[] _AllPosition;
     
 	/** Constructor */
     public MachineSimulation( final Probe<?> probe ) {
         final Trajectory<?> trajectory = probe.getTrajectory();
 		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
-
+		
         SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
-        
         final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
         while ( stateIter.hasNext() ) {
             final ProbeState<?> state = stateIter.next();
-			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
+			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state ); 
             SIMULATION_RECORDS.add( simulationRecord );
         }
     }
     
-    
     /** Get the simulation records */
     public List<MachineSimulationRecord> getSimulationRecords() {
         return SIMULATION_RECORDS;
+    }
+ 
+/** get all the element's position in selected sequence ----xiaohan add*/
+    public List<Double> getAllPosition(){
+    	final int RecordsSize = SIMULATION_RECORDS.size();
+      List<Double> _AllPosition = new ArrayList<Double>();
+        _AllPosition.removeAll(_AllPosition);
+    	for(int i=0;i<RecordsSize;i++){
+    		_AllPosition.add(SIMULATION_RECORDS.get(i).getPosition());
+    	}
+    	return _AllPosition;
     }
 }
