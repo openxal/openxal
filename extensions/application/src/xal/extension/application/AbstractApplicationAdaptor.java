@@ -201,7 +201,6 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
 	
 	/** Get the window reference from the resource if any */
 	public WindowReference getDefaultWindowReference( final String tag, final Object... parameters ) {
-		System.out.println("in AbstractApplicationAdaptor getDefaultWindowR..1");
 		final URL url = getResourceURL( GUI_BRICKS_RESOURCE );
 		return new WindowReference( url, tag, parameters );
 		
