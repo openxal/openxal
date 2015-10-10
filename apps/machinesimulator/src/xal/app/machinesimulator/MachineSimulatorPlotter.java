@@ -53,25 +53,25 @@ public class MachineSimulatorPlotter {
 		for(int i=0;i<19;i++){
 		   	_twissParameterplotdata[i]=new BasicGraphData();
 				}
-		_twissParameterplotdata[0].setGraphColor(Color.black);
+		_twissParameterplotdata[0].setGraphColor(new Color(0, 0, 0));
 		_twissParameterplotdata[1].setGraphColor(new Color(148, 0, 211));//betax
 		_twissParameterplotdata[2].setGraphColor(new Color(255, 69, 0)); //betay
-		_twissParameterplotdata[3].setGraphColor(new Color(0, 0, 0));    //betaz
-		_twissParameterplotdata[4].setGraphColor(new Color(47, 255, 225));//alphax
+		_twissParameterplotdata[3].setGraphColor(new Color(0, 255, 0));    //betaz
+		_twissParameterplotdata[4].setGraphColor(new Color(0, 70, 70));//alphax
 		_twissParameterplotdata[5].setGraphColor(new Color(0, 255, 255)); //alphay
 		_twissParameterplotdata[6].setGraphColor(new Color(255, 255, 0)); // alphaz
-		_twissParameterplotdata[7].setGraphColor(Color.red);              // gammax
-		_twissParameterplotdata[8].setGraphColor(Color.red);              //gammay
-		_twissParameterplotdata[9].setGraphColor(Color.red);              //gammaz
-		_twissParameterplotdata[10].setGraphColor(Color.red);
-		_twissParameterplotdata[11].setGraphColor(Color.red);
-		_twissParameterplotdata[12].setGraphColor(Color.red);
-		_twissParameterplotdata[13].setGraphColor(Color.red);
-		_twissParameterplotdata[14].setGraphColor(Color.red);
-		_twissParameterplotdata[15].setGraphColor(Color.red);
-		_twissParameterplotdata[16].setGraphColor(Color.red);
-		_twissParameterplotdata[17].setGraphColor(Color.red);
-		_twissParameterplotdata[18].setGraphColor(Color.red);
+		_twissParameterplotdata[7].setGraphColor(new Color(255, 0, 0));// gammax
+		_twissParameterplotdata[8].setGraphColor(new Color(255, 165, 0));//gammay
+		_twissParameterplotdata[9].setGraphColor(new Color(0, 0, 255));//gammaz
+		_twissParameterplotdata[10].setGraphColor(new Color(225, 150, 0));//emittancex
+		_twissParameterplotdata[11].setGraphColor(new Color(120, 225, 255));//emittancey
+		_twissParameterplotdata[12].setGraphColor(new Color(50, 25, 175));//emittancez
+		_twissParameterplotdata[13].setGraphColor(new Color(120, 0, 140));//beamsizex
+		_twissParameterplotdata[14].setGraphColor(new Color(240, 20, 20));//beamsizey
+		_twissParameterplotdata[15].setGraphColor(new Color(0, 140, 70));//beamsizez
+		_twissParameterplotdata[16].setGraphColor(new Color(120, 70, 70));//betatronphasex
+		_twissParameterplotdata[17].setGraphColor(new Color(200, 0, 70));//betatronphasey
+		_twissParameterplotdata[18].setGraphColor(new Color(0, 0, 139));//betatronphasez
 		
 		
 		for(int i=0;i<19;i++){_twissParameterplotdata[i].setGraphProperty(_twissParametersplot.getLegendKeyString(), _parameterName[i]);}
