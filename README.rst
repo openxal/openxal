@@ -16,5 +16,8 @@ Open XAL is designed to be a flexible application framework for developing accel
 
 
 
-.. image:: https://travis-ci.org/Eothred/openxal.png?branch=github
+.. image:: https://travis-ci.org/Eothred/openxal.png?branch=master
    :target: https://travis-ci.org/Eothred/openxal
+
+.. image:: https://gitlab01.esss.lu.se/ci/projects/2/status.png?ref=master
+   :target: https://gitlab01.esss.lu.se/ci/projects/2?ref=master

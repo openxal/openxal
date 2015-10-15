@@ -1,0 +1,20 @@
+variables:
+    GIT_SSL_NO_VERIFY: "true"
+test:
+    script:
+        - yum install ant junit ant-junit maven -y
+        - ant test
+    only:
+        - master
+        - site.sns.master
+test.maven:
+    script:
+        - yum install maven -y
+        - git clone https://bitbucket.org/europeanspallationsource/ess-java-config.git
+        - cd ess-java-config
+        - mvn install
+        - cd ../
+        - mvn package
+    only:
+        - site.ess.master
+
