@@ -48,10 +48,12 @@ public class SwitcherDocument extends XalDocument {
      * pane to use the textDocument variable as its document.
      */
     public void makeMainWindow() {
-        mainWindow = new DefaultXalWindow( this, false );
+		final WindowReference windowReference = getDefaultWindowReference( "MainWindow", this );
+        mainWindow = (DefaultXalWindow)windowReference.getWindow();
+
         final OpticsSwitcher opticsSwitcher = OpticsSwitcher.getInstanceForHostedFrame();
-        mainWindow.getContentPane().add( opticsSwitcher.getView() );
-        mainWindow.pack();
+		final Box editorContainer = (Box)windowReference.getView( "EditorContainer" );
+		editorContainer.add( opticsSwitcher.getView() );
 	}
     
     
