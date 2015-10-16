@@ -423,7 +423,7 @@ public class IdealRfCavity extends ElementSeq  implements IRfCavity {
                 // We've hit the last cell in a cell bank
                 if (bolInCellBank) {
 
-                    indCell += 2;
+                    indCell += 2;       // the cell banks remain in phase
                     bolInCellBank = false;
 
                 // We've hit the first cell in a cell bank

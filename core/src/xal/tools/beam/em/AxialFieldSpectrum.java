@@ -351,7 +351,9 @@ public class AxialFieldSpectrum {
      * </p>
      * <p>
      * In this case the given field spectra are assumed to be functions of
-     * normalized particle velocity &beta;.
+     * normalized particle velocity &beta;.  Thus, the RF frequency is needed
+     * to convert from wave number <i>k</i> to normalized velocity &beta; in 
+     * order to evaluate the functions.
      * </p>
      *
      * @param dblFreq       frequency of the time-harmonic electric field (Hz)
@@ -398,9 +400,18 @@ public class AxialFieldSpectrum {
 
 
     /**
+     * <p>
      * Constructor for creating the full field model using the sine and cosine
      * transform and their conjugates.  The pre- and post-envelope spectra are 
      * build from these objects and used to compute acceleration parameters.
+     * </p>
+     * <p>
+     * Note that frequency <i>f</i> is not needed here since the given arguments are
+     * assumed to be functions of <i>k</i>.  RF frequency is only needed to convert
+     * from wave number <i>k</i> to normalized velocity &beta; in the case of 
+     * spectral functions that are functions of &beta; 
+     * (e.g., <i>T</i>(&beta;), <i>S</i>(&beta;), etc.).
+     * </p>
      *
      * @param fncTz         field cosine transform (transit time factor)
      * @param fncDTz        derivative of the cosine transform w.r.t. <i>k</i>
@@ -440,7 +451,7 @@ public class AxialFieldSpectrum {
         
         // Null out all the partial field model parameters
         this.dblFldOSet = 0.0;
-        this.dblFrq     = 0.0;
+        this.dblFrq     = 0.0; // frequency is only used to convert from k to beta
         
         this.fncTz0  = null;
         this.fncDTz0 = null;
@@ -531,8 +542,8 @@ public class AxialFieldSpectrum {
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
     public Complex  fldSpectrum(double k) {
-        double  dblReal = +this.T(k);
-        double  dblImag = -this.S(k);
+        double  dblReal = +this.Tz(k);
+        double  dblImag = -this.Sz(k);
         
         Complex cpxSpectra = new Complex(dblReal, dblImag);
         
@@ -568,8 +579,8 @@ public class AxialFieldSpectrum {
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
     public Complex  dkFldSpectrum(double k) {
-        double  dblReal = +this.dT(k);
-        double  dblImag = -this.dS(k);
+        double  dblReal = +this.dTz(k);
+        double  dblImag = -this.dSz(k);
         
         Complex cpxSpectra = new Complex(dblReal, dblImag);
         
@@ -805,15 +816,15 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   T(double k) {
-        double      T;
+    public double   Tz(double k) {
+        double      Tz;
         
         if (this.bolPrtlFldMdl)
-            T = this.TfromTz0(k);
+            Tz = this.TzfromTz0(k);
         else
-            T = this.fncTz.evaluateAt(k);
+            Tz = this.fncTz.evaluateAt(k);
             
-        return T;
+        return Tz;
     }
     
     /**
@@ -826,15 +837,15 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   dT(double k) {
-        double      dT;
+    public double   dTz(double k) {
+        double      dTz;
         
         if (this.bolPrtlFldMdl)
-            dT = this.dTfromDTz0(k);
+            dTz = this.dTzfromDTz0(k);
         else
-            dT = this.fncDTz.evaluateAt(k);
+            dTz = this.fncDTz.evaluateAt(k);
         
-        return dT;
+        return dTz;
     }
     
     /**
@@ -847,15 +858,15 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   S(double k) {
-        double      S;
+    public double   Sz(double k) {
+        double      Sz;
         
         if (this.bolPrtlFldMdl)
-            S = this.SfromTz0(k);
+            Sz = this.SzfromTz0(k);
         else
-            S = this.fncSz.evaluateAt(k);
+            Sz = this.fncSz.evaluateAt(k);
         
-        return S;
+        return Sz;
     }
     
     /**
@@ -868,15 +879,15 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   dS(double k) {
-        double      dS;
+    public double   dSz(double k) {
+        double      dSz;
         
         if (this.bolPrtlFldMdl) 
-            dS = this.dSfromDTz0(k);
+            dSz = this.dSzfromDTz0(k);
         else
-            dS = this.fncDSz.evaluateAt(k);
+            dSz = this.fncDSz.evaluateAt(k);
         
-        return dS;
+        return dSz;
     }
     
     /**
@@ -995,16 +1006,16 @@ public class AxialFieldSpectrum {
      *
      * @since  Feb 13, 2015   by Christopher K. Allen
      */
-    private double  TfromTz0(double k) {
+    private double  TzfromTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double cos = Math.cos(k*dz);
 
-        double beta = this.velocity(k);
+        double beta = this.computeVelocity(k);
         double T0   = this.fncTz0.evaluateAt(beta);
-        double T    = T0*cos;
+        double Tz   = T0*cos;
         
-        return T;
+        return Tz;
     }
     
     /**
@@ -1042,18 +1053,18 @@ public class AxialFieldSpectrum {
      * @version July 29, 2015: Modified to assume 
      *          <code>fitTTFPrime</code> = <i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
-    private double  dTfromDTz0(double k) {
+    private double  dTzfromDTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double cos = Math.cos(k*dz);
         double sin = Math.sin(k*dz);
 
-        double beta = this.velocity(k);
-        double T0p  = this.fncDTz0.evaluateAt(beta);
-        double T0   = this.fncTz0.evaluateAt(beta);
-        double Tp   = T0p*cos - T0*dz*sin;
+        double beta = this.computeVelocity(k);
+        double dTz0 = this.fncDTz0.evaluateAt(beta);
+        double Tz0  = this.fncTz0.evaluateAt(beta);
+        double dT   = dTz0*cos - Tz0*dz*sin;
         
-        return Tp;
+        return dT;
     }
     
     /**
@@ -1084,16 +1095,16 @@ public class AxialFieldSpectrum {
      *
      * @since  Feb 16, 2015   by Christopher K. Allen
      */
-    private double  SfromTz0(double k) {
+    private double  SzfromTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double sin = Math.sin(k*dz);
 
-        double beta = this.velocity(k);
-        double T0   = this.fncTz0.evaluateAt(beta);
-        double S    = T0*sin;
+        double beta = this.computeVelocity(k);
+        double Tz0  = this.fncTz0.evaluateAt(beta);
+        double Sz    = Tz0*sin;
         
-        return S;
+        return Sz;
     }
     
     /**
@@ -1132,18 +1143,18 @@ public class AxialFieldSpectrum {
      * @since  Feb 16, 2015   by Christopher K. Allen
      * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
-    private double  dSfromDTz0(double k) {
+    private double  dSzfromDTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double sin = Math.sin(k*dz);
         double cos = Math.cos(k*dz);
         
-        double beta = this.velocity(k);
-        double T0p  = this.fncDTz0.evaluateAt(beta);
-        double T0   = this.fncTz0.evaluateAt(beta);
-        double Tp   = T0p*sin + T0*dz*cos;
+        double beta = this.computeVelocity(k);
+        double dTz0 = this.fncDTz0.evaluateAt(beta);
+        double Tz0  = this.fncTz0.evaluateAt(beta);
+        double dT   = dTz0*sin + Tz0*dz*cos;
         
-        return Tp;
+        return dT;
     }
     
     
@@ -1178,7 +1189,7 @@ public class AxialFieldSpectrum {
         double dz  = - this.getFieldOffset();
         double sin = Math.sin(k*dz);
 
-        double beta = this.velocity(k);
+        double beta = this.computeVelocity(k);
         double Sq0  = this.fncSq0.evaluateAt(beta);
         double Tq   = -Sq0*sin;
         
@@ -1234,7 +1245,7 @@ public class AxialFieldSpectrum {
         double cos = Math.cos(k*dz);
         double sin = Math.sin(k*dz);
         
-        double beta = this.velocity(k);
+        double beta = this.computeVelocity(k);
         double Sq0p = this.fncDSq0.evaluateAt(beta);
         double Sq0  = this.fncSq0.evaluateAt(beta);
         double Tqp  = -Sq0p*sin - Sq0*dz*cos;
@@ -1274,7 +1285,7 @@ public class AxialFieldSpectrum {
         double dz  = - this.getFieldOffset();
         double cos = Math.cos(k*dz);
 
-        double beta = this.velocity(k);
+        double beta = this.computeVelocity(k);
         double Sq0  = this.fncSq0.evaluateAt(beta);
         double Sq   = Sq0*cos;
         
@@ -1323,7 +1334,7 @@ public class AxialFieldSpectrum {
         double sin = Math.sin(k*dz);
         double cos = Math.cos(k*dz);
         
-        double beta = this.velocity(k);
+        double beta = this.computeVelocity(k);
         double dSq0 = this.fncDSq0.evaluateAt(beta);
         double Sq0  = this.fncSq0.evaluateAt(beta);
         double dSq  = dSq0*cos - Sq0*dz*sin;
@@ -1341,7 +1352,7 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    private double velocity(double k) {
+    private double computeVelocity(double k) {
         double  lambda = DBL_LGHT_SPD/this.getFrequency();
         double  beta   = DBL_2PI/(k*lambda);
         

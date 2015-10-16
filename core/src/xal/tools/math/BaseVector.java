@@ -419,6 +419,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * Sets the entire vector to the values given in the Java primitive type 
      * double array.
      * 
+     * <h4>NOTE!</h4>
+     * TODO This is not going to work for homogeneous coordinates!
+     * <br/>
+     * <br/>
+     * 
      * @param arrVector Java primitive array containing new vector values
      * 
      * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
@@ -468,6 +473,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  The token string argument is assumed to be one-dimensional and packed by
      *  column (aka FORTRAN).
      *
+     *  <h4>NOTE!</h4> 
+     *  TODO This is not going to work for homogeneous coordinates!
+     *  <br/>
+     *  <br/>
+     * 
      *  @param  strValues   token vector of SIZE<sup>2</sup> numeric values
      *
      *  @exception  IllegalArgumentException    wrong number of token strings
