@@ -33,7 +33,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 //    final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      
       
-    final MachineSimulatorController _MachineSimulatorController;
+    final MachineSimulatorController _machineSimulatorController;
 	
 	
     /** Empty Constructor */
@@ -56,7 +56,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         
         // initialize the model here
         MODEL = new MachineModel();
-		_MachineSimulatorController= new MachineSimulatorController(this,WINDOW_REFERENCE);
+		_machineSimulatorController= new MachineSimulatorController(this,WINDOW_REFERENCE);
         
 		
 		if ( url != null ) {
