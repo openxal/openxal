@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Sun Oct 18 18:56:32 CST 2015" version="1.0.0">
+<BricksDocument date="Sun Oct 18 21:28:44 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -118,6 +118,11 @@
                             <BeanProperty name="selected" value="false"/>
                             <BeanProperty name="toolTipText" value="Display the Betatron Phase"/>
                         </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Clear All">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="name" value="Clear All"/>
+                        <BeanProperty name="text" value="Clear All"/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>

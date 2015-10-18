@@ -32,39 +32,22 @@ public class MachineSimulatorController {
     final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final MachineModel MODEL;
-     public List<MachineSimulationRecord> _allRecords;
+     public List<MachineSimulationRecord> _allRecords=null;
       
      /**result of MachineSimulatoion */
-     public MachineSimulation _MachineSimulation;
+     public MachineSimulation _machineSimulation;
       /** the document for the Machine Simulator application*/
      final private MachineSimulatorDocument _Document;
      /** the plotter*/
-     public MachineSimulatorPlotter _MachineSimulatorPlotter;
+     public MachineSimulatorPlotter _machineSimulatorPlotter;
        
      final KeyValueAdaptor KEY_VALUE_ADAPTOR;
      
      final HashMap<String, List<Double>> PLOT_DATA;
        /** initialize the data list of parameters*/
      public List<Double> _position=new ArrayList<Double>();
-     public List<Double> kineticenery=new ArrayList<Double>();     
-     public List<Double> betax=new ArrayList<Double>();
-     public List<Double> betay=new ArrayList<Double>();
-     public List<Double> betaz=new ArrayList<Double>();
-     public List<Double> alphax=new ArrayList<Double>();
-     public List<Double> alphay=new ArrayList<Double>();
-     public List<Double> alphaz=new ArrayList<Double>();
-     public List<Double> gammax=new ArrayList<Double>();
-     public List<Double> gammay=new ArrayList<Double>();
-     public List<Double> gammaz=new ArrayList<Double>();
-     public List<Double> emittancex=new ArrayList<Double>();
-     public List<Double> emittancey=new ArrayList<Double>();
-     public List<Double> emittancez=new ArrayList<Double>();
-     public List<Double> beamsizex=new ArrayList<Double>();
-     public List<Double> beamsizey=new ArrayList<Double>();
-     public List<Double> beamsizez=new ArrayList<Double>();
-     public List<Double> betatronphasex=new ArrayList<Double>();
-     public List<Double> betatronphasey=new ArrayList<Double>();
-     public List<Double> betatronphasez=new ArrayList<Double>();
+     
+//     public String[] parameterKeysForPlot=null;
 
         
 	/**constructor */
@@ -78,7 +61,7 @@ public class MachineSimulatorController {
         // initialize the model here
         MODEL = _Document.getModel();
 
-//        RECORDS=_MachineSimulation.getSimulationRecords();
+//        RECORDS=_machineSimulation.getSimulationRecords();
          configureTableWindow(WINDOW_REFERENCE);
 	}
 	
@@ -115,8 +98,8 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
         
-        final FunctionGraphsJPanel twissParametersplot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _MachineSimulatorPlotter=new MachineSimulatorPlotter(twissParametersplot);
+        final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
+        _machineSimulatorPlotter=new MachineSimulatorPlotter(twissParametersPlot);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
@@ -188,9 +171,20 @@ public class MachineSimulatorController {
                 System.arraycopy( vectorParameterKeys, 0, parameterKeys, scalarParameterKeys.length + standardParameterKeys.length, vectorParameterKeys.length );
                 STATES_TABLE_MODEL.setKeyPaths( parameterKeys );
                 
-                final String[] parameterKeysForPlot=new String[parameterKeys.length-1];
-                System.arraycopy(parameterKeys, 1, parameterKeysForPlot, 0, parameterKeys.length-1);
-                getParametersData(_allRecords, parameterKeysForPlot);
+               final String[] parameterKeysForPlot=new String[parameterKeys.length-2];
+               
+                System.arraycopy(parameterKeys, 2, parameterKeysForPlot, 0, parameterKeys.length-2);
+             
+                twissParametersPlot.removeAllGraphData();
+                
+                if(parameterKeysForPlot.length!=0&_allRecords!=null){
+                  getParametersData(_allRecords, parameterKeysForPlot);
+                	_machineSimulatorPlotter.setupPlot(twissParametersPlot);
+                    for(final String parameterKey:parameterKeysForPlot){
+                        _machineSimulatorPlotter.showtwissplot(_position, PLOT_DATA.get(parameterKey), "betax");
+                        }	
+                }
+
             }
         };
         
@@ -209,7 +203,27 @@ public class MachineSimulatorController {
         betatronPhaseCheckbox.addActionListener( PARAMETER_HANDLER );
         
         // perform the initial parameter display configuration
-       // PARAMETER_HANDLER.actionPerformed( null );
+        PARAMETER_HANDLER.actionPerformed( null );
+        
+        // configure the Clear All button
+        final JButton ClearButton = (JButton)windowReference.getView( "Clear All" );
+        final ActionListener CLEAR_BUTTON=new ActionListener() {
+            public void actionPerformed( final ActionEvent event ) {
+            	 kineticEnergyCheckbox.setSelected(false);
+                xSelectionCheckbox.setSelected(false);
+                ySelectionCheckbox.setSelected(false);
+                zSelectionCheckbox.setSelected(false);
+                betaCheckbox.setSelected(false);
+                alphaCheckbox.setSelected(false);
+                gammaCheckbox.setSelected(false);
+                emittanceCheckbox.setSelected(false);
+                beamSizeCheckbox.setSelected(false);
+                betatronPhaseCheckbox.setSelected(false);
+                
+                PARAMETER_HANDLER.actionPerformed( null );              
+            }
+        };
+      ClearButton.addActionListener(CLEAR_BUTTON);
         
         
         // configure the run button
@@ -219,7 +233,9 @@ public class MachineSimulatorController {
                 System.out.println( "running the model..." );
                 final MachineSimulation simulation = MODEL.runSimulation();
                 _allRecords=simulation.getSimulationRecords();
+                _position=simulation.getAllPosition();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
+                CLEAR_BUTTON.actionPerformed(null);
             }
         });
 
@@ -231,6 +247,8 @@ public class MachineSimulatorController {
 				MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( phaseSlipCheckbox.isSelected() );
 			}
 		});
+		
+
     }
     
     /** get the parameter data from Machinesimulation*/  
