@@ -171,6 +171,7 @@ public class MachineSimulatorController {
                 System.arraycopy( vectorParameterKeys, 0, parameterKeys, scalarParameterKeys.length + standardParameterKeys.length, vectorParameterKeys.length );
                 STATES_TABLE_MODEL.setKeyPaths( parameterKeys );
                 
+                
                final String[] parameterKeysForPlot=new String[parameterKeys.length-2];
                
                 System.arraycopy(parameterKeys, 2, parameterKeysForPlot, 0, parameterKeys.length-2);
@@ -180,8 +181,10 @@ public class MachineSimulatorController {
                 if(parameterKeysForPlot.length!=0&_allRecords!=null){
                   getParametersData(_allRecords, parameterKeysForPlot);
                 	_machineSimulatorPlotter.setupPlot(twissParametersPlot);
+                	int i=0;
                     for(final String parameterKey:parameterKeysForPlot){
-                        _machineSimulatorPlotter.showtwissplot(_position, PLOT_DATA.get(parameterKey), "betax");
+                        _machineSimulatorPlotter.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
+                       i++;
                         }	
                 }
 
@@ -235,6 +238,7 @@ public class MachineSimulatorController {
                 _allRecords=simulation.getSimulationRecords();
                 _position=simulation.getAllPosition();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
+                
                 CLEAR_BUTTON.actionPerformed(null);
             }
         });
@@ -259,9 +263,7 @@ public class MachineSimulatorController {
     		for(final MachineSimulationRecord record:records){
     			PLOT_DATA.get(keyPath).add((Double)KEY_VALUE_ADAPTOR.valueForKeyPath(record,keyPath));    			
     		}
-    	}
-    	
-    	
+    	}    	
     }
     
     
