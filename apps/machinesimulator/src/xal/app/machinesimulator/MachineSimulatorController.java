@@ -32,22 +32,20 @@ public class MachineSimulatorController {
     final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final MachineModel MODEL;
-     public List<MachineSimulationRecord> _allRecords=null;
-      
+     /**records of simulation result*/
+     public List<MachineSimulationRecord> _allRecords=null; 
      /**result of MachineSimulatoion */
      public MachineSimulation _machineSimulation;
       /** the document for the Machine Simulator application*/
      final private MachineSimulatorDocument _Document;
      /** the plotter*/
-     public MachineSimulatorTwissPlot _machineSimulatorPlotter;
-       /** */
+     public MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
+ 	  /** key value adaptor to get the twiss value from a record for the specified key path */
      final KeyValueAdaptor KEY_VALUE_ADAPTOR;
-     
+     /**a map array from parameter's key to plot data list*/
      final HashMap<String, List<Double>> PLOT_DATA;
        /** initialize the data list of parameters*/
      public List<Double> _position=new ArrayList<Double>();
-     
-//     public String[] parameterKeysForPlot=null;
 
         
 	/**constructor */
@@ -97,7 +95,7 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
         
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _machineSimulatorPlotter=new MachineSimulatorTwissPlot(twissParametersPlot);
+        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
@@ -169,17 +167,17 @@ public class MachineSimulatorController {
                 
                 
                final String[] parameterKeysForPlot=new String[parameterKeys.length-2];
-               
+                //select parameters' key
                 System.arraycopy(parameterKeys, 2, parameterKeysForPlot, 0, parameterKeys.length-2);
              
                 twissParametersPlot.removeAllGraphData();
-                
+                //setup plot panel and show the selected parameters' graph
                 if(parameterKeysForPlot.length!=0&_allRecords!=null){
                   getParametersData(_allRecords, parameterKeysForPlot);
-                	_machineSimulatorPlotter.setupPlot(twissParametersPlot);
+                	_machineSimulatorTwissPlot.setupPlot(twissParametersPlot);
 
                    for(final String parameterKey:parameterKeysForPlot){
-                        _machineSimulatorPlotter.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
+                        _machineSimulatorTwissPlot.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
                          }	
                      }
 
@@ -250,7 +248,10 @@ public class MachineSimulatorController {
 
     }
     
-    /** get the parameter data from Machinesimulation*/  
+  /** get the selected parameters' data from simulation records 
+    * @param records the result of simulation 
+    * @param keyPaths specifies the array of key paths to get the data to plot
+    */  
     public void getParametersData(List<MachineSimulationRecord> records,String[] keyPaths){ 
     	PLOT_DATA.clear();
     	for(final String keyPath:keyPaths){
@@ -261,8 +262,6 @@ public class MachineSimulatorController {
     	}    	
     }
     
-    
-
 }
 
 

@@ -16,16 +16,16 @@ import xal.extension.widgets.plot.IncrementalColors;
  * plot the parameters 
  */
 public class MachineSimulatorTwissPlot{
-	/** */
+	/** plot panel*/
 	public FunctionGraphsJPanel _twissParametersPlot;
-	
-	final private int PARAMETER_NUMBER=19;
-	
-	
-	public String[] _parameterName=new String[]{ "kineticEnergy ","betay","betaz","betax","alphay",
-			                                               "alphaz","alphax","gammay","gammaz","gammax",
-			                                               "emittancey","emittancez","emittancex","envelopeRadiusy",
-			                                                "envelopeRadiusz","envelopeRadiusx","betatronPhasey","betatronPhasez","betatronPhasex"};
+	/**the total numbers of parameters*/
+	final private int PARAMETER_NUMBER=19;	
+	/**the parameters' name*/
+	final String[] _parameterName=new String[]{ "kineticEnergy*","betay","betaz","betax","alphay",
+			                                    "alphaz","alphax","gammay","gammaz","gammax","emittancey",
+			                                    "emittancez","emittancex","envelopeRadiusy","envelopeRadiusz",
+			                                    "envelopeRadiusx","betatronPhasey","betatronPhasez","betatronPhasex"};
+	/**graphs of parameters*/
 	public BasicGraphData[] _twissParameterPlotData = new BasicGraphData[PARAMETER_NUMBER];
 	
 	
@@ -36,7 +36,13 @@ public class MachineSimulatorTwissPlot{
 	   setupPlot(twissParametersPlot);
 		
 	}
-	//show the Graphs 
+	
+	/**
+	 * show the selected parameter's graph 
+	 * @param position the position of all the elements in the selected sequence 
+	 * @param twissParameterValues parameter's value of all the elements
+	 * @param keypath the key path of parameter which is selected
+	 */
 	public void showTwissPlot(List<Double> position,List<Double> twissParameterValues,String keypath){
 		double[] position1=new double[position.size()];
 		double[] twissParameterValues1=new double[twissParameterValues.size()];
@@ -48,7 +54,11 @@ public class MachineSimulatorTwissPlot{
 	}
 
 
-
+    /**
+      * Identify which parameter the keyPath map to
+      * @param keyPath the key path
+      * @return an index of parameter name array
+    */
 	public int twissParameterIdentify(String keyPath){
 		int plane=-1;
 		int _parameterNameIndex=-1;
@@ -75,7 +85,9 @@ public class MachineSimulatorTwissPlot{
 		return _parameterNameIndex;
 	}
 	
-     /**setup twissplot*/	
+     /**setup twiss plot
+      *@param twissParametersPlot the plot panel 
+      */	
 	public void setupPlot(FunctionGraphsJPanel twissParametersPlot){
 		
 		//labels
@@ -92,7 +104,7 @@ public class MachineSimulatorTwissPlot{
 				}
 		
 	   // configure the graphic color
-	   _twissParameterPlotData[0].setGraphColor(IncrementalColors.getColor(0));   //kineticEnergy
+//	   _twissParameterPlotData[0].setGraphColor(IncrementalColors.getColor(0));   //kineticEnergy
 		for(int i=1;i<PARAMETER_NUMBER;i++){
 			switch ((int)Math.ceil((double)i/3)){
 			case 1:
@@ -118,14 +130,14 @@ public class MachineSimulatorTwissPlot{
 			}
 		}
 			    	
-
+ //configure the graphic line pattern
 		for(int i=1;i<PARAMETER_NUMBER;i++){
 			switch (i%3) {
 			case 1:
-				_twissParameterPlotData[i].setLineDashPattern(3.0f);//y
+				_twissParameterPlotData[i].setLineDashPattern(3.0f);//y plane
 				break;
 			case 2:
-				_twissParameterPlotData[i].setLineDashPattern(11.0f);//z
+				_twissParameterPlotData[i].setLineDashPattern(11.0f);//z plane
 				break;
 			default:
 				break;
@@ -133,10 +145,11 @@ public class MachineSimulatorTwissPlot{
 		}
 
 		
-		
+// set the graphic name		
 		for(int i=0;i<PARAMETER_NUMBER;i++){
 			_twissParameterPlotData[i].setGraphProperty(_twissParametersPlot.getLegendKeyString(), _parameterName[i]);
 			}
+// add the graphs to plot panel		
 	   for(int i=0;i<PARAMETER_NUMBER;i++){
 		   _twissParametersPlot.addGraphData(_twissParameterPlotData[i]);
 		   }
