@@ -39,8 +39,8 @@ public class MachineSimulatorController {
       /** the document for the Machine Simulator application*/
      final private MachineSimulatorDocument _Document;
      /** the plotter*/
-     public MachineSimulatorPlotter _machineSimulatorPlotter;
-       
+     public MachineSimulatorTwissPlot _machineSimulatorPlotter;
+       /** */
      final KeyValueAdaptor KEY_VALUE_ADAPTOR;
      
      final HashMap<String, List<Double>> PLOT_DATA;
@@ -52,7 +52,6 @@ public class MachineSimulatorController {
         
 	/**constructor */
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
-		// TODO Auto-generated constructor stub
 		_Document=document;
 		WINDOW_REFERENCE=windowReference;
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
@@ -61,8 +60,7 @@ public class MachineSimulatorController {
         // initialize the model here
         MODEL = _Document.getModel();
 
-//        RECORDS=_machineSimulation.getSimulationRecords();
-         configureTableWindow(WINDOW_REFERENCE);
+      configureTableWindow(WINDOW_REFERENCE);
 	}
 	
 	
@@ -99,7 +97,7 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
         
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _machineSimulatorPlotter=new MachineSimulatorPlotter(twissParametersPlot);
+        _machineSimulatorPlotter=new MachineSimulatorTwissPlot(twissParametersPlot);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
@@ -145,14 +143,12 @@ public class MachineSimulatorController {
                 
                 int vectorParameterBaseCount = twissParameterNames.size();
                 if ( betatronPhaseCheckbox.isSelected() )  vectorParameterBaseCount++;
-  //                   System.out.println(vectorParameterBaseCount);
                 
                 // construct the full vector parameter keys from each pair of selected planes and vector parameter names
                 final String[] vectorParameterKeys = new String[ planes.size() * vectorParameterBaseCount ];
                 int vectorParameterIndex = 0;
                 for ( final String plane : planes ) {
                     for ( final String twissParameter : twissParameterNames ) {
-//                        vectorParameterKeys[ vectorParameterIndex++ ] = "twiss." + plane + "." + twissParameter;
                         vectorParameterKeys[ vectorParameterIndex++ ] = "twissParameters." + plane + "." + twissParameter;
                     }
                     
@@ -181,12 +177,11 @@ public class MachineSimulatorController {
                 if(parameterKeysForPlot.length!=0&_allRecords!=null){
                   getParametersData(_allRecords, parameterKeysForPlot);
                 	_machineSimulatorPlotter.setupPlot(twissParametersPlot);
-                	int i=0;
-                    for(final String parameterKey:parameterKeysForPlot){
+
+                   for(final String parameterKey:parameterKeysForPlot){
                         _machineSimulatorPlotter.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
-                       i++;
-                        }	
-                }
+                         }	
+                     }
 
             }
         };

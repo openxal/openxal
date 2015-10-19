@@ -15,7 +15,7 @@ import xal.extension.widgets.plot.IncrementalColors;
  * @author luxiaohan
  * plot the parameters 
  */
-public class MachineSimulatorPlotter {
+public class MachineSimulatorTwissPlot{
 	/** */
 	public FunctionGraphsJPanel _twissParametersPlot;
 	
@@ -30,7 +30,7 @@ public class MachineSimulatorPlotter {
 	
 	
 	/**constructor*/
-	public MachineSimulatorPlotter(FunctionGraphsJPanel twissParametersPlot){
+	public MachineSimulatorTwissPlot(FunctionGraphsJPanel twissParametersPlot){
 		_twissParametersPlot=twissParametersPlot;
 
 	   setupPlot(twissParametersPlot);
