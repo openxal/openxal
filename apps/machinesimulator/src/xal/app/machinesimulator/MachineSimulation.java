@@ -48,7 +48,7 @@ public class MachineSimulation {
     public List<Double> getAllPosition(){
     	final int RecordsSize = SIMULATION_RECORDS.size();
       List<Double> _AllPosition = new ArrayList<Double>();
-        _AllPosition.removeAll(_AllPosition);
+      _AllPosition.clear();;
     	for(int i=0;i<RecordsSize;i++){
     		_AllPosition.add(SIMULATION_RECORDS.get(i).getPosition());
     	}
