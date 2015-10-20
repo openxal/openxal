@@ -1,5 +1,5 @@
 /*
- *  SpectralMapRfGap.java
+ *  SpectrumMapRfGap.java
  *
  *  Created on October 22, 2002, 1:58 PM
  */
@@ -102,16 +102,16 @@ import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
  *             <br/>Jan 16, 2015
  *             <br/>July 29, 2015
  */
-public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCell {
+public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCell {
 
 	/*
 	 *  Global Constants
 	 */
 	
     /**
-	 *  the string type identifier for all SpectralMapRfGap objects
+	 *  the string type identifier for all SpectrumMapRfGap objects
 	 */
-	public final static String s_strType = "SpectralMapRfGap"; //$NON-NLS-1$
+	public final static String s_strType = "SpectrumMapRfGap"; //$NON-NLS-1$
 
 	
 	//
@@ -366,14 +366,14 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 	 */
 	
 	/**
-	 *  Creates a new instance of SpectralMapRfGap
+	 *  Creates a new instance of SpectrumMapRfGap
 	 *
 	 *@param  strId     instance identifier of element
 	 *@param  dblETL    field/transit time/length factor for gap (in <b>volts</b> )
 	 *@param  dblPhase  operating phase of gap (in <b>radians</b> )
 	 *@param  dblFreq   operating RF frequency of gap (in <b>Hertz</b> )
 	 */
-	public SpectralMapRfGap(String strId, double dblETL, double dblPhase, double dblFreq) {
+	public SpectrumMapRfGap(String strId, double dblETL, double dblPhase, double dblFreq) {
 		super(s_strType, strId);
 
 		this.setETL(dblETL);
@@ -382,10 +382,10 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 	}
 
 	/**
-	 *  JavaBean constructor - creates a new uninitialized instance of SpectralMapRfGap <b>
+	 *  JavaBean constructor - creates a new uninitialized instance of SpectrumMapRfGap <b>
 	 *  BE CAREFUL</b>
 	 */
-	public SpectralMapRfGap() {
+	public SpectrumMapRfGap() {
 		super(s_strType);
 	}
 
@@ -481,7 +481,7 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
      * 
      * @return  average or "mid-gap" velocity in units of <b>c</b>
      * 
-     * @see SpectralMapRfGap#energyGain(IProbe)
+     * @see SpectrumMapRfGap#energyGain(IProbe)
      */
     public double   compMidGapBeta(IProbe probe)   {
         
@@ -718,6 +718,7 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
     @Override
 	public void setE0(double E) {
 		dblFieldE0 = E;
+		this.resetGapPotential();
 	}
 
 	/**
@@ -895,7 +896,7 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
     public double energyGain(IProbe probe) {
         double  dW = this.compGapPhaseAndEnergyGain(probe).getEnergy();
 
-//        System.out.println("SpectralMapRfGap#energyGain() - " + this.getId() + " index=" + this.indCell + ", dW = " + dW);
+//        System.out.println("SpectrumMapRfGap#energyGain() - " + this.getId() + " index=" + this.indCell + ", dW = " + dW);
         
         return dW;
     }
@@ -1058,15 +1059,17 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
         
         RfGap rfgap = (RfGap) element.getHardwareNode();
 
-        // Initialize from source values
+        // Initialize the RF gap properties
         this.bolStartCell = rfgap.isFirstGap();
         this.bolEndCell = rfgap.isEndCell();
         this.dblGapLength = rfgap.getGapLength();
         this.gapOffset = rfgap.getGapOffset();
         
-        this.m_dblFreq = rfgap.getGapDfltFrequency();
-        
+        // Initialize the RF cavity properties
         this.dblCavModeConst = rfgap.getStructureMode();
+        
+        this.dblFieldE0 = rfgap.getGapDfltAmp() * 1.0e3;        // the SMF object uses kV (stupid)
+        this.m_dblFreq = rfgap.getGapDfltFrequency() * 1.0e6;   // the SMF object uses MHz (stupid)
         
         // Create the defining axial field spectrum object
         IRealFunction fitTTFPrime = rfgap.getTTFPrimeFit();
@@ -1181,83 +1184,33 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
         return A;
     }
     
-//    /**
-//     * <p>
-//     * Computes and returns the total propagation time for the probe from inception
-//     * until the end of the entire accelerating gap cell.  That is, the returned value
-//     * would be the total time <b>for the probe</b>, not the time interval for its
-//     * propagation through the accelerating cell.
-//     * </p>
-//     * <p>
-//     * <h4>CKA NOTES:</h4>
-//     * &middot; The gap phase change &Delta;&phi; is included in the exit time
-//     * calculation via the call to <code>{@link #elapsedTime(IProbe)}</code>
-//     * where it is calculated internally.
-//     * </p>
-//     * 
-//     * @param probe     probe containing parameters for gap computations
-//     * 
-//     * @return          probe time at exit of full accelerating cell
-//     *
-//     * @author Christopher K. Allen
-//     * @since  Nov 19, 2014
-//     */
-//    @Deprecated
-//    private double  compCellExitTime(final IProbe probe) {
-//        double  c  = IElement.LightSpeed;       // speed of light
-//        double  ti = probe.getTime();           // probe time at cell entrance
-//        double  bf = this.compFinalBeta(probe); // final probe velocity after gap
-//        double  dt = this.elapsedTime(probe);   // propagation time through gap
-//        
-//        double  dL = this.getCellLength()/2.0;  // half length of total accelerating cell
-//        
-//        double  tf = ti + dt + dL/(bf*c);
-//        
-//        return tf;
-//    }
-//    
-//    /**
-//     * Computes the phase shift due to probe drift time between gaps
-//     * in a coupled-cavity tank.  The returned result considers both the drift
-//     * time of the probe between gaps and the mode number of the cavity
-//     * fields. 
-//     * 
-//     * @param probe     drifting probe
-//     * 
-//     * @return      the phase shift occurring between the previous gap and this gap
-//     * 
-//     * @since  Nov 28, 2014 @author Christopher K. Allen
-//     * 
-//     * @deprecated  This is bullshit
-//     */
-//    @Deprecated
-//    private double  compCoupledCavityPhaseShift(IProbe probe) {
-//
-//        // Compute the drifting time since the last gap
-//        ProbeState<?>   stateLastGap = probe.lookupLastStateFor( this.getType() );
-//
-//        double  t_prev  = stateLastGap.getTime();   // the exit time of the previous gap
-//        double  t_curr  = probe.getTime();          // the entrance time of this gap
-//        double  t_drift = t_curr - t_prev;          // drifting time between two gaps
-//
-//        // Compute the RF frequency of the operating mode
-//        double  f_0     = this.getFrequency();
-//        double  q_mode  = this.getCavityModeConstant();
-//        double  f_mode  = 2.0*q_mode*f_0;            
-//
-//        // Compute the number of RF cycles taken between RF gaps
-//        //  and then the resulting phase shift
-//        int     nCycles = (int) Math.round(f_mode * t_drift);
-//        double  D_phi   =  nCycles*Math.PI;
-//
-//        return D_phi;
-//
-//        // TODO - Figure this out??
-//        //  applied after the above is computed and then added on the next call
-//        //        STRUCTURE_PHASE = STRUCTURE_PHASE - (2 - dblCavModeConst) * Math.PI;
-//        //        STRUCTURE_PHASE = Math.IEEEremainder(STRUCTURE_PHASE , (2. * Math.PI));
-//    }
+    /**
+     * <p>
+     * Resets the total potential gain across the gap.  This is the integral of the 
+     * axial electric field <i>E<sub>z</sub></i>(<i>z</i>) through the entire gap 
+     * region.
+     * </p>
+     * <p>
+     * This method needs to be called whenever the gap length or gap potential are 
+     * changed.  The effects is to change the magnitude of the spectral maps that define
+     * the gap fields. 
+     * </p>
+     *
+     * @since  Oct 16, 2015,   Christopher K. Allen
+     */
+    private void    resetGapPotential() {
 
+        // Create the accelerating gap model
+        //  The accelerating gap potential is set for a unit charge.  It is later updated
+        //  for whatever charge the probe carries when energy and phase calculations are made.
+        double E0   = this.getE0();
+        double A    = this.compCavModeFieldCoeff();
+        double L    = this.getGapLength();
+        double V0   = A * E0 * L;   // This is for a unit charge 
+        
+        this.gapAcclMdl = new AcceleratingRfGap(this.m_dblFreq, V0, this.spcGapFlds);
+    }
+    
     /**
      * <p>
      * Computes and returns the phase at the position of the gap's 
@@ -1838,7 +1791,7 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
             vecPreGapGains = this.gapAcclMdl.computePreGapGains(Er, vecInitEnergy);
             
         } catch (AcceleratingRfGap.NoConvergenceException e) {
-            System.err.println("WARNING! SpectralMapRfGap#compGapPhaseAndEnergyGain() did not converge for element " + this.getId());
+            System.err.println("WARNING! SpectrumMapRfGap#compGapPhaseAndEnergyGain() did not converge for element " + this.getId());
 
             throw e;
         }
@@ -1848,10 +1801,38 @@ public class SpectralMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 
         // TODO Remove type out
         if (!this.bolMethodCalled) {
+            double V0 = this.gapAcclMdl.getRfFieldPotential();
+            double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
+//            double db = 0.01*bi;
+            double dk = 0.01*ki;
+//            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
+//            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+            double T = this.spcGapFlds.Tz(ki);
+            double S = this.spcGapFlds.Sz(ki);
+            
+            double d_T = this.spcGapFlds.dTz(ki);
+            double d_S = this.spcGapFlds.dSz(ki);
+            
+            double dT = (this.spcGapFlds.Tz(ki + dk) - T)/dk;
+            double dS = (this.spcGapFlds.Sz(ki + dk) - S)/dk;
+            
+            phi0 = (180.0/Math.PI) * Math.IEEEremainder(phi0, 2.0*Math.PI); // convert to degrees
+            
+            System.out.println("SpectrumMapRfGap#compEnergyGainIndirect: " + this.getId());
+            System.out.println("    Q*V0=" + Q * V0);
+            System.out.println("    phi0=" + phi0 + ", cos(phi0)=" + Math.cos(phi0) + ", Acos(phi0)=" + A*Math.cos(phi0));
+            System.out.println("    T(ki)=" + T + ", T'(ki)=" + d_T + ", S(ki)=" + S + ", S'(ki)=" + d_S);
+            System.out.println("    dT/dk=" + d_T + ", dS/dk=" + d_S);
+            System.out.println("    Numeric: T'(ki)=" + dT + ", S'(ki)=" + dS);
+            System.out.println("    ki=" + ki);
+        }
+
+        // TODO Remove type out
+        if (!this.bolMethodCalled) {
             double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW_mid, Er);
             double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
             System.out.println("    k_mid=" + k_mid);
-            System.out.println("    dph_midi=" + dphi_mid + ", dW_mid=" + dW_mid + ", W_mid=" + Wi+dW_mid);
+            System.out.println("    dph_midi=" + (180.0/Math.PI)*dphi_mid + ", dW_mid=" + dW_mid + ", W_mid=" + Double.toString(Wi+dW_mid));
             System.out.println();
             
             this.bolMethodCalled = true;

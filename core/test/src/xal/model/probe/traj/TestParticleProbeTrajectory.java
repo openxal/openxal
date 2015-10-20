@@ -38,7 +38,21 @@ import xal.tools.ResourceManager;
 import xal.tools.beam.PhaseVector;
 
 /**
- * Class <code></code>.
+ * <p>
+ * Class <code>TestParticleProbeTrajectory</code>.
+ * <p/>
+ * <p>
+ * Use Java virtual machine command line switch
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=cpu=times</tt>
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=heap=dump,format=b</tt>
+ * <br/>
+ * <br/>
+ * to create <code>java.hprof.TMP</code> files for profiling.
+ * </p>
  *
  *
  * @author Christopher K. Allen
@@ -391,10 +405,11 @@ public class TestParticleProbeTrajectory {
             ParticleProbeState  state     = itr.next();
             String              strElemId = state.getElementId();
             double              dblPos    = state.getPosition();
+            double              dblPhs    = state.getLongitudinalPhase();
             double              dblNrg    = state.getKineticEnergy();
             PhaseVector         vecState  = state.getPhaseCoordinates();
 
-            String strLine = strElemId + " s=" + dblPos + ", W=" + dblNrg + ", z=" + vecState.toString();
+            String strLine = strElemId + " s=" + dblPos + ", phi=" + dblPhs + ", W=" + dblNrg + ", z=" + vecState.toString();
             prs.println(strLine);
         }
         prs.println();

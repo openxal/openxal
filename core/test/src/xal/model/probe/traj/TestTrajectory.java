@@ -34,7 +34,18 @@ import xal.smf.data.XMLDataManager;
 import xal.tools.beam.PhaseVector;
 
 /**
+ * <p>
  * Class of test cases for class <code>{@link Trajectory}</code>.
+ * <p/>
+ * <p>
+ * Use Java virtual machine command line switch
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=cpu=times</tt>
+ * <br/>
+ * <br/>
+ * to create <code>java.hprof.TMP</code> files for profiling.
+ * </p>
  *
  * @author Christopher K. Allen
  * @since  Aug 25, 2014
@@ -47,8 +58,8 @@ public class TestTrajectory {
      */
     
     /** Accelerator sequence used for testing */
-    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-//    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     
     
     /** Bending Dipole ID */

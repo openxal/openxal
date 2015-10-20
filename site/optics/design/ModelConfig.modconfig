@@ -21,7 +21,9 @@
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
-		<map smf="rfgap" model="xal.model.elem.IdealRfGap"/>
+
+		<!-- map smf="rfgap" model="xal.model.elem.IdealRfGap"/ -->
+        <map smf="rfgap" model="xal.model.elem.SpectrumMapRfGap"/>
 
 		<map smf="bcm" model="xal.model.elem.Marker"/>
 

@@ -1,10 +1,19 @@
 <project name="config">
+	<!-- Import site specific configuration properties if any giving preference to site specific ones. -->
+	<import file="../site/config/config.xml" optional="true" />
+
     <!-- XAL Home is where this file resides -->
     <dirname property="config.home" file="${ant.file.config}" />
     <property name="xal.home" value="${config.home}/.." />
 
     <property environment="env" />
-    
+
+	<!-- By default build applications against the shared library otherwise build them as standalone. You can override this property in your site specific config.xml -->
+	<property name="app.build.standalone" value="false" />
+
+	<!-- By default build services against the shared library otherwise build them as standalone. You can override this property in your site specific config.xml -->
+	<property name="service.build.standalone" value="false" />
+
     <!-- location of source code directory relative to a source root -->            
     <property name="source.code.dir" value="src" />
     
@@ -31,8 +40,13 @@
 	<property name="build.intermediates.services" value="${build.intermediates.root}/services" />
 	<property name="build.intermediates.shared" value="${build.intermediates.root}/shared" />
 
+	<!-- Determine the bootstrap class path using the environment variable if defined to avoid a warning due to the compiler target. -->
+	<condition property="xal.bootclasspath" value="${env.XAL_BOOTCLASSPATH}">
+		<isset property="env.XAL_BOOTCLASSPATH" />
+	</condition>
+
 	<!-- Configure build compilation -->
-	<property name="build.compile.java.source" value="1.7" />
+	<property name="build.compile.java.source" value="1.8" />
 	<property name="build.compile.java.target" value="${build.compile.java.source}" />
 
 	<!-- Configure build products  -->
@@ -69,7 +83,11 @@
     <property name="apps.root" value="${xal.home}/apps" />
     <property name="apps.build.jar.root" value="${build.jar.root}/apps" />
     <property name="apps.install.root" value="${install.root}/apps" />
-    
+
+	<echo message="install root: ${install.root}" />
+	<echo message="install lib root: ${install.lib.root}" />
+	<echo message="apps install root: ${apps.install.root}" />
+
     <!-- Configure paths for scripts  -->
     <property name="scripts.build.root" value="${build.products.root}/scripts" />
     <property name="scripts.install.root" value="${install.root}/scripts" />

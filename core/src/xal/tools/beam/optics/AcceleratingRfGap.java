@@ -33,7 +33,7 @@ public class AcceleratingRfGap {
     
     
     /** default error tolerance when searching for consistent gain parameters */
-    private static final double     DBL_ERR_TOL = 1.0e-12;
+    private static final double     DBL_ERR_TOL = 1.0e-16;
     
     /** maximum number of allowable iterations when searching for consistent gain parameters */
     private static final int        CNT_MAX_ITER = 100;
@@ -135,11 +135,11 @@ public class AcceleratingRfGap {
      * */
 //    private final double        dblGapLen;
     
+    /** total potential drop <i>V</i><sub>0</sub> across accelerating gap */
+    private double              dblFldMag;  
+    
     /** time-harmonic frequency of the gap RF field */
     private final double        dblFldFrq;
-    
-    /** total potential drop <i>V</i><sub>0</sub> across accelerating gap */
-    private final double        dblFldMag;  
     
     
     /** spectrum of the accelerating fields along the design axis */
@@ -227,6 +227,17 @@ public class AcceleratingRfGap {
      */
     public void    setErrorTolerance(double dblErrTol) {
         this.dblErrTol = dblErrTol;
+    }
+    
+    /**
+     * Resets the total potential gain across the accelerating gap.
+     * 
+     * @param V0    the integral &int;<i>E<sub>z</i></i>(<i>z<i>) <i>dz</i> (in Volts)
+     *
+     * @since  Oct 16, 2015,   Christopher K. Allen
+     */
+    public void     setRfFieldPotential(double V0) {
+        this.dblFldMag = V0;
     }
 
     
@@ -407,11 +418,13 @@ public class AcceleratingRfGap {
         //  Use the phase intercept and initial energy as starting values
         double phi = phi0;  // the synchronous phase at the gap center
         double W   = Wi;    // the energy gained up to the gap center
+        double k   = this.computeWaveNumber(W, Er);
 
         // Compute the starting values for phase jump and energy gain
-        double k    = this.computeWaveNumber(W, Er);
         double dW   = - V0 * this.dphiPreGapHamiltonian(phi, k).imaginary();
+//        double dW   = - V0 * this.dphiPreGapHamiltonian(phi, k).imaginary();
         double dphi = + Ki * this.dkPreGapHamiltonian(phi, k).imaginary();
+//        double dphi = + Ki * this.dkPreGapHamiltonian(phi, k).imaginary();
         
         // Initialize the search loop
         int     cntIter = 0;
@@ -422,20 +435,21 @@ public class AcceleratingRfGap {
             //  phase jump and energy gain
             phi = phi0 + dphi;
             W   = Wi + dW;
+            k   = this.computeWaveNumber(W, Er);
             
             // Compute the new phase jump and energy gain from the new phase 
             //  and energies
-            double k_i    =        this.computeWaveNumber(W, Er);
+//            double dphi_i = + Ki * this.dkPreGapHamiltonian(phi, k).imaginary();
             double dphi_i = + Ki * this.dkPreGapHamiltonian(phi, k).imaginary();
+//            double dW_i   = - V0 * this.dphiPreGapHamiltonian(phi, k).imaginary();
             double dW_i   = - V0 * this.dphiPreGapHamiltonian(phi, k).imaginary();
             
             // Compute stopping criteria values 
             cntIter++;
-            dblErr = (dphi_i - dphi)*(dphi_i - dphi) + (dW - dW_i)*(dW - dW_i);
+            dblErr = (dphi_i - dphi)*(dphi_i - dphi) + (dW - dW_i)*(dW - dW_i)/(Wi*Wi);
 
             // Update the values of the dependent variables wave number, phase jump, 
             //  and energy gain 
-            k    = k_i;
             dphi = dphi_i;
             dW   = dW_i;
             
@@ -523,7 +537,7 @@ public class AcceleratingRfGap {
      */
     private Complex preGapHamiltonain(double phi, double k) {
         Complex     cpxPreSpc = this.spcFldSpc.preEnvSpectrum(k);
-        Complex     cpxPreAng = Complex.euler(k);
+        Complex     cpxPreAng = Complex.euler(phi);
         Complex     cpxHamilt = cpxPreSpc.times(cpxPreAng);
         
         return cpxHamilt;
@@ -555,7 +569,7 @@ public class AcceleratingRfGap {
      */
     private Complex dkPreGapHamiltonian(double phi, double k) {
         Complex     cpxDkPreSpc = this.spcFldSpc.dkPreEnvSpectrum(k);
-        Complex     cpxPreAngle = Complex.euler(k);
+        Complex     cpxPreAngle = Complex.euler(phi);
         Complex     cpxDkHamilt = cpxDkPreSpc.times(cpxPreAngle);
         
         return cpxDkHamilt;

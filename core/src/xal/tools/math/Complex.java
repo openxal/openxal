@@ -318,6 +318,7 @@ public class Complex {
 	 */
 	
 	/** Get a string representation of this complex number */
+	@Override
 	public String toString() {
 		final String operator = dblImag >= 0 ? " + i" : " - i";
 		return dblReal + operator + Math.abs( dblImag );
