@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package xal.app.machinesimulator;
 
@@ -13,7 +13,7 @@ import xal.extension.widgets.plot.IncrementalColors;
 
 /**
  * @author luxiaohan
- * plot the parameters 
+ * plot the parameters
  */
 public class MachineSimulatorTwissPlot{
 	
@@ -72,7 +72,7 @@ public class MachineSimulatorTwissPlot{
 			}
 			else{
 			  for(int i=0;i<_parameterName.length;i++){
-				 if(_parameterName[i].substring(0, _parameterName[i].length()-1).equals(keyPart)) indexes.add(i);				
+				 if(_parameterName[i].substring(0, _parameterName[i].length()-1).equals(keyPart)) indexes.add(i);
 			   }
 			}
 		}
@@ -87,7 +87,7 @@ public class MachineSimulatorTwissPlot{
 	}
 	
      /**setup twiss plot
-      *@param twissParametersPlot the plot panel 
+      *@param twissParametersPlot the plot panel
       */	
 	public void setupPlot(final FunctionGraphsJPanel twissParametersPlot){
 		
@@ -150,11 +150,11 @@ public class MachineSimulatorTwissPlot{
 		for(int i=0;i<PARAMETER_NUMBER;i++){
 			_twissParameterPlotData[i].setGraphProperty(twissParametersPlot.getLegendKeyString(), _parameterName[i]);
 		}
-// add the graphs to plot panel		
+// add the graphs to plot panel
 	   for(int i=0;i<PARAMETER_NUMBER;i++){
 		   twissParametersPlot.addGraphData(_twissParameterPlotData[i]);
 		}
-				
+
 	}
 
 }

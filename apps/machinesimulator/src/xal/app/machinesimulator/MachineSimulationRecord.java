@@ -31,7 +31,6 @@ public class MachineSimulationRecord {
 		PROBE_STATE = probeState;
 		TWISS_PARAMETERS = resultsAdaptor.computeTwissParameters( probeState );
 		BETATRON_PHASE = resultsAdaptor.computeBetatronPhase( probeState );
- //    System.out.println(TWISS_PARAMETERS.length);
     }
 
 

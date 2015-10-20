@@ -28,8 +28,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
    /** main model */
    final MachineModel MODEL;
-   
-   /** controller*/      
+
+   /** controller*/
    final MachineSimulatorController _machineSimulatorController;
 	
 	
@@ -48,20 +48,16 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
         
-//        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<IPhaseState>();
-//        STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
-        
         // initialize the model here
         MODEL = new MachineModel();
 		_machineSimulatorController= new MachineSimulatorController(this,WINDOW_REFERENCE);
-        
-		
+
+
 		if ( url != null ) {
             System.out.println( "Opening document: " + url.toString() );
             final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
             update( documentAdaptor.childAdaptor( dataLabel() ) );
-        }		
-			
+        }
 		
 		setHasChanges( false );
     }
@@ -84,7 +80,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     static private String toTwissParameterKey( final String twissParameterName, final int plane ) {
         return "twiss." + plane + "." + twissParameterName;
     } */
-    
+
     
     
  /*    * Save the document to the specified URL.

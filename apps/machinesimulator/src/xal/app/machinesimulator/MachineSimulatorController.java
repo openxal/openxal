@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package xal.app.machinesimulator;
 
@@ -14,8 +14,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import com.sun.istack.internal.FinalArrayList;
-
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
@@ -23,17 +21,17 @@ import xal.tools.data.KeyValueAdaptor;
 
 /**
  * @author luxiaohan
- * controller for binding the MachineSimulator model to the user interface 
+ * controller for binding the MachineSimulator model to the user interface
  */
 public class MachineSimulatorController {
 	  /** main window reference */
-	  final private WindowReference WINDOW_REFERENCE;	
+	  final private WindowReference WINDOW_REFERENCE;
      /** simulated states table model */
      final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final MachineModel MODEL;
      /**records of simulation result*/
-     public List<MachineSimulationRecord> _allRecords=null; 
+     public List<MachineSimulationRecord> _allRecords=null;
      /** the document for the Machine Simulator application*/
      final private MachineSimulatorDocument _Document;
      /** the plotter*/
@@ -45,7 +43,7 @@ public class MachineSimulatorController {
      /** the position list of elements*/
      public List<Double> _position;
 
-        
+
 	/**constructor */
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
 		_Document=document;
@@ -58,8 +56,8 @@ public class MachineSimulatorController {
 
       configureMainWindow(WINDOW_REFERENCE);
 	}
-	
-	
+
+
     /** configure the main window */
     private void configureMainWindow( final WindowReference windowReference ) {
         STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "probeState.kineticEnergy" );
@@ -84,33 +82,33 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setColumnName( "twissParameters.2.emittance", "<html>&epsilon;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "twissParameters.2.envelopeRadius", "<html>&sigma;<sub>z</sub></html>" );
         STATES_TABLE_MODEL.setColumnName( "betatronPhase.toArray.2", "<html>&phi;<sub>z</sub></html>" );
-        
+
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
         statesTable.setModel( STATES_TABLE_MODEL );
-        
+
         final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
-        
+
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
         _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
-        
+
         final JCheckBox xSelectionCheckbox = (JCheckBox)windowReference.getView( "X Selection Checkbox" );
         final JCheckBox ySelectionCheckbox = (JCheckBox)windowReference.getView( "Y Selection Checkbox" );
         final JCheckBox zSelectionCheckbox = (JCheckBox)windowReference.getView( "Z Selection Checkbox" );
-        
+
         final JCheckBox betaCheckbox = (JCheckBox)windowReference.getView( "Beta Checkbox" );
         final JCheckBox alphaCheckbox = (JCheckBox)windowReference.getView( "Alpha Checkbox" );
         final JCheckBox gammaCheckbox = (JCheckBox)windowReference.getView( "Gamma Checkbox" );
         final JCheckBox emittanceCheckbox = (JCheckBox)windowReference.getView( "Emittance Checkbox" );
         final JCheckBox beamSizeCheckbox = (JCheckBox)windowReference.getView( "Beam Size Checkbox" );
         final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
-                
+
         final ActionListener PARAMETER_HANDLER = new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {                
+            public void actionPerformed( final ActionEvent event ) {
                 // array of standard parameters to display
                 final String[] standardParameterKeys = new String[] { "elementID", "position" };
                 // array of optional scalar parameters to display
@@ -122,13 +120,13 @@ public class MachineSimulatorController {
                     scalarParameterKeys[ scalarParameterIndex++ ] = scalarParameterName;
                 }
                 STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, scalarParameterKeys );
-                
+
                 // Add each selected plan to the list of planes to display and associate each plane with its corresponding twiss array index
                 final List<String> planes = new ArrayList<String>(3);
                 if ( xSelectionCheckbox.isSelected() )  planes.add( "0" );
                 if ( ySelectionCheckbox.isSelected() )  planes.add( "1" );
                 if ( zSelectionCheckbox.isSelected() )  planes.add( "2" );
-                
+
                 // Add each selected twiss parameter name to the list of parameters to display
                 final List<String> twissParameterNames = new ArrayList<String>();
                 if ( betaCheckbox.isSelected() )  twissParameterNames.add( "beta" );
@@ -136,10 +134,10 @@ public class MachineSimulatorController {
                 if ( gammaCheckbox.isSelected() )  twissParameterNames.add( "gamma" );
                 if ( emittanceCheckbox.isSelected() )  twissParameterNames.add( "emittance" );
                 if ( beamSizeCheckbox.isSelected() )  twissParameterNames.add( "envelopeRadius" );
-                
+
                 int vectorParameterBaseCount = twissParameterNames.size();
                 if ( betatronPhaseCheckbox.isSelected() )  vectorParameterBaseCount++;
-                
+
                 // construct the full vector parameter keys from each pair of selected planes and vector parameter names
                 final String[] vectorParameterKeys = new String[ planes.size() * vectorParameterBaseCount ];
                 int vectorParameterIndex = 0;
@@ -147,13 +145,13 @@ public class MachineSimulatorController {
                     for ( final String twissParameter : twissParameterNames ) {
                         vectorParameterKeys[ vectorParameterIndex++ ] = "twissParameters." + plane + "." + twissParameter;
                     }
-                    
+
                     if ( betatronPhaseCheckbox.isSelected() ) {
                         vectorParameterKeys[ vectorParameterIndex++ ] = "betatronPhase.toArray." + plane;
                     }
                 }
                 STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, vectorParameterKeys );
-                
+
                 final String[] parameterKeys = new String[standardParameterKeys.length + scalarParameterKeys.length + vectorParameterKeys.length];
                 // add standard parameters at the start
                 System.arraycopy( standardParameterKeys, 0, parameterKeys, 0, standardParameterKeys.length );
@@ -162,12 +160,12 @@ public class MachineSimulatorController {
                 // append vector parameters after scalar parameters
                 System.arraycopy( vectorParameterKeys, 0, parameterKeys, scalarParameterKeys.length + standardParameterKeys.length, vectorParameterKeys.length );
                 STATES_TABLE_MODEL.setKeyPaths( parameterKeys );
-                
- /**************   configure plot view   ****************/               
+
+/**************   configure plot view   ****************/
                final String[] parameterKeysForPlot=new String[parameterKeys.length-2];
                 //copy the parameters' key without elementID and position
                 System.arraycopy(parameterKeys, 2, parameterKeysForPlot, 0, parameterKeys.length-2);
-             
+
                 twissParametersPlot.removeAllGraphData();
                 //setup plot panel and show the selected parameters' graph
                 if(parameterKeysForPlot.length!=0&_allRecords!=null){
@@ -176,34 +174,34 @@ public class MachineSimulatorController {
 
                    for(final String parameterKey:parameterKeysForPlot){
                         _machineSimulatorTwissPlot.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
-                         }	
+                         }
                      }
 
             }
         };
-        
+
         kineticEnergyCheckbox.addActionListener( PARAMETER_HANDLER );
-        
+
         xSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         ySelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         zSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
-        
+
         betaCheckbox.addActionListener( PARAMETER_HANDLER );
         alphaCheckbox.addActionListener( PARAMETER_HANDLER );
         gammaCheckbox.addActionListener( PARAMETER_HANDLER );
         emittanceCheckbox.addActionListener( PARAMETER_HANDLER );
         beamSizeCheckbox.addActionListener( PARAMETER_HANDLER );
-        
+
         betatronPhaseCheckbox.addActionListener( PARAMETER_HANDLER );
-        
+
         // perform the initial parameter display configuration
         PARAMETER_HANDLER.actionPerformed( null );
-        
+
         // configure the Clear All button
         final JButton ClearButton = (JButton)windowReference.getView( "Clear All" );
         final ActionListener CLEAR_BUTTON=new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {
-            	 kineticEnergyCheckbox.setSelected(false);
+            	kineticEnergyCheckbox.setSelected(false);
                 xSelectionCheckbox.setSelected(false);
                 ySelectionCheckbox.setSelected(false);
                 zSelectionCheckbox.setSelected(false);
@@ -213,13 +211,13 @@ public class MachineSimulatorController {
                 emittanceCheckbox.setSelected(false);
                 beamSizeCheckbox.setSelected(false);
                 betatronPhaseCheckbox.setSelected(false);
-                
-                PARAMETER_HANDLER.actionPerformed( null );              
+
+                PARAMETER_HANDLER.actionPerformed( null );
             }
         };
       ClearButton.addActionListener(CLEAR_BUTTON);
-        
-        
+
+
         // configure the run button
         final JButton runButton = (JButton)windowReference.getView( "Run Button" );
         runButton.addActionListener( new ActionListener() {
@@ -229,12 +227,11 @@ public class MachineSimulatorController {
                 _allRecords=simulation.getSimulationRecords();
                 _position=simulation.getAllPosition();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
-                
+
                 CLEAR_BUTTON.actionPerformed(null);
             }
         });
 
-		
 		final JCheckBox phaseSlipCheckbox = (JCheckBox)windowReference.getView( "Phase Slip Checkbox" );
 		phaseSlipCheckbox.setSelected( MODEL.getSimulator().getUseRFGapPhaseSlipCalculation() );
 		phaseSlipCheckbox.addActionListener( new ActionListener() {
@@ -242,25 +239,25 @@ public class MachineSimulatorController {
 				MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( phaseSlipCheckbox.isSelected() );
 			}
 		});
-		
+
 
     }
-    
-  /** get the selected parameters' data from simulation records 
-    * @param records the result of simulation 
+
+  /** get the selected parameters' data from simulation records
+    * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
-    */  
-    public void getParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){ 
+    */ 
+    public void getParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){
     	PLOT_DATA.clear();
     	for(final String keyPath:keyPaths){
     		PLOT_DATA.put(keyPath, new ArrayList<Double>(records.size()));
     		for(final MachineSimulationRecord record:records){
-    			PLOT_DATA.get(keyPath).add((Double)KEY_VALUE_ADAPTOR.valueForKeyPath(record,keyPath));    			
+    			PLOT_DATA.get(keyPath).add((Double)KEY_VALUE_ADAPTOR.valueForKeyPath(record,keyPath));
     		}
-    	}    	
+    	}
     }
-    
+
 }
 
 
- 
+
