@@ -30,7 +30,7 @@ public class MachineSimulatorTwissPlot{
 	
 	
 	/**constructor*/
-	public MachineSimulatorTwissPlot(FunctionGraphsJPanel twissParametersPlot){
+	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot){
 
 	   setupPlot(twissParametersPlot);
 		
@@ -42,7 +42,7 @@ public class MachineSimulatorTwissPlot{
 	 * @param twissParameterValues parameter's value of all the elements
 	 * @param keypath the key path of parameter which is selected
 	 */
-	public void showTwissPlot(List<Double> position,List<Double> twissParameterValues,String keypath){
+	public void showTwissPlot(final List<Double> position,final List<Double> twissParameterValues,final String keypath){
 		double[] position1=new double[position.size()];
 		double[] twissParameterValues1=new double[twissParameterValues.size()];
 		for(int j=0;j<position.size();j++){
@@ -58,7 +58,7 @@ public class MachineSimulatorTwissPlot{
       * @param keyPath the key path
       * @return An index of parameter name array
     */
-	private int twissParameterIdentify(String keyPath){
+	private int twissParameterIdentify(final String keyPath){
 		int plane=-1;
 		int _parameterNameIndex=-1;
 	    List<Integer> indexes=new ArrayList<Integer>();
@@ -89,7 +89,7 @@ public class MachineSimulatorTwissPlot{
      /**setup twiss plot
       *@param twissParametersPlot the plot panel 
       */	
-	public void setupPlot(FunctionGraphsJPanel twissParametersPlot){
+	public void setupPlot(final FunctionGraphsJPanel twissParametersPlot){
 		
 		//labels
 		twissParametersPlot.setName("");

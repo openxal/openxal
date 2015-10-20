@@ -14,6 +14,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import com.sun.istack.internal.FinalArrayList;
+
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
@@ -248,7 +250,7 @@ public class MachineSimulatorController {
     * @param records the result of simulation 
     * @param keyPaths specifies the array of key paths to get the data to plot
     */  
-    public void getParametersData(List<MachineSimulationRecord> records,String[] keyPaths){ 
+    public void getParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){ 
     	PLOT_DATA.clear();
     	for(final String keyPath:keyPaths){
     		PLOT_DATA.put(keyPath, new ArrayList<Double>(records.size()));
