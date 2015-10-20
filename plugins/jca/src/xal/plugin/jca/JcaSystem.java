@@ -45,8 +45,6 @@ class JcaSystem extends ChannelSystem {
 			
 			final String contextType = ( contextName != null ) ? contextName : defaultJCAContextType();
 			JCA_CONTEXT = JCA_LIBRARY.createContext( contextType );
-			 JCA_CONTEXT.initialize();
-          JCA_CONTEXT.printInfo();
 		}
 		catch(CAException exception) {
 			exception.printStackTrace();
