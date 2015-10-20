@@ -24,19 +24,15 @@ import xal.tools.data.KeyValueAdaptor;
  * controller for binding the MachineSimulator model to the user interface 
  */
 public class MachineSimulatorController {
-	
-	 /** main window reference */
-	 final private WindowReference WINDOW_REFERENCE;
-	
+	  /** main window reference */
+	  final private WindowReference WINDOW_REFERENCE;	
      /** simulated states table model */
-    final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
+     final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final MachineModel MODEL;
      /**records of simulation result*/
      public List<MachineSimulationRecord> _allRecords=null; 
-     /**result of MachineSimulatoion */
-     public MachineSimulation _machineSimulation;
-      /** the document for the Machine Simulator application*/
+     /** the document for the Machine Simulator application*/
      final private MachineSimulatorDocument _Document;
      /** the plotter*/
      public MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
@@ -44,8 +40,8 @@ public class MachineSimulatorController {
      final KeyValueAdaptor KEY_VALUE_ADAPTOR;
      /**a map array from parameter's key to plot data list*/
      final HashMap<String, List<Double>> PLOT_DATA;
-       /** initialize the data list of parameters*/
-     public List<Double> _position=new ArrayList<Double>();
+     /** the position list of elements*/
+     public List<Double> _position;
 
         
 	/**constructor */
@@ -58,12 +54,12 @@ public class MachineSimulatorController {
         // initialize the model here
         MODEL = _Document.getModel();
 
-      configureTableWindow(WINDOW_REFERENCE);
+      configureMainWindow(WINDOW_REFERENCE);
 	}
 	
 	
-    /** configure the Table window */
-    private void configureTableWindow( final WindowReference windowReference ) {
+    /** configure the main window */
+    private void configureMainWindow( final WindowReference windowReference ) {
         STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "probeState.kineticEnergy" );
 
         STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
@@ -165,9 +161,9 @@ public class MachineSimulatorController {
                 System.arraycopy( vectorParameterKeys, 0, parameterKeys, scalarParameterKeys.length + standardParameterKeys.length, vectorParameterKeys.length );
                 STATES_TABLE_MODEL.setKeyPaths( parameterKeys );
                 
-                
+ /**************   configure plot view   ****************/               
                final String[] parameterKeysForPlot=new String[parameterKeys.length-2];
-                //select parameters' key
+                //copy the parameters' key without elementID and position
                 System.arraycopy(parameterKeys, 2, parameterKeysForPlot, 0, parameterKeys.length-2);
              
                 twissParametersPlot.removeAllGraphData();

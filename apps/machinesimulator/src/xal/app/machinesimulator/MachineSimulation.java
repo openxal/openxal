@@ -21,9 +21,7 @@ import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 /** MachineSimulation is the simulation result for a simulation on an accelerator sequence  */
 public class MachineSimulation {
     /** states for every element */
-    final List<MachineSimulationRecord> SIMULATION_RECORDS;;
-    public int RecordsSize=0;
-    public double[] _AllPosition;
+    final List<MachineSimulationRecord> SIMULATION_RECORDS;
     
 	/** Constructor */
     public MachineSimulation( final Probe<?> probe ) {
@@ -47,8 +45,8 @@ public class MachineSimulation {
 /** get all the element's position in selected sequence ----xiaohan add*/
     public List<Double> getAllPosition(){
     	final int RecordsSize = SIMULATION_RECORDS.size();
-      List<Double> _AllPosition = new ArrayList<Double>();
-      _AllPosition.clear();;
+      List<Double> _AllPosition = new ArrayList<Double>(RecordsSize);
+      _AllPosition.clear();
     	for(int i=0;i<RecordsSize;i++){
     		_AllPosition.add(SIMULATION_RECORDS.get(i).getPosition());
     	}

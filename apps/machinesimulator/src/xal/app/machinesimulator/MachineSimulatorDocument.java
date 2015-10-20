@@ -26,14 +26,11 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	/** main window reference */
 	final WindowReference WINDOW_REFERENCE;
     
-    /** main model */
-    final MachineModel MODEL;
-    
-    /** simulated states table model */
-//    final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
-     
-      
-    final MachineSimulatorController _machineSimulatorController;
+   /** main model */
+   final MachineModel MODEL;
+   
+   /** controller*/      
+   final MachineSimulatorController _machineSimulatorController;
 	
 	
     /** Empty Constructor */
