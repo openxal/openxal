@@ -228,7 +228,7 @@ public class MachineSimulatorController {
                 _position=simulation.getAllPosition();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
 
-                CLEAR_BUTTON.actionPerformed(null);
+                PARAMETER_HANDLER.actionPerformed(null);
             }
         });
 

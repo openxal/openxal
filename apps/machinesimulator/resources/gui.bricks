@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Sun Oct 18 21:28:44 CST 2015" version="1.0.0">
+<BricksDocument date="Wed Oct 21 07:53:56 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -60,13 +60,13 @@
                         <ViewNode tag="X Selection Checkbox">
                             <ViewProxy type="javax.swing.JCheckBox"/>
                             <BeanProperty name="text" value="X"/>
-                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="selected" value="true"/>
                             <BeanProperty name="toolTipText" value="Display Horizontal Component"/>
                         </ViewNode>
                         <ViewNode tag="Y Selection Checkbox">
                             <ViewProxy type="javax.swing.JCheckBox"/>
                             <BeanProperty name="text" value="Y"/>
-                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="selected" value="true"/>
                             <BeanProperty name="toolTipText" value="Display Vertical Component"/>
                         </ViewNode>
                         <ViewNode tag="Z Selection Checkbox">
@@ -85,7 +85,7 @@
                         <ViewNode tag="Beta Checkbox">
                             <ViewProxy type="javax.swing.JCheckBox"/>
                             <BeanProperty name="text" value="&lt;html>&amp;beta;&lt;/html>"/>
-                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="selected" value="true"/>
                             <BeanProperty name="toolTipText" value="Display the Beta Function"/>
                         </ViewNode>
                         <ViewNode tag="Alpha Checkbox">
