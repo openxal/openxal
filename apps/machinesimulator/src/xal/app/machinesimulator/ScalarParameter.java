@@ -10,6 +10,8 @@ package xal.app.machinesimulator;
 public class ScalarParameter extends Parameter {
 	/**the key path map to this parameter*/
 	private String keyPath;
+	/**the name of the specified parameter*/
+	private String parameterName;
 	
 	/**
 	 * Constructor
@@ -26,7 +28,9 @@ public class ScalarParameter extends Parameter {
 	 * @return the name
 	 */
 	public String getParameterName(final String keyPath) {
-       return super.getLable();
+		if(isThisParameter(keyPath)) parameterName=super.getLable();
+		else parameterName=null;
+       return parameterName;
 	}
 	/**
 	 * get the key path map to this parameter
