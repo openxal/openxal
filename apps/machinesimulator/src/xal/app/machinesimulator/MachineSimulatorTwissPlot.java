@@ -16,10 +16,10 @@ import xal.extension.widgets.plot.IncrementalColors;
  * plot the parameters
  */
 public class MachineSimulatorTwissPlot{
-	
+	/**plot panel*/
 	private FunctionGraphsJPanel _twissParametersPlot;
 	
-	/***/
+	/**list of parameters*/
 	final private List<Parameter> PARAMETERS;
 	
 	
@@ -27,7 +27,7 @@ public class MachineSimulatorTwissPlot{
 	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot){
 		
 		_twissParametersPlot=twissParametersPlot;
-		
+		//add parameters to the array
 		PARAMETERS = new ArrayList<Parameter>();
 		PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
 		PARAMETERS.add(new VectorParameter("Beta", "twissParameters", "beta"));
@@ -56,19 +56,26 @@ public class MachineSimulatorTwissPlot{
 		}
 		BasicGraphData twissParameterPlotData= new BasicGraphData();
 		configureGraph(twissParameterPlotData, keyPath);
+		
 	   twissParameterPlotData.updateValues(position1, twissParameterValues1);
 		_twissParametersPlot.addGraphData(twissParameterPlotData);
 	}
+	/**
+	 * configure the graph with color and line pattern
+	 * @param graphData the graph to configure
+	 * @param keyPath  the key path to identify which parameter it is
+	 */
 	
 	public void configureGraph(final BasicGraphData graphData,final String keyPath){
 		for(final Parameter parameter:PARAMETERS){
 			if(parameter.isThisParameter(keyPath)){
-				System.out.println(parameter.getParameterName(keyPath));
+				//configure the graphic name
 				graphData.setGraphProperty(_twissParametersPlot.getLegendKeyString(), parameter.getParameterName(keyPath));
 				// configure the graphic color
 				switch (parameter.getLable()){
 				case "Kinetic Energy":
-					graphData.setGraphColor(IncrementalColors.getColor(0));//kineticEnergy
+					graphData.setGraphColor(null);//kineticEnergy
+					break;
 				case "Beta":
 					graphData.setGraphColor(IncrementalColors.getColor(1));//beta
 					break;
@@ -81,7 +88,7 @@ public class MachineSimulatorTwissPlot{
 				case "Emittance":
 					graphData.setGraphColor(IncrementalColors.getColor(4));//emittance
 					break;
-				case "EnvelopRadius":
+				case "EnvelopeRadius":
 					graphData.setGraphColor(IncrementalColors.getColor(5));//envelopeRadius
 					break;
 				case "BetatronPhase":
@@ -90,7 +97,7 @@ public class MachineSimulatorTwissPlot{
 				default:
 					break;
 				}
-				
+				//configure the graphic line pattern
 				switch (parameter.getPlane(keyPath)) {
 				case "X":
 					graphData.setLineDashPattern(null);//x plane
@@ -105,11 +112,6 @@ public class MachineSimulatorTwissPlot{
 				}
 			}
 		}
-		
-
-
-		
-		 //configure the graphic line pattern
 		
 	}
 	
@@ -127,12 +129,5 @@ public class MachineSimulatorTwissPlot{
 		twissParametersPlot.setLegendBackground(Color.white);
 
 		}
-		
-// set the graphic name		
-//		for(int i=0;i<PARAMETER_NUMBER;i++){
-//			_twissParameterPlotData[i].setGraphProperty(twissParametersPlot.getLegendKeyString(), _parameterName[i]);
-//		}
-
-
 
 }
