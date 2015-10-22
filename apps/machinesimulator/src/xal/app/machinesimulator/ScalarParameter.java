@@ -28,7 +28,7 @@ public class ScalarParameter extends Parameter {
 	 * @return the name
 	 */
 	public String getParameterName(final String keyPath) {
-		if(isThisParameter(keyPath)) parameterName=super.getLable();
+		if(isThisParameter(keyPath)) parameterName=super.getLabel();
 		else parameterName=null;
        return parameterName;
 	}
@@ -38,6 +38,13 @@ public class ScalarParameter extends Parameter {
 	 */
 	public String getKeyPath(){
 		return keyPath;
+	}
+	/**
+	 * get a symbol (for scalar parameter just return the label for now)
+	 * @param the key path
+	 */
+	public String getSymbol() {
+		return super.getLabel();
 	}
 	/**
 	 * get the plane of the parameter
@@ -58,5 +65,6 @@ public class ScalarParameter extends Parameter {
 	public boolean isThisParameter(final String keyPath){
 		return this.keyPath.equals(keyPath);
 	}
+
 
 }

@@ -3,6 +3,9 @@
  */
 package xal.app.machinesimulator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author luxiaohan
  *this class define a vector parameter with label name,key path which map to the parameter
@@ -18,36 +21,42 @@ public class VectorParameter extends Parameter {
 	private String parameterName;
 	/**the plane of the specified parameter*/
 	private String plane;
+	/** a symbol to represent the parameter*/
+	private String symbol;
+	/**a map array to hold all the key path */
+	private Map<String, String> keyPaths;
 	
 	/**
 	 * Constructor
 	 * @param label the label of parameter
+	 * @param symbol a symbol to represent the parameter
 	 * @param keyPrefix the prefix of the key path
 	 */
-	public VectorParameter(final String label,final String keyPrefix ) {
+	public VectorParameter(final String label,final String symbol,final String keyPrefix ) {
 		super(label);
 		this.keyPrefix=keyPrefix;
-		
+		this.symbol=symbol;
 	}
 	
 	/**
 	 * Constructor
 	 * @param label the label of parameter
+	 * @param symbol a symbol to represent the parameter
 	 * @param keyPrefix the prefix of the key path
 	 * @param keySuffix the suffix of the key path  
 	 */
-	public VectorParameter(final String label,final String keyPrefix,final String keySuffix) {
+	public VectorParameter(final String label,final String symbol,final String keyPrefix,final String keySuffix) {
 		super(label);
 		this.keyPrefix=keyPrefix;
 		this.keySuffix=keySuffix;
-		
+		this.symbol=symbol;
 	}
 	/**
 	 * get the label of the parameter
 	 * @return
 	 */
 	public String getLabel(){
-		return super.getLable();
+		return super.getLabel();
 	}
 	/**
 	 * get the key path of the parameter for x-plane
@@ -77,19 +86,58 @@ public class VectorParameter extends Parameter {
 		return keyPath;
 	}
 	/**
+	 * put the the key path of all planes to a map list
+	 * @return key paths
+	 */
+	public Map<String,String> getKeyPathToArray(){
+		keyPaths=new HashMap<String,String>(3);
+		keyPaths.put("X",getKeyPathForX());
+		keyPaths.put("Y",getKeyPathForY());
+		keyPaths.put("Z",getKeyPathForZ());
+		return keyPaths;
+	}
+	/**
 	 * get the name of the specified parameter
 	 * @param keyPath the key path 
 	 * @return the name
 	 */
 	public String getParameterName(final String keyPath) {
 		if(isThisParameter(keyPath)){
-			String label=super.getLable();
+			String label=super.getLabel();
 			if(keyPath.equals(getKeyPathForX())) parameterName=label+"X";
 			if(keyPath.equals(getKeyPathForY())) parameterName=label+"Y";
 			if(keyPath.equals(getKeyPathForZ())) parameterName=label+"Z";
 		}
 		else parameterName=null;
 		return parameterName;
+	}
+	/**
+	 * get a symbol to represent parameter's name 
+	 * @return a symbol
+	 */
+	public String getSymbol() {
+		return "<html>&"+symbol+"</html>";
+	}
+	/**
+	 * get a symbol for x plane to represent parameter's name 
+	 * @return a symbol
+	 */
+	public String getSymbolForX(){
+		return "<html>&"+symbol+";<sub>x</sub></html>";
+	}
+	/**
+	 * get a symbol for y plane to represent parameter's name 
+	 * @return a symbol
+	 */
+	public String getSymbolForY(){
+		return "<html>&"+symbol+";<sub>y</sub></html>";
+	}
+	/**
+	 * get a symbol for z plane to represent parameter's name 
+	 * @return a symbol
+	 */
+	public String getSymbolForZ(){
+		return "<html>&"+symbol+";<sub>z</sub></html>";
 	}
 	/**
 	 * get the plane of the specified parameter

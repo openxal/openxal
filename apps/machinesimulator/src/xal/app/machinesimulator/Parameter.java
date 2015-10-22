@@ -21,7 +21,7 @@ public abstract class Parameter {
 		this.label=label;
 	}
 	/**get the label*/
-	public String getLable(){
+	public String getLabel(){
 		return this.label;
 	}
 	
@@ -31,6 +31,11 @@ public abstract class Parameter {
 	 * @return The name
 	 */
 	public abstract String getParameterName(final String object);
+	/**
+	 * get a symbol to represent parameter's name 
+	 * @return a symbol
+	 */
+	public abstract String getSymbol();
 	
 	/**
 	 * get the plane of the specified parameter
