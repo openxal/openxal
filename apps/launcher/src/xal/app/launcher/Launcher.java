@@ -80,7 +80,12 @@ public class Launcher implements DataListener {
 			else newClassPath = xalLibJarFile.getAbsolutePath() + File.pathSeparator + currentClassPath;
 			environment.put( "CLASSPATH", newClassPath );
 
+			// print out some common environment variables as diagnostics
+			System.out.println( "" );
 			System.out.println( "CLASSPATH: " + environment.get( "CLASSPATH" ) );
+			System.out.println( "OPENXAL_HOME: " + environment.get("OPENXAL_HOME") );		// optional
+			System.out.println( "OPENXAL_ENVIRONMENT: " + environment.get("OPENXAL_ENVIRONMENT") );		// optional
+			System.out.println( "" );
 
 			return environment;
 			}
