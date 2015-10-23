@@ -7,9 +7,6 @@
 package xal.app.machinesimulator;
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import xal.extension.application.*;
 import xal.extension.application.smf.*;
 import xal.smf.*;
@@ -24,20 +21,13 @@ import xal.extension.bricks.WindowReference;
  */
 public class MachineSimulatorDocument extends AcceleratorDocument implements DataListener {
  	/** the data adaptor label used for reading and writing this document */
-	static public final String DATA_LABEL = "MachineSimulatorDocument";
-	
+	static public final String DATA_LABEL = "MachineSimulatorDocument";	
 	/** main window reference */
-	final WindowReference WINDOW_REFERENCE;
-    
+	final WindowReference WINDOW_REFERENCE;    
    /** main model */
    final MachineModel MODEL;
-
    /** controller*/
    final MachineSimulatorController _machineSimulatorController;
-    /**the scalar parameters*/
-   final List<ScalarParameter> SCALAR_PARAMETERS;
-   /**the vector parameters*/
-   final List<VectorParameter> VECTOR_PARAMETERS;
 	
 	
     /** Empty Constructor */
@@ -54,17 +44,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
         setSource( url );
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
-		
-		SCALAR_PARAMETERS=new ArrayList<ScalarParameter>();
-		SCALAR_PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
-		
-		VECTOR_PARAMETERS=new ArrayList<VectorParameter>();
-		VECTOR_PARAMETERS.add(new VectorParameter("Beta","beta","twissParameters", "beta"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Alpha","alpha","twissParameters", "alpha"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Gamma","gamma","twissParameters", "gamma"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Emittance","epsilon","twissParameters", "emittance"));
-		VECTOR_PARAMETERS.add(new VectorParameter("EnvelopeRadius","sigma","twissParameters", "envelopeRadius"));
-		VECTOR_PARAMETERS.add(new VectorParameter("BetatronPhase","phi","betatronPhase"));
         
         // initialize the model here
         MODEL = new MachineModel();
@@ -90,16 +69,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	/** get the model */
 	public MachineModel getModel() {
 		return MODEL;
-	}
-	/**get the list of scalar parameters*/
-	public List<ScalarParameter> getScarlarParameter() {
-		return SCALAR_PARAMETERS;		
-	}
-	/**get the list of vector parameters*/
-	public List<VectorParameter> getVectorParameter() {
-		return VECTOR_PARAMETERS;
-	}
-    
+	}   
 	
     
 /**    // Generate the twiss parameter key from the base twiss parameter name and the plane

@@ -29,29 +29,24 @@ public class MachineSimulatorController {
      /** simulated states table model */
      final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
-     final MachineModel MODEL;
-     /**records of simulation result*/
-     public List<MachineSimulationRecord> _allRecords=null;
-     /** the document for the Machine Simulator application*/
-     final private MachineSimulatorDocument _document;
+     final private MachineModel MODEL;
      /** the plotter*/
      public MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
  	  /** key value adaptor to get the twiss value from a record for the specified key path */
-     final KeyValueAdaptor KEY_VALUE_ADAPTOR;
+     final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
      /**a map array from parameter's key to plot data list*/
-     final HashMap<String, List<Double>> PLOT_DATA;
-     /** the position list of elements*/
-     public List<Double> _position;
+     final private HashMap<String, List<Double>> PLOT_DATA;
      /**the scalar parameters*/
-     final List<ScalarParameter> SCALAR_PARAMETERS;
+     final private List<ScalarParameter> SCALAR_PARAMETERS;
      /**the vector parameters*/
-     final List<VectorParameter> VECTOR_PARAMETERS;    
+     final private List<VectorParameter> VECTOR_PARAMETERS;
+ 	  /**list of parameters*/
+ 	  final private List<Parameter> PARAMETERS;
      
 
 
 	/**constructor */
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
-		_document=document;
 		WINDOW_REFERENCE=windowReference;
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
@@ -59,9 +54,21 @@ public class MachineSimulatorController {
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
       // initialize the model here
       MODEL = document.getModel();
-      
-      SCALAR_PARAMETERS=document.getScarlarParameter();
-      VECTOR_PARAMETERS=document.getVectorParameter();
+		
+		SCALAR_PARAMETERS=new ArrayList<ScalarParameter>();
+		SCALAR_PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
+		
+		VECTOR_PARAMETERS=new ArrayList<VectorParameter>();
+		VECTOR_PARAMETERS.add(new VectorParameter("Beta","beta","twissParameters", "beta"));
+		VECTOR_PARAMETERS.add(new VectorParameter("Alpha","alpha","twissParameters", "alpha"));
+		VECTOR_PARAMETERS.add(new VectorParameter("Gamma","gamma","twissParameters", "gamma"));
+		VECTOR_PARAMETERS.add(new VectorParameter("Emittance","epsilon","twissParameters", "emittance"));
+		VECTOR_PARAMETERS.add(new VectorParameter("EnvelopeRadius","sigma","twissParameters", "envelopeRadius"));
+		VECTOR_PARAMETERS.add(new VectorParameter("BetatronPhase","phi","betatronPhase"));
+		//put scalar and vector parameter together
+		PARAMETERS = new ArrayList<Parameter>(SCALAR_PARAMETERS.size()+VECTOR_PARAMETERS.size());
+		PARAMETERS.addAll(SCALAR_PARAMETERS);
+		PARAMETERS.addAll(VECTOR_PARAMETERS);
         
 
       configureMainWindow(WINDOW_REFERENCE);
@@ -91,7 +98,7 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
 
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,_document);
+        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,PARAMETERS);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
@@ -150,12 +157,12 @@ public class MachineSimulatorController {
 
                 twissParametersPlot.removeAllGraphData();
                 //setup plot panel and show the selected parameters' graph
-                if(parameterKeyPaths.length!=0&_allRecords!=null){
-                  getParametersData(_allRecords, parameterKeyPaths);
+                if(parameterKeyPaths.length!=0&MODEL.getSimulation()!=null){
+                  getParametersData(MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths);
                 	_machineSimulatorTwissPlot.setupPlot(twissParametersPlot);
 
                    for(final String parameterKey:parameterKeyPaths){
-                        _machineSimulatorTwissPlot.showTwissPlot(_position, PLOT_DATA.get(parameterKey), parameterKey);
+                        _machineSimulatorTwissPlot.showTwissPlot(MODEL.getSimulation().getAllPosition(), PLOT_DATA.get(parameterKey), parameterKey);
                          }
                      }
 
@@ -206,8 +213,6 @@ public class MachineSimulatorController {
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );
                 final MachineSimulation simulation = MODEL.runSimulation();
-                _allRecords=simulation.getSimulationRecords();
-                _position=simulation.getAllPosition();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
 
                 PARAMETER_HANDLER.actionPerformed(null);

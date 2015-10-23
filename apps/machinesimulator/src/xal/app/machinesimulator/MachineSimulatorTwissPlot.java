@@ -4,7 +4,6 @@
 package xal.app.machinesimulator;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 import xal.extension.widgets.plot.BasicGraphData;
@@ -18,19 +17,14 @@ import xal.extension.widgets.plot.IncrementalColors;
 public class MachineSimulatorTwissPlot{
 	/**plot panel*/
 	private FunctionGraphsJPanel _twissParametersPlot;
-	
 	/**list of parameters*/
 	final private List<Parameter> PARAMETERS;
 	
 	
 	/**constructor*/
-	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final MachineSimulatorDocument document){
-		
+	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<Parameter>... parameters){
 		_twissParametersPlot=twissParametersPlot;
-		//put scalar and vector parameter together
-		PARAMETERS = new ArrayList<Parameter>();
-		PARAMETERS.addAll(document.getScarlarParameter());
-		PARAMETERS.addAll(document.getVectorParameter());
+		PARAMETERS=parameters;
 		
 	   setupPlot(twissParametersPlot);
 		
@@ -67,31 +61,7 @@ public class MachineSimulatorTwissPlot{
 				//configure the graphic name
 				graphData.setGraphProperty(_twissParametersPlot.getLegendKeyString(), PARAMETERS.get(parameterIndex).getParameterName(keyPath));
 				// configure the graphic color
-				switch (parameterIndex){
-				case 0:
-					graphData.setGraphColor(null);
-					break;
-				case 1:
-					graphData.setGraphColor(IncrementalColors.getColor(1));
-					break;
-				case 2:
-					graphData.setGraphColor(IncrementalColors.getColor(2));
-					break;
-				case 3:
-					graphData.setGraphColor(IncrementalColors.getColor(3));
-					break;
-				case 4:
-					graphData.setGraphColor(IncrementalColors.getColor(4));
-					break;
-				case 5:
-					graphData.setGraphColor(IncrementalColors.getColor(5));
-					break;
-				case 6:
-					graphData.setGraphColor(IncrementalColors.getColor(6));
-					break;
-				default:
-					break;
-				}
+				graphData.setGraphColor(IncrementalColors.getColor(parameterIndex));
 				//configure the graphic line pattern
 				switch (PARAMETERS.get(parameterIndex).getPlane(keyPath)) {
 				case "X":
