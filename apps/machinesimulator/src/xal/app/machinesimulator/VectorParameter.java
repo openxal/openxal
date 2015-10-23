@@ -18,9 +18,9 @@ public class VectorParameter extends Parameter {
 	/**the suffix of the key path*/
 	private String keySuffix=null;
 	/**the name of the specified parameter*/
-	private String parameterName;
+	private String parameterName=null;
 	/**the plane of the specified parameter*/
-	private String plane;
+	private String plane="0";
 	/** a symbol to represent the parameter*/
 	private String symbol;
 	/**a map array to hold all the key path */
@@ -102,13 +102,10 @@ public class VectorParameter extends Parameter {
 	 * @return the name
 	 */
 	public String getParameterName(final String keyPath) {
-		if(isThisParameter(keyPath)){
-			String label=super.getLabel();
-			if(keyPath.equals(getKeyPathForX())) parameterName=label+"X";
-			if(keyPath.equals(getKeyPathForY())) parameterName=label+"Y";
-			if(keyPath.equals(getKeyPathForZ())) parameterName=label+"Z";
-		}
-		else parameterName=null;
+		String label=super.getLabel();
+		if(keyPath.equals(getKeyPathForX())) parameterName=label+"X";
+		if(keyPath.equals(getKeyPathForY())) parameterName=label+"Y";
+		if(keyPath.equals(getKeyPathForZ())) parameterName=label+"Z";
 		return parameterName;
 	}
 	/**
@@ -145,12 +142,9 @@ public class VectorParameter extends Parameter {
 	 * @return the plane
 	 */
 	public String getPlane(final String keyPath){
-		if(isThisParameter(keyPath)){
-			if(keyPath.equals(getKeyPathForX())) plane="X";
-			if(keyPath.equals(getKeyPathForY())) plane="Y";
-			if(keyPath.equals(getKeyPathForZ())) plane="Z";
-		}
-		else plane="0";
+		if(keyPath.equals(getKeyPathForX())) plane="X";
+		if(keyPath.equals(getKeyPathForY())) plane="Y";
+		if(keyPath.equals(getKeyPathForZ())) plane="Z";;
 		return plane;
 	}
 	/**

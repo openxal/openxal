@@ -24,8 +24,6 @@ import xal.tools.data.KeyValueAdaptor;
  * controller for binding the MachineSimulator model to the user interface
  */
 public class MachineSimulatorController {
-	  /** main window reference */
-	  final private WindowReference WINDOW_REFERENCE;
      /** simulated states table model */
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
@@ -38,8 +36,6 @@ public class MachineSimulatorController {
      final private List<ScalarParameter> SCALAR_PARAMETERS;
      /**the vector parameters*/
      final private List<VectorParameter> VECTOR_PARAMETERS;
- 	  /**list of parameters*/
- 	  final private List<Parameter> PARAMETERS;
      /** the plotter*/
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /** the position list of elements*/
@@ -49,7 +45,6 @@ public class MachineSimulatorController {
 
 	/**constructor */
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
-		WINDOW_REFERENCE=windowReference;
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
 		PLOT_DATA = new HashMap<String,List<Double>>();
@@ -67,13 +62,8 @@ public class MachineSimulatorController {
 		VECTOR_PARAMETERS.add(new VectorParameter("Emittance","epsilon","twissParameters", "emittance"));
 		VECTOR_PARAMETERS.add(new VectorParameter("EnvelopeRadius","sigma","twissParameters", "envelopeRadius"));
 		VECTOR_PARAMETERS.add(new VectorParameter("BetatronPhase","phi","betatronPhase"));
-		//put scalar and vector parameter together
-		PARAMETERS = new ArrayList<Parameter>(SCALAR_PARAMETERS.size()+VECTOR_PARAMETERS.size());
-		PARAMETERS.addAll(SCALAR_PARAMETERS);
-		PARAMETERS.addAll(VECTOR_PARAMETERS);
         
-
-      configureMainWindow(WINDOW_REFERENCE);
+      configureMainWindow(windowReference);
 	}
 
 
@@ -100,7 +90,7 @@ public class MachineSimulatorController {
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
 
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,PARAMETERS);
+        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS);
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );

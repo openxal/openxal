@@ -4,6 +4,7 @@
 package xal.app.machinesimulator;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import xal.extension.widgets.plot.BasicGraphData;
@@ -16,17 +17,19 @@ import xal.extension.widgets.plot.IncrementalColors;
  */
 public class MachineSimulatorTwissPlot{
 	/**plot panel*/
-	final private FunctionGraphsJPanel _twissParametersPlot;
+	final private FunctionGraphsJPanel TWISS_PARAMETERS_PLOT;
 	/**list of parameters*/
 	final private List<Parameter> PARAMETERS;
 	
 	/**constructor*/
-	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<Parameter>parameters){
-		_twissParametersPlot=twissParametersPlot;
-		PARAMETERS=parameters;
+	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<ScalarParameter>scalarParameters,final List<VectorParameter>vectorParameters){
+		TWISS_PARAMETERS_PLOT=twissParametersPlot;
+		PARAMETERS=new ArrayList<Parameter>(scalarParameters.size()+vectorParameters.size());
+		//put scalar and vector parameter together
+		PARAMETERS.addAll(scalarParameters);
+		PARAMETERS.addAll(vectorParameters);
 		
-	   configurePlotPanel(twissParametersPlot);
-		
+	   configurePlotPanel(twissParametersPlot);	
 	}
 	
 	/**
@@ -38,15 +41,15 @@ public class MachineSimulatorTwissPlot{
 	public void showTwissPlot(final List<Double> position,final List<Double> twissParameterValues,final String keyPath){
 		double[] position1=new double[position.size()];
 		double[] twissParameterValues1=new double[twissParameterValues.size()];
-		for(int j=0;j<position.size();j++){
-			position1[j]=position.get(j);
-			twissParameterValues1[j]=twissParameterValues.get(j);
+		for(int index=0;index<position.size();index++){
+			position1[index]=position.get(index);
+			twissParameterValues1[index]=twissParameterValues.get(index);
 		}
 		BasicGraphData twissParameterPlotData= new BasicGraphData();
 		configureGraph(twissParameterPlotData, keyPath);
 		
 	   twissParameterPlotData.updateValues(position1, twissParameterValues1);
-		_twissParametersPlot.addGraphData(twissParameterPlotData);
+		TWISS_PARAMETERS_PLOT.addGraphData(twissParameterPlotData);
 	}
 	/**
 	 * configure the graph with color and line pattern
@@ -58,7 +61,7 @@ public class MachineSimulatorTwissPlot{
 		for(int parameterIndex=0;parameterIndex<PARAMETERS.size();parameterIndex++){
 			if(PARAMETERS.get(parameterIndex).isThisParameter(keyPath)){
 				//configure the graphic name
-				graphData.setGraphProperty(_twissParametersPlot.getLegendKeyString(), PARAMETERS.get(parameterIndex).getParameterName(keyPath));
+				graphData.setGraphProperty(TWISS_PARAMETERS_PLOT.getLegendKeyString(), PARAMETERS.get(parameterIndex).getParameterName(keyPath));
 				// configure the graphic color
 				graphData.setGraphColor(IncrementalColors.getColor(parameterIndex));
 				//configure the graphic line pattern
