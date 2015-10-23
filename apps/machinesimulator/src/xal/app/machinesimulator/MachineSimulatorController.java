@@ -27,11 +27,9 @@ public class MachineSimulatorController {
 	  /** main window reference */
 	  final private WindowReference WINDOW_REFERENCE;
      /** simulated states table model */
-     final KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
-     /** the plotter*/
-     public MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
  	  /** key value adaptor to get the twiss value from a record for the specified key path */
      final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
      /**a map array from parameter's key to plot data list*/
@@ -42,6 +40,10 @@ public class MachineSimulatorController {
      final private List<VectorParameter> VECTOR_PARAMETERS;
  	  /**list of parameters*/
  	  final private List<Parameter> PARAMETERS;
+     /** the plotter*/
+     private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
+     /** the position list of elements*/
+     private List<Double> _positions;
      
 
 
@@ -83,7 +85,7 @@ public class MachineSimulatorController {
         for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
             STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol() );
            }
-        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){        	
+        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),vectorParameter.getSymbolForX());
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(),vectorParameter.getSymbolForY());
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(),vectorParameter.getSymbolForZ());
@@ -158,11 +160,9 @@ public class MachineSimulatorController {
                 twissParametersPlot.removeAllGraphData();
                 //setup plot panel and show the selected parameters' graph
                 if(parameterKeyPaths.length!=0&MODEL.getSimulation()!=null){
-                  getParametersData(MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths);
-                	_machineSimulatorTwissPlot.setupPlot(twissParametersPlot);
-
-                   for(final String parameterKey:parameterKeyPaths){
-                        _machineSimulatorTwissPlot.showTwissPlot(MODEL.getSimulation().getAllPosition(), PLOT_DATA.get(parameterKey), parameterKey);
+                  configureParametersData(MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths);
+                   for(final String parameterKey:parameterKeyPaths){                	   
+                        _machineSimulatorTwissPlot.showTwissPlot(_positions, PLOT_DATA.get(parameterKey), parameterKey);
                          }
                      }
 
@@ -214,7 +214,8 @@ public class MachineSimulatorController {
                 System.out.println( "running the model..." );
                 final MachineSimulation simulation = MODEL.runSimulation();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
-
+                _positions=simulation.getAllPosition();
+                
                 PARAMETER_HANDLER.actionPerformed(null);
             }
         });
@@ -234,14 +235,14 @@ public class MachineSimulatorController {
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    public void getParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){
-    	PLOT_DATA.clear();
+    private void configureParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){
+      PLOT_DATA.clear();      
     	for(final String keyPath:keyPaths){
     		PLOT_DATA.put(keyPath, new ArrayList<Double>(records.size()));
     		for(final MachineSimulationRecord record:records){
     			PLOT_DATA.get(keyPath).add((Double)KEY_VALUE_ADAPTOR.valueForKeyPath(record,keyPath));
     		}
-    	}
+    	}   	
     }
 
 }

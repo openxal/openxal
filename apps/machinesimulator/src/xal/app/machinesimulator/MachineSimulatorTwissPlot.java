@@ -16,17 +16,16 @@ import xal.extension.widgets.plot.IncrementalColors;
  */
 public class MachineSimulatorTwissPlot{
 	/**plot panel*/
-	private FunctionGraphsJPanel _twissParametersPlot;
+	final private FunctionGraphsJPanel _twissParametersPlot;
 	/**list of parameters*/
 	final private List<Parameter> PARAMETERS;
 	
-	
 	/**constructor*/
-	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<Parameter>... parameters){
+	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<Parameter>parameters){
 		_twissParametersPlot=twissParametersPlot;
 		PARAMETERS=parameters;
 		
-	   setupPlot(twissParametersPlot);
+	   configurePlotPanel(twissParametersPlot);
 		
 	}
 	
@@ -55,7 +54,7 @@ public class MachineSimulatorTwissPlot{
 	 * @param keyPath  the key path to identify which parameter it is
 	 */
 	
-	public void configureGraph(final BasicGraphData graphData,final String keyPath){
+	private void configureGraph(final BasicGraphData graphData,final String keyPath){
 		for(int parameterIndex=0;parameterIndex<PARAMETERS.size();parameterIndex++){
 			if(PARAMETERS.get(parameterIndex).isThisParameter(keyPath)){
 				//configure the graphic name
@@ -81,10 +80,10 @@ public class MachineSimulatorTwissPlot{
 		
 	}
 	
-     /**setup twiss plot
+     /**configure plot panel
       *@param twissParametersPlot the plot panel
       */	
-	public void setupPlot(final FunctionGraphsJPanel twissParametersPlot){
+	private void configurePlotPanel(final FunctionGraphsJPanel twissParametersPlot){
 		
 		//labels
 		twissParametersPlot.setName("");

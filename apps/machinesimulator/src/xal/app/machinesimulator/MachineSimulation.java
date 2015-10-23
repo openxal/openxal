@@ -44,11 +44,9 @@ public class MachineSimulation {
  
 /** get all the element's position in selected sequence ----xiaohan add*/
     public List<Double> getAllPosition(){
-    	final int RecordsSize = SIMULATION_RECORDS.size();
-      List<Double> _AllPosition = new ArrayList<Double>(RecordsSize);
-      _AllPosition.clear();
-    	for(int i=0;i<RecordsSize;i++){
-    		_AllPosition.add(SIMULATION_RECORDS.get(i).getPosition());
+      List<Double> _AllPosition = new ArrayList<Double>(SIMULATION_RECORDS.size());
+    	for(final MachineSimulationRecord record:SIMULATION_RECORDS){
+    		_AllPosition.add(record.getPosition());
     	}
     	return _AllPosition;
     }

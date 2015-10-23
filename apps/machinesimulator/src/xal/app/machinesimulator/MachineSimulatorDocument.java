@@ -27,27 +27,25 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
    /** main model */
    final MachineModel MODEL;
    /** controller*/
-   final MachineSimulatorController _machineSimulatorController;
-	
-	
+   final MachineSimulatorController MACHINE_SIMULATOR_CONTROLLER;
+   
+   
     /** Empty Constructor */
     public MachineSimulatorDocument() {
         this( null );
     }
-    
-    
+   
     /** 
      * Primary constructor 
      * @param url The URL of the file to load into the new document.
      */
     public MachineSimulatorDocument( final java.net.URL url ) {
-        setSource( url );
+    	setSource( url );
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
-        
-        // initialize the model here
-        MODEL = new MachineModel();
-		_machineSimulatorController= new MachineSimulatorController(this,WINDOW_REFERENCE);
+      // initialize the model here
+      MODEL = new MachineModel();
+		MACHINE_SIMULATOR_CONTROLLER= new MachineSimulatorController(this,WINDOW_REFERENCE);
 
 		if ( url != null ) {
             System.out.println( "Opening document: " + url.toString() );
