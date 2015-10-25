@@ -6,13 +6,19 @@
 
 package xal.app.machinesimulator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.*;
+
+import javax.swing.JToggleButton.ToggleButtonModel;
+
 import xal.extension.application.*;
 import xal.extension.application.smf.*;
 import xal.smf.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.*;
 import xal.extension.bricks.WindowReference;
+import xal.sim.scenario.Scenario;
 
 
 /**
@@ -21,9 +27,19 @@ import xal.extension.bricks.WindowReference;
  */
 public class MachineSimulatorDocument extends AcceleratorDocument implements DataListener {
  	/** the data adaptor label used for reading and writing this document */
-	static public final String DATA_LABEL = "MachineSimulatorDocument";	
+	static public final String DATA_LABEL = "MachineSimulatorDocument";
+	/**the button to set use design mode*/
+	final private ToggleButtonModel USE_DESIGN;
+	/**the button to set use rf_design mode*/
+	final private ToggleButtonModel USE_RF_DESIGN;
+	/**the button to set use live mode*/
+	final private ToggleButtonModel USE_CHANNEL;
+	/**the button to set using read back value when using live mode*/
+	final private ToggleButtonModel USE_READ_BACK;
+	/**the button to set using set value when using live mode*/
+	final private ToggleButtonModel USE_SET;
 	/** main window reference */
-	final WindowReference WINDOW_REFERENCE;    
+	final WindowReference WINDOW_REFERENCE;
    /** main model */
    final MachineModel MODEL;
    /** controller*/
@@ -41,12 +57,18 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
      */
     public MachineSimulatorDocument( final java.net.URL url ) {
     	setSource( url );
+    	//initialize the buttons
+		USE_DESIGN = new ToggleButtonModel();
+		USE_RF_DESIGN = new ToggleButtonModel();
+		USE_CHANNEL= new ToggleButtonModel();
+		USE_READ_BACK= new ToggleButtonModel();
+		USE_SET= new ToggleButtonModel();
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
       // initialize the model here
       MODEL = new MachineModel();
 		MACHINE_SIMULATOR_CONTROLLER= new MachineSimulatorController(this,WINDOW_REFERENCE);
-
+		
 		if ( url != null ) {
             System.out.println( "Opening document: " + url.toString() );
             final DataAdaptor documentAdaptor = XmlDataAdaptor.adaptorForUrl( url, false );
@@ -67,17 +89,62 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	/** get the model */
 	public MachineModel getModel() {
 		return MODEL;
-	}   
+	}
 	
-    
-/**    // Generate the twiss parameter key from the base twiss parameter name and the plane
-    static private String toTwissParameterKey( final String twissParameterName, final int plane ) {
-        return "twiss." + plane + "." + twissParameterName;
-    } */
+	/**
+	 * Register custom actions for the commands of this application
+	 * @param commander  The commander with which to register the custom commands.
+	 */
+	public void customizeCommands(Commander commander) {
+		
+		// register use_design button
+		USE_DESIGN.setSelected(true);
+		USE_DESIGN.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+			}
+		});
+		commander.registerModel("use-design",USE_DESIGN);
+		
+		//register use_rf_design button 
+		USE_RF_DESIGN.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
+			}
+		});
+		commander.registerModel( "use-rf_design",USE_RF_DESIGN);
+		
+		//register use_channel button
+		USE_CHANNEL.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
+			}
+		});
+		commander.registerModel( "use-channel",USE_CHANNEL);
+		
+		//register use_set button
+		USE_SET.setSelected(true);
+		USE_SET.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.setUseFieldReadback(false);
+			}
+		});
+		commander.registerModel( "fieldSet",USE_SET);
+		
+		//register use_read_back button
+		USE_READ_BACK.addActionListener( new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				MODEL.setUseFieldReadback(true);
+			}
+		});
+		commander.registerModel( "fieldReadback",USE_READ_BACK);
+		
+		
+		
+	}
 
     
-    
- /*    * Save the document to the specified URL.
+   /** Save the document to the specified URL.
      * @param url The URL to which the document should be saved.
      */
     public void saveDocumentAs( final URL url ) {
@@ -87,7 +154,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** Handle the accelerator changed event by displaying the elements of the accelerator in the main window. */
     public void acceleratorChanged() {
-        try {
+        try {        	
             MODEL.setSequence( null );
             setHasChanges( true );
         }
@@ -100,8 +167,12 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** Handle the selected sequence changed event by displaying the elements of the selected sequence in the main window. */
     public void selectedSequenceChanged() {
-        try {
+        try {        	
             MODEL.setSequence( getSelectedSequence() );
+            if(USE_RF_DESIGN.isSelected()) MODEL.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
+            if(USE_CHANNEL.isSelected()) MODEL.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
+            if(USE_READ_BACK.isSelected()) MODEL.setUseFieldReadback(true);
+            if(USE_SET.isSelected()) MODEL.setUseFieldReadback(false);
             setHasChanges( true );
         }
         catch ( Exception exception ) {

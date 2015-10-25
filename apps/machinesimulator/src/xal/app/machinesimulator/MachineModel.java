@@ -41,7 +41,16 @@ public class MachineModel implements DataListener {
         _sequence = sequence;
     }
     
+	/** Set the synchronization mode */   
+    public void setSynchronizationMode(final String newMode){
+    	SIMULATOR.setSynchronizationMode(newMode);
+    }
     
+    /** Set whether to use field readback when modeling live machine */   
+    public void setUseFieldReadback( final boolean useFieldReadback){
+    	SIMULATOR.setUseFieldReadback(useFieldReadback);
+    }
+
     /** get the accelerator sequence */
     public AcceleratorSeq getSequence() {
         return _sequence;

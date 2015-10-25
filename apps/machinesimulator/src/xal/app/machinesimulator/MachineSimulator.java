@@ -90,16 +90,19 @@ public class MachineSimulator implements DataListener {
     
     
     /** Create a new scenario */
-    private void configScenario() throws ModelException {
+    private void configScenario() throws ModelException {    	
         if ( _sequence != null ) {
             _scenario = Scenario.newScenarioFor( _sequence );
-            _scenario.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
         }
         else {
             _scenario = null;
         }
     }
     
+	/** Set the synchronization mode */    
+    public void setSynchronizationMode(final String newMode){   	
+    	if(_scenario!=null) _scenario.setSynchronizationMode(newMode);
+    }
     
     /** Set the accelerator sequence */
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {

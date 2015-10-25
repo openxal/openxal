@@ -28,7 +28,7 @@ public class MachineSimulatorController {
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
- 	  /** key value adaptor to get the twiss value from a record for the specified key path */
+     /** key value adaptor to get the twiss value from a record for the specified key path */
      final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
      /**a map array from parameter's key to plot data list*/
      final private HashMap<String, List<Double>> PLOT_DATA;
