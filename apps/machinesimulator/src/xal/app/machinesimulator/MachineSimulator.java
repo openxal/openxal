@@ -152,7 +152,7 @@ public class MachineSimulator implements DataListener {
 	}
 	
     
-    /** Set whether to use field readback when modeling live machine */
+    /** Set whether to use field read_back when modeling live machine */
     public void setUseFieldReadback( final boolean useFieldReadback ) {
         if ( _useFieldReadback != useFieldReadback ) {
             _useFieldReadback = useFieldReadback;
@@ -161,7 +161,7 @@ public class MachineSimulator implements DataListener {
     }
     
     
-    /** Determine whether the field readback is used when modeling the live machine */
+    /** Determine whether the field read_back is used when modeling the live machine */
     public boolean getUseFieldReadback() {
         return _useFieldReadback;
     }

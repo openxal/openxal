@@ -28,15 +28,15 @@ import xal.sim.scenario.Scenario;
 public class MachineSimulatorDocument extends AcceleratorDocument implements DataListener {
  	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "MachineSimulatorDocument";
-	/**the button to set use design mode*/
+	/**the button to set using design mode*/
 	final private ToggleButtonModel USE_DESIGN;
-	/**the button to set use rf_design mode*/
+	/**the button to set using rf_design mode*/
 	final private ToggleButtonModel USE_RF_DESIGN;
-	/**the button to set use live mode*/
+	/**the button to set using live mode*/
 	final private ToggleButtonModel USE_CHANNEL;
-	/**the button to set using read back value when using live mode*/
+	/**the button to set using read back value*/
 	final private ToggleButtonModel USE_READ_BACK;
-	/**the button to set using set value when using live mode*/
+	/**the button to set using set value*/
 	final private ToggleButtonModel USE_SET;
 	/** main window reference */
 	final WindowReference WINDOW_REFERENCE;
