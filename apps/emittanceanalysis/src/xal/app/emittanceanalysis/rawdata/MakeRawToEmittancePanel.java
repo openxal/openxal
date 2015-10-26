@@ -39,6 +39,8 @@ public class MakeRawToEmittancePanel {
 	//raw data object
 	private WireRawData rawData = null;
 
+	private ReadRawDataPanel readRawDataPanel = null;
+	
 	//filter raw data panel
 	private FilterRawDataPanel filterRawDataPanel = null;
 
@@ -145,6 +147,7 @@ public class MakeRawToEmittancePanel {
 	private int emSizeY = 200;
 
 	private JButton makeEmittPlot_Button = new JButton("PLOT EMITTANCE");
+	private JButton dumpPhaseSpacePlot_Button = new JButton("EXPORT DISTRIBUTION FILE");
 
 	private TitledBorder emmParamPanelBorder = null;
 
@@ -489,8 +492,10 @@ public class MakeRawToEmittancePanel {
 			});
 
 		makeEmittPlot_Button.setForeground(Color.blue.darker());
+		dumpPhaseSpacePlot_Button.setForeground(Color.blue.darker());
 		//makeEmittPlot_Button.setBackground( Color.cyan );
 		makeEmittPlot_Button.setBorder(BorderFactory.createRaisedBevelBorder());
+		dumpPhaseSpacePlot_Button.setBorder(BorderFactory.createRaisedBevelBorder());
 
 		makeEmittPlot_Button.addActionListener(
 			new ActionListener() {
@@ -500,6 +505,13 @@ public class MakeRawToEmittancePanel {
 				}
 			});
 
+		dumpPhaseSpacePlot_Button.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dumpDistributionData();
+				}
+			});
+		
 		restore_Button.setForeground(Color.blue.darker());
 		//restore_Button.setBackground( Color.cyan );
 		restore_Button.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -684,13 +696,22 @@ public class MakeRawToEmittancePanel {
 		tmp_panel_1_5.add(alphaEm_Text);
 		tmp_panel_1_5.add(betaEm_Text);
 		tmp_panel_1_5.add(rmsEm_Text);
-
+		
+		JPanel tmp_panel_1_6 = new JPanel();
+		tmp_panel_1_6.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
+		tmp_panel_1_6.add(dumpPhaseSpacePlot_Button);
+		
+		JPanel tmp_panel_1_7 = new JPanel();
+		tmp_panel_1_7.setLayout(new BorderLayout());
+		tmp_panel_1_7.add(tmp_panel_1_5, BorderLayout.NORTH);
+		tmp_panel_1_7.add(tmp_panel_1_6, BorderLayout.CENTER);
+		
 		JPanel tmp_panel_1 = new JPanel();
 		tmp_panel_1.setLayout(new BorderLayout());
 		tmp_panel_1.setBorder(etchedBorderBlack);
 		tmp_panel_1.add(tmp_panel_1_3, BorderLayout.NORTH);
 		tmp_panel_1.add(tmp_panel_1_4, BorderLayout.CENTER);
-		tmp_panel_1.add(tmp_panel_1_5, BorderLayout.SOUTH);
+		tmp_panel_1.add(tmp_panel_1_7, BorderLayout.SOUTH);
 
 		//3-rd sub-panel (editing wires signal)
 		JPanel tmp_panel_2_0 = new JPanel();
@@ -803,6 +824,7 @@ public class MakeRawToEmittancePanel {
 		threshold_Text.setFont(fnt);
 
 		makeEmittPlot_Button.setFont(fnt);
+		dumpPhaseSpacePlot_Button.setFont(fnt);
 
 		alphaEm_Label.setFont(fnt);
 		betaEm_Label.setFont(fnt);
@@ -868,7 +890,16 @@ public class MakeRawToEmittancePanel {
 	public void setFilterRawDataPanel(FilterRawDataPanel filterRawDataPanelIn) {
 		filterRawDataPanel = filterRawDataPanelIn;
 	}
-
+	
+	/**
+	 *  Sets the readRawDataPanel instance object
+	 *
+	 *@param  readRawDataPanelIn  The readRawDataPanel reference
+	 */
+	public void setReadRawDataPanel(	ReadRawDataPanel readRawDataPanelIn) {
+		readRawDataPanel = readRawDataPanelIn;
+	}
+	
 
 	/**
 	 *  Sets the plotRawDataPanel reference object
@@ -1384,7 +1415,111 @@ public class MakeRawToEmittancePanel {
 		}
 		emittance3D.calcMaxMinZ();
 	}
-
+	
+	/**
+	 *  This method will show the dialog to save the 2D distribution.
+	 */	
+	 public void dumpDistributionData(){
+		 
+		 DecimalFormat dataFormat = new DecimalFormat("0.00000E00");
+		 
+		 int NUMBERWIDTH = 12;
+		 
+		 EmittanceRawData data = emittanceRawData;
+		 
+		 if (data.isInitialized()) {	
+			 File rawFile = readRawDataPanel.getFile();
+			 File dataFile;
+			 
+			 
+			 JFileChooser ch = new JFileChooser(rawFile);
+			 ch.setDialogTitle("Save Emittance 2D Data");
+			 if (rawFile != null) {
+				 String path = rawFile.getAbsolutePath();
+				 
+				 dataFile = new File(path.substring(0, path.lastIndexOf(".")) + ".dat");
+				 ch.setSelectedFile(dataFile);
+			 }
+			 
+			 int returnVal = ch.showSaveDialog(panel);
+			 
+			 if (returnVal == JFileChooser.APPROVE_OPTION) {
+				 dataFile = ch.getSelectedFile();
+			 } else {
+				 return;
+			 }
+			 
+			 BufferedWriter bw = null;
+			 try {
+				 
+				 bw = new BufferedWriter(new FileWriter(dataFile));
+				 
+				 
+				 int nx = emittance3D.getSizeX();
+				 int nxp = emittance3D.getSizeY();
+				 
+				 StringBuilder result = new StringBuilder();
+				 result.append("# ");
+				 result.append(" "+nx+" ");
+				 for (int i = 0; i < nx; i++) {   
+					 double x = emittance3D.getX(i);
+					 spaceFormat(result, NUMBERWIDTH, dataFormat.format(x));
+				 }		
+				 result.append("\n");
+				 result.append("# ");
+				 result.append(" "+nxp+" ");
+				 for (int i = 0; i < nxp; i++) {   
+					 double y = emittance3D.getY(i);
+					 spaceFormat(result, NUMBERWIDTH, dataFormat.format(y));
+				 }			 
+				 result.append("\n");
+				 
+				 for (int i = 0; i < nx; i++) { 
+					 for (int j = 0; j < nxp; j++) { 
+						 double val = emittance3D.getValue(i,j);
+						 spaceFormat(result, NUMBERWIDTH, dataFormat.format(val));
+					 }
+					result.append("\n");
+				 }
+				 
+				 bw.write(result.toString());
+				 bw.close();		 
+				 
+			 } catch (Exception ex) {
+				 return;
+			 } 
+		 }
+	 }
+	 
+	 private static StringBuilder spaceFormat(StringBuilder sb, int size, String addedString) {
+		 if (sb == null || addedString == null) {
+			 return sb;
+		 }
+		 int strLen = addedString.length();
+		 int spaces = size - strLen;
+		 spaces = (spaces > 0) ? spaces : 0;
+		 
+		 switch (spaces) {
+		 case 0:
+			 break;
+		 case 1:
+			 sb.append(" ");
+			 break;
+		 case 2:
+			 sb.append("  ");
+			 break;
+		 case 3:
+			 sb.append("   ");
+			 break;
+		 default:
+			 for (int i = 0; i < spaces; i++) {
+				 sb.append(" ");
+			 }
+			 
+		 }
+		 sb.append(addedString);
+		 return sb;
+	 }
 
 	/**
 	 *  This method will generate gaussian distribution with specified parameters

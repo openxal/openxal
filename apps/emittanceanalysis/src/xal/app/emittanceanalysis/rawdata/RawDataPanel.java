@@ -111,6 +111,7 @@ public final class RawDataPanel {
 
 		makeRawToEmittancePanel.setWireRawData(rawData);
 		makeRawToEmittancePanel.setFilterRawDataPanel(filterRawDataPanel);
+		makeRawToEmittancePanel.setReadRawDataPanel(readRawDataPanel);
 		makeRawToEmittancePanel.setPlotRawDataPanel(plotRawDataPanel);
 
 		//panel border
@@ -272,6 +273,7 @@ public final class RawDataPanel {
 	}
 
 
+	 
 	/**
 	 *  Returns the string identifier in the XML structure.
 	 *
