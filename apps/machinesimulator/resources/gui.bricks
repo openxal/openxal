@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Wed Oct 21 07:53:56 CST 2015" version="1.0.0">
+<BricksDocument date="Tue Oct 27 11:21:33 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -145,6 +145,12 @@
                         <BeanProperty name="name" value="States Plot"/>
                         <ViewNode tag="States Plot">
                             <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                        </ViewNode>
+                        <ViewNode tag="SynopticContainer">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BeanProperty height="40" name="preferredSize" width="25000"/>
+                            <BeanProperty height="41" name="maximumSize" width="30000"/>
+                            <BeanProperty height="39" name="minimumSize" width="100"/>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>

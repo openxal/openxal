@@ -22,7 +22,7 @@ public class MachineSimulatorTwissPlot{
 	final private List<Parameter> PARAMETERS;
 	
 	/**constructor*/
-	public MachineSimulatorTwissPlot(final FunctionGraphsJPanel twissParametersPlot,final List<ScalarParameter>scalarParameters,final List<VectorParameter>vectorParameters){
+	public MachineSimulatorTwissPlot( final FunctionGraphsJPanel twissParametersPlot,final List<ScalarParameter>scalarParameters,final List<VectorParameter>vectorParameters){
 		TWISS_PARAMETERS_PLOT=twissParametersPlot;
 		PARAMETERS=new ArrayList<Parameter>(scalarParameters.size()+vectorParameters.size());
 		//put scalar and vector parameter together

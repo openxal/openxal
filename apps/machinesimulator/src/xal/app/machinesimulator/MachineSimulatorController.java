@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.*;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
@@ -16,6 +17,8 @@ import javax.swing.JTextField;
 
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
+import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 import xal.tools.data.KeyValueAdaptor;
 
@@ -91,6 +94,8 @@ public class MachineSimulatorController {
 
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
         _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS);
+        
+		  final Box synopticBox = (Box)windowReference.getView( "SynopticContainer" );
 
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
@@ -154,6 +159,11 @@ public class MachineSimulatorController {
                    for(final String parameterKey:parameterKeyPaths){                	   
                         _machineSimulatorTwissPlot.showTwissPlot(_positions, PLOT_DATA.get(parameterKey), parameterKey);
                          }
+                   //synoptic display
+               	final XALSynopticPanel xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo(twissParametersPlot, MODEL.getSequence());
+               	synopticBox.removeAll();
+               	synopticBox.add(xalSynopticPanel);
+               	synopticBox.validate();
                      }
 
             }
@@ -205,7 +215,7 @@ public class MachineSimulatorController {
                 final MachineSimulation simulation = MODEL.runSimulation();
                 STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
                 _positions=simulation.getAllPosition();
-                
+
                 PARAMETER_HANDLER.actionPerformed(null);
             }
         });
