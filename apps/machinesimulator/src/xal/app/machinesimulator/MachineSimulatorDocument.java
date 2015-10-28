@@ -95,7 +95,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	 * Register custom actions for the commands of this application
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	public void customizeCommands(Commander commander) {
+	public void customizeCommands( Commander commander ) {
 		
 		// register use_design button
 		USE_DESIGN.setSelected(true);
@@ -104,40 +104,40 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
 			}
 		});
-		commander.registerModel("use-design",USE_DESIGN);
+		commander.registerModel( "use-design",USE_DESIGN );
 		
 		//register use_rf_design button 
 		USE_RF_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
+				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 			}
 		});
-		commander.registerModel( "use-rf_design",USE_RF_DESIGN);
+		commander.registerModel( "use-rf_design",USE_RF_DESIGN );
 		
 		//register use_channel button
 		USE_CHANNEL.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
+				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
 			}
 		});
-		commander.registerModel( "use-channel",USE_CHANNEL);
+		commander.registerModel( "use-channel",USE_CHANNEL );
 		
 		//register use_set button
-		USE_SET.setSelected(true);
+		USE_SET.setSelected( true );
 		USE_SET.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-				MODEL.setUseFieldReadback(false);
+				MODEL.setUseFieldReadback( false );
 			}
 		});
-		commander.registerModel( "fieldSet",USE_SET);
+		commander.registerModel( "fieldSet",USE_SET );
 		
 		//register use_read_back button
 		USE_READ_BACK.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-				MODEL.setUseFieldReadback(true);
+				MODEL.setUseFieldReadback( true );
 			}
 		});
-		commander.registerModel( "fieldReadback",USE_READ_BACK);
+		commander.registerModel( "fieldReadback",USE_READ_BACK );
 		
 		
 		
@@ -169,10 +169,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     public void selectedSequenceChanged() {
         try {        	
             MODEL.setSequence( getSelectedSequence() );
-            if(USE_RF_DESIGN.isSelected()) MODEL.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN);
-            if(USE_CHANNEL.isSelected()) MODEL.setSynchronizationMode(Scenario.SYNC_MODE_LIVE);
-            if(USE_READ_BACK.isSelected()) MODEL.setUseFieldReadback(true);
-            if(USE_SET.isSelected()) MODEL.setUseFieldReadback(false);
+            if( USE_RF_DESIGN.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
+            if( USE_CHANNEL.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
+            if( USE_READ_BACK.isSelected() ) MODEL.setUseFieldReadback( true );
+            if( USE_SET.isSelected() ) MODEL.setUseFieldReadback( false );
             setHasChanges( true );
         }
         catch ( Exception exception ) {

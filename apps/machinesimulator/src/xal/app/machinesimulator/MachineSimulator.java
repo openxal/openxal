@@ -101,7 +101,7 @@ public class MachineSimulator implements DataListener {
     
 	/** Set the synchronization mode */    
     public void setSynchronizationMode(final String newMode){   	
-    	if(_scenario!=null) _scenario.setSynchronizationMode(newMode);
+    	if(_scenario != null) _scenario.setSynchronizationMode(newMode);
     }
     
     /** Set the accelerator sequence */
@@ -172,9 +172,9 @@ public class MachineSimulator implements DataListener {
         final boolean useFieldReadback = _useFieldReadback;     // local copy of the field readback flag
         final AcceleratorSeq sequence = _sequence;   // local copy of the sequence
         if ( sequence != null ) {
-            final List<AcceleratorNode> magnets = sequence.getAllNodesOfType( Electromagnet.s_strType );
-            for ( final AcceleratorNode magnet : magnets ) {
-                ((Electromagnet)magnet).setUseFieldReadback( useFieldReadback );
+            final List<Electromagnet> magnets = sequence.getAllNodesOfType( Electromagnet.s_strType );
+            for ( final Electromagnet magnet : magnets ) {
+                magnet.setUseFieldReadback( useFieldReadback );
             }
         }
     }

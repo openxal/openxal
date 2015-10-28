@@ -20,6 +20,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
+import xal.smf.AcceleratorSeq;
 import xal.tools.data.KeyValueAdaptor;
 
 /**
@@ -43,6 +44,8 @@ public class MachineSimulatorController {
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /** the position list of elements*/
      private List<Double> _positions;
+     /**the sequence*/
+     private AcceleratorSeq _sequence;
      
 
 
@@ -52,6 +55,7 @@ public class MachineSimulatorController {
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
+		
       // initialize the model here
       MODEL = document.getModel();
 		
@@ -127,12 +131,12 @@ public class MachineSimulatorController {
                 if ( zSelectionCheckbox.isSelected() )  planes.add( "Z" );
                 // Add each selected twiss parameter key path to the list of parameters to display
                 for ( final String plane : planes ){
-                    if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add(VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane));                    
-                    if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add(VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane));
-                    if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add(VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
-                    if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add(VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
-                    if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add(VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
-                    if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add(VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
+                    if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );                    
+                    if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
+                    if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
+                    if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
+                    if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
+                    if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
                      }                
                
                 //turn the keyPath list to string array
@@ -154,16 +158,20 @@ public class MachineSimulatorController {
 
                 twissParametersPlot.removeAllGraphData();
                 //setup plot panel and show the selected parameters' graph
-                if(parameterKeyPaths.length!=0&MODEL.getSimulation()!=null){
-                  configureParametersData(MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths);
-                   for(final String parameterKey:parameterKeyPaths){                	   
-                        _machineSimulatorTwissPlot.showTwissPlot(_positions, PLOT_DATA.get(parameterKey), parameterKey);
+                if( parameterKeyPaths.length > 0 && MODEL.getSimulation() != null ){
+                  configureParametersData( MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths );
+                   for( final String parameterKey:parameterKeyPaths ){                	   
+                        _machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
                          }
                    //synoptic display
-               	final XALSynopticPanel xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo(twissParametersPlot, MODEL.getSequence());
-               	synopticBox.removeAll();
-               	synopticBox.add(xalSynopticPanel);
-               	synopticBox.validate();
+                  if( _sequence != MODEL.getSequence() ){
+                      _sequence = MODEL.getSequence();
+                     	final XALSynopticPanel xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, _sequence );
+                       	synopticBox.removeAll();
+                       	synopticBox.add( xalSynopticPanel );
+                       	synopticBox.validate();
+                        }
+
                      }
 
             }
@@ -213,10 +221,13 @@ public class MachineSimulatorController {
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );
                 final MachineSimulation simulation = MODEL.runSimulation();
-                STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
-                _positions=simulation.getAllPosition();
+                if( MODEL.getSequence() != null ){
+                    STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
+                    _positions=simulation.getAllPosition();
 
-                PARAMETER_HANDLER.actionPerformed(null);
+                    PARAMETER_HANDLER.actionPerformed( null );
+                     }
+
             }
         });
 
@@ -235,12 +246,12 @@ public class MachineSimulatorController {
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    private void configureParametersData(final List<MachineSimulationRecord> records,final String[] keyPaths){
+    private void configureParametersData( final List<MachineSimulationRecord> records,final String[] keyPaths ){
       PLOT_DATA.clear();      
-    	for(final String keyPath:keyPaths){
-    		PLOT_DATA.put(keyPath, new ArrayList<Double>(records.size()));
-    		for(final MachineSimulationRecord record:records){
-    			PLOT_DATA.get(keyPath).add((Double)KEY_VALUE_ADAPTOR.valueForKeyPath(record,keyPath));
+    	for( final String keyPath:keyPaths ){
+    		PLOT_DATA.put( keyPath, new ArrayList<Double>( records.size() ) );
+    		for( final MachineSimulationRecord record:records ){
+    			PLOT_DATA.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
     		}
     	}   	
     }

@@ -17,7 +17,7 @@ public abstract class Parameter {
 	}
 	
 	/** Constructor*/
-	public Parameter(final String label){
+	public Parameter( final String label ){
 		this.label=label;
 	}
 	/**get the label*/
@@ -30,7 +30,7 @@ public abstract class Parameter {
 	 * @param object 
 	 * @return The name
 	 */
-	public abstract String getParameterName(final String object);
+	public abstract String getParameterName( final String object );
 	/**
 	 * get a symbol to represent parameter's name 
 	 * @return a symbol
@@ -42,14 +42,14 @@ public abstract class Parameter {
 	 * @param object
 	 * @return The plane
 	 */
-	public abstract String getPlane(final String object);
+	public abstract String getPlane( final String object );
 	
 	/**
 	 * Identify whether the key path map to this parameter
 	 * @param keyPath the key path
 	 * @return
 	 */
-	public abstract boolean isThisParameter(final String keyPath);
+	public abstract boolean isThisParameter( final String keyPath );
 
 
 }

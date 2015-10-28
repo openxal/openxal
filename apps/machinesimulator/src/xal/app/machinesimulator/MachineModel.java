@@ -8,6 +8,8 @@
 
 package xal.app.machinesimulator;
 
+import javax.swing.JOptionPane;
+
 import xal.model.ModelException;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
@@ -65,8 +67,10 @@ public class MachineModel implements DataListener {
 	
 	/** Run the simulation. */
 	public MachineSimulation runSimulation() {
-        _simulation = SIMULATOR.run();
-        return _simulation;
+		if(_sequence != null) _simulation = SIMULATOR.run();
+		else JOptionPane.showMessageDialog(null, "You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);
+		
+		return _simulation;
 	}
 
 

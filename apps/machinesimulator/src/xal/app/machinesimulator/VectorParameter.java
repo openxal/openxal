@@ -16,9 +16,9 @@ public class VectorParameter extends Parameter {
 	/**the prefix of the key path*/
 	private String keyPrefix;
 	/**the suffix of the key path*/
-	private String keySuffix=null;
+	private String keySuffix = null;
 	/**the name of the specified parameter*/
-	private String parameterName=null;
+	private String parameterName = null;
 	/**the plane of the specified parameter*/
 	private String plane="0";
 	/** a symbol to represent the parameter*/
@@ -32,10 +32,10 @@ public class VectorParameter extends Parameter {
 	 * @param symbol a symbol to represent the parameter
 	 * @param keyPrefix the prefix of the key path
 	 */
-	public VectorParameter(final String label,final String symbol,final String keyPrefix ) {
-		super(label);
-		this.keyPrefix=keyPrefix;
-		this.symbol=symbol;
+	public VectorParameter( final String label, final String symbol, final String keyPrefix ) {
+		super( label );
+		this.keyPrefix = keyPrefix;
+		this.symbol = symbol;
 	}
 	
 	/**
@@ -45,11 +45,11 @@ public class VectorParameter extends Parameter {
 	 * @param keyPrefix the prefix of the key path
 	 * @param keySuffix the suffix of the key path  
 	 */
-	public VectorParameter(final String label,final String symbol,final String keyPrefix,final String keySuffix) {
+	public VectorParameter(final String label,final String symbol,final String keyPrefix,final String keySuffix ) {
 		super(label);
-		this.keyPrefix=keyPrefix;
-		this.keySuffix=keySuffix;
-		this.symbol=symbol;
+		this.keyPrefix = keyPrefix;
+		this.keySuffix = keySuffix;
+		this.symbol = symbol;
 	}
 	/**
 	 * get the label of the parameter
@@ -63,7 +63,7 @@ public class VectorParameter extends Parameter {
 	 * @return the key path
 	 */
 	public String getKeyPathForX(){
-		if(keySuffix==null) keyPath=keyPrefix+".toArray."+"0";
+		if( keySuffix == null ) keyPath=keyPrefix+".toArray."+"0";
 		else keyPath=keyPrefix+"."+"0"+"."+keySuffix;
 		return keyPath;
 	}
@@ -72,7 +72,7 @@ public class VectorParameter extends Parameter {
 	 * @return the key path
 	 */
 	public String getKeyPathForY(){
-		if(keySuffix==null) keyPath=keyPrefix+".toArray."+"1";
+		if( keySuffix == null ) keyPath=keyPrefix+".toArray."+"1";
 		else keyPath=keyPrefix+"."+"1"+"."+keySuffix;
 		return keyPath;
 	}
@@ -81,8 +81,8 @@ public class VectorParameter extends Parameter {
 	 * @return the key path
 	 */
 	public String getKeyPathForZ(){
-		if(keySuffix==null) keyPath=keyPrefix+".toArray."+"2";
-		else keyPath=keyPrefix+"."+"2"+"."+keySuffix;
+		if( keySuffix == null ) keyPath=keyPrefix+".toArray."+"2";
+		else keyPath = keyPrefix+"."+"2"+"."+keySuffix;
 		return keyPath;
 	}
 	/**
@@ -91,9 +91,9 @@ public class VectorParameter extends Parameter {
 	 */
 	public Map<String,String> getKeyPathToArray(){
 		keyPaths=new HashMap<String,String>(3);
-		keyPaths.put("X",getKeyPathForX());
-		keyPaths.put("Y",getKeyPathForY());
-		keyPaths.put("Z",getKeyPathForZ());
+		keyPaths.put( "X",getKeyPathForX() );
+		keyPaths.put( "Y",getKeyPathForY() );
+		keyPaths.put( "Z",getKeyPathForZ() );
 		return keyPaths;
 	}
 	/**
@@ -101,11 +101,11 @@ public class VectorParameter extends Parameter {
 	 * @param keyPath the key path 
 	 * @return the name
 	 */
-	public String getParameterName(final String keyPath) {
+	public String getParameterName( final String keyPath ) {
 		String label=super.getLabel();
-		if(keyPath.equals(getKeyPathForX())) parameterName=label+"X";
-		if(keyPath.equals(getKeyPathForY())) parameterName=label+"Y";
-		if(keyPath.equals(getKeyPathForZ())) parameterName=label+"Z";
+		if( keyPath.equals( getKeyPathForX() ) ) parameterName=label+"X";
+		if( keyPath.equals( getKeyPathForY() ) ) parameterName=label+"Y";
+		if( keyPath.equals( getKeyPathForZ() ) ) parameterName=label+"Z";
 		return parameterName;
 	}
 	/**
@@ -141,10 +141,10 @@ public class VectorParameter extends Parameter {
 	 * @param the key path 
 	 * @return the plane
 	 */
-	public String getPlane(final String keyPath){
-		if(keyPath.equals(getKeyPathForX())) plane="X";
-		if(keyPath.equals(getKeyPathForY())) plane="Y";
-		if(keyPath.equals(getKeyPathForZ())) plane="Z";;
+	public String getPlane( final String keyPath ){
+		if( keyPath.equals( getKeyPathForX() ) ) plane="X";
+		if( keyPath.equals( getKeyPathForY() ) ) plane="Y";
+		if( keyPath.equals( getKeyPathForZ() ) ) plane="Z";;
 		return plane;
 	}
 	/**
@@ -152,9 +152,9 @@ public class VectorParameter extends Parameter {
 	 * @param keyPath the key path
 	 * @return true or false
 	 */
-	public boolean isThisParameter(String keyPath) {
+	public boolean isThisParameter( final String keyPath ) {
 		boolean result=false;
-		if(keyPath.equals(getKeyPathForX())|keyPath.equals(getKeyPathForY())|keyPath.equals(getKeyPathForZ())) result=true ;
+		if( keyPath.equals( getKeyPathForX() )|keyPath.equals( getKeyPathForY() )|keyPath.equals(getKeyPathForZ() ) ) result=true ;
 		return result;
 	}
 

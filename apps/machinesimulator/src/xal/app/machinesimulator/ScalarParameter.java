@@ -18,8 +18,8 @@ public class ScalarParameter extends Parameter {
 	 * @param label the label of parameter
 	 * @param key the key path
 	 */
-	public ScalarParameter(final String label,final String key) {
-		super(label);
+	public ScalarParameter( final String label, final String key ) {
+		super( label );
 		keyPath=key;
 	}
 	/**
@@ -27,8 +27,8 @@ public class ScalarParameter extends Parameter {
 	 * @param keyPath the key path 
 	 * @return the name
 	 */
-	public String getParameterName(final String keyPath) {
-		if(isThisParameter(keyPath)) parameterName=super.getLabel();
+	public String getParameterName( final String keyPath ) {
+		if( isThisParameter( keyPath ) ) parameterName=super.getLabel();
 		else parameterName=null;
        return parameterName;
 	}
@@ -40,7 +40,7 @@ public class ScalarParameter extends Parameter {
 		return keyPath;
 	}
 	/**
-	 * get a symbol (for scalar parameter just return the label for now)
+	 * get a symbol ( for scalar parameter just return the label for now )
 	 * @param the key path
 	 */
 	public String getSymbol() {
@@ -54,7 +54,7 @@ public class ScalarParameter extends Parameter {
 	 * we don't want to write another code to separate them.
 	 * so just add a method in ScalarParameter to return a invalid character.
 	 */
-	public String getPlane(final String keyPath){
+	public String getPlane( final String keyPath ){
 		return "0";
 	}
 	/**
@@ -62,8 +62,8 @@ public class ScalarParameter extends Parameter {
 	 * @param keyPath the key path
 	 * @return true or false
 	 */
-	public boolean isThisParameter(final String keyPath){
-		return this.keyPath.equals(keyPath);
+	public boolean isThisParameter( final String keyPath ){
+		return this.keyPath.equals( keyPath );
 	}
 
 
