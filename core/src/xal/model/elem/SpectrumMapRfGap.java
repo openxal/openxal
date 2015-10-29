@@ -21,7 +21,6 @@ import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.em.AxialFieldSpectrum;
 import xal.tools.beam.optics.AcceleratingRfGap;
 import xal.tools.math.fnc.IRealFunction;
-import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 /**
  *  <p>
@@ -1832,7 +1831,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
             double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW_mid, Er);
             double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
             System.out.println("    k_mid=" + k_mid);
-            System.out.println("    dph_midi=" + (180.0/Math.PI)*dphi_mid + ", dW_mid=" + dW_mid + ", W_mid=" + Double.toString(Wi+dW_mid));
+            System.out.println("    dphi_mid=" + (180.0/Math.PI)*dphi_mid + ", dW_mid=" + dW_mid + ", W_mid=" + Double.toString(Wi+dW_mid));
             System.out.println();
             
             this.bolMethodCalled = true;
