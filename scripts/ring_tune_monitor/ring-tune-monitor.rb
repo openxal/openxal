@@ -214,7 +214,7 @@ class WaveformMerger
 			waveforms.each do |waveform|
 				if waveform != nil
 					raw_positions = analyzer.positions( waveform )
-					centered_positions = center_positions raw_positions
+					centered_positions = self.center_positions( raw_positions )
 					
 					if merged_positions.length == 0
 						base_norm = norm centered_positions
@@ -239,7 +239,10 @@ class WaveformMerger
 		end
 	end
 	
-	
+
+	# TODO: Really should break the arrays down to the two strongest orthogonal components. Now we are effectively throwing away half the signal set.
+	# merge the new array into the base array by adding the component of the new array that is in the base array
+	# we only care about frequency here and not phase
 	def merge_arrays( base_array, new_array )
 		merged_array = []
 		if base_array != nil
@@ -255,13 +258,15 @@ class WaveformMerger
 		return merged_array
 	end
 	
-	
+
+	# compute the norm of the positions vector: sqrt( sum(p_i * p_i) )
 	def norm positions
 		product = scalar_product( positions, positions )
 		return product > 0.0 ? Math.sqrt( product ) : 0.0
 	end
 	
-	
+
+	# compute the scalar product between the two arrays as if they were vectors
 	def scalar_product( array1, array2 )
 		if array1 == nil or array2 == nil; return 0.0; end
 		
@@ -282,7 +287,8 @@ class WaveformMerger
 		return sum
 	end
 	
-	
+
+	# shift the waveform signals to remove the offset so the signal is centered about zero
 	def center_positions raw_positions
 		sum = 0.0
 		raw_positions.each { |position| sum += position }
@@ -478,7 +484,8 @@ class ControlApp
 			merger = WaveformMerger.new
 			x_waveform = merger.merge( @waveform_analyzer, x_waveforms )
 			y_waveform = merger.merge( @waveform_analyzer, y_waveforms )
-			return [x_waveform, y_waveform]
+			waveforms = { :x => x_waveform, :y => y_waveform }
+			return waveforms
 		else
 			return nil
 		end
@@ -491,9 +498,9 @@ class ControlApp
 	
 	
 	def postTunes waveforms
-		if waveforms != nil and waveforms.length == 2
-			postTune( waveforms[0], @tune_stats[0], @horizontal_tune_field )
-			postTune( waveforms[1], @tune_stats[1], @vertical_tune_field )
+		if waveforms != nil
+			postTune( waveforms[:x], @tune_stats[0], @horizontal_tune_field )
+			postTune( waveforms[:y], @tune_stats[1], @vertical_tune_field )
 		end
 	end
 	
@@ -519,10 +526,10 @@ class ControlApp
 	
 	
 	def plotSpectra waveforms
-		if waveforms != nil and waveforms.length == 2
+		if waveforms != nil
 			has_update = false
 				
-			x_waveform = waveforms[0]
+			x_waveform = waveforms[:x]
 			if x_waveform != nil
 				x_timestamp = x_waveform.timestamp
 				if x_timestamp != @last_x_waveform_timestamp
@@ -531,7 +538,7 @@ class ControlApp
 				end
 			end
 				
-			y_waveform = waveforms[1]
+			y_waveform = waveforms[:y]
 			if y_waveform != nil
 				y_timestamp = y_waveform.timestamp
 				if y_timestamp != @last_y_waveform_timestamp
