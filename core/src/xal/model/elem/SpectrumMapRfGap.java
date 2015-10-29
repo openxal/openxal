@@ -789,7 +789,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
      * <p>
      * Returns the structure mode <b>number</b> <i>q</i> for the cavity in which this 
      * gap belongs.  Here the structure mode number is defined in terms of
-     * the fractional phase advance between cells, with respect to &pi;.  
+     * the fractional phase advance between cells in units of &pi;.  
      * To make this explicit
      * <br/>
      * <br/>
@@ -818,6 +818,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
      * @author Christopher K. Allen
      * @since  Nov 20, 2014
      */
+    @Override
     public double getCavityModeConstant() {
         return this.dblCavModeConst;
     }
@@ -1085,6 +1086,8 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
         double A    = this.compCavModeFieldCoeff();
         double L    = this.getGapLength();
         double V0   = A * E0 * L;   // This is for a unit charge 
+        
+//        System.out.println(this.getId() + " mode field coefficient A = " + A);
         
         this.gapAcclMdl = new AcceleratingRfGap(this.m_dblFreq, V0, this.spcGapFlds);
     }
@@ -1795,8 +1798,8 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
             throw e;
         }
         
-        double  dphi_mid = Q * vecPreGapGains.getPhase();
-        double  dW_mid   = Q * vecPreGapGains.getEnergy();
+        double  dphi_mid = Q * A * vecPreGapGains.getPhase();
+        double  dW_mid   = Q * A * vecPreGapGains.getEnergy();
 
         // TODO Remove type out
         if (!this.bolMethodCalled) {
@@ -1818,7 +1821,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
             phi0 = (180.0/Math.PI) * Math.IEEEremainder(phi0, 2.0*Math.PI); // convert to degrees
             
             System.out.println("SpectrumMapRfGap#compEnergyGainIndirect: " + this.getId());
-            System.out.println("    Q*V0=" + Q * V0);
+            System.out.println("    Q*A*V0=" + Q * A * V0);
             System.out.println("    phi0=" + phi0 + ", cos(phi0)=" + Math.cos(phi0) + ", Acos(phi0)=" + A*Math.cos(phi0));
             System.out.println("    T(ki)=" + T + ", T'(ki)=" + d_T + ", S(ki)=" + S + ", S'(ki)=" + d_S);
             System.out.println("    dT/dk=" + d_T + ", dS/dk=" + d_S);
@@ -1826,22 +1829,23 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
             System.out.println("    ki=" + ki);
         }
 
-        // TODO Remove type out
-        if (!this.bolMethodCalled) {
-            double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW_mid, Er);
-            double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
-            System.out.println("    k_mid=" + k_mid);
-            System.out.println("    dphi_mid=" + (180.0/Math.PI)*dphi_mid + ", dW_mid=" + dW_mid + ", W_mid=" + Double.toString(Wi+dW_mid));
-            System.out.println();
-            
-            this.bolMethodCalled = true;
-        }
-        
         // TODO - Temporary until we get the calculated for the post gap region installed
         double  dphi = 2.0 * dphi_mid;
         double  dW   = 2.0 * dW_mid;
         
         EnergyVector    vecGains = new EnergyVector(dphi, dW);
+
+        // TODO Remove type out
+        if (!this.bolMethodCalled) {
+            double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW_mid, Er);
+            double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
+            System.out.println("    k_mid=" + k_mid);
+            System.out.println("    dphi=" + (180.0/Math.PI)*dphi + ", dW=" + dW + ", W=" + Double.toString(Wi+dW));
+            System.out.println();
+            
+            this.bolMethodCalled = true;
+        }
+        
         
         return vecGains;
     }
