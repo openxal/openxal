@@ -10,24 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
-import xal.smf.AcceleratorSeq;
 import xal.tools.data.KeyValueAdaptor;
 
 /**
  * @author luxiaohan
  * controller for binding the MachineSimulator model to the user interface
  */
-public class MachineSimulatorController {
+public class MachineSimulatorController implements MachineModelListener {
      /** simulated states table model */
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /** main model */
@@ -42,11 +37,13 @@ public class MachineSimulatorController {
      final private List<VectorParameter> VECTOR_PARAMETERS;
      /** the plotter*/
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
+     /**the synoptic panel*/
+	  private XALSynopticPanel xalSynopticPanel;
      /** the position list of elements*/
      private List<Double> _positions;
      /**the sequence*/
-     private AcceleratorSeq _sequence;
-     
+     private boolean _sequenceChanged;
+
 
 
 	/**constructor */
@@ -58,6 +55,7 @@ public class MachineSimulatorController {
 		
       // initialize the model here
       MODEL = document.getModel();
+      MODEL.addMachineModelListener(this);
 		
 		SCALAR_PARAMETERS=new ArrayList<ScalarParameter>();
 		SCALAR_PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
@@ -100,7 +98,8 @@ public class MachineSimulatorController {
         _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS);
         
 		  final Box synopticBox = (Box)windowReference.getView( "SynopticContainer" );
-
+		  xalSynopticPanel = new XALSynopticPanel();
+        
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
 
@@ -164,13 +163,13 @@ public class MachineSimulatorController {
                         _machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
                          }
                    //synoptic display
-                  if( _sequence != MODEL.getSequence() ){
-                      _sequence = MODEL.getSequence();
-                     	final XALSynopticPanel xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, _sequence );
+                   if( _sequenceChanged ){
+                	   _sequenceChanged = false;
+                     	xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
                        	synopticBox.removeAll();
-                       	synopticBox.add( xalSynopticPanel );
+                        synopticBox.add( xalSynopticPanel );
                        	synopticBox.validate();
-                        }
+                         }
 
                      }
 
@@ -219,14 +218,15 @@ public class MachineSimulatorController {
         final JButton runButton = (JButton)windowReference.getView( "Run Button" );
         runButton.addActionListener( new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {
-                System.out.println( "running the model..." );
-                final MachineSimulation simulation = MODEL.runSimulation();
+                System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
-                    STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
-                    _positions=simulation.getAllPosition();
+                	final MachineSimulation simulation = MODEL.runSimulation();
+                  STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
+                  _positions=simulation.getAllPosition();
 
-                    PARAMETER_HANDLER.actionPerformed( null );
+                  PARAMETER_HANDLER.actionPerformed( null );
                      }
+                else JOptionPane.showMessageDialog(windowReference.getWindow(), "You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
 
             }
         });
@@ -255,7 +255,13 @@ public class MachineSimulatorController {
     		}
     	}   	
     }
+    
+    /**event indicates that the Model has changed*/
+    public void modelChanged(MachineModel model) {
+    	_sequenceChanged = true;
+    }
 
+    
 }
 
 

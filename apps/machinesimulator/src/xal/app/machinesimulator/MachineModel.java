@@ -8,18 +8,23 @@
 
 package xal.app.machinesimulator;
 
-import javax.swing.JOptionPane;
-
 import xal.model.ModelException;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
+import xal.tools.messaging.MessageCenter;
 
 
 /** MachineModel is the main model for the machine */
 public class MachineModel implements DataListener {
  	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "MachineModel";
+	
+	/** message center used to post events from this instance */
+	final private MessageCenter MESSAGE_CENTER;
+	
+	/**the proxy to post events */
+	final private MachineModelListener EVENT_PROXY;
     
     /** simulator */
     final private MachineSimulator SIMULATOR;
@@ -32,8 +37,11 @@ public class MachineModel implements DataListener {
 
     
 	/** Constructor */
-	public MachineModel() {        
-        SIMULATOR = new MachineSimulator( null );
+	public MachineModel() {
+		MESSAGE_CENTER = new MessageCenter( DATA_LABEL );
+		SIMULATOR = new MachineSimulator( null );
+		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, MachineModelListener.class );
+
 	}
     
     
@@ -41,6 +49,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
+        EVENT_PROXY.modelChanged(this);
     }
     
 	/** Set the synchronization mode */   
@@ -67,9 +76,7 @@ public class MachineModel implements DataListener {
 	
 	/** Run the simulation. */
 	public MachineSimulation runSimulation() {
-		if(_sequence != null) _simulation = SIMULATOR.run();
-		else JOptionPane.showMessageDialog(null, "You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);
-		
+		_simulation = SIMULATOR.run();
 		return _simulation;
 	}
 
@@ -97,4 +104,21 @@ public class MachineModel implements DataListener {
     public void write( final DataAdaptor adaptor ) {
         adaptor.writeNode( SIMULATOR );
     }
+    
+	/**
+	 * Add a listener of MachineModel events from this instance
+	 * @param listener The listener to add
+	 */
+	public void addMachineModelListener( final MachineModelListener listener ) {
+		MESSAGE_CENTER.registerTarget( listener, this, MachineModelListener.class );
+	}
+	
+	
+	/**
+	 * Remove a listener of MachineModel events from this instance
+	 * @param listener The listener to remove
+	 */
+	public void removeMachineModelListener( final MachineModelListener listener ) {
+		MESSAGE_CENTER.removeTarget( listener, this, MachineModelListener.class );
+	}
 }
