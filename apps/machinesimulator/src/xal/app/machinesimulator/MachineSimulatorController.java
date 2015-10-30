@@ -41,9 +41,6 @@ public class MachineSimulatorController implements MachineModelListener {
 	  private XALSynopticPanel xalSynopticPanel;
      /** the position list of elements*/
      private List<Double> _positions;
-     /**the sequence*/
-     private boolean _sequenceChanged;
-
 
 
 	/**constructor */
@@ -96,10 +93,14 @@ public class MachineSimulatorController implements MachineModelListener {
 
         final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
         _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS);
-        
-		  final Box synopticBox = (Box)windowReference.getView( "SynopticContainer" );
-		  xalSynopticPanel = new XALSynopticPanel();
-        
+
+		//synoptic display of nodes
+		final Box synopticBox = (Box)windowReference.getView( "SynopticContainer" );
+		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
+		synopticBox.removeAll();
+		synopticBox.add( xalSynopticPanel );
+		synopticBox.validate();
+
         // handle the parameter selections of Table view
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
 
@@ -114,67 +115,58 @@ public class MachineSimulatorController implements MachineModelListener {
         final JCheckBox beamSizeCheckbox = (JCheckBox)windowReference.getView( "Beam Size Checkbox" );
         final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
 
-        final ActionListener PARAMETER_HANDLER = new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {
-                // array of standard parameters to display
-                final String[] standardParameterKeys = new String[] { "elementID", "position" };
-                
-                // array of optional scalar and vector parameters to display
-                final List<String> parameterKeyPathsList = new ArrayList<String>();
-                if ( kineticEnergyCheckbox.isSelected() )  parameterKeyPathsList.add(SCALAR_PARAMETERS.get(0).getKeyPath());
+		final ActionListener PARAMETER_HANDLER = new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+				// array of standard parameters to display
+				final String[] standardParameterKeys = new String[] { "elementID", "position" };
 
-                // Add each selected plan to the list of planes to display
-                final List<String> planes = new ArrayList<String>(3);
-                if ( xSelectionCheckbox.isSelected() )  planes.add( "X" );
-                if ( ySelectionCheckbox.isSelected() )  planes.add( "Y" );
-                if ( zSelectionCheckbox.isSelected() )  planes.add( "Z" );
-                // Add each selected twiss parameter key path to the list of parameters to display
-                for ( final String plane : planes ){
-                    if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );                    
-                    if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
-                    if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
-                    if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
-                    if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
-                    if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
-                     }                
-               
-                //turn the keyPath list to string array
-                final String[] parameterKeyPaths= new String[parameterKeyPathsList.size()];
-                parameterKeyPathsList.toArray(parameterKeyPaths);
-                
-                STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
-                STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class,parameterKeyPaths );
+				// array of optional scalar and vector parameters to display
+				final List<String> parameterKeyPathsList = new ArrayList<String>();
+				if ( kineticEnergyCheckbox.isSelected() )  parameterKeyPathsList.add(SCALAR_PARAMETERS.get(0).getKeyPath());
 
-                final String[] parameterKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPaths.length];
-                // add standard parameters at the start
-                System.arraycopy( standardParameterKeys, 0, parameterKeyPathsForTable, 0, standardParameterKeys.length );
-                // append scalar and vector parameters after standard parameters
-                System.arraycopy( parameterKeyPaths, 0, parameterKeyPathsForTable, standardParameterKeys.length, parameterKeyPaths.length );
-               
-                STATES_TABLE_MODEL.setKeyPaths( parameterKeyPathsForTable );
-                
-/**************   configure plot view   ****************/
+				// Add each selected plan to the list of planes to display
+				final List<String> planes = new ArrayList<String>(3);
+				if ( xSelectionCheckbox.isSelected() )  planes.add( "X" );
+				if ( ySelectionCheckbox.isSelected() )  planes.add( "Y" );
+				if ( zSelectionCheckbox.isSelected() )  planes.add( "Z" );
+				// Add each selected twiss parameter key path to the list of parameters to display
+				for ( final String plane : planes ){
+					if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );
+					if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
+					if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
+					if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
+					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
+					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
+				}
 
-                twissParametersPlot.removeAllGraphData();
-                //setup plot panel and show the selected parameters' graph
-                if( parameterKeyPaths.length > 0 && MODEL.getSimulation() != null ){
-                  configureParametersData( MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths );
-                   for( final String parameterKey:parameterKeyPaths ){                	   
-                        _machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
-                         }
-                   //synoptic display
-                   if( _sequenceChanged ){
-                	   _sequenceChanged = false;
-                     	xalSynopticPanel=FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
-                       	synopticBox.removeAll();
-                        synopticBox.add( xalSynopticPanel );
-                       	synopticBox.validate();
-                         }
+				//turn the keyPath list to string array
+				final String[] parameterKeyPaths= new String[parameterKeyPathsList.size()];
+				parameterKeyPathsList.toArray(parameterKeyPaths);
 
-                     }
+				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
+				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class,parameterKeyPaths );
 
-            }
-        };
+				final String[] parameterKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPaths.length];
+				// add standard parameters at the start
+				System.arraycopy( standardParameterKeys, 0, parameterKeyPathsForTable, 0, standardParameterKeys.length );
+				// append scalar and vector parameters after standard parameters
+				System.arraycopy( parameterKeyPaths, 0, parameterKeyPathsForTable, standardParameterKeys.length, parameterKeyPaths.length );
+
+				STATES_TABLE_MODEL.setKeyPaths( parameterKeyPathsForTable );
+
+				/**************   configure plot view   ****************/
+
+				twissParametersPlot.removeAllGraphData();
+				//setup plot panel and show the selected parameters' graph
+				if( parameterKeyPaths.length > 0 && MODEL.getSimulation() != null ){
+					configureParametersData( MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths );
+					for( final String parameterKey:parameterKeyPaths ){
+						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
+					}
+				}
+				xalSynopticPanel.setAcceleratorSequence( MODEL.getSequence() );
+			}
+		};
 
         kineticEnergyCheckbox.addActionListener( PARAMETER_HANDLER );
 
@@ -242,6 +234,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
     }
 
+	
   /** get the selected parameters' data from simulation records
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
@@ -255,13 +248,11 @@ public class MachineSimulatorController implements MachineModelListener {
     		}
     	}   	
     }
-    
+
+
     /**event indicates that the Model has changed*/
     public void modelChanged(MachineModel model) {
-    	_sequenceChanged = true;
     }
-
-    
 }
 
 
