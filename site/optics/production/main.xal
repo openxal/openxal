@@ -1,6 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE sources SYSTEM "xdxf.dtd">
-<!-- main xml file for the Feb 2012 beam run -->
 <sources version="2.0">
 	<modelElementConfig_source name="modelElementConfig" url="ModelConfig.modconfig" />
 	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
