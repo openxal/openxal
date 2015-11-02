@@ -1,10 +1,12 @@
 package xal.app.machinesimulator;
 
+import xal.ca.ConnectionException;
+import xal.ca.GetException;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
 import xal.smf.impl.Electromagnet;
 import xal.smf.impl.RfCavity;
-import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.smf.proxy.RfCavityPropertyAccessor;
 /**
  * 
  * @author luxiaohan
@@ -15,44 +17,62 @@ public class AcceleratorNodeRecord {
 	final private AcceleratorNode NODE;
 	/**the specified scenario*/
 	final private Scenario SCENARIO;
+	final private String PROPERTY_NAME;
 	/**magnet*/
 	private Electromagnet magnet;
 	/**rf cavity*/
 	private RfCavity 	rfCavity;
 	
 	/**Constructor*/
-	public AcceleratorNodeRecord( final AcceleratorNode node, final Scenario scenario) {
+	public AcceleratorNodeRecord( final AcceleratorNode node, final Scenario scenario, final String propertyName) {
 		NODE = node;
 		SCENARIO = scenario;
+		PROPERTY_NAME = propertyName;
 		if( node instanceof Electromagnet) magnet = (Electromagnet)node;
 		if( node instanceof RfCavity ) rfCavity = (RfCavity)node;
 	}
 	
-	public AcceleratorNode getNode(){
-		return NODE;
+	/**get the accelerator node*/
+	public String getNodeId(){
+		return NODE.getId();
 	}
 	
-	public Electromagnet getElectromagnet(){
-		return magnet;
+	/**get the property name*/
+	public String getPropertyName(){
+		return PROPERTY_NAME;
 	}
 	
-	public double getTestValue(){
-		double value;
-		if(SCENARIO.getModelInput(magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD) == null) {
-			value = magnet.getDfltField();
+	/** get the magnet */
+	public double getDesignValue(){
+		return NODE.getDesignPropertyValue(PROPERTY_NAME);
+	}
+	
+	/**get the live value if use live model and there is one*/
+	public double getLiveValue() throws ConnectionException, GetException{
+		double liveValue = 0;
+		if( SCENARIO.getSynchronizationMode().equals(Scenario.SYNC_MODE_LIVE) ){
+			if( NODE instanceof Electromagnet ) liveValue = magnet.getField();
+			if( NODE instanceof RfCavity ) {
+				if( PROPERTY_NAME.equals(RfCavityPropertyAccessor.PROPERTY_AMPLITUDE ) ) liveValue = rfCavity.getCavAmpAvg();
+				if( PROPERTY_NAME.equals(RfCavityPropertyAccessor.PROPERTY_PHASE ) ) liveValue = rfCavity.getCavPhaseAvg();
+			}
 		}
-		else value = SCENARIO.getModelInput(magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD).getDoubleValue();
-		return value;
+		return liveValue;
 	}
 	
+	/**get the test value which sets by ourself*/
+	public double getTestValue(){
+		double testValue;
+		if(SCENARIO.getModelInput(NODE, PROPERTY_NAME) == null) {
+			testValue = getDesignValue();
+		}
+		else testValue = SCENARIO.getModelInput(NODE, PROPERTY_NAME).getDoubleValue();
+		return testValue;
+	}
+	
+	/**set the test value*/
 	public void setTestValue( final double vule ){
-		SCENARIO.setModelInput(magnet, ElectromagnetPropertyAccessor.PROPERTY_FIELD, vule);
-	}
-	
-	public RfCavity getRfCavity(){
-		return rfCavity;	
-	}
-	
-
+		SCENARIO.setModelInput(NODE, PROPERTY_NAME, vule);
+	}	
 
 }

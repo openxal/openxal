@@ -85,9 +85,11 @@ public class MachineSimulatorController implements MachineModelListener {
            }
         
         //set the column name of the sequence table
-        SEQUENCE_TABLE_MODEL.setColumnName( "Node.Id", "Node" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "Electromagnet.DesignField", "Design" );
-        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test");
+        SEQUENCE_TABLE_MODEL.setColumnName( "NodeId", "Node" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "DesignValue", "Design Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "LiveValue", "Live Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test Value");
 
         //get components
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
@@ -102,11 +104,11 @@ public class MachineSimulatorController implements MachineModelListener {
         
         //set the filter field for sequence table
         SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "Node.Id" );
+        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "NodeId" );
         
         //configure the sequence table model
-		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "Electromagnet.DesignField","TestValue" );
-		  SEQUENCE_TABLE_MODEL.setKeyPaths( "Node.Id", "Electromagnet.DesignField", "TestValue" );
+		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "DesignValue", "LiveValue", "TestValue" );
+		  SEQUENCE_TABLE_MODEL.setKeyPaths( "NodeId", "PropertyName", "DesignValue", "LiveValue", "TestValue" );
 		  SEQUENCE_TABLE_MODEL.setColumnEditable( "TestValue", true );
 
         final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
