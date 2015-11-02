@@ -1,0 +1,129 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<!-- adjust corrector polarities to match the calibration -->
+<xdxf date="08.25.2011" system="sns" ver="3.0.0">
+    <sequence id="MEBT">
+	<node id="MEBT_Mag:DCH01">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node>
+	<node id="MEBT_Mag:DCV01">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCV04">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+   	<node id="MEBT_Mag:DCH05">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCH10">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+	<node id="MEBT_Mag:DCH11">
+		<attributes>
+			<magnet polarity="-1" />
+		</attributes>
+	</node> 
+    </sequence>
+
+
+    <sequence id="Ring1">
+        <node id="Ring_Mag:DCH_A13">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_A13">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+    </sequence>
+    <sequence id="Ring2">
+        <node id="Ring_Mag:DCH_B10">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_B10">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCH_B13">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_B13">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+   </sequence>
+   <sequence id="Ring3">
+       <node id="Ring_Mag:DCH_C10">
+           <attributes>
+               <magnet polarity="1" />
+           </attributes>
+       </node>
+        <node id="Ring_Mag:DCV_C10">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+   </sequence>
+    <sequence id="Ring4">
+        <node id="Ring_Mag:DCH_C13">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_C13">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCH_D10">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+         <node id="Ring_Mag:DCV_D10">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCH_D13">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_D13">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+   </sequence>
+    <sequence id="Ring5">
+        <node id="Ring_Mag:DCH_A10">
+            <attributes>
+                <magnet polarity="1" />
+            </attributes>
+        </node>
+        <node id="Ring_Mag:DCV_A10">
+            <attributes>
+          	<magnet polarity="-1" />
+            </attributes>
+        </node>
+     </sequence>
+</xdxf>
