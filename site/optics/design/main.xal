@@ -7,4 +7,7 @@
 	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
 	<timing_source name="timing" url="timing_pvs.tim"/>
 	<tablegroup_source name="modelparams" url="model.params"/>
+	<optics_extra name="alignment" url="alignment.xdxf" />
+	<optics_extra name="Corrector Calibration" url="corrector-polarities.xdxf"/>
+	<optics_extra name="General Device Modifications" url="device-mods.xdxf" />
 </sources>

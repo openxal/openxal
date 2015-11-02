@@ -1,0 +1,62 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="03.06.2009" system="sns" ver="2.0.0">
+	<sequence id="MEBT">
+		<!-- Add markers for MEBT scrapers for Andrei. - Nov. 2, 2015 tom pelaia -->
+		<node id="MEBT_Diag:H_SCRP" type="Scrp" pos="1.743" len="0.0" />
+		<node id="MEBT_Diag:V_SCRP" type="Scrp" pos="2.499" len="0.0" />
+	</sequence>
+
+    <sequence id="RTBT1">
+    	<!-- temporary addition by tom p. to support Sarah's study - Aug. 26, 2009 -->
+		<node id="RTBT_POST_SEPTUM" type="marker" pos="20.0" len="0.0" />
+    </sequence>
+    
+	<sequence id="RTBT2">
+		<node id="RTBT_Diag:BPM29">
+			<channelsuite name="bpmsuite">
+				<channel handle="yAvg" valid="false" mod-comment="Y signal is shorted at the feedthrough and unlikely to be repaired, soon." />
+				<channel handle="yTBT" valid="false" mod-comment="Y signal is shorted at the feedthrough and unlikely to be repaired, soon." />
+			</channelsuite>
+		</node>
+	</sequence>
+
+	<!-- There are no setpoint channels for Ring RF, but we are using readbacks for the simple save-restore.rb script -->
+	<sequence id="Ring4">
+		<sequence id="Ring_RF:Cav01">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav1:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav1:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav02">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav2:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav2:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav03">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav3:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav3:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+
+		<sequence id="Ring_RF:Cav04">
+			<channelsuite name="rfsuite">
+				<channel handle="cavAmpSet" signal="" valid="false" />
+				<channel handle="cavPhaseSet" signal="" valid="false" />
+				<channel handle="cavAmpAvg" signal="Ring_LLRF:Cav4:Field_Amp_Avg" settable="false"/>
+				<channel handle="cavPhaseAvg" signal="Ring_LLRF:Cav4:Field_Phase_Avg" settable="false"/>
+			</channelsuite>
+		</sequence>
+	</sequence>
+</xdxf>
