@@ -25,6 +25,8 @@ import xal.tools.data.KeyValueAdaptor;
 public class MachineSimulatorController implements MachineModelListener {
      /** simulated states table model */
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
+     /**accelerator node table model*/
+     final private KeyValueFilteredTableModel<AcceleratorNodeRecord> SEQUENCE_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -37,8 +39,6 @@ public class MachineSimulatorController implements MachineModelListener {
      final private List<VectorParameter> VECTOR_PARAMETERS;
      /** the plotter*/
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
-     /**the synoptic panel*/
-	  private XALSynopticPanel xalSynopticPanel;
      /** the position list of elements*/
      private List<Double> _positions;
 
@@ -47,6 +47,7 @@ public class MachineSimulatorController implements MachineModelListener {
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
+		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<AcceleratorNodeRecord>();
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
 		
@@ -72,7 +73,7 @@ public class MachineSimulatorController implements MachineModelListener {
     /** configure the main window */
     private void configureMainWindow( final WindowReference windowReference ) {
 
-        //set the column name of the table
+        //set the column name of the states table
         STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
         for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
             STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol() );
@@ -82,20 +83,37 @@ public class MachineSimulatorController implements MachineModelListener {
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(),vectorParameter.getSymbolForY());
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(),vectorParameter.getSymbolForZ());
            }
+        
+        //set the column name of the sequence table
+        SEQUENCE_TABLE_MODEL.setColumnName( "Node.Id", "Node" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "Electromagnet.DesignField", "Design" );
+        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test");
 
         //get components
         final JTable statesTable = (JTable)windowReference.getView( "States Table" );
         statesTable.setModel( STATES_TABLE_MODEL );
+        
+        final JTable sequenceTable = (JTable)windowReference.getView( "Sequence Table" );
+        sequenceTable.setModel( SEQUENCE_TABLE_MODEL );
 
         final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
+        
+        //set the filter field for sequence table
+        SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
+        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "Node.Id" );
+        
+        //configure the sequence table model
+		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "Electromagnet.DesignField","TestValue" );
+		  SEQUENCE_TABLE_MODEL.setKeyPaths( "Node.Id", "Electromagnet.DesignField", "TestValue" );
+		  SEQUENCE_TABLE_MODEL.setColumnEditable( "TestValue", true );
 
-        final FunctionGraphsJPanel twissParametersPlot = (FunctionGraphsJPanel) windowReference.getView("States Plot");
-        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot(twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS);
+        final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
+        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
 
 		//synoptic display of nodes
-		final Box synopticBox = (Box)windowReference.getView( "SynopticContainer" );
+		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
 		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
 		synopticBox.removeAll();
 		synopticBox.add( xalSynopticPanel );
@@ -145,6 +163,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
 				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class,parameterKeyPaths );
+				
 
 				final String[] parameterKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPaths.length];
 				// add standard parameters at the start
@@ -213,7 +232,7 @@ public class MachineSimulatorController implements MachineModelListener {
                 System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
                 	final MachineSimulation simulation = MODEL.runSimulation();
-                  STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );
+                  STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
                   _positions=simulation.getAllPosition();
 
                   PARAMETER_HANDLER.actionPerformed( null );
@@ -250,8 +269,12 @@ public class MachineSimulatorController implements MachineModelListener {
     }
 
 
-    /**event indicates that the Model has changed*/
-    public void modelChanged(MachineModel model) {
+    /**event indicates that the sequence has changed*/
+    public void modelSequenceChanged(MachineModel model) {
+    	if( model.getSequence() != null){
+    		SEQUENCE_TABLE_MODEL.setRecords(model.getAcceleratorNodes().getAcceleratorNodeRecords());
+    	}
+    	
     }
 }
 

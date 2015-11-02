@@ -49,7 +49,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
-        EVENT_PROXY.modelChanged(this);
+        EVENT_PROXY.modelSequenceChanged(this);
     }
     
 	/** Set the synchronization mode */   
@@ -65,6 +65,10 @@ public class MachineModel implements DataListener {
     /** get the accelerator sequence */
     public AcceleratorSeq getSequence() {
         return _sequence;
+    }
+    /**get all the nodes of the sequence with a specified scenario */
+    public AcceleratorNodes getAcceleratorNodes(){
+    	return new AcceleratorNodes(_sequence, SIMULATOR.getScenario());
     }
     
     

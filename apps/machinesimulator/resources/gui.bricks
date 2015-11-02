@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Oct 27 11:21:33 CST 2015" version="1.0.0">
+<BricksDocument date="Sat Oct 31 21:44:56 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -130,6 +130,16 @@
                 </ViewNode>
                 <ViewNode tag="Tabbed Pane">
                     <ViewProxy type="javax.swing.JTabbedPane"/>
+                    <ViewNode tag="Sequence Table View">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <BeanProperty name="name" value="Sequence Table"/>
+                        <ViewNode tag="Sequence Table Scroller">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <ViewNode tag="Sequence Table">
+                                <ViewProxy type="javax.swing.JTable"/>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
                     <ViewNode tag="States Table View">
                         <ViewProxy type="javax.swing.Box_Vertical"/>
                         <BeanProperty name="name" value="States Table"/>

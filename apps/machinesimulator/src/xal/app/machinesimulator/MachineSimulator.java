@@ -98,6 +98,10 @@ public class MachineSimulator implements DataListener {
             _scenario = null;
         }
     }
+    /**get the scenario*/
+    public Scenario getScenario(){
+    	return _scenario;
+    }
     
 	/** Set the synchronization mode */    
     public void setSynchronizationMode(final String newMode){   	

@@ -10,6 +10,6 @@ package xal.app.machinesimulator;
 public interface MachineModelListener {
 	
 	/**event indicates that the Model has changed*/
-	public void modelChanged(final MachineModel model);
+	public void modelSequenceChanged(final MachineModel model);
 
 }
