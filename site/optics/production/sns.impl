@@ -27,6 +27,7 @@
    <device type="RF" class="xal.smf.impl.RfCavity"/>
    <device type="RG" class="xal.smf.impl.RfGap"/>
    <device type="SCLCavity" class="xal.smf.impl.SCLCavity"/>
+   <device type="Scrp" class="xal.smf.impl.Marker"/>
    <device type="SH" class="xal.smf.impl.Sextupole"/>
    <device type="SV" class="xal.smf.impl.Sextupole"/>
    <device type="SSH" class="xal.smf.impl.Sextupole"/>
