@@ -16,6 +16,7 @@ import xal.extension.bricks.WindowReference;
 import java.util.logging.*;
 import java.io.File;
 import java.net.*;
+import java.util.prefs.Preferences;
 
 
 /**
@@ -140,6 +141,17 @@ abstract public class AbstractApplicationAdaptor implements ApplicationListener 
      * @return The name of the application
      */
     abstract public String applicationName();
+
+
+	/** Get the node for this application's preferences */
+	final public Preferences getUserPreferencesNode() {
+		if ( this.getClass().getName().startsWith("xal.app.") ) {	// standard Java based Open XAL application
+			return Preferences.userNodeForPackage( this.getClass() );
+		} else {		// class is not from XAL so probably a script (e.g. jruby)
+			final String scriptID = applicationName().toLowerCase().replaceAll(" ", "_").replaceAll("\\/", "-");
+			return Preferences.userNodeForPackage( AbstractApplicationAdaptor.class ).node("/xal/script/"+scriptID);
+		}
+	}
     
     
     /**

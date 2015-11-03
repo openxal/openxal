@@ -198,11 +198,12 @@ end
 class WaveformMerger
 	def merge( analyzer, waveforms )
 		if waveforms == nil; return nil; end
-		
+
+		# if just one waveform, the waveform consists of the its positions tagged by timestamp
 		if waveforms.length == 1
 			raw_waveform = waveforms[0]
 			if raw_waveform != nil
-				raw_positions = analyzer.positions raw_waveform
+				raw_positions = analyzer.positions( raw_waveform )
 				positions = raw_positions.collect { |position| position	}	# convert Java array to Ruby array
 				waveform = Waveform.new( positions, raw_waveform.timestamp )
 				return waveform
@@ -210,20 +211,24 @@ class WaveformMerger
 				return nil
 			end
 		elsif waveforms.length > 1
+			# for more than one waveform, merge them into one waveform constructively
 			merged_positions = []
 			waveforms.each do |waveform|
 				if waveform != nil
+					# get the waveform's positions and remove the offset
 					raw_positions = analyzer.positions( waveform )
-					centered_positions = center_positions raw_positions
+					centered_positions = self.center_positions( raw_positions )
 					
 					if merged_positions.length == 0
+						# this is oour first waveform so its positions are just that of the waveform's
 						base_norm = norm centered_positions
 						if base_norm > 0.0
-							merged_positions = centered_positions.collect { |position| position / base_norm }
+							merged_positions = centered_positions.collect { |position| position }
 						else
 							merged_positions = []
 						end
 					else
+						# merge the new centered positions into the existing merged positions
 						merged_positions = merge_arrays( merged_positions, centered_positions )
 					end
 				end
@@ -239,15 +244,20 @@ class WaveformMerger
 		end
 	end
 	
-	
+
+	# Merge the new array into the base array by adding the new array and the base array aligning them to the same quadrant to avoid cancellation.
+	# The set of all waveforms with the same frequency and centered at zero form a 2D (amplitude and phase) or more generally 3D (amplitude, phase and damping) surface
+	# passing through zero in the space of all possible waveforms (dimension of the waveform length).
+	# We want to sum the waveforms on the surface of constant frequency avoiding cancellation. Finding the optimal rotation on this surface is to expensive, so instead we
+	# settle for a positive scalar product which prevents cancellation and adds them constructively to some degree.
+	# We only care about frequency here and not phase, amplitude or damping (offset has been removed by centering)
 	def merge_arrays( base_array, new_array )
 		merged_array = []
 		if base_array != nil
-			base_norm = norm base_array
 			new_norm = norm new_array
 			if new_norm > 0.0
-				coef = scalar_product( base_array, new_array ) / ( base_norm * new_norm )
-				base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] / new_norm ) }
+				coef = scalar_product( base_array, new_array ) > 0 ? 1 : -1
+				base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] ) }
 			else
 				return base_array
 			end
@@ -255,13 +265,15 @@ class WaveformMerger
 		return merged_array
 	end
 	
-	
+
+	# compute the norm of the positions vector: sqrt( sum(p_i * p_i) )
 	def norm positions
 		product = scalar_product( positions, positions )
 		return product > 0.0 ? Math.sqrt( product ) : 0.0
 	end
 	
-	
+
+	# compute the scalar product between the two arrays as if they were vectors
 	def scalar_product( array1, array2 )
 		if array1 == nil or array2 == nil; return 0.0; end
 		
@@ -282,7 +294,8 @@ class WaveformMerger
 		return sum
 	end
 	
-	
+
+	# shift the waveform signals to remove the offset so the signal is centered about zero
 	def center_positions raw_positions
 		sum = 0.0
 		raw_positions.each { |position| sum += position }
@@ -478,7 +491,8 @@ class ControlApp
 			merger = WaveformMerger.new
 			x_waveform = merger.merge( @waveform_analyzer, x_waveforms )
 			y_waveform = merger.merge( @waveform_analyzer, y_waveforms )
-			return [x_waveform, y_waveform]
+			waveforms = { :x => x_waveform, :y => y_waveform }
+			return waveforms
 		else
 			return nil
 		end
@@ -491,9 +505,9 @@ class ControlApp
 	
 	
 	def postTunes waveforms
-		if waveforms != nil and waveforms.length == 2
-			postTune( waveforms[0], @tune_stats[0], @horizontal_tune_field )
-			postTune( waveforms[1], @tune_stats[1], @vertical_tune_field )
+		if waveforms != nil
+			postTune( waveforms[:x], @tune_stats[0], @horizontal_tune_field )
+			postTune( waveforms[:y], @tune_stats[1], @vertical_tune_field )
 		end
 	end
 	
@@ -519,10 +533,10 @@ class ControlApp
 	
 	
 	def plotSpectra waveforms
-		if waveforms != nil and waveforms.length == 2
+		if waveforms != nil
 			has_update = false
 				
-			x_waveform = waveforms[0]
+			x_waveform = waveforms[:x]
 			if x_waveform != nil
 				x_timestamp = x_waveform.timestamp
 				if x_timestamp != @last_x_waveform_timestamp
@@ -531,7 +545,7 @@ class ControlApp
 				end
 			end
 				
-			y_waveform = waveforms[1]
+			y_waveform = waveforms[:y]
 			if y_waveform != nil
 				y_timestamp = y_waveform.timestamp
 				if y_timestamp != @last_y_waveform_timestamp
