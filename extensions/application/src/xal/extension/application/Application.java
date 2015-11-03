@@ -310,7 +310,7 @@ abstract public class Application {
     
     /** Create a file chooser for opening and saving documents. */
     protected void makeFileChoosers() {
-		_recentFileTracker = new RecentFileTracker( getAdaptor().getClass(), "recent_files" );
+		_recentFileTracker = new RecentFileTracker( 10, getAdaptor().getUserPreferencesNode(), "recent_files" );
 
 		setOpenFileChooser( new JFileChooser() );
 		FileFilterFactory.applyFileFilters( _openFileChooser, _applicationAdaptor.readableDocumentTypes() );
