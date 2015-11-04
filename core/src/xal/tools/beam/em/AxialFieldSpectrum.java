@@ -1029,7 +1029,7 @@ public class AxialFieldSpectrum {
      *                                 - &Delta;<i>z</i> <i>T</i><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i>,
      * <br/>
      * <br/>
-     * whenever <i>T'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) is taken w.r.t. velocity &beta, or
+     * whenever <i>T'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) is taken w.r.t. velocity &beta;, or
      * <br/>
      * <br/>
      * &nbsp; &nbsp; <i>T</i></i><sub><i>z</i></sub>'(<i>k</i>) = <i>T'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i> 
@@ -1062,7 +1062,8 @@ public class AxialFieldSpectrum {
         double beta = this.computeVelocity(k);
         double dTz0 = this.fncDTz0.evaluateAt(beta);
         double Tz0  = this.fncTz0.evaluateAt(beta);
-        double dT   = dTz0*cos - Tz0*dz*sin;
+//        double dT   = dTz0*cos - Tz0*dz*sin;          // TODO must decide which is right?
+        double dT   = (-beta/k)*dTz0*cos - Tz0*dz*sin;
         
         return dT;
     }
@@ -1110,12 +1111,12 @@ public class AxialFieldSpectrum {
     /**
      * <p>
      * Compute and return the derivative of the standard transit time factor 
-     * <i>S'</i></i><sub><i>z</i></sub>(<i>k</i>) with respect to &beta; including
+     * <i>S'</i></i><sub><i>z</i></sub>(<i>k</i>) with respect to <i>k</i> including
      * any gap "offsets." The value is given by
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; <i>S</i>'</i><sub><i>z</i></sub>(<i>k</i>) = <i>T</i>'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
-     *                                 + &Delta;<i>z</i> <i>T</i></i><sub><i>z</i></sub><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i>,
+     * &nbsp; &nbsp; <i>S</i>'</i><sub><i>z</i></sub>(<i>k</i>) = <i>T</i>'</i><sub><i>z</i></sub><sub>0</sub>(&beta;(<i>k</i>)) sin <i>k</i>&Delta;<i>z</i> 
+     *                                 + &Delta;<i>z</i> <i>T</i></i><sub><i>z</i></sub><sub>0</sub>(&beta;(<i>k</i>)) cos <i>k</i>&Delta;<i>z</i>,
      * <br/>
      * <br/>
      * where <i>T</i>'</i><sub><i>z</i></sub><sub>0</sub> is the derivative of the symmetric cosine transit time factor, 
@@ -1130,7 +1131,7 @@ public class AxialFieldSpectrum {
      * <i>dS</i>(&beta;)/<i>d</i>&beta; is stored.  If it is the later then the returned value should be
      * <br/>
      * <br/>
-     * &nbsp; &nbsp; <i>S</i>'</i><sub><i>z</i></sub>(&beta;) = (-&beta;/<i>k</i>)<i>T</i>'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
+     * &nbsp; &nbsp; <i>S</i>'</i><sub><i>z</i></sub>(<i>k</i>) = (-&beta;/<i>k</i>)<i>T</i>'</i><sub><i>z</i></sub><sub>0</sub>(&beta;) sin <i>k</i>&Delta;<i>z</i> 
      *                                 + &Delta;<i>z</i> <i>T</i></i><sub><i>z</i></sub><sub>0</sub>(&beta;) cos <i>k</i>&Delta;<i>z</i>,
      * <br/>
      * <br/>
@@ -1138,7 +1139,7 @@ public class AxialFieldSpectrum {
      * 
      * @param k         particle wave number with respect to the RF frequency (radians/meter)
      * 
-     * @return          the derivative of sine transit time factor w.r.t. wave number <i>k</i> (meters/radian)
+     * @return          the derivative of sine transit time factor <i>S</i>(<i>k</i>) w.r.t. wave number <i>k</i> (meters/radian)
      *
      * @since  Feb 16, 2015   by Christopher K. Allen
      * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
@@ -1152,9 +1153,10 @@ public class AxialFieldSpectrum {
         double beta = this.computeVelocity(k);
         double dTz0 = this.fncDTz0.evaluateAt(beta);
         double Tz0  = this.fncTz0.evaluateAt(beta);
-        double dT   = dTz0*sin + Tz0*dz*cos;
+//        double dS   = dTz0*sin + Tz0*dz*cos;          // TODO need to figure out which is right?
+        double dS   = (-beta/k)*dTz0*sin + Tz0*dz*cos;
         
-        return dT;
+        return dS;
     }
     
     

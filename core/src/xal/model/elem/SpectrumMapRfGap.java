@@ -20,6 +20,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
 import xal.tools.beam.em.AxialFieldSpectrum;
 import xal.tools.beam.optics.AcceleratingRfGap;
+import xal.tools.beam.optics.AcceleratingRfGap.LOC;
 import xal.tools.math.fnc.IRealFunction;
 
 /**
@@ -1759,7 +1760,9 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
         //  TODO: We need to check that the probe is giving the correct phase here.
         //        The phase must be set with respect to the first gap 
         //
-        double phi0 = this.compGapEntrancePhase(probe); // phase at gap "electrical" entrance
+        // Compute the phase axis intercept of the asymptotic form of phase advance
+        //  entering the gap, i.e., phi_0^minus
+        double phi0m = this.compGapEntrancePhase(probe); // phase at gap "electrical" entrance
 
         // phase change from center correction factor for future time calculations
         // in PARMILA TTFPrime and SPrime are in [1/cm] units, we use [m]
@@ -1786,69 +1789,115 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
         // Initialize the search 
         //
 
-        EnergyVector    vecInitEnergy  = new EnergyVector(phi0, Wi);
-        EnergyVector    vecPreGapGains;
+        EnergyVector    vecInitVals  = new EnergyVector(phi0m, Wi);
+//        EnergyVector    vecMidVals;
+//        EnergyVector    vecPreGapGains;
+//        EnergyVector    vecPostGapGains;
         
         try {
-            vecPreGapGains = this.gapAcclMdl.computePreGapGains(Er, vecInitEnergy);
             
+            // Compute the phase variable gain in the pre-gap region
+            EnergyVector vecPreGapGains = this.gapAcclMdl.computeGapGains(LOC.PREGAP, Q, Er, vecInitVals);
+            
+            double dphim = A * vecPreGapGains.getPhase();
+            double dWm   = A * vecPreGapGains.getEnergy();
+            
+            // Form the longitudinal phase and energy at the gap center
+            double phi0 = phi0m + dphim;
+            double W0   = Wi + dWm;
+            
+            EnergyVector vecMidVals = new EnergyVector(phi0, W0);
+            
+            // Compute the post-gap phase variable changes
+            EnergyVector vecPostGapGains = this.gapAcclMdl.computeGapGains(LOC.POSTGAP, Q, Er, vecMidVals);
+            
+            double dphip = A * vecPostGapGains.getPhase();
+            double dWp   = A * vecPostGapGains.getEnergy();
+            
+            // Form the Longitudinal phase variables in the post gap region
+            double  phi0p = phi0 + dphip;
+            double  Wf    = W0 + dWp;
+            
+            EnergyVector vecEndVals = new EnergyVector(phi0p, Wf);
+            
+            
+            // Compute the total gains for the gap
+            double  dphi = dphim + dphip;
+            double  dW   = dWm + dWp;
+            
+            EnergyVector vecGapGains = new EnergyVector(dphi, dW);
+            
+            
+            //          double  dphi_mid = Q * A * vecPreGapGains.getPhase();
+            //          double  dW_mid   = Q * A * vecPreGapGains.getEnergy();
+//            double  dphi_mid = A * vecPreGapGains.getPhase();
+//            double  dW_mid   = A * vecPreGapGains.getEnergy();
+
+            // TODO Remove type out
+            if (!this.bolMethodCalled) {
+                double V0 = this.gapAcclMdl.getRfFieldPotential();
+                double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
+                //              double db = 0.01*bi;
+                double dk = 0.01*ki;
+                //              double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
+                //              double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
+                double T = this.spcGapFlds.Tz(ki);
+                double S = this.spcGapFlds.Sz(ki);
+                double Tq = this.spcGapFlds.Tq(ki);
+                double Sq = this.spcGapFlds.Sq(ki);
+
+                double dT = this.spcGapFlds.dTz(ki);  // TODO check the argument, k or beta?
+                double dS = this.spcGapFlds.dSz(ki);
+                double dTq = this.spcGapFlds.dTq(ki);
+                double dSq = this.spcGapFlds.dSq(ki);
+
+                double dT_num = (this.spcGapFlds.Tz(ki + dk) - T)/dk;
+                double dS_num = (this.spcGapFlds.Sz(ki + dk) - S)/dk;
+                double dTq_num = (this.spcGapFlds.Tq(ki + dk) - Tq)/dk;
+                double dSq_num = (this.spcGapFlds.Sq(ki + dk) - Sq)/dk;
+
+                phi0m = (180.0/Math.PI) * Math.IEEEremainder(phi0m, 2.0*Math.PI); // convert to degrees
+
+                System.out.println("SpectrumMapRfGap#compEnergyGainIndirect: " + this.getId());
+                System.out.println("    Q*A*V0=" + Q * A * V0);
+                System.out.println("    phi0m=" + phi0m + ", cos(phi0)=" + Math.cos(phi0m) + ", Acos(phi0)=" + A*Math.cos(phi0m));
+                System.out.println("    T(ki)=" + T + ", T'(ki)=" + dT + ", S(ki)=" + S + ", S'(ki)=" + dS);
+                System.out.println("    Tq(ki);=" + Tq + ", Tq'(ki)=" + dTq + ", Sq(ki)=" + Sq + ", Sq'(ki)=" + dSq);
+//                System.out.println("    dT/dk=" + d_T + ", dS/dk=" + d_S);
+                System.out.println("    Numeric: T'(ki) =" + dT_num + ", S'(ki) =" + dS_num);
+                System.out.println("    Numeric: Tq'(ki)=" + dTq_num + ", Sq'(ki)=" + dSq_num);
+                System.out.println("    ki=" + ki);
+            }
+
+            // TODO - Temporary until we get the calculated for the post gap region installed
+//            double  dphi = 2.0 * dphi_mid;
+//            double  dW   = 2.0 * dW_mid;
+//
+//            EnergyVector    vecGains = new EnergyVector(dphi, dW);
+
+            // TODO Remove type out
+            if (!this.bolMethodCalled) {
+                double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(W0, Er);
+                double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
+                System.out.println("    k_mid=" + k_mid);
+                System.out.println("    Entrance values: " + vecInitVals + ", Pre-gap gains: " + vecPreGapGains);
+                System.out.println("    Mid gap values: " + vecMidVals);
+                System.out.println("    Exit values: " + vecEndVals + ", Post-gap gains: " + vecPostGapGains);
+                System.out.println("    Total gains: " + vecGapGains);
+                System.out.println("    dphi=" + (180.0/Math.PI)*dphi + ", dW=" + dW + ", W=" + Double.toString(Wi+dW));
+                System.out.println();
+
+                this.bolMethodCalled = true;
+            }
+
+
+            return vecGapGains;
+
         } catch (AcceleratingRfGap.NoConvergenceException e) {
             System.err.println("WARNING! SpectrumMapRfGap#compGapPhaseAndEnergyGain() did not converge for element " + this.getId());
 
             throw e;
         }
-        
-        double  dphi_mid = Q * A * vecPreGapGains.getPhase();
-        double  dW_mid   = Q * A * vecPreGapGains.getEnergy();
-
-        // TODO Remove type out
-        if (!this.bolMethodCalled) {
-            double V0 = this.gapAcclMdl.getRfFieldPotential();
-            double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
-//            double db = 0.01*bi;
-            double dk = 0.01*ki;
-//            double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
-//            double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
-            double T = this.spcGapFlds.Tz(ki);
-            double S = this.spcGapFlds.Sz(ki);
-            
-            double d_T = this.spcGapFlds.dTz(ki);
-            double d_S = this.spcGapFlds.dSz(ki);
-            
-            double dT = (this.spcGapFlds.Tz(ki + dk) - T)/dk;
-            double dS = (this.spcGapFlds.Sz(ki + dk) - S)/dk;
-            
-            phi0 = (180.0/Math.PI) * Math.IEEEremainder(phi0, 2.0*Math.PI); // convert to degrees
-            
-            System.out.println("SpectrumMapRfGap#compEnergyGainIndirect: " + this.getId());
-            System.out.println("    Q*A*V0=" + Q * A * V0);
-            System.out.println("    phi0=" + phi0 + ", cos(phi0)=" + Math.cos(phi0) + ", Acos(phi0)=" + A*Math.cos(phi0));
-            System.out.println("    T(ki)=" + T + ", T'(ki)=" + d_T + ", S(ki)=" + S + ", S'(ki)=" + d_S);
-            System.out.println("    dT/dk=" + d_T + ", dS/dk=" + d_S);
-            System.out.println("    Numeric: T'(ki)=" + dT + ", S'(ki)=" + dS);
-            System.out.println("    ki=" + ki);
-        }
-
-        // TODO - Temporary until we get the calculated for the post gap region installed
-        double  dphi = 2.0 * dphi_mid;
-        double  dW   = 2.0 * dW_mid;
-        
-        EnergyVector    vecGains = new EnergyVector(dphi, dW);
-
-        // TODO Remove type out
-        if (!this.bolMethodCalled) {
-            double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(Wi + dW_mid, Er);
-            double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
-            System.out.println("    k_mid=" + k_mid);
-            System.out.println("    dphi=" + (180.0/Math.PI)*dphi + ", dW=" + dW + ", W=" + Double.toString(Wi+dW));
-            System.out.println();
-            
-            this.bolMethodCalled = true;
-        }
-        
-        
-        return vecGains;
     }
-
 }
 

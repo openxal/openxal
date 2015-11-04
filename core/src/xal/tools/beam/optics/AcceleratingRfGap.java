@@ -44,6 +44,98 @@ public class AcceleratingRfGap {
      */
 
     /**
+     * Enumeration specifying the upstream location or downstream locations for
+     * the RF accelerating gap.
+     *
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 2, 2015
+     */
+    public enum LOC {
+        
+        /** Constant identifying the pre-gap (upstream) location */
+        PREGAP,
+        
+        /** Constant identifying the post-gap (downstream) location */
+        POSTGAP;
+
+        
+        /*
+         * Operations
+         */
+        
+        /**
+         * Compute and return the value of the generalized Hamiltonian function 
+         * <i>H</i> at the given longitudinal
+         * phase coordinates for the given accelerating RF gap.
+         *  
+         * @param gap   Hamiltonian function for this gap
+         * @param phi   particle phase location &phi; (radians)
+         * @param k     particle wave number <i>k</i> (radians/meter)
+         * 
+         * @return      Hamiltonian function <i>H</i>(&phi;,<i>k</i>)
+         * 
+         * @see AcceleratingRfGap#preGapHamiltonain(double, double)
+         * @see AcceleratingRfGap#postGapHamiltonain(double, double)
+         *
+         * @since  Nov 3, 2015,   Christopher K. Allen
+         */
+        public Complex   gapHamiltonian(AcceleratingRfGap gap, double phi, double k) {
+            if (this.equals(PREGAP))
+                return gap.preGapHamiltonain(phi, k);
+            else
+                return gap.postGapHamiltonain(phi, k);
+        }
+        
+        /**
+         * Compute and return the derivative of the generalized Hamiltonian function 
+         * <i>dH</i>/<i>d</i>&phi; with respect to particle phase location &phi; 
+         * for the given accelerating RF gap.
+         *  
+         * @param gap   gap for which the parameters are computed
+         * @param phi   particle phase location &phi; (radians)
+         * @param k     particle wave number <i>k</i> (radians/meter)
+         * 
+         * @return      value of derivative <i>dH</i>(&phi;,<i>k</i>)/<i>d</i>&phi;
+         * 
+         * @see AcceleratingRfGap#dphiPreGapHamiltonian(double, double)
+         * @see AcceleratingRfGap#dphiPostGapHamiltonian(double, double)
+         *
+         * @since  Nov 3, 2015,   Christopher K. Allen
+         */
+        public Complex dphiGapHamiltonian(AcceleratingRfGap gap, double phi, double k) {
+            if (this.equals(PREGAP))
+                return gap.dphiPreGapHamiltonian(phi, k);
+            else
+                return gap.dphiPostGapHamiltonian(phi, k);
+        }
+        
+        /**
+         * Compute and return the derivative of the generalized Hamiltonian function 
+         * <i>dH</i>/<i>dk</i> with respect to particle wave number <i>k</i> 
+         * for the given accelerating RF gap.
+         *  
+         * @param gap   gap for which the parameters are computed
+         * @param phi   particle phase location &phi; (radians)
+         * @param k     particle wave number <i>k</i> (radians/meter)
+         * 
+         * @return      value of derivative <i>dH</i>(&phi;,<i>k</i>)/<i>dk</i>
+         * 
+         * @see AcceleratingRfGap#dkPreGapHamiltonian(double, double)
+         * @see AcceleratingRfGap#dkPostGapHamiltonian(double, double)
+         *
+         * @since  Nov 3, 2015,   Christopher K. Allen
+         */
+        public Complex  dkGapHamiltonian(AcceleratingRfGap gap, double phi, double k) {
+            if (this.equals(PREGAP))
+                return gap.dkPreGapHamiltonian(phi, k);
+            else
+                return gap.dkPostGapHamiltonian(phi, k);
+        }
+        
+    }
+    
+    /**
      * Class <code>NoConvergenceException</code>.  This exception class is thrown
      * in the case of a search algorithm that does not converge.
      *
@@ -359,6 +451,131 @@ public class AcceleratingRfGap {
     /**
      * <p>
      * Computes and returns the phase jump &Delta;&phi; and energy gain &Delta;<i>W</i>
+     * imparted to a particle with the the given particle charge <i>Q</i> and 
+     * rest energy <i>E<sub>r</sub></i> for the given gap region.  The particle enters this
+     * region with initial gap phase &phi;<sub>0</sub> and initial 
+     * kinetic energy <i>W<sub>i</sub></i>.  The returned values represent the effects of
+     * the first have of this gap upon the so described particle.  This method uses
+     * an iterative technique to compute the results in order to maintain a 
+     * self-consistent set of expressions.  That is, the modeling expressions are a
+     * set of transcendental equations which must be solved self-consistently.
+     * Thus, we are relegated to iterative methods. 
+     * </p>
+     * <p>
+     * The provided phase &phi;<sub>0</sub> is assumed
+     * to be the phase of the particle at the center of the gap, if it were coasting
+     * through the gap with kinetic energy <i>W<sub>i</sub></i> for the pre-gap computation, and
+     * after the pre-gap phase jump &Delta;&phi;<sup>-</sup> for the post-gap computation.  
+     * The phase value returned by this method, either &Delta;&phi;<sup>-</sup> or 
+     * &Delta;&phi;<sup>+</sup> for the pre-gap or post-gap calculation, respectively, is 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;&phi;<sup>-</sup> = +&phi;<sub>0</sub> - &phi;<sub>0</sub><sup>-</sup> ,
+     * <br/>
+     * &nbsp; &nbsp; &Delta;&phi;<sup>+</sup> = -&phi;<sub>0</sub> + &phi;<sub>0</sub><sup>+</sup> ,
+     * <br/>
+     * <br/>
+     * where &phi;<sub>0</sub><sup>-</sup> is the thin-lens model gap center intercept of the incoming
+     * coasting particle, &phi;<sub>0</sub><sup>+</sup> is the thin-lens model gap center intercept of the
+     * outgoing coasting particle, and &phi;<sub>0</sub> is the actual particle phase at the gap center.  
+     * The total phase jump at the gap center &Delta;&phi; is the sum of these two phase jumps,   
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;&phi; = &Delta;&phi;<sup>-</sup> + &Delta;&phi;<sup>+</sup> = &phi;<sub>0</sub><sup>+</sup> - &phi;<sub>0</sub><sup>-</sup> ,
+     * <br/>
+     * </p>
+     * <p>
+     * The returned energy gain, either &Delta;<i>W</i><sup>-</sup> for the pre-gap location or
+     * &Delta;<i>W</i><sup>+</sup> for the post-gap location, is the energy gained by the particle in
+     * those respective locations.  The total energy gained by a particle through the gap is the sum
+     * of these energies
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &Delta;<i>W</i> = &Delta;<i>W</i><sup>-</sup> + &Delta;<i>W</i><sup>+</sup> . 
+     * </p>
+     * 
+     * @param locHam    location of longitudinal gain calculations, with respect to gap center
+     * @param Q         charge of the incoming particles in terms of fundamental charge <i>q</i> (unitless)
+     * @param Er        rest energy of the incoming particles (electron-Volts)
+     * @param vecInit   initial phase and energy pair 
+     *                  (&phi;<sub>0</sub>,<i>W<sub>i</sub></i>) into specified gap region 
+     *                  (radians, electron-Volts)
+     *                   
+     * @return          the corrective phase jump and energy gain pair (&Delta;&phi;,&Delta;<i>W</i>)
+     *                  after impulse at specified location, pre- or post-gap (radians, electron-Volts)
+     *                  
+     * @throws  NoConvergenceException  the iterative search for (&Delta;&phi;,&Delta;<i>W</i>) failed to converge
+     *
+     * @since  Oct 15, 2015,   Christopher K. Allen
+     */
+    public EnergyVector  computeGapGains(LOC locHam, double Q, double Er, EnergyVector vecInit) throws NoConvergenceException {
+        
+        // Variable scaling constants (scales the "Hamiltonian")
+        final double  V0 = Q * this.getRfFieldPotential();
+        final double  Ki = Q * this.computeNormWaveNumber(vecInit.getEnergy(), Er);
+        
+        // For the asymptotic model, get the phase intercept, the initial kinetic energy, 
+        //  and the initial wave number 
+        double  phi0 = vecInit.getPhase();
+        double  Wi   = vecInit.getEnergy();
+        
+        // Initialize the search variables.
+        //  Use the phase intercept and initial energy as starting values
+        double phi = phi0;  // the synchronous phase at the gap center
+        double W   = Wi;    // the energy gained up to the gap center
+        double k   = this.computeWaveNumber(W, Er);
+
+        // Compute the starting values for phase jump and energy gain
+        double dW   = - V0 * locHam.dphiGapHamiltonian(this, phi, k).imaginary();
+        double dphi = + Ki * locHam.dkGapHamiltonian(this, phi, k).imaginary();
+        
+        // Initialize the search loop
+        int     cntIter = 0;
+        double  dblErr  = 10.0*this.getErrorTolerance();
+        while (cntIter < this.getMaxIterations()) {
+
+            // Compute the new phase and energy from the previously computed
+            //  phase jump and energy gain
+            phi = phi0 + dphi;
+            W   = Wi + dW;
+            k   = this.computeWaveNumber(W, Er);
+            
+            // Compute the new phase jump and energy gain from the new phase 
+            //  and energies
+            double dphi_i = + Ki * locHam.dkGapHamiltonian(this, phi, k).imaginary();
+            double dW_i   = - V0 * locHam.dphiGapHamiltonian(this, phi, k).imaginary();
+            
+            // Compute stopping criteria values 
+            cntIter++;
+            dblErr = (dphi_i - dphi)*(dphi_i - dphi) + (dW - dW_i)*(dW - dW_i)/(Wi*Wi);
+
+            // Update the values of the dependent variables wave number, phase jump, 
+            //  and energy gain 
+            dphi = dphi_i;
+            dW   = dW_i;
+            
+            // Check for Cauchy sequence convergence.  Stop and return gains if passed. 
+            if (dblErr < this.getErrorTolerance()) {
+                EnergyVector     vecGains = new EnergyVector(dphi, dW);
+                
+                return vecGains;
+            }
+            
+        }
+
+        // If we made it outside the loop then there was no converge.
+        String  strMsg = locHam.name() + ": failed to compute gap gain values after " 
+                + cntIter 
+                + " iterations.  Error = " 
+                + dblErr;
+
+        throw new NoConvergenceException(strMsg);
+    }
+    
+    
+    /**
+     * <p>
+     * Computes and returns the phase jump &Delta;&phi; and energy gain &Delta;<i>W</i>
      * imparted to a particle with the the given rest energy <i>E<sub>r</sub></i>,
      * gap phase &phi;<sub>0</sub><sup>-</sup>, and initial 
      * kinetic energy <i>W<sub>i</sub></i>.  The returned values represent the effects of
@@ -402,6 +619,7 @@ public class AcceleratingRfGap {
      *
      * @since  Oct 15, 2015,   Christopher K. Allen
      */
+    @Deprecated
     public EnergyVector  computePreGapGains(double Er, EnergyVector vecInit) throws NoConvergenceException {
         
         // Variable scaling constants (scales the "Hamiltonian")
@@ -506,7 +724,7 @@ public class AcceleratingRfGap {
      *
      * @since  Oct 9, 2015,   Christopher K. Allen
      */
-    public double   computePreGapEnergyGain(double phi, double k) {
+    private  double   computePreGapEnergyGain(double phi, double k) {
 
         Complex     cpxDphiHamil = this.dphiPreGapHamiltonian(phi, k);
         double      dblImagHamil = cpxDphiHamil.imaginary();
@@ -544,6 +762,34 @@ public class AcceleratingRfGap {
     }
     
     /**
+     * Computes and returns the post-gap "Hamiltonian" function 
+     * <i>H</i><sup>+</sup>(&phi;, <i>k</i>).  This complex function is the product of the
+     * post-envelope spectrum &Escr;<sup>+</sup>(<i>k</i>) and mid-gap synchronous
+     * phase &exponentiale;<sup>-<i>i</i> &phi;</sup>.  That is,
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>H</i><sup>+</sup>(&phi;, <i>k</i>) = &Escr;<sup>+</sup>(<i>k</i>)&exponentiale;<sup>-<i>i</i> &phi;</sup>.
+     * <br/>
+     * <br/>
+     * The phase jump &Delta;&phi;<sup>+</sup> and energy gain &Delta;<i>W</i><sup>+</sup> are 
+     * dependent upon this quantity.
+     * 
+     * @param phi       the mid-gap synchronous phase angle &phi; (in radians)
+     * @param k         the synchronous particle wave number (in radians/meter)
+     * 
+     * @return          value of the Hamiltonian <i>H</i><sup>+</sup> at &phi; and <i>k</i>
+     *
+     * @since  Oct 7, 2015,   Christopher K. Allen
+     */
+    private Complex postGapHamiltonain(double phi, double k) {
+        Complex     cpxPostSpc = this.spcFldSpc.postEnvSpectrum(k);
+        Complex     cpxPostAng = Complex.euler(phi);
+        Complex     cpxHamilt = cpxPostSpc.times(cpxPostAng);
+        
+        return cpxHamilt;
+    }
+    
+    /**
      * Computes and returns the derivative of the pre-gap "Hamiltonian" function 
      * <i>H</i><sup>-</sup>(&phi;, <i>k</i>) with respect to the wave number <i>k</i>,
      * that is, the value   <i>dH</i><sup>-</sup>(&phi;, <i>k</i>)/<i>dk</i>.
@@ -576,6 +822,38 @@ public class AcceleratingRfGap {
     }
     
     /**
+     * Computes and returns the derivative of the post-gap "Hamiltonian" function 
+     * <i>H</i><sup>+</sup>(&phi;, <i>k</i>) with respect to the wave number <i>k</i>,
+     * that is, the value   <i>dH</i><sup>+</sup>(&phi;, <i>k</i>)/<i>dk</i>.
+     * This complex-valued function of variables &phi; and <i>k</i> is given by 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>dH</i><sup>+</sup>(&phi;, <i>k</i>)/<i>dk</i> = 
+     *                                    [<i>d</i>&Escr;<sup>+</sup>(<i>k</i>)/<i>dk</i>] &exponentiale;<sup>-<i>i</i> &phi;</sup>.
+     * <br/>
+     * <br/>
+     * where &Escr;<sup>+</sup>(<i>k</i>) is the post-envelope spectrum and 
+     * &exponentiale;<sup>-<i>i</i> &phi;</sup> is the mid-gap synchronous
+     * phase.  
+     * The phase jump &Delta;&phi;<sup>+</sup> is directly proportional to the imaginary part
+     * of this quantity.
+     * 
+     * @param phi       the mid-gap synchronous phase angle &phi; (in radians)
+     * @param k         the synchronous particle wave number (in radians/meter)
+     * 
+     * @return          value of the Hamiltonian <i>H</i><sup>+</sup> at &phi; and <i>k</i>
+     *
+     * @since  Oct 7, 2015,   Christopher K. Allen
+     */
+    private Complex dkPostGapHamiltonian(double phi, double k) {
+        Complex     cpxDkPostSpc = this.spcFldSpc.dkPostEnvSpectrum(k);
+        Complex     cpxPostAngle = Complex.euler(phi);
+        Complex     cpxDkHamilt  = cpxDkPostSpc.times(cpxPostAngle);
+        
+        return cpxDkHamilt;
+    }
+    
+    /**
      * Computes and returns the derivative of the pre-gap "Hamiltonian" function 
      * <i>H</i><sup>-</sup>(&phi;, <i>k</i>) with respect to the mid-gap 
      * synchronous phase &phi;,
@@ -603,6 +881,40 @@ public class AcceleratingRfGap {
      */
     private Complex dphiPreGapHamiltonian(double phi, double k) {
         Complex     cpxHamil = this.preGapHamiltonain(phi, k);
+        Complex     cpxRotat = Complex.IUNIT.negate();
+        Complex     cpxDphiHamil = cpxHamil.times(cpxRotat);
+        
+        return  cpxDphiHamil;
+    }
+    
+    /**
+     * Computes and returns the derivative of the post-gap "Hamiltonian" function 
+     * <i>H</i><sup>+</sup>(&phi;, <i>k</i>) with respect to the mid-gap 
+     * synchronous phase &phi;,
+     * that is, the value   <i>dH</i><sup>+</sup>(&phi;, <i>k</i>)/<i>d</i>&phi;.
+     * This complex-valued function of variables &phi; and <i>k</i> is given by 
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; <i>dH</i><sup>+</sup>(&phi;, <i>k</i>)/<i>d</i>&phi; = 
+     *                                       &Escr;<sup>+</sup>(<i>k</i>) <i>d</i>&exponentiale;<sup>-<i>i</i> &phi;</sup>/<i>d</i>&phi;
+     *                                    = -<i>i</i> <i>H</i><sup>+</sup>(&phi;,<i>k</i>) ,
+     * <br/>
+     * <br/>
+     * where &Escr;<sup>+</sup>(<i>k</i>) is the post-envelope spectrum and 
+     * &exponentiale;<sup>-<i>i</i> &phi;</sup> is the mid-gap synchronous
+     * phase.  
+     * The energy gain &Delta;<i>W</i><sup>+</sup> is proportional to the 
+     * imaginary part of this quantity.
+     * 
+     * @param phi       the mid-gap synchronous phase angle &phi; (in radians)
+     * @param k         the synchronous particle wave number (in radians/meter)
+     * 
+     * @return          value of the Hamiltonian <i>H</i><sup>+</sup> at &phi; and <i>k</i>
+     *
+     * @since  Oct 7, 2015,   Christopher K. Allen
+     */
+    private Complex dphiPostGapHamiltonian(double phi, double k) {
+        Complex     cpxHamil = this.postGapHamiltonain(phi, k);
         Complex     cpxRotat = Complex.IUNIT.negate();
         Complex     cpxDphiHamil = cpxHamil.times(cpxRotat);
         
