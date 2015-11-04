@@ -1838,7 +1838,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
                 double V0 = this.gapAcclMdl.getRfFieldPotential();
                 double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
                 //              double db = 0.01*bi;
-                double dk = 0.01*ki;
+                double dk = 0.1*ki;
                 //              double dT = (this.fitTTF.evaluateAt(bi + db) - ttf)/db;
                 //              double dS = (this.fitSTF.evaluateAt(bi + db) - stf)/db;
                 double T = this.spcGapFlds.Tz(ki);
@@ -1846,10 +1846,10 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
                 double Tq = this.spcGapFlds.Tq(ki);
                 double Sq = this.spcGapFlds.Sq(ki);
 
-                double dT = this.spcGapFlds.dTz(ki);  // TODO check the argument, k or beta?
-                double dS = this.spcGapFlds.dSz(ki);
-                double dTq = this.spcGapFlds.dTq(ki);
-                double dSq = this.spcGapFlds.dSq(ki);
+                double dT = this.spcGapFlds.dkTz(ki);  // TODO check the argument, k or beta?
+                double dS = this.spcGapFlds.dkSz(ki);
+                double dTq = this.spcGapFlds.dkTq(ki);
+                double dSq = this.spcGapFlds.dkSq(ki);
 
                 double dT_num = (this.spcGapFlds.Tz(ki + dk) - T)/dk;
                 double dS_num = (this.spcGapFlds.Sz(ki + dk) - S)/dk;

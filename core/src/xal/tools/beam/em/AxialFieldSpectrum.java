@@ -8,6 +8,7 @@ package xal.tools.beam.em;
 
 import xal.tools.math.Complex;
 import xal.tools.math.fnc.IRealFunction;
+import xal.tools.math.fnc.ISmoothRealFunction;
 
 /**
  * <p>
@@ -579,8 +580,8 @@ public class AxialFieldSpectrum {
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
     public Complex  dkFldSpectrum(double k) {
-        double  dblReal = +this.dTz(k);
-        double  dblImag = -this.dSz(k);
+        double  dblReal = +this.dkTz(k);
+        double  dblImag = -this.dkSz(k);
         
         Complex cpxSpectra = new Complex(dblReal, dblImag);
         
@@ -652,8 +653,8 @@ public class AxialFieldSpectrum {
      * @since  Sep 30, 2015,   Christopher K. Allen
      */
     public Complex  dkCnjSpectrum(double k) {
-        double  dblReal = +this.dTq(k);
-        double  dblImag = -this.dSq(k);
+        double  dblReal = +this.dkTq(k);
+        double  dblImag = -this.dkSq(k);
         
         Complex cpxSpectra = new Complex(dblReal, dblImag);
         
@@ -837,11 +838,11 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   dTz(double k) {
+    public double   dkTz(double k) {
         double      dTz;
         
         if (this.bolPrtlFldMdl)
-            dTz = this.dTzfromDTz0(k);
+            dTz = this.dkTzfromDkTz0(k);
         else
             dTz = this.fncDTz.evaluateAt(k);
         
@@ -879,11 +880,11 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 28, 2015   by Christopher K. Allen
      */
-    public double   dSz(double k) {
+    public double   dkSz(double k) {
         double      dSz;
         
         if (this.bolPrtlFldMdl) 
-            dSz = this.dSzfromDTz0(k);
+            dSz = this.dkSzfromDkTz0(k);
         else
             dSz = this.fncDSz.evaluateAt(k);
         
@@ -921,11 +922,11 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 29, 2015,   Christopher K. Allen
      */
-    public double   dTq(double k) {
+    public double   dkTq(double k) {
         double      dTq;
         
         if (this.bolPrtlFldMdl) 
-            dTq = this.dTqFromDSq0(k);
+            dTq = this.dkTqFromDkSq0(k);
         else
             dTq = this.fncDTq.evaluateAt(k);
             
@@ -963,11 +964,11 @@ public class AxialFieldSpectrum {
      *
      * @since  Sep 29, 2015,   Christopher K. Allen
      */
-    public double   dSq(double k) {
+    public double   dkSq(double k) {
         double      dSq;
         
         if (this.bolPrtlFldMdl) 
-            dSq = this.dSqFromDSq0(k);
+            dSq = this.dkSqFromDkSq0(k);
         else
             dSq = this.fncDSq.evaluateAt(k);
             
@@ -1053,14 +1054,17 @@ public class AxialFieldSpectrum {
      * @version July 29, 2015: Modified to assume 
      *          <code>fitTTFPrime</code> = <i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
-    private double  dTzfromDTz0(double k) {
+    private double  dkTzfromDkTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double cos = Math.cos(k*dz);
         double sin = Math.sin(k*dz);
 
         double beta = this.computeVelocity(k);
+
         double dTz0 = this.fncDTz0.evaluateAt(beta);
+//        double dTz0 = ((ISmoothRealFunction)(this.fncTz0)).derivativeAt(beta);
+        
         double Tz0  = this.fncTz0.evaluateAt(beta);
 //        double dT   = dTz0*cos - Tz0*dz*sin;          // TODO must decide which is right?
         double dT   = (-beta/k)*dTz0*cos - Tz0*dz*sin;
@@ -1144,7 +1148,7 @@ public class AxialFieldSpectrum {
      * @since  Feb 16, 2015   by Christopher K. Allen
      * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
-    private double  dSzfromDTz0(double k) {
+    private double  dkSzfromDkTz0(double k) {
 //        double k   = this.waveNumber(beta);
         double dz  = - this.getFieldOffset();
         double sin = Math.sin(k*dz);
@@ -1242,7 +1246,7 @@ public class AxialFieldSpectrum {
      *          <br/>
      *          Sept 23, 2015: Modified to assume <code>fitSTF</code> actually contains <i>S<sub>q</i></sub>(&beta;)
      */
-    private double  dTqFromDSq0(double k) {
+    private double  dkTqFromDkSq0(double k) {
         double dz  = - this.getFieldOffset();
         double cos = Math.cos(k*dz);
         double sin = Math.sin(k*dz);
@@ -1331,7 +1335,7 @@ public class AxialFieldSpectrum {
      * @since  Feb 16, 2015   by Christopher K. Allen
      * @version July 29, 2015 modified to assume <code>fitSTFPrime</code> = <i>dS</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
-    private double  dSqFromDSq0(double k) {
+    private double  dkSqFromDkSq0(double k) {
         double dz  = - this.getFieldOffset();
         double sin = Math.sin(k*dz);
         double cos = Math.cos(k*dz);
