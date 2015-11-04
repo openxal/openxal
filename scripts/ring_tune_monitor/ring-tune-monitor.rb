@@ -246,18 +246,28 @@ class WaveformMerger
 	
 
 	# Merge the new array into the base array by adding the new array and the base array aligning them to the same quadrant to avoid cancellation.
-	# The set of all waveforms with the same frequency and centered at zero form a 2D (amplitude and phase) or more generally 3D (amplitude, phase and damping) surface
+	# All BPM waveforms should share a common frequency and damping rate.
+	# The set of all waveforms with the same frequency and damping rate and centered at zero form a 2D (amplitude and phase) plane
 	# passing through zero in the space of all possible waveforms (dimension of the waveform length).
-	# We want to sum the waveforms on the surface of constant frequency avoiding cancellation. Finding the optimal rotation on this surface is to expensive, so instead we
-	# settle for a positive scalar product which prevents cancellation and adds them constructively to some degree.
-	# We only care about frequency here and not phase, amplitude or damping (offset has been removed by centering)
+	# We want to sum the waveforms on the surface of constant frequency avoiding which maximizes the signal to noise ratio.
+	# We only care about frequency here and not phase, amplitude or damping (offset has mostly been removed by centering).
 	def merge_arrays( base_array, new_array )
 		merged_array = []
 		if base_array != nil
+			base_norm = norm base_array
 			new_norm = norm new_array
 			if new_norm > 0.0
-				coef = scalar_product( base_array, new_array ) > 0 ? 1 : -1
-				base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] ) }
+				b_dot_n = scalar_product( base_array, new_array )
+				if b_dot_n != 0
+					n2_minus_b2 = new_norm * new_norm - base_norm * base_norm
+					coef = b_dot_n > 0 ? 1 : -1
+					ws = ( n2_minus_b2 + coef * Math.sqrt( n2_minus_b2 * n2_minus_b2 + 4 * b_dot_n * b_dot_n ) ) / ( 2 * b_dot_n )
+					w1 = Math.sqrt( 1 / ( 1 + ws * ws ) )
+					w2 = ws * w1
+					base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] ) }
+				else
+					return base_array
+				end
 			else
 				return base_array
 			end
