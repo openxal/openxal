@@ -474,6 +474,7 @@ public class BeamSizeFace extends JPanel{
         //double emity0 = 13.;
         double emitx0 = twiss[0].getEmittance();
         double emity0 = twiss[1].getEmittance();
+		double emitz0 = twiss[2].getEmittance();
         
         System.out.println("Starting with ax, bx, ex = " + alphax0 +  " " + betax0 + " " + emitx0);
         System.out.println("Starting with ay, by, ey = " + alphay0 +  " " + betay0 + " " + emity0);
@@ -559,7 +560,7 @@ public class BeamSizeFace extends JPanel{
         //System.out.println("first is " + namelist.get(0));
         
         for(int i =0; i<size; i++){
-            String name = namelist.get(i);      // TODO: CKA - NEVER USED
+            //String name = namelist.get(i);
             //EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS21")[0];
             EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
             
@@ -567,12 +568,16 @@ public class BeamSizeFace extends JPanel{
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             rx =  twiss[0].getEnvelopeRadius();
             ry =  twiss[1].getEnvelopeRadius();
+			if ( Double.isNaN(rx) || Double.isNaN(ry) )  return Double.POSITIVE_INFINITY;
+//			System.out.println( "Envelope Radius[" + name + "] = (" + twiss[0].getEnvelopeRadius() + ", " + twiss[1].getEnvelopeRadius() + ")" );
+//			System.out.println( "Beta[" + name + "] = (" + twiss[0].getBeta() + ", " + twiss[1].getBeta() + ")" );
             error += Math.pow( (rx*1000. - ((Double)xdatalist.get(i)).doubleValue()), 2.);
             error += Math.pow( (ry*1000. - ((Double)ydatalist.get(i)).doubleValue()), 2.);
-            //System.out.println(namelist.get(i) + " " + rx*1000 + " " + xdatalist.get(i));
+//          System.out.println(name + " " + rx*1000 + " " + xdatalist.get(i));
+//			System.out.println(name + " " + ry*1000 + " " + ydatalist.get(i));
         }
         error = Math.sqrt(error);
-        return error;
+		return error;
     }
     
     void updateProbe(ArrayList<Variable> vars, Trial trial){
@@ -1086,6 +1091,7 @@ public class BeamSizeFace extends JPanel{
             while(itr.hasNext()){
                 TargetObjective objective = (TargetObjective)itr.next();
                 error = calcError(_variables, trial);
+				//System.out.println( "Error: " + error );
                 trial.setScore(objective, error);
             }
             
