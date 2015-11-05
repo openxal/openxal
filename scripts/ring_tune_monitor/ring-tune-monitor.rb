@@ -249,32 +249,25 @@ class WaveformMerger
 	# All BPM waveforms should share a common frequency and damping rate.
 	# The set of all waveforms with the same frequency and damping rate and centered at zero form a 2D (amplitude and phase) plane
 	# passing through zero in the space of all possible waveforms (dimension of the waveform length).
-	# We want to sum the waveforms on the surface of constant frequency avoiding which maximizes the signal to noise ratio.
-	# We only care about frequency here and not phase, amplitude or damping (offset has mostly been removed by centering).
+	# Sum the two input vectors such that the two inputs vectors are rotated towards each other depending on their relative lengths.
+	# The resulting vector is the weighted sum of the two input vectors: sum = w1 * v1 + w2 * v2
+	# Add the two vectors such that the resulting length is the sum of the lengths of the two input vectors.
 	def merge_arrays( base_array, new_array )
 		merged_array = []
 		if base_array != nil
 			base_norm = norm base_array
 			new_norm = norm new_array
-			if new_norm > 0.0
-				b_dot_n = scalar_product( base_array, new_array )
-				if b_dot_n != 0
-					n2_minus_b2 = new_norm * new_norm - base_norm * base_norm
-					coef = b_dot_n > 0 ? 1 : -1
-					ws = ( n2_minus_b2 + coef * Math.sqrt( n2_minus_b2 * n2_minus_b2 + 4 * b_dot_n * b_dot_n ) ) / ( 2 * b_dot_n )
-					w1 = Math.sqrt( 1 / ( 1 + ws * ws ) )
-					w2 = ws * w1
-					base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] ) }
-				else
-					return base_array
-				end
-			else
-				return base_array
-			end
+			b_dot_n = scalar_product( base_array, new_array )
+			b_2 = base_norm * base_norm
+			n_2 = new_norm * new_norm
+			coef = b_dot_n > 0 ? 1 : -1		# choose coefficient that is constructive
+			w1 = Math.sqrt( ( b_2 + n_2 + 2 * base_norm * new_norm ) / ( b_2 + n_2 + 2 * coef * b_dot_n ) )
+			w2 = coef * w1
+			base_array.each_with_index { |base_item, index| merged_array.push( w1 * base_item + w2 * new_array[index] ) }
 		end
 		return merged_array
 	end
-	
+
 
 	# compute the norm of the positions vector: sqrt( sum(p_i * p_i) )
 	def norm positions
