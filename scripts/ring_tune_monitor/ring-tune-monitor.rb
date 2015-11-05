@@ -257,17 +257,13 @@ class WaveformMerger
 		if base_array != nil
 			base_norm = norm base_array
 			new_norm = norm new_array
-			if new_norm > 0.0
-				b_dot_n = scalar_product( base_array, new_array )
-				b_2 = base_norm * base_norm
-				n_2 = new_norm * new_norm
-				coef = b_dot_n > 0 ? 1 : -1		# choose coefficient that is constructive
-				w1 = Math.sqrt( ( b_2 + n_2 + 2 * base_norm * new_norm ) / ( b_2 + n_2 + 2 * coef * b_dot_n ) )
-				w2 = coef * w1
-				base_array.each_with_index { |base_item, index| merged_array.push( w1 * base_item + w2 * new_array[index] ) }
-			else
-				return base_array
-			end
+			b_dot_n = scalar_product( base_array, new_array )
+			b_2 = base_norm * base_norm
+			n_2 = new_norm * new_norm
+			coef = b_dot_n > 0 ? 1 : -1		# choose coefficient that is constructive
+			w1 = Math.sqrt( ( b_2 + n_2 + 2 * base_norm * new_norm ) / ( b_2 + n_2 + 2 * coef * b_dot_n ) )
+			w2 = coef * w1
+			base_array.each_with_index { |base_item, index| merged_array.push( w1 * base_item + w2 * new_array[index] ) }
 		end
 		return merged_array
 	end
