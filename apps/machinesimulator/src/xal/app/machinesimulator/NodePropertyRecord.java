@@ -4,32 +4,24 @@ import xal.ca.ConnectionException;
 import xal.ca.GetException;
 import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
-import xal.smf.impl.Electromagnet;
-import xal.smf.impl.RfCavity;
-import xal.smf.proxy.RfCavityPropertyAccessor;
 /**
  * 
  * @author luxiaohan
  *get and set values of the specified property in an accelerator node
  */
-public class AcceleratorNodeRecord {
+public class NodePropertyRecord {
 	/**the accelerator node*/
 	final private AcceleratorNode NODE;
 	/**the specified scenario*/
 	final private Scenario SCENARIO;
+	/**the name of specified property*/
 	final private String PROPERTY_NAME;
-	/**magnet*/
-	private Electromagnet magnet;
-	/**rf cavity*/
-	private RfCavity 	rfCavity;
 	
 	/**Constructor*/
-	public AcceleratorNodeRecord( final AcceleratorNode node, final Scenario scenario, final String propertyName) {
+	public NodePropertyRecord( final AcceleratorNode node, final Scenario scenario, final String propertyName) {
 		NODE = node;
 		SCENARIO = scenario;
 		PROPERTY_NAME = propertyName;
-		if( node instanceof Electromagnet) magnet = (Electromagnet)node;
-		if( node instanceof RfCavity ) rfCavity = (RfCavity)node;
 	}
 	
 	/**get the accelerator node*/
@@ -50,12 +42,8 @@ public class AcceleratorNodeRecord {
 	/**get the live value if use live model and there is one*/
 	public double getLiveValue() throws ConnectionException, GetException{
 		double liveValue = 0;
-		if( SCENARIO.getSynchronizationMode().equals(Scenario.SYNC_MODE_LIVE) ){
-			if( NODE instanceof Electromagnet ) liveValue = magnet.getField();
-			if( NODE instanceof RfCavity ) {
-				if( PROPERTY_NAME.equals(RfCavityPropertyAccessor.PROPERTY_AMPLITUDE ) ) liveValue = rfCavity.getCavAmpAvg();
-				if( PROPERTY_NAME.equals(RfCavityPropertyAccessor.PROPERTY_PHASE ) ) liveValue = rfCavity.getCavPhaseAvg();
-			}
+		if( NODE.getLivePropertyChannels(PROPERTY_NAME).length != 0 && NODE.getLivePropertyChannels(PROPERTY_NAME)[0].connectAndWait(0.01)) {		
+		liveValue = NODE.getLivePropertyValue(PROPERTY_NAME, NODE.getLivePropertyChannels(PROPERTY_NAME)[0].getArrDbl());
 		}
 		return liveValue;
 	}

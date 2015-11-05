@@ -17,6 +17,8 @@ import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 import xal.tools.data.KeyValueAdaptor;
+import xal.tools.dispatch.DispatchQueue;
+import xal.tools.dispatch.DispatchTimer;
 
 /**
  * @author luxiaohan
@@ -26,7 +28,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /** simulated states table model */
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /**accelerator node table model*/
-     final private KeyValueFilteredTableModel<AcceleratorNodeRecord> SEQUENCE_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<NodePropertyRecord> SEQUENCE_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -37,6 +39,10 @@ public class MachineSimulatorController implements MachineModelListener {
      final private List<ScalarParameter> SCALAR_PARAMETERS;
      /**the vector parameters*/
      final private List<VectorParameter> VECTOR_PARAMETERS;
+     /**timer to sync the live value*/
+     final private DispatchTimer VALUE_SYNC_TIME;
+     /**sync period in milliseconds*/
+     private long _syncPeriod;
      /** the plotter*/
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /** the position list of elements*/
@@ -47,9 +53,13 @@ public class MachineSimulatorController implements MachineModelListener {
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
-		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<AcceleratorNodeRecord>();
+		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
+		
+		VALUE_SYNC_TIME = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue(""), getLiveValueSynchronizer() );
+		// set the default sync period to 1 second
+		_syncPeriod = 1000;
 		
       // initialize the model here
       MODEL = document.getModel();
@@ -269,12 +279,21 @@ public class MachineSimulatorController implements MachineModelListener {
     		}
     	}   	
     }
+    /**get a runnalbe that syncs the values */
+    private Runnable getLiveValueSynchronizer(){
+    	return new Runnable() {
+			public void run() {
+				SEQUENCE_TABLE_MODEL.fireTableDataChanged();
+			}
+		};
+    }
 
 
     /**event indicates that the sequence has changed*/
     public void modelSequenceChanged(MachineModel model) {
     	if( model.getSequence() != null){
     		SEQUENCE_TABLE_MODEL.setRecords(model.getAcceleratorNodes().getAcceleratorNodeRecords());
+   		VALUE_SYNC_TIME.startNowWithInterval(_syncPeriod, 0);
     	}
     	
     }

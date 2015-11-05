@@ -67,8 +67,8 @@ public class MachineModel implements DataListener {
         return _sequence;
     }
     /**get all the nodes of the sequence with a specified scenario */
-    public AcceleratorNodes getAcceleratorNodes(){
-    	return new AcceleratorNodes(_sequence, SIMULATOR.getScenario());
+    public WhatIfConfiguration getAcceleratorNodes(){
+    	return new WhatIfConfiguration(_sequence, SIMULATOR.getScenario());
     }
     
     
