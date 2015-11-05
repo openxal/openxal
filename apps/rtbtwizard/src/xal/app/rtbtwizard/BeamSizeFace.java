@@ -4,67 +4,57 @@
  */
 package xal.app.rtbtwizard;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-
-import xal.ca.Channel;
-import xal.ca.ChannelFactory;
-import xal.ca.ConnectionException;
-import xal.ca.PutException;
-import xal.extension.solver.Evaluator;
-import xal.extension.solver.Objective;
-import xal.extension.solver.Problem;
-import xal.extension.solver.SolveStopperFactory;
-import xal.extension.solver.Solver;
-import xal.extension.solver.Stopper;
-import xal.extension.solver.Trial;
-import xal.extension.solver.Variable;
-import xal.extension.solver.algorithm.RandomShrinkSearch;
-//import xal.tools.formula.*;
-import xal.extension.solver.hint.InitialDelta;
-import xal.extension.widgets.apputils.SimpleProbeEditor;
-// TODO: CKA - Half the Imports are Unused
-import xal.extension.widgets.plot.BasicGraphData;
-import xal.extension.widgets.plot.FunctionGraphsJPanel;
-import xal.extension.widgets.plot.GridLimits;
-import xal.extension.widgets.swing.DecimalField;
-import xal.model.IAlgorithm;
-import xal.model.probe.EnvelopeProbe;
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.Trajectory;
-import xal.service.pvlogger.sim.PVLoggerDataSource;
-import xal.sim.scenario.AlgorithmFactory;
-import xal.sim.scenario.ProbeFactory;
-import xal.sim.scenario.Scenario;
-import xal.smf.Accelerator;
-import xal.smf.AcceleratorSeq;
+import xal.extension.widgets.swing.*;
 import xal.tools.apputils.EdgeLayout;
-import xal.tools.beam.CovarianceMatrix;
-import xal.tools.beam.PhaseMatrix;
+import xal.tools.messaging.*;
+import xal.ca.*;
+import xal.tools.data.*;
+
+import java.text.NumberFormat;
+import java.util.*;
+import java.io.*;
+
+import javax.swing.*;
+import javax.swing.event.*;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import xal.extension.application.smf.*;
+import xal.smf.data.*;
+import xal.smf.*;
+import xal.smf.impl.*;
+import xal.smf.proxy.ElectromagnetPropertyAccessor;
+import xal.model.*;
+import xal.model.alg.*;
+import xal.sim.scenario.*;
+import xal.model.probe.*;
+import xal.model.probe.traj.*;
+import xal.model.xml.*;
 //import xal.tools.optimizer.*;
 import xal.tools.beam.Twiss;
+import xal.extension.widgets.plot.*;
+
+import java.text.NumberFormat;
+
+import xal.extension.widgets.swing.DecimalField;
+import xal.tools.apputils.EdgeLayout;
+import xal.tools.data.*;
+import xal.tools.xml.XmlDataAdaptor;
+import xal.tools.beam.*;
 import xal.tools.beam.calc.CalculationsOnBeams;
-import xal.tools.data.DataTable;
-import xal.tools.data.GenericRecord;
+
+import java.text.DecimalFormat;
+
+import xal.extension.solver.*;
+//import xal.tools.formula.*;
+import xal.extension.solver.hint.*;
+import xal.extension.solver.algorithm.*;
+import xal.extension.solver.market.*;
+import xal.extension.solver.solutionjudge.*;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+// TODO: CKA - Half the Imports are Unused
 
 /**
  * Performs matching to find steerer strengths for desired injection
@@ -561,12 +551,6 @@ public class BeamSizeFace extends JPanel{
         }
         
         Trajectory<EnvelopeProbeState> traj = probe.getTrajectory();
-        
-        // TODO - Remove debugging type outs
-//        for (EnvelopeProbeState state : traj) {
-//            System.out.println( state.toString() );
-//        }
-        
         double error = 0.0;
         int size = namelist.size();
         double rx=0;
@@ -581,31 +565,19 @@ public class BeamSizeFace extends JPanel{
             EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
             
             CovarianceMatrix covarianceMatrix = state.getCovarianceMatrix();
-            rx = covarianceMatrix.getSigmaX();
-            ry = covarianceMatrix.getSigmaY();
-            
             Twiss[] twiss = covarianceMatrix.computeTwiss();
-//            rx =  twiss[0].getEnvelopeRadius();
-//            ry =  twiss[1].getEnvelopeRadius();
-            
-            // TODO remove debugging crash
-            if (rx == Double.NaN)
-                System.exit(ERROR);
-            
-			if ( Double.isNaN(rx) || Double.isNaN(ry) )  {
-			    System.err.println("NaN for beam envelope radius at element " + name);
-			    
-			    return Double.POSITIVE_INFINITY;
-			}
-			error += Math.pow( (rx*1000. - ((Double)xdatalist.get(i)).doubleValue()), 2.);
+            rx =  twiss[0].getEnvelopeRadius();
+            ry =  twiss[1].getEnvelopeRadius();
+            if ( Double.isNaN(rx) || Double.isNaN(ry) )  {
+                System.err.println("NaN for beam envelope radius at element " + name);
+                
+                return Double.POSITIVE_INFINITY;
+            }
+//			System.out.println( "Envelope Radius[" + name + "] = (" + twiss[0].getEnvelopeRadius() + ", " + twiss[1].getEnvelopeRadius() + ")" );
+//			System.out.println( "Beta[" + name + "] = (" + twiss[0].getBeta() + ", " + twiss[1].getBeta() + ")" );
+            error += Math.pow( (rx*1000. - ((Double)xdatalist.get(i)).doubleValue()), 2.);
             error += Math.pow( (ry*1000. - ((Double)ydatalist.get(i)).doubleValue()), 2.);
-            
-            // TODO remove debugging type outs
-//            System.out.println( "Envelope Radius via Sigma [" + name + "] = (" + rx + ", " + ry + ")");
-//            System.out.println( "Envelope Radius via Twiss [" + name + "] = (" + twiss[0].getEnvelopeRadius() + ", " + twiss[1].getEnvelopeRadius() + ")" );
-//            System.out.println( "Beta[" + name + "] = (" + twiss[0].getBeta() + ", " + twiss[1].getBeta() + ")" );
-
-//            System.out.println(name + " " + rx*1000 + " " + xdatalist.get(i));
+//          System.out.println(name + " " + rx*1000 + " " + xdatalist.get(i));
 //			System.out.println(name + " " + ry*1000 + " " + ydatalist.get(i));
         }
         error = Math.sqrt(error);
@@ -823,12 +795,8 @@ public class BeamSizeFace extends JPanel{
             CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
             newtwiss = covarianceMatrix.computeTwiss();
             
-            rx = 1000.0 * covarianceMatrix.getSigmaX();
-            ry = 1000.0 * covarianceMatrix.getSigmaY();
-            
-//            rx = 1000*newtwiss[0].getEnvelopeRadius();    // CKA 11/5/2015
-//            ry = 1000*newtwiss[1].getEnvelopeRadius();
-            
+			rx = 1000*newtwiss[0].getEnvelopeRadius();
+			ry = 1000*newtwiss[1].getEnvelopeRadius();
 			tabledata[i][1] = new Double(decfor.format(rx));
 			tabledata[i][2] = new Double(decfor.format(ry));
 			System.out.println("Horizontal Alpha and Beta for " + fullnamelist.get(i) + " is " + newtwiss[0].getAlpha() + " and " + newtwiss[0].getBeta());
@@ -840,13 +808,8 @@ public class BeamSizeFace extends JPanel{
         
         CovarianceMatrix covarianceMatrix = newstate.getCovarianceMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
-
-        rx = 1000.0 * covarianceMatrix.getSigmaX();
-        ry = 1000.0 * covarianceMatrix.getSigmaY();
-        
-//		rx = 1000*newtwiss[0].getEnvelopeRadius();  // CKA 11/5/2015
-//		ry = 1000*newtwiss[1].getEnvelopeRadius();
-        
+		rx = 1000*newtwiss[0].getEnvelopeRadius();
+		ry = 1000*newtwiss[1].getEnvelopeRadius();
 		tabledata[5][1] = new Double(decfor.format(rx));
 		tabledata[5][2] = new Double(decfor.format(ry));
 		newstate = traj.statesForElement("RTBT:Tgt").get(0);
@@ -854,12 +817,8 @@ public class BeamSizeFace extends JPanel{
         covarianceMatrix = newstate.getCovarianceMatrix();
         newtwiss = covarianceMatrix.computeTwiss();
         
-        rx = 1000.0 * covarianceMatrix.getSigmaX();
-        ry = 1000.0 * covarianceMatrix.getSigmaY();
-        
-//		rx = 1000*newtwiss[0].getEnvelopeRadius();
-//		ry = 1000*newtwiss[1].getEnvelopeRadius();
-		
+		rx = 1000*newtwiss[0].getEnvelopeRadius();
+		ry = 1000*newtwiss[1].getEnvelopeRadius();
 		tabledata[6][1] = new Double(decfor.format(rx));
 		tabledata[6][2] = new Double(decfor.format(ry));
 		double xtargetwin = Math.sqrt(rx*rx + 11.0*11.0);
