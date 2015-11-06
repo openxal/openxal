@@ -53,13 +53,13 @@ public class MachineModel implements DataListener {
     }
     
 	/** Set the synchronization mode */   
-    public void setSynchronizationMode(final String newMode){
-    	SIMULATOR.setSynchronizationMode(newMode);
+    public void setSynchronizationMode( final String newMode ){
+    	SIMULATOR.setSynchronizationMode( newMode );
     }
     
     /** Set whether to use field readback when modeling live machine */   
-    public void setUseFieldReadback( final boolean useFieldReadback){
-    	SIMULATOR.setUseFieldReadback(useFieldReadback);
+    public void setUseFieldReadback(  final boolean useFieldReadback ){
+    	SIMULATOR.setUseFieldReadback( useFieldReadback );
     }
 
     /** get the accelerator sequence */
@@ -67,8 +67,8 @@ public class MachineModel implements DataListener {
         return _sequence;
     }
     /**get all the nodes of the sequence with a specified scenario */
-    public WhatIfConfiguration getAcceleratorNodes(){
-    	return new WhatIfConfiguration(_sequence, SIMULATOR.getScenario());
+    public WhatIfConfiguration getWhatIfConfiguration(){
+    	return new WhatIfConfiguration( _sequence, SIMULATOR.getScenario() );
     }
     
     

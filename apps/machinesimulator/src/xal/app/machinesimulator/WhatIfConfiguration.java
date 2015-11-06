@@ -60,7 +60,7 @@ public class WhatIfConfiguration {
 	 * get a list of AcceleratorNodeRecord
 	 * @return a list of AcceleratorNodeRecord
 	 */
-	public List<NodePropertyRecord> getAcceleratorNodeRecords(){
+	public List<NodePropertyRecord> getNodePropertyRecords(){
 		return RECORDS;
 	}
 

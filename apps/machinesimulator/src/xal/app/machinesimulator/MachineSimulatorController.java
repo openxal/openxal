@@ -292,7 +292,7 @@ public class MachineSimulatorController implements MachineModelListener {
     /**event indicates that the sequence has changed*/
     public void modelSequenceChanged(MachineModel model ) {
     	if( model.getSequence() != null){
-    		SEQUENCE_TABLE_MODEL.setRecords(model.getAcceleratorNodes().getAcceleratorNodeRecords() );
+    		SEQUENCE_TABLE_MODEL.setRecords(model.getWhatIfConfiguration().getNodePropertyRecords() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
@@ -302,7 +302,7 @@ public class MachineSimulatorController implements MachineModelListener {
 	/**event indicates that the scenario has changed*/
 	public void modelScenarioChanged(MachineModel model) {
 		if( model.getSequence() != null ){
-			SEQUENCE_TABLE_MODEL.setRecords( model.getAcceleratorNodes().getAcceleratorNodeRecords() );
+			SEQUENCE_TABLE_MODEL.setRecords( model.getWhatIfConfiguration().getNodePropertyRecords() );
 			VALUE_SYNC_TIME.resume();
 		}
 		
