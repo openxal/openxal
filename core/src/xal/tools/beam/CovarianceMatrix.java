@@ -553,7 +553,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;x^2&gt; - &lt;x&gt;^2 ) 
      */
     public double   getSigmaX() {
-        return Math.sqrt( computeCentralCovXX() );
+        double  dblCovX = this.computeCentralCovXX();
+        double  dblSigX = Math.sqrt(dblCovX);
+        
+        return dblSigX;
     }
 
     /**
@@ -562,7 +565,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;y^2&gt; - &lt;y&gt;^2 ) 
      */
     public double   getSigmaY() {
-        return Math.sqrt( computeCentralCovYY() );
+        double  dblCovY = this.computeCentralCovYY();
+        double  dblSigY = Math.sqrt(dblCovY);
+        
+        return dblSigY;
     }
 
     /**
@@ -571,7 +577,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;z^2&gt; - &lt;z&gt;^2 ) 
      */
     public double   getSigmaZ() {
-        return Math.sqrt( computeCentralCovZZ() );
+        double  dblCovZ = this.computeCentralCovZZ();
+        double  dblSigZ = Math.sqrt(dblCovZ);
+        
+        return dblSigZ;
     }
 
 
