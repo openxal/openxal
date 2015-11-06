@@ -290,13 +290,23 @@ public class MachineSimulatorController implements MachineModelListener {
 
 
     /**event indicates that the sequence has changed*/
-    public void modelSequenceChanged(MachineModel model) {
+    public void modelSequenceChanged(MachineModel model ) {
     	if( model.getSequence() != null){
-    		SEQUENCE_TABLE_MODEL.setRecords(model.getAcceleratorNodes().getAcceleratorNodeRecords());
-   		VALUE_SYNC_TIME.startNowWithInterval(_syncPeriod, 0);
+    		SEQUENCE_TABLE_MODEL.setRecords(model.getAcceleratorNodes().getAcceleratorNodeRecords() );
+   		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
     }
+
+
+	/**event indicates that the scenario has changed*/
+	public void modelScenarioChanged(MachineModel model) {
+		if( model.getSequence() != null ){
+			SEQUENCE_TABLE_MODEL.setRecords( model.getAcceleratorNodes().getAcceleratorNodeRecords() );
+			VALUE_SYNC_TIME.resume();
+		}
+		
+	}
 }
 
 

@@ -95,6 +95,10 @@ public class MachineModel implements DataListener {
     public String dataLabel() {
         return DATA_LABEL;
     }
+    /**post the event that the scenario has changed*/
+    public void modelScenarioChanged(){
+    	EVENT_PROXY.modelScenarioChanged(this);
+    }
     
     
     /** Instructs the receiver to update its data based on the given adaptor. */

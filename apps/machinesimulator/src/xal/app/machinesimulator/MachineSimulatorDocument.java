@@ -102,6 +102,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+				MODEL.modelScenarioChanged();
 			}
 		});
 		commander.registerModel( "use-design",USE_DESIGN );
@@ -110,6 +111,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_RF_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
+				MODEL.modelScenarioChanged();
 			}
 		});
 		commander.registerModel( "use-rf_design",USE_RF_DESIGN );
@@ -118,6 +120,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_CHANNEL.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
+				MODEL.modelScenarioChanged();
 			}
 		});
 		commander.registerModel( "use-channel",USE_CHANNEL );
@@ -127,6 +130,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_SET.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( false );
+				MODEL.modelScenarioChanged();
 			}
 		});
 		commander.registerModel( "fieldSet",USE_SET );
@@ -135,6 +139,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_READ_BACK.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( true );
+				MODEL.modelScenarioChanged();
 			}
 		});
 		commander.registerModel( "fieldReadback",USE_READ_BACK );
