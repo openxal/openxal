@@ -560,7 +560,7 @@ public class BeamSizeFace extends JPanel{
         //System.out.println("first is " + namelist.get(0));
         
         for(int i =0; i<size; i++){
-            //String name = namelist.get(i);
+            String name = namelist.get(i);
             //EnvelopeProbeState state = (EnvelopeProbeState)traj.statesForElement("RTBT_Diag:WS21")[0];
             EnvelopeProbeState state = traj.statesForElement(namelist.get(i)).get(0);
             
@@ -568,7 +568,11 @@ public class BeamSizeFace extends JPanel{
             Twiss[] twiss = covarianceMatrix.computeTwiss();
             rx =  twiss[0].getEnvelopeRadius();
             ry =  twiss[1].getEnvelopeRadius();
-			if ( Double.isNaN(rx) || Double.isNaN(ry) )  return Double.POSITIVE_INFINITY;
+            if ( Double.isNaN(rx) || Double.isNaN(ry) )  {
+                System.err.println("NaN for beam envelope radius at element " + name);
+                
+                return Double.POSITIVE_INFINITY;
+            }
 //			System.out.println( "Envelope Radius[" + name + "] = (" + twiss[0].getEnvelopeRadius() + ", " + twiss[1].getEnvelopeRadius() + ")" );
 //			System.out.println( "Beta[" + name + "] = (" + twiss[0].getBeta() + ", " + twiss[1].getBeta() + ")" );
             error += Math.pow( (rx*1000. - ((Double)xdatalist.get(i)).doubleValue()), 2.);
