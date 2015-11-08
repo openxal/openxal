@@ -47,6 +47,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /** the position list of elements*/
      private List<Double> _positions;
+     /**get a list of the test values*/
+     private List<Double> testValueList;
 
 
 	/**constructor */

@@ -1,6 +1,9 @@
 package xal.app.machinesimulator;
 
-import xal.sim.scenario.Scenario;
+import java.util.ArrayList;
+import java.util.List;
+
+import xal.ca.Channel;
 import xal.smf.AcceleratorNode;
 /**
  * 
@@ -10,20 +13,28 @@ import xal.smf.AcceleratorNode;
 public class NodePropertyRecord {
 	/**the accelerator node*/
 	final private AcceleratorNode NODE;
-	/**the specified scenario*/
-	final private Scenario SCENARIO;
 	/**the name of specified property*/
 	final private String PROPERTY_NAME;
+	/**the channel array*/
+	final private Channel[] CHANNELS;
 	/** channel monitor to monitor the value of the channel */
-	private ChannelMonitor channelMonitor;
+	private List<ChannelMonitor> channelMonitorList;
+	/***/
+	private Double testValue = null;
 	
 	/**Constructor*/
-	public NodePropertyRecord( final AcceleratorNode node, final Scenario scenario, final String propertyName ) {
+	public NodePropertyRecord( final AcceleratorNode node, final String propertyName ) {
 		NODE = node;
-		SCENARIO = scenario;
 		PROPERTY_NAME = propertyName;
-		if( NODE.getLivePropertyChannels( PROPERTY_NAME ).length != 0 ){
-			channelMonitor = new ChannelMonitor( NODE.getLivePropertyChannels( PROPERTY_NAME )[0] );
+		CHANNELS = NODE.getLivePropertyChannels( PROPERTY_NAME );
+		channelMonitorList = new ArrayList<ChannelMonitor>();
+		setupMonitors(CHANNELS);
+	}
+	
+	/**setup monitors*/
+	private void setupMonitors( final Channel[] channels ){
+		for( Channel channel:channels){
+			channelMonitorList.add( new ChannelMonitor( channel ) );
 		}
 	}
 	
@@ -45,25 +56,20 @@ public class NodePropertyRecord {
 	/**get the live value if use live model and there is one*/
 	public double getLiveValue() {
 		double liveValue = 0;
-		if( NODE.getLivePropertyChannels( PROPERTY_NAME).length != 0 ) {
-		liveValue = NODE.getLivePropertyValue( PROPERTY_NAME, channelMonitor.getValueList() ) ;
+		for( ChannelMonitor channelMonitor:channelMonitorList ){
+			liveValue += NODE.getLivePropertyValue(PROPERTY_NAME, channelMonitor.getValueList() );
 		}
 		return liveValue;
 	}
 	
 	/**get the test value which sets by ourself*/
-	public double getTestValue(){
-		double testValue;
-		if(SCENARIO.getModelInput(NODE, PROPERTY_NAME) == null) {
-			testValue = getDesignValue();
-		}
-		else testValue = SCENARIO.getModelInput( NODE, PROPERTY_NAME ).getDoubleValue();
+	public Double getTestValue(){
 		return testValue;
 	}
 	
 	/**set the test value*/
-	public void setTestValue( final double vule ){
-		SCENARIO.setModelInput( NODE, PROPERTY_NAME, vule );
+	public void setTestValue( final Double vule ){
+		testValue = vule;
 	}	
 
 }

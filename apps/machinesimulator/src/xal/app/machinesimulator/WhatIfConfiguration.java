@@ -6,7 +6,6 @@ package xal.app.machinesimulator;
 import java.util.ArrayList;
 import java.util.List;
 
-import xal.sim.scenario.Scenario;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Electromagnet;
@@ -24,12 +23,9 @@ public class WhatIfConfiguration {
 	
 	/**the list of AcceleratorNodeRecord*/
 	final private List<NodePropertyRecord> RECORDS;
-	/**the scenario to decide which value to use*/
-	final private Scenario SCENARIO;
 	
 	/**Constructor*/
-	public WhatIfConfiguration( final AcceleratorSeq sequence, final Scenario scenario ){
-		SCENARIO = scenario;
+	public WhatIfConfiguration( final AcceleratorSeq sequence ){
 		RECORDS = new ArrayList<NodePropertyRecord>();
 		configRecords( sequence );
 	}
@@ -39,15 +35,14 @@ public class WhatIfConfiguration {
 		for( AcceleratorNode node:sequence.getAllNodes() ){
 			if ( node.getStatus() ){
 				if( node instanceof PermanentMagnet ){
-					RECORDS.add( new NodePropertyRecord(node, SCENARIO, PermanentMagnetPropertyAccessor.PROPERTY_FIELD ) );
+					RECORDS.add( new NodePropertyRecord(node, PermanentMagnetPropertyAccessor.PROPERTY_FIELD ) );
 				}
-				if( node instanceof Electromagnet ){
-					RECORDS.add( new NodePropertyRecord(node, SCENARIO, ElectromagnetPropertyAccessor.PROPERTY_FIELD ) );
+				else if( node instanceof Electromagnet ){
+					RECORDS.add( new NodePropertyRecord(node, ElectromagnetPropertyAccessor.PROPERTY_FIELD ) );
 				}
-				
-				if( node instanceof RfCavity ){
-					RECORDS.add( new NodePropertyRecord(node, SCENARIO, RfCavityPropertyAccessor.PROPERTY_AMPLITUDE ) );
-					RECORDS.add( new NodePropertyRecord(node, SCENARIO, RfCavityPropertyAccessor.PROPERTY_PHASE ) );
+				else if( node instanceof RfCavity ){
+					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_AMPLITUDE ) );
+					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_PHASE ) );
 				}
 			}
 
