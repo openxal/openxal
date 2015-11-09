@@ -8,7 +8,6 @@ package xal.tools.beam.em;
 
 import xal.tools.math.Complex;
 import xal.tools.math.fnc.IRealFunction;
-import xal.tools.math.fnc.ISmoothRealFunction;
 
 /**
  * <p>
@@ -1053,6 +1052,8 @@ public class AxialFieldSpectrum {
      * @since  Feb 16, 2015   by Christopher K. Allen
      * @version July 29, 2015: Modified to assume 
      *          <code>fitTTFPrime</code> = <i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
+     * @version Nov 9, 2015: Modified to assume 
+     *          <code>fitTTFPrime</code> = <b>-</b><i>dT</i><sub>0</sub>(&beta;)/<i>dk</i>
      */
     private double  dkTzfromDkTz0(double k) {
 //        double k   = this.waveNumber(beta);
@@ -1062,12 +1063,12 @@ public class AxialFieldSpectrum {
 
         double beta = this.computeVelocity(k);
 
-        double dTz0 = this.fncDTz0.evaluateAt(beta);
-//        double dTz0 = ((ISmoothRealFunction)(this.fncTz0)).derivativeAt(beta);
-        
+        double dTz0 = this.fncDTz0.evaluateAt(beta); 
         double Tz0  = this.fncTz0.evaluateAt(beta);
+        
 //        double dT   = dTz0*cos - Tz0*dz*sin;          // TODO must decide which is right?
-        double dT   = (-beta/k)*dTz0*cos - Tz0*dz*sin;
+        double dT   = (-1.0/DBL_2PI)*dTz0*cos - Tz0*dz*sin;  // the magic number seems to work??
+//        double dT   = (-beta/k)*dTz0*cos - Tz0*dz*sin;
         
         return dT;
     }
@@ -1158,7 +1159,8 @@ public class AxialFieldSpectrum {
         double dTz0 = this.fncDTz0.evaluateAt(beta);
         double Tz0  = this.fncTz0.evaluateAt(beta);
 //        double dS   = dTz0*sin + Tz0*dz*cos;          // TODO need to figure out which is right?
-        double dS   = (-beta/k)*dTz0*sin + Tz0*dz*cos;
+      double dS   = (-1.0/DBL_2PI)*dTz0*sin + Tz0*dz*cos; // the magic factor gives results close to what I know is true
+//        double dS   = (-beta/k)*dTz0*sin + Tz0*dz*cos;
         
         return dS;
     }
@@ -1252,11 +1254,11 @@ public class AxialFieldSpectrum {
         double sin = Math.sin(k*dz);
         
         double beta = this.computeVelocity(k);
-        double Sq0p = this.fncDSq0.evaluateAt(beta);
+        double dSq0 = this.fncDSq0.evaluateAt(beta);
         double Sq0  = this.fncSq0.evaluateAt(beta);
-        double Tqp  = -Sq0p*sin - Sq0*dz*cos;
+        double dTq  = -(-1.0/DBL_2PI)*dSq0*sin - Sq0*dz*cos; // The magic number works for T'(b)
         
-        return Tqp;
+        return dTq;
     }
     
     /**
@@ -1343,7 +1345,7 @@ public class AxialFieldSpectrum {
         double beta = this.computeVelocity(k);
         double dSq0 = this.fncDSq0.evaluateAt(beta);
         double Sq0  = this.fncSq0.evaluateAt(beta);
-        double dSq  = dSq0*cos - Sq0*dz*sin;
+        double dSq  = (-1.0/DBL_2PI)*dSq0*cos - Sq0*dz*sin; // magic number works for T'(b)
         
         return dSq;
     }
