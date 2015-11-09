@@ -8,7 +8,10 @@
 
 package xal.app.machinesimulator;
 
+import java.util.List;
+
 import xal.model.ModelException;
+import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
@@ -71,6 +74,10 @@ public class MachineModel implements DataListener {
     	return new WhatIfConfiguration( _sequence );
     }
     
+    /**set the specified values for specified property of nodes*/
+    public void setModelInputs( final List<ModelInput> allModelInputs, final List<ModelInput> validModelInputs ){
+    	SIMULATOR.setModelInputs(  allModelInputs, validModelInputs );
+    }
     
     /** Get the most recent simulation */
     public MachineSimulation getSimulation() {

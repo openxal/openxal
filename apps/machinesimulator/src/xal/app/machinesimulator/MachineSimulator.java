@@ -98,10 +98,6 @@ public class MachineSimulator implements DataListener {
             _scenario = null;
         }
     }
-    /**get the scenario*/
-    public Scenario getScenario(){
-    	return _scenario;
-    }
     
 	/** Set the synchronization mode */    
     public void setSynchronizationMode(final String newMode){   	
@@ -246,6 +242,20 @@ public class MachineSimulator implements DataListener {
 		return getDefaultProbe( sequence ).getKineticEnergy();
 	}
 	
+    /**
+     * set the specified values for specified property of nodes
+     * @param allModelInputs  all the ModelInput variables to remove the potential model input
+     * @param validModelInputs the valid ModelInput variables which hold a non-null value
+     */
+    public void setModelInputs( final List<ModelInput> allModelInputs, final List<ModelInput> validModelInputs ){
+    	for( ModelInput input:allModelInputs ){
+    		_scenario.removeModelInput(input.getAcceleratorNode(), input.getProperty() );
+    	}
+
+    	for( ModelInput validInput:validModelInputs ){
+    		_scenario.setModelInput( validInput.getAcceleratorNode(), validInput.getProperty(), validInput.getDoubleValue() );
+    	}
+    }
 	
 	/**
 	 * Run the simulation.

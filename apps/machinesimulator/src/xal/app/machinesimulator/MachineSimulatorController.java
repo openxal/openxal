@@ -16,6 +16,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
+import xal.sim.scenario.ModelInput;
 import xal.tools.data.KeyValueAdaptor;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.dispatch.DispatchTimer;
@@ -41,14 +42,19 @@ public class MachineSimulatorController implements MachineModelListener {
      final private List<VectorParameter> VECTOR_PARAMETERS;
      /**timer to sync the live value*/
      final private DispatchTimer VALUE_SYNC_TIME;
+     /**all the modelinputs variables*/
+     final private List<ModelInput> ALL_MODEL_INPUT;
+     /**the modelinputs with non-null test value*/
+     final private List<ModelInput> VALID_MODEL_INPUT;
      /**sync period in milliseconds*/
      private long _syncPeriod;
      /** the plotter*/
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
+     /**the list of NodePropertyRecord*/
+     private List<NodePropertyRecord> nodePropertyRecords;
      /** the position list of elements*/
      private List<Double> _positions;
-     /**get a list of the test values*/
-     private List<Double> testValueList;
+
 
 
 	/**constructor */
@@ -62,6 +68,9 @@ public class MachineSimulatorController implements MachineModelListener {
 		VALUE_SYNC_TIME = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue(""), getLiveValueSynchronizer() );
 		// set the default sync period to 1 second
 		_syncPeriod = 1000;
+		
+		ALL_MODEL_INPUT = new ArrayList<ModelInput>();
+		VALID_MODEL_INPUT = new ArrayList<ModelInput>();
 		
       // initialize the model here
       MODEL = document.getModel();
@@ -245,6 +254,8 @@ public class MachineSimulatorController implements MachineModelListener {
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
+                	checkTestValues();
+                	MODEL.setModelInputs( ALL_MODEL_INPUT, VALID_MODEL_INPUT );
                 	final MachineSimulation simulation = MODEL.runSimulation();
                   STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
                   _positions=simulation.getAllPosition();
@@ -289,12 +300,26 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 		};
     }
+    
+    /**check if there are non-null test values and set to scenario before running simulator*/
+    private void checkTestValues(){
+    	ALL_MODEL_INPUT.clear();
+    	VALID_MODEL_INPUT.clear();
+    	for( NodePropertyRecord record:nodePropertyRecords ){
+    		ALL_MODEL_INPUT.add( record.getModelInput() );
+    		if( record.getTestValue() != null ){
+    			record.getModelInput().setDoubleValue( record.getTestValue() );
+    			VALID_MODEL_INPUT.add( record.getModelInput() );
+    		}
+    	}
+    }
 
 
     /**event indicates that the sequence has changed*/
-    public void modelSequenceChanged(MachineModel model ) {
-    	if( model.getSequence() != null){
-    		SEQUENCE_TABLE_MODEL.setRecords(model.getWhatIfConfiguration().getNodePropertyRecords() );
+    public void modelSequenceChanged( MachineModel model ) {
+    	if( model.getSequence() != null ){
+    		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
+    		SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
@@ -302,9 +327,10 @@ public class MachineSimulatorController implements MachineModelListener {
 
 
 	/**event indicates that the scenario has changed*/
-	public void modelScenarioChanged(MachineModel model) {
+	public void modelScenarioChanged( MachineModel model) {
 		if( model.getSequence() != null ){
-			SEQUENCE_TABLE_MODEL.setRecords( model.getWhatIfConfiguration().getNodePropertyRecords() );
+			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
+			SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
 			VALUE_SYNC_TIME.resume();
 		}
 		

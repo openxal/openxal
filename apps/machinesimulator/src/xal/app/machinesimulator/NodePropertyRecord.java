@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xal.ca.Channel;
+import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
 /**
  * 
@@ -17,9 +18,11 @@ public class NodePropertyRecord {
 	final private String PROPERTY_NAME;
 	/**the channel array*/
 	final private Channel[] CHANNELS;
+	/**modelinput variable to set test value to scenario*/
+	final private ModelInput MODEL_INPUT;
 	/** channel monitor to monitor the value of the channel */
 	private List<ChannelMonitor> channelMonitorList;
-	/***/
+	/**test value*/
 	private Double testValue = null;
 	
 	/**Constructor*/
@@ -29,6 +32,8 @@ public class NodePropertyRecord {
 		CHANNELS = NODE.getLivePropertyChannels( PROPERTY_NAME );
 		channelMonitorList = new ArrayList<ChannelMonitor>();
 		setupMonitors(CHANNELS);
+		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME);
+		
 	}
 	
 	/**setup monitors*/
@@ -47,6 +52,10 @@ public class NodePropertyRecord {
 	public String getPropertyName(){
 		return PROPERTY_NAME;
 	}
+	/**get the model input*/
+	public ModelInput getModelInput(){
+		return MODEL_INPUT;
+	}
 	
 	/** get the magnet */
 	public double getDesignValue(){
@@ -54,9 +63,10 @@ public class NodePropertyRecord {
 	}
 	
 	/**get the live value if use live model and there is one*/
-	public double getLiveValue() {
-		double liveValue = 0;
+	public Double getLiveValue() {
+		Double liveValue = null;
 		for( ChannelMonitor channelMonitor:channelMonitorList ){
+			if( liveValue == null ) liveValue = 0.0;
 			liveValue += NODE.getLivePropertyValue(PROPERTY_NAME, channelMonitor.getValueList() );
 		}
 		return liveValue;
@@ -68,8 +78,8 @@ public class NodePropertyRecord {
 	}
 	
 	/**set the test value*/
-	public void setTestValue( final Double vule ){
-		testValue = vule;
+	public void setTestValue( final Double value ){
+		testValue = value;
 	}	
 
 }
