@@ -250,20 +250,13 @@ class WaveformMerger
 	# The set of all waveforms with the same frequency and damping rate and centered at zero form a 2D (amplitude and phase) plane
 	# passing through zero in the space of all possible waveforms (dimension of the waveform length).
 	# Sum the two input vectors such that the two inputs vectors are rotated towards each other depending on their relative lengths.
-	# The resulting vector is the weighted sum of the two input vectors: sum = w1 * v1 + w2 * v2
-	# Add the two vectors such that the resulting length is the sum of the lengths of the two input vectors.
+	# The resulting vector is the weighted sum of the two input vectors that is most constructive.
 	def merge_arrays( base_array, new_array )
 		merged_array = []
 		if base_array != nil
-			base_norm = norm base_array
-			new_norm = norm new_array
 			b_dot_n = scalar_product( base_array, new_array )
-			b_2 = base_norm * base_norm
-			n_2 = new_norm * new_norm
-			coef = b_dot_n > 0 ? 1 : -1		# choose coefficient that is constructive
-			w1 = Math.sqrt( ( b_2 + n_2 + 2 * base_norm * new_norm ) / ( b_2 + n_2 + 2 * coef * b_dot_n ) )
-			w2 = coef * w1
-			base_array.each_with_index { |base_item, index| merged_array.push( w1 * base_item + w2 * new_array[index] ) }
+			coef = b_dot_n > 0 ? 1 : -1		# choose coefficient that produces most constructive vector sum
+			base_array.each_with_index { |base_item, index| merged_array.push( base_item + coef * new_array[index] ) }
 		end
 		return merged_array
 	end
