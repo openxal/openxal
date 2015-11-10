@@ -19,8 +19,8 @@ public class ChannelMonitor implements IEventSinkValue, ConnectionListener {
 	
 	/** The channel object */
 	private Channel channel;
-	/** the live value */
-	private volatile double value = Double.NaN;
+	/** the latest live value */
+	private volatile double latestValue = Double.NaN;
 	/** the monitor for this channel */
 	private Monitor monitor;
 	
@@ -32,14 +32,8 @@ public class ChannelMonitor implements IEventSinkValue, ConnectionListener {
 	}
 	
 	/** returns the latest value from this Channel */
-	protected double getValDbl() { 
-		return value;
-	}
-	
-	/**returns the latest value list*/
-	protected double[] getValueList() {
-		double[] values = {value}; 
-		return values;
+	protected double getLatestValue() { 
+		return latestValue;
 	}
 	
 	/** make a monitor connection to a channel */
@@ -58,12 +52,12 @@ public class ChannelMonitor implements IEventSinkValue, ConnectionListener {
 	
 	/** ConnectionListener interface */
 	public void connectionDropped(Channel aChannel) {
-		value = Double.NaN;
+		latestValue = Double.NaN;
 	}
 
 
 	/** interface method for IEventSinkVal */
 	public void eventValue(ChannelRecord newRecord, Channel chan) {
-		value = newRecord.doubleValue();
+		latestValue = newRecord.doubleValue();
 	}
 }

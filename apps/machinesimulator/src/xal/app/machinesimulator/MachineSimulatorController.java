@@ -307,7 +307,7 @@ public class MachineSimulatorController implements MachineModelListener {
     	VALID_MODEL_INPUT.clear();
     	for( NodePropertyRecord record:nodePropertyRecords ){
     		ALL_MODEL_INPUT.add( record.getModelInput() );
-    		if( record.getTestValue() != null ){
+    		if( !Double.isNaN( record.getTestValue() ) ){
     			record.getModelInput().setDoubleValue( record.getTestValue() );
     			VALID_MODEL_INPUT.add( record.getModelInput() );
     		}
