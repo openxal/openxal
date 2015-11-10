@@ -1027,7 +1027,7 @@ public class AcceleratingRfGap {
      *
      * @since  Oct 1, 2015,   Christopher K. Allen
      */
-    private double computeNormWaveNumber(double W, double Er) {
+    public double computeNormWaveNumber(double W, double Er) {
         double gamma = this.computeGammaFromEnergy(W, Er);
         double bg    = Math.sqrt(gamma*gamma - 1.0);
         double bg3   = bg * bg * bg;

@@ -1773,7 +1773,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 
         // Gap parameters
         double E0   = this.getE0();
-        double f    = this.getFrequency();
+//        double f    = this.getFrequency();
         double A    = this.compCavModeFieldCoeff();
         double L    = this.getGapLength();
         double qAEL = Q * A * E0 * L;
@@ -1877,6 +1877,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 
             // TODO Remove type out
             if (!this.bolMethodCalled) {
+                double  ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
                 double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(W0, Er);
                 double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
                 System.out.println("    k_mid=" + k_mid);
@@ -1885,7 +1886,12 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
                 System.out.println("    Exit values: " + vecEndVals + ", Post-gap gains: " + vecPostGapGains);
                 System.out.println("    Total gains: " + vecGapGains);
                 System.out.println("    dphi=" + (180.0/Math.PI)*dphi + ", dW=" + dW + ", W=" + Double.toString(Wi+dW));
+                
+                double  theEnergyGain = qAEL * this.spcGapFlds.Tz(k_mid) * Math.cos(phi0 + dphim);
+                double DELTA_PHASE_CORRECTION = Q * A * this.gapAcclMdl.computeNormWaveNumber(W0+dWm, Er) * this.spcGapFlds.dkTz(ki) * Math.sin(phi0 + dphim);
+                System.out.println("    theEnergyGain=" + theEnergyGain + ", DELTA_PHASE_CORRECTION=" + DELTA_PHASE_CORRECTION);
                 System.out.println();
+                
 
                 this.bolMethodCalled = true;
             }
