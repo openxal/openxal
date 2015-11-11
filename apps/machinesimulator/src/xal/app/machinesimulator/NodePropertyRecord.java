@@ -17,8 +17,6 @@ public class NodePropertyRecord {
 	final private ModelInput MODEL_INPUT;
 	/** channel monitor to monitor the value of the channel */
 	final private ChannelMonitor[] CHANNEL_MONITORS;
-	/**test value*/
-	private double testValue = Double.NaN;
 	
 	/**Constructor*/
 	public NodePropertyRecord( final AcceleratorNode node, final String propertyName ) {
@@ -26,7 +24,7 @@ public class NodePropertyRecord {
 		PROPERTY_NAME = propertyName;
 		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
 		CHANNEL_MONITORS = createMonitors(channels);		
-		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME);
+		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, Double.NaN );
 		
 	}
 	
@@ -70,12 +68,12 @@ public class NodePropertyRecord {
 	
 	/**get the test value */
 	public double getTestValue(){
-		return testValue;
+		return MODEL_INPUT.getDoubleValue();
 	}
 	
 	/**set the test value*/
 	public void setTestValue( final double value ){
-		testValue = value;
+		MODEL_INPUT.setDoubleValue(value);
 	}	
 
 }

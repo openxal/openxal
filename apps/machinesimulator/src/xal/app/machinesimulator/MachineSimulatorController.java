@@ -16,7 +16,6 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
-import xal.sim.scenario.ModelInput;
 import xal.tools.data.KeyValueAdaptor;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.dispatch.DispatchTimer;
@@ -43,9 +42,6 @@ public class MachineSimulatorController implements MachineModelListener {
      /**timer to sync the live value*/
      final private DispatchTimer VALUE_SYNC_TIME;
      /**all the modelinputs variables*/
-     final private List<ModelInput> ALL_MODEL_INPUT;
-     /**the modelinputs with non-null test value*/
-     final private List<ModelInput> VALID_MODEL_INPUT;
      /**sync period in milliseconds*/
      private long _syncPeriod;
      /** the plotter*/
@@ -65,12 +61,9 @@ public class MachineSimulatorController implements MachineModelListener {
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
 		
-		VALUE_SYNC_TIME = DispatchTimer.getCoalescingInstance( DispatchQueue.createSerialQueue(""), getLiveValueSynchronizer() );
+		VALUE_SYNC_TIME = DispatchTimer.getCoalescingInstance( DispatchQueue.getMainQueue(), getLiveValueSynchronizer() );
 		// set the default sync period to 1 second
 		_syncPeriod = 1000;
-		
-		ALL_MODEL_INPUT = new ArrayList<ModelInput>();
-		VALID_MODEL_INPUT = new ArrayList<ModelInput>();
 		
       // initialize the model here
       MODEL = document.getModel();
@@ -254,8 +247,6 @@ public class MachineSimulatorController implements MachineModelListener {
             public void actionPerformed( final ActionEvent event ) {
                 System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
-                	checkTestValues();
-                	MODEL.setModelInputs( ALL_MODEL_INPUT, VALID_MODEL_INPUT );
                 	final MachineSimulation simulation = MODEL.runSimulation();
                   STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
                   _positions=simulation.getAllPosition();
@@ -277,7 +268,6 @@ public class MachineSimulatorController implements MachineModelListener {
 
 
     }
-
 	
   /** get the selected parameters' data from simulation records
     * @param records the result of simulation
@@ -292,28 +282,11 @@ public class MachineSimulatorController implements MachineModelListener {
     		}
     	}   	
     }
+    
     /**get a runnalbe that syncs the values */
     private Runnable getLiveValueSynchronizer(){
-    	return new Runnable() {
-			public void run() {
-				SEQUENCE_TABLE_MODEL.fireTableDataChanged();
-			}
-		};
+    	return () -> SEQUENCE_TABLE_MODEL.fireTableRowsUpdated( 0, nodePropertyRecords.size()-1 ); 
     }
-    
-    /**check if there are non-null test values and set to scenario before running simulator*/
-    private void checkTestValues(){
-    	ALL_MODEL_INPUT.clear();
-    	VALID_MODEL_INPUT.clear();
-    	for( NodePropertyRecord record:nodePropertyRecords ){
-    		ALL_MODEL_INPUT.add( record.getModelInput() );
-    		if( !Double.isNaN( record.getTestValue() ) ){
-    			record.getModelInput().setDoubleValue( record.getTestValue() );
-    			VALID_MODEL_INPUT.add( record.getModelInput() );
-    		}
-    	}
-    }
-
 
     /**event indicates that the sequence has changed*/
     public void modelSequenceChanged( MachineModel model ) {

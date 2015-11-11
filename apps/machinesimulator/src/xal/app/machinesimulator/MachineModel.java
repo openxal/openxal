@@ -11,7 +11,6 @@ package xal.app.machinesimulator;
 import java.util.List;
 
 import xal.model.ModelException;
-import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
@@ -37,6 +36,9 @@ public class MachineModel implements DataListener {
     
     /** latest simulation */
     private MachineSimulation _simulation;
+    
+    /** whatIfconfiguration*/
+    private WhatIfConfiguration _whatIfConfiguration;
 
     
 	/** Constructor */
@@ -52,6 +54,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
+        setupWhatIfConfiguration( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
     
@@ -71,12 +74,16 @@ public class MachineModel implements DataListener {
     }
     /**get all the nodes of the sequence with a specified scenario */
     public WhatIfConfiguration getWhatIfConfiguration(){
-    	return new WhatIfConfiguration( _sequence );
+    	return _whatIfConfiguration;
+    }
+    /** setup WhatIfConfiguration*/
+    private void setupWhatIfConfiguration( final AcceleratorSeq sequence ){
+    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence );
     }
     
-    /**set the specified values for specified property of nodes*/
-    public void setModelInputs( final List<ModelInput> allModelInputs, final List<ModelInput> validModelInputs ){
-    	SIMULATOR.setModelInputs(  allModelInputs, validModelInputs );
+    /**configure the ModelInputs from a list of NodePropertyRecord*/
+    private void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
+    	SIMULATOR.configModelInputs( nodePropertyRecords );
     }
     
     /** Get the most recent simulation */
@@ -87,6 +94,7 @@ public class MachineModel implements DataListener {
 	
 	/** Run the simulation. */
 	public MachineSimulation runSimulation() {
+		configModelInputs( this.getWhatIfConfiguration().getNodePropertyRecords() );
 		_simulation = SIMULATOR.run();
 		return _simulation;
 	}
@@ -104,6 +112,7 @@ public class MachineModel implements DataListener {
     }
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
+    	setupWhatIfConfiguration( _sequence );
     	EVENT_PROXY.modelScenarioChanged(this);
     }
     

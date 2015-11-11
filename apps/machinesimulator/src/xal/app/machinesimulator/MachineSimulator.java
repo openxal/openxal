@@ -43,6 +43,8 @@ public class MachineSimulator implements DataListener {
 	
 	/** indicator of whether the simulation is running */
 	private volatile boolean _isRunning;
+	/**the list of ModelInput*/
+	private List<ModelInput> modelInputs;
 
     
 	/** Constructor */
@@ -50,6 +52,8 @@ public class MachineSimulator implements DataListener {
 		_isRunning = false;
         _useFieldReadback = false;  // by default use the field setting
 		_useRFGapPhaseSlipCalculation = true;	// by default perform the full RF Gap phase slip calculation
+		
+		modelInputs = new ArrayList<ModelInput>();
         
 		try {
             setSequenceProbe( sequence, entranceProbe );
@@ -242,19 +246,37 @@ public class MachineSimulator implements DataListener {
 		return getDefaultProbe( sequence ).getKineticEnergy();
 	}
 	
-    /**
-     * set the specified values for specified property of nodes
-     * @param allModelInputs  all the ModelInput variables to remove the potential model input
-     * @param validModelInputs the valid ModelInput variables which hold a non-null value
-     */
-    public void setModelInputs( final List<ModelInput> allModelInputs, final List<ModelInput> validModelInputs ){
-    	for( ModelInput input:allModelInputs ){
-    		_scenario.removeModelInput(input.getAcceleratorNode(), input.getProperty() );
+	/**
+	 * configure the modelInputs with the list of NodePropertyRecord which holds the ModelInput instance
+	 * @param nodePropertyRecords The list of NodePropertyRecord
+	 */
+    public void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
+    	List<ModelInput> newModelInputs = new ArrayList<ModelInput>();
+    	for( NodePropertyRecord record:nodePropertyRecords ){
+    		if( !Double.isNaN( record.getTestValue() ) ){
+    			newModelInputs.add( record.getModelInput() );
+    		}
     	}
+	
+    	changeModelInputs( modelInputs, newModelInputs );	
 
-    	for( ModelInput validInput:validModelInputs ){
-    		_scenario.setModelInput( validInput.getAcceleratorNode(), validInput.getProperty(), validInput.getDoubleValue() );
+    }
+    
+    /**
+     * change the modelInput
+     * @param oldInputs The old modelInputs which we set last time
+     * @param newInputs The new modelInputs which we are going to set
+     */
+    private void changeModelInputs( final List<ModelInput> oldInputs, final List<ModelInput> newInputs ){
+    	for( final ModelInput oldInput:oldInputs ){
+    		_scenario.removeModelInput( oldInput.getAcceleratorNode(), oldInput.getProperty() );
     	}
+    	
+    	for( final ModelInput newInput:newInputs ){
+    		_scenario.setModelInput(newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );
+    	}
+    	
+    	modelInputs = newInputs;
     }
 	
 	/**
