@@ -72,7 +72,7 @@ public class MachineModel implements DataListener {
     public AcceleratorSeq getSequence() {
         return _sequence;
     }
-    /**get all the nodes of the sequence with a specified scenario */
+    /**get the whatIfConfiguration */
     public WhatIfConfiguration getWhatIfConfiguration(){
     	return _whatIfConfiguration;
     }

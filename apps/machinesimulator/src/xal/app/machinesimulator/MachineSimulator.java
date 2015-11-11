@@ -43,6 +43,7 @@ public class MachineSimulator implements DataListener {
 	
 	/** indicator of whether the simulation is running */
 	private volatile boolean _isRunning;
+	
 	/**the list of ModelInput*/
 	private List<ModelInput> modelInputs;
 
