@@ -285,7 +285,7 @@ public class MachineSimulatorController implements MachineModelListener {
     
     /**get a runnalbe that syncs the values */
     private Runnable getLiveValueSynchronizer(){
-    	return () -> SEQUENCE_TABLE_MODEL.fireTableRowsUpdated( 0, nodePropertyRecords.size()-1 ); 
+    	return () -> SEQUENCE_TABLE_MODEL.fireTableRowsUpdated( 0, SEQUENCE_TABLE_MODEL.getRowCount() - 1  ); 
     }
 
     /**event indicates that the sequence has changed*/
