@@ -1875,11 +1875,15 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 //
 //            EnergyVector    vecGains = new EnergyVector(dphi, dW);
 
+            double  ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
+            double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(W0, Er);
+            double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
+
+            double  theEnergyGain = qAEL * this.spcGapFlds.Tz(k_mid) * Math.cos(phi0 + dphim);
+            double DELTA_PHASE_CORRECTION = Q * A * this.gapAcclMdl.computeNormWaveNumber(W0+dWm, Er) * this.spcGapFlds.dkTz(ki) * Math.sin(phi0 + dphim);
+
             // TODO Remove type out
             if (!this.bolMethodCalled) {
-                double  ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
-                double  b_mid = RelativisticParameterConverter.computeBetaFromEnergies(W0, Er);
-                double  k_mid = DBL_2PI /(b_mid*IElement.LightSpeed/this.getFrequency());
                 System.out.println("    k_mid=" + k_mid);
                 System.out.println("    Entrance values: " + vecInitVals + ", Pre-gap gains: " + vecPreGapGains);
                 System.out.println("    Mid gap values: " + vecMidVals);
@@ -1887,8 +1891,6 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
                 System.out.println("    Total gains: " + vecGapGains);
                 System.out.println("    dphi=" + (180.0/Math.PI)*dphi + ", dW=" + dW + ", W=" + Double.toString(Wi+dW));
                 
-                double  theEnergyGain = qAEL * this.spcGapFlds.Tz(k_mid) * Math.cos(phi0 + dphim);
-                double DELTA_PHASE_CORRECTION = Q * A * this.gapAcclMdl.computeNormWaveNumber(W0+dWm, Er) * this.spcGapFlds.dkTz(ki) * Math.sin(phi0 + dphim);
                 System.out.println("    theEnergyGain=" + theEnergyGain + ", DELTA_PHASE_CORRECTION=" + DELTA_PHASE_CORRECTION);
                 System.out.println();
                 
@@ -1896,8 +1898,10 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
                 this.bolMethodCalled = true;
             }
 
-
-            return vecGapGains;
+            EnergyVector    vecCrapGains = new EnergyVector(DELTA_PHASE_CORRECTION, theEnergyGain);
+            
+            return vecCrapGains;
+//            return vecGapGains;
 
         } catch (AcceleratingRfGap.NoConvergenceException e) {
             System.err.println("WARNING! SpectrumMapRfGap#compGapPhaseAndEnergyGain() did not converge for element " + this.getId());
