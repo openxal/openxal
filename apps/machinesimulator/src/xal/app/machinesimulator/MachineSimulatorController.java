@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.*;
 
+import xal.app.machinesimulator.MachineModel.SimulationHistoryRecord;
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
@@ -29,6 +30,10 @@ public class MachineSimulatorController implements MachineModelListener {
      final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
      /**accelerator node table model*/
      final private KeyValueFilteredTableModel<NodePropertyRecord> SEQUENCE_TABLE_MODEL;
+     /**history record table model*/
+     final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
+     /**history data table model*/
+     final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -50,6 +55,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<NodePropertyRecord> nodePropertyRecords;
      /** the position list of elements*/
      private List<Double> _positions;
+     /**the keyPaths for history data*/
+     private String[] historyDataKeyPaths = new String[2];
 
 
 
@@ -58,6 +65,9 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
 		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
+		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
+		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
+		
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
 		
@@ -86,56 +96,9 @@ public class MachineSimulatorController implements MachineModelListener {
 
     /** configure the main window */
     private void configureMainWindow( final WindowReference windowReference ) {
-
-        //set the column name of the states table
-        STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
-        for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
-            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol() );
-           }
-        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
-        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),vectorParameter.getSymbolForX());
-        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(),vectorParameter.getSymbolForY());
-        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(),vectorParameter.getSymbolForZ());
-           }
-        
-        //set the column name of the sequence table
-        SEQUENCE_TABLE_MODEL.setColumnName( "NodeId", "Node" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "DesignValue", "Design Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "LiveValue", "Live Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test Value");
-
-        //get components
-        final JTable statesTable = (JTable)windowReference.getView( "States Table" );
-        statesTable.setModel( STATES_TABLE_MODEL );
-        
-        final JTable sequenceTable = (JTable)windowReference.getView( "Sequence Table" );
-        sequenceTable.setModel( SEQUENCE_TABLE_MODEL );
-
+    	  //get the filter
         final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
-        STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
-        
-        //set the filter field for sequence table
-        SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "NodeId" );
-        
-        //configure the sequence table model
-		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "DesignValue", "LiveValue", "TestValue" );
-		  SEQUENCE_TABLE_MODEL.setKeyPaths( "NodeId", "PropertyName", "DesignValue", "LiveValue", "TestValue" );
-		  SEQUENCE_TABLE_MODEL.setColumnEditable( "TestValue", true );
-
-        final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
-        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
-
-		//synoptic display of nodes
-		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
-		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
-		synopticBox.removeAll();
-		synopticBox.add( xalSynopticPanel );
-		synopticBox.validate();
-
-        // handle the parameter selections of Table view
+        // handle the parameter selections
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
 
         final JCheckBox xSelectionCheckbox = (JCheckBox)windowReference.getView( "X Selection Checkbox" );
@@ -148,7 +111,85 @@ public class MachineSimulatorController implements MachineModelListener {
         final JCheckBox emittanceCheckbox = (JCheckBox)windowReference.getView( "Emittance Checkbox" );
         final JCheckBox beamSizeCheckbox = (JCheckBox)windowReference.getView( "Beam Size Checkbox" );
         final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
+        
+/***************configure the history record view*****************************************/
+        //configure history record table
+        final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
+        historyRecordTable.setModel(HISTORY_RECORD_TABLE_MODEL);
+        
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("SelectState", "select");
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("NodeId", "Sequence" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("DateTime", "Time" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("RecordName", "Recordname" );
+        
+        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "SelectState");
+        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "SelectState", "NodeId", "DateTime", "RecordName");
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "RecordName", true );
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "SelectState", true );
+        
+        //configure history data table
+        final JTable historyDataTable = (JTable)windowReference.getView( "History Data Table" );
+        historyDataTable.setModel( HISTORY_DATA_TABLE_MODEL );
+        
+        HISTORY_DATA_TABLE_MODEL.setColumnName( "AcceleratorNode.Id" , "Node" );
+        HISTORY_DATA_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
+        historyDataKeyPaths[0] = "AcceleratorNode.Id";
+        historyDataKeyPaths[1] =  "PropertyName";
+        
+        
+/******************configure the sequence table view*************************************/
+        
+        final JTable sequenceTable = (JTable)windowReference.getView( "Sequence Table" );
+        sequenceTable.setModel( SEQUENCE_TABLE_MODEL ); 
+        
+        //set the column name of the sequence table
+        SEQUENCE_TABLE_MODEL.setColumnName( "AcceleratorNode.Id", "Node" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "DesignValue", "Design Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "LiveValue", "Live Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test Value");
+        
+        //set the filter field for sequence table
+        SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
+        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "AcceleratorNode.Id" );
+         
+        //configure the sequence table model
+		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "DesignValue", "LiveValue", "TestValue" );
+		  SEQUENCE_TABLE_MODEL.setKeyPaths( "AcceleratorNode.Id", "PropertyName", "DesignValue", "LiveValue", "TestValue" );
+		  SEQUENCE_TABLE_MODEL.setColumnEditable( "TestValue", true );
 
+/**********************configure the states table view***********************************/
+	     //get components
+	     final JTable statesTable = (JTable)windowReference.getView( "States Table" );
+	     statesTable.setModel( STATES_TABLE_MODEL );
+	     
+        //set the column name of the states table
+        STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
+        for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
+            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol() );
+           }
+        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
+        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),vectorParameter.getSymbolForX());
+        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(),vectorParameter.getSymbolForY());
+        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(),vectorParameter.getSymbolForZ());
+           }
+        //set the filter field for states table
+        STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
+       
+/**************************configure the plot view**************************************/
+        final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
+        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
+
+		//synoptic display of nodes
+		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
+		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
+		synopticBox.removeAll();
+		synopticBox.add( xalSynopticPanel );
+		synopticBox.validate();
+
+/***************************Check boxes action**************************************/
+		
 		final ActionListener PARAMETER_HANDLER = new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				// array of standard parameters to display
@@ -203,6 +244,8 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 		};
 
+/*************************activate check boxes***************************************/
+		
         kineticEnergyCheckbox.addActionListener( PARAMETER_HANDLER );
 
         xSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
@@ -250,7 +293,10 @@ public class MachineSimulatorController implements MachineModelListener {
                 	final MachineSimulation simulation = MODEL.runSimulation();
                   STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
                   _positions=simulation.getAllPosition();
-
+                  
+                  HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
+                  historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords() );
+                 
                   PARAMETER_HANDLER.actionPerformed( null );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(), "You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
@@ -258,6 +304,7 @@ public class MachineSimulatorController implements MachineModelListener {
             }
         });
 
+      //configure the phase slip check box
 		final JCheckBox phaseSlipCheckbox = (JCheckBox)windowReference.getView( "Phase Slip Checkbox" );
 		phaseSlipCheckbox.setSelected( MODEL.getSimulator().getUseRFGapPhaseSlipCalculation() );
 		phaseSlipCheckbox.addActionListener( new ActionListener() {
@@ -265,7 +312,45 @@ public class MachineSimulatorController implements MachineModelListener {
 				MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( phaseSlipCheckbox.isSelected() );
 			}
 		});
+		
+		//configure the remove button of the history record view
+		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
+		removeButton.addActionListener( event -> {		
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+System.out.println(records.size());				
+			int recordNumber = records.size();
+			int removed = 0;
+			for( int index = 0; index < recordNumber; index++ ){			
+				if( records.get( index-removed ).getSelectState() ) {					
+					records.get( index-removed ).setSelectState( false );
+					records.remove( index-removed );
+					removed++;
+				}
+			}
 
+			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
+		});
+		
+		//configure the select all button
+		final JButton selectAllButton = (JButton)windowReference.getView( "Select All" );
+		selectAllButton.addActionListener( event -> {
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+			for ( int index = 0; index < records.size();index++){
+				records.get( index ).setSelectState( true );
+			}
+			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, records.size()-1 );;
+		});
+		
+		//configure the unselect all button
+		final JButton unselectAllButton = (JButton)windowReference.getView( "Unselect All" );
+		unselectAllButton.addActionListener( event -> {
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+			for ( int index = 0; index < records.size();index++){
+				records.get( index ).setSelectState( false );
+			}
+			
+			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
+		});
 
     }
 	
@@ -289,18 +374,25 @@ public class MachineSimulatorController implements MachineModelListener {
     }
 
     /**event indicates that the sequence has changed*/
-    public void modelSequenceChanged( MachineModel model ) {
+    public void modelSequenceChanged( final MachineModel model ) {
     	if( model.getSequence() != null ){
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
+    	//unselect all the history records when changing the sequence 
+		for ( int index = 0; index < model.getSimulationHistoryRecords().size();index++){
+			model.getSimulationHistoryRecords().get( index ).setSelectState( false );
+		}
+		
+		HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, model.getSimulationHistoryRecords().size()-1 );
+    	
     }
 
 
 	/**event indicates that the scenario has changed*/
-	public void modelScenarioChanged( MachineModel model) {
+	public void modelScenarioChanged( final MachineModel model) {
 		if( model.getSequence() != null ){
 			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
 			SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
@@ -308,6 +400,26 @@ public class MachineSimulatorController implements MachineModelListener {
 		}
 		
 	}
+
+	/**event indicates that the history record select state changed*/
+	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords ) {
+		int valueNumber = nodePropertyHistoryRecords.get(0).getValues().length;
+		String[] keyPathsForValues = new String[valueNumber];
+		String[] allKeyPaths = new String[historyDataKeyPaths.length+keyPathsForValues.length];
+		for( int index = 0; index<valueNumber;index++){
+			HISTORY_DATA_TABLE_MODEL.setColumnName( "Values."+index , "ValueRecord"+index );
+			keyPathsForValues[index] = "Values."+index;
+		}
+		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, keyPathsForValues);
+		System.arraycopy( historyDataKeyPaths, 0, allKeyPaths, 0, historyDataKeyPaths.length );
+		System.arraycopy( keyPathsForValues, 0, allKeyPaths, historyDataKeyPaths.length, keyPathsForValues.length );
+		
+		HISTORY_DATA_TABLE_MODEL.setKeyPaths( allKeyPaths );
+		
+		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+
+	}
+	
 }
 
 

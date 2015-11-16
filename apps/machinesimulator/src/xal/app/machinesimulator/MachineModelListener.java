@@ -3,6 +3,8 @@
  */
 package xal.app.machinesimulator;
 
+import java.util.List;
+
 /**
  * @author luxiaohan
  *MachineModelListener
@@ -14,5 +16,8 @@ public interface MachineModelListener {
 	
 	/**event indicates that the scenario has changed*/
 	public void modelScenarioChanged(final MachineModel model);
+	
+	/**event indicates that the history record select state changed*/
+	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords );
 
 }

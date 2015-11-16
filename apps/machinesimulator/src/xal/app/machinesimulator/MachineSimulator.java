@@ -14,6 +14,7 @@ import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.*;
+import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
 import xal.smf.impl.Electromagnet;
 
@@ -46,6 +47,8 @@ public class MachineSimulator implements DataListener {
 	
 	/**the list of ModelInput*/
 	private List<ModelInput> modelInputs;
+	/***/
+	private Map<AcceleratorNode, Map<String, Double>> propertyValuesRecordForNodes;
 
     
 	/** Constructor */
@@ -248,11 +251,21 @@ public class MachineSimulator implements DataListener {
 	}
 	
 	/**
+	 * get the propertyValuesRecordForNodes
+	 * @return
+	 */
+	public Map<AcceleratorNode, Map<String, Double>> getPropertyValuesRecordForNodes(){
+		return propertyValuesRecordForNodes;
+	}
+	
+	/**
 	 * configure the modelInputs with the list of NodePropertyRecord which holds the ModelInput instance
 	 * @param nodePropertyRecords The list of NodePropertyRecord
+	 * @throws SynchronizationException 
 	 */
     public void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
     	List<ModelInput> newModelInputs = new ArrayList<ModelInput>();
+    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
     	for( NodePropertyRecord record:nodePropertyRecords ){
     		if( !Double.isNaN( record.getTestValue() ) ){
     			newModelInputs.add( record.getModelInput() );
@@ -260,6 +273,16 @@ public class MachineSimulator implements DataListener {
     	}
 	
     	changeModelInputs( modelInputs, newModelInputs );	
+
+    	for( NodePropertyRecord record : nodePropertyRecords){
+    		try {
+				propertyValueForNode.put(record.getAcceleratorNode(), _scenario.propertiesForNode(record.getAcceleratorNode()));
+			} catch (SynchronizationException e) {
+				e.printStackTrace();
+			}
+    	}
+    	// record the values used for simulation
+    	propertyValuesRecordForNodes = propertyValueForNode;
 
     }
     
@@ -274,12 +297,17 @@ public class MachineSimulator implements DataListener {
     	}
     	
     	for( final ModelInput newInput:newInputs ){
-    		_scenario.setModelInput(newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );
+    		_scenario.setModelInput(newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
     	}
     	
     	modelInputs = newInputs;
     }
-	
+    
+    /**Return the values record used for simulation*/
+    public Map<AcceleratorNode, Map<String, Double>> getPropertyValuesRecord(){
+    	return propertyValuesRecordForNodes;
+    }
+    
 	/**
 	 * Run the simulation.
 	 * @return the generated simulation or null if the run failed.

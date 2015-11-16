@@ -1,13 +1,15 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Sat Oct 31 21:44:56 CST 2015" version="1.0.0">
+<BricksDocument date="Sat Nov 14 17:05:02 CST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="874" tag="MainWindow" width="1442">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
                 <ViewProxy type="javax.swing.Box_Vertical"/>
                 <ViewNode tag="Controls Bar">
                     <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <BeanProperty name="inheritsPopupMenu" value="false"/>
+                    <BeanProperty height="28" name="maximumSize" width="32973"/>
                     <ViewNode tag="Run Button">
                         <ViewProxy type="javax.swing.JButton"/>
                         <BeanProperty name="text" value="Run"/>
@@ -124,12 +126,62 @@
                         <BeanProperty name="name" value="Clear All"/>
                         <BeanProperty name="text" value="Clear All"/>
                     </ViewNode>
-                    <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
-                    </ViewNode>
                 </ViewNode>
                 <ViewNode tag="Tabbed Pane">
                     <ViewProxy type="javax.swing.JTabbedPane"/>
+                    <ViewNode tag="History Table View">
+                        <ViewProxy type="javax.swing.Box_Vertical"/>
+                        <BeanProperty name="name" value="History Table"/>
+                        <ViewNode tag="Control Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BeanProperty height="28" name="maximumSize" width="32973"/>
+                            <ViewNode tag="Remove Button">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Remove"/>
+                            </ViewNode>
+                            <ViewNode tag="Select All">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="name" value="Select All"/>
+                                <BeanProperty name="text" value="Select All"/>
+                            </ViewNode>
+                            <ViewNode tag="Unselect All">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Unselect All"/>
+                            </ViewNode>
+                            <ViewNode tag="Panel">
+                                <ViewProxy type="javax.swing.JPanel"/>
+                                <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
+                                <BeanProperty name="focusable" value="true"/>
+                                <BeanProperty name="inheritsPopupMenu" value="false"/>
+                                <BeanProperty name="focusCycleRoot" value="false"/>
+                                <BeanProperty height="38" name="minimumSize" width="1000"/>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="History Table Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <ViewNode tag="History Pane">
+                                <ViewProxy type="javax.swing.JSplitPane"/>
+                                <BeanProperty name="continuousLayout" value="true"/>
+                                <BeanProperty name="autoscrolls" value="false"/>
+                                <BeanProperty name="focusCycleRoot" value="false"/>
+                                <BeanProperty height="200" name="minimumSize" width="400"/>
+                                <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
+                                <BeanProperty name="oneTouchExpandable" value="true"/>
+                                <ViewNode tag="History Record Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <ViewNode tag="History Record Table">
+                                        <ViewProxy type="javax.swing.JTable"/>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="History Data Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <ViewNode tag="History Data Table">
+                                        <ViewProxy type="javax.swing.JTable"/>
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
                     <ViewNode tag="Sequence Table View">
                         <ViewProxy type="javax.swing.Box_Vertical"/>
                         <BeanProperty name="name" value="Sequence Table"/>

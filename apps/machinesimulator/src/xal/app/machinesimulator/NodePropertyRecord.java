@@ -39,8 +39,8 @@ public class NodePropertyRecord {
 	}
 	
 	/**get the accelerator node*/
-	public String getNodeId(){
-		return NODE.getId();
+	public AcceleratorNode getAcceleratorNode(){
+		return NODE;
 	}
 	
 	/**get the property name*/
