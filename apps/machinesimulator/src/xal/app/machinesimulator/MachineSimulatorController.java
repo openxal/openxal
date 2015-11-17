@@ -118,12 +118,12 @@ public class MachineSimulatorController implements MachineModelListener {
         historyRecordTable.setModel(HISTORY_RECORD_TABLE_MODEL);
         
         HISTORY_RECORD_TABLE_MODEL.setColumnName("SelectState", "select");
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("NodeId", "Sequence" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("Sequence.Id", "Sequence" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("DateTime", "Time" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("RecordName", "Recordname" );
         
         HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "SelectState");
-        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "SelectState", "NodeId", "DateTime", "RecordName");
+        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "SelectState", "Sequence.Id", "DateTime", "RecordName");
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "RecordName", true );
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "SelectState", true );
         
@@ -291,6 +291,7 @@ public class MachineSimulatorController implements MachineModelListener {
                 System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
                 	final MachineSimulation simulation = MODEL.runSimulation();
+                	
                   STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
                   _positions=simulation.getAllPosition();
                   
@@ -316,8 +317,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		//configure the remove button of the history record view
 		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
 		removeButton.addActionListener( event -> {		
-			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-System.out.println(records.size());				
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();			
 			int recordNumber = records.size();
 			int removed = 0;
 			for( int index = 0; index < recordNumber; index++ ){			
@@ -358,11 +358,11 @@ System.out.println(records.size());
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    private void configureParametersData( final List<MachineSimulationRecord> records,final String[] keyPaths ){
+    private <T> void configureParametersData( final List<T> records,final String[] keyPaths ){
       PLOT_DATA.clear();      
     	for( final String keyPath:keyPaths ){
     		PLOT_DATA.put( keyPath, new ArrayList<Double>( records.size() ) );
-    		for( final MachineSimulationRecord record:records ){
+    		for( final T record:records ){
     			PLOT_DATA.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
     		}
     	}   	

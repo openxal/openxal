@@ -11,6 +11,7 @@ package xal.app.machinesimulator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.text.DateFormat;
 import java.util.List;
@@ -33,6 +34,8 @@ public class MachineModel implements DataListener {
 	final private MachineModelListener EVENT_PROXY;
 	/**the simulation history records*/
 	final private LinkedList<SimulationHistoryRecord> SIMULATION_HISTORY_RECORDS;
+	/**the history results of simulations*/
+	final private Map<AcceleratorSeq, Map<Date, MachineSimulation>> SIMULATION_HISTORY_RESULTS;
    /** simulator */
    final private MachineSimulator SIMULATOR;
    /** accelerator sequence on which to run the simulations */
@@ -57,6 +60,8 @@ public class MachineModel implements DataListener {
 		SIMULATION_HISTORY_RECORDS = new LinkedList<SimulationHistoryRecord>();
 		
 		ALL_HISTORY_DATUM = new HashMap<AcceleratorSeq, List<NodePropertyHistoryRecord>>();
+		
+		SIMULATION_HISTORY_RESULTS = new LinkedHashMap<AcceleratorSeq, Map<Date, MachineSimulation>>();
 		
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, MachineModelListener.class );
 
@@ -110,11 +115,38 @@ public class MachineModel implements DataListener {
         return _simulation;
     }
     
+    /**Get the most recent simulation for specified sequence in the selected history record except the new one*/
+    private MachineSimulation getHistorySimulation( final AcceleratorSeq seq ){
+    	MachineSimulation machineSimulation = null;
+    	List<SimulationHistoryRecord> historyRecords = SIMULATION_HISTORY_RECORDS.subList( 1, SIMULATION_HISTORY_RECORDS.size() );
+    	for( SimulationHistoryRecord record: historyRecords ){
+    		if( record.getSelectState() && record.getSequence().getId().equals( seq.getId() ) ){
+    			machineSimulation = SIMULATION_HISTORY_RESULTS.get( seq ).get( record.getDate() );
+    			break;
+    		}		
+    	}
+    	return machineSimulation;
+    }
+    
+    /***/
+    public  List<?> getSimulationRecords( final AcceleratorSeq seq, final MachineSimulation simulation ){
+    	List<?> simulationRecords = null;
+    	List<MachineSimulationHistoryRecord> simulationHistoryRecords = new ArrayList<MachineSimulationHistoryRecord>();
+    	if ( getHistorySimulation( seq ) == null ) simulationRecords = simulation.getSimulationRecords();
+    	else {
+    		for ( int index = 0; index<simulation.getSimulationRecords().size();index++ ){
+    			simulationHistoryRecords.add( new MachineSimulationHistoryRecord( simulation.getSimulationRecords().get( index ), getHistorySimulation(seq).getSimulationRecords().get( index ) ) );
+    		}
+    		simulationRecords = simulationHistoryRecords;
+    	}
+    	
+    	return simulationRecords;
+    }
+    
     /**get the simulation history record*/
     public List<SimulationHistoryRecord> getSimulationHistoryRecords(){
     	return SIMULATION_HISTORY_RECORDS;
     }
-    
 	
 	/** Run the simulation and record the result and the values used for simulation */
 	public MachineSimulation runSimulation() {
@@ -126,8 +158,7 @@ public class MachineModel implements DataListener {
 		
 		if(_simulation != null ) {
 			Date time = new Date();
-			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ) );
-			
+			//record the values used for simulation
 			if( ALL_HISTORY_DATUM.get( _sequence ) == null ){				
 				ALL_HISTORY_DATUM.put( _sequence, createHistoryRecordForNodePropertyValues( nodePropertyRecords ) );
 			}
@@ -135,6 +166,16 @@ public class MachineModel implements DataListener {
 			for( final NodePropertyHistoryRecord historyRecord: ALL_HISTORY_DATUM.get( _sequence ) ){
 				historyRecord.addValue( time, SIMULATOR.getPropertyValuesRecord().get( historyRecord.getAcceleratorNode() ).get( historyRecord.getPropertyName() ) );
 			}
+			
+			//record the simulation history
+			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ) );
+			
+			//record the simulation result
+			if( SIMULATION_HISTORY_RESULTS.get( _sequence ) == null ){
+				SIMULATION_HISTORY_RESULTS.put(_sequence, new LinkedHashMap<Date,MachineSimulation>());
+			}
+			
+			SIMULATION_HISTORY_RESULTS.get( _sequence ).put( time, _simulation );
 
 			
 		}
@@ -216,7 +257,7 @@ public class MachineModel implements DataListener {
 		TIME = time;
 		SEQUENCE = _sequence;
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
-		recordName = getNodeId()+getDateTime();
+		recordName = getSequence().getId()+getDateTime();
 		selectState = true;
 	}
 	
@@ -235,9 +276,14 @@ public class MachineModel implements DataListener {
 		selectState = select;
 	}
 	
-	/**get the sequence id*/
-	public String getNodeId(){
-		return SEQUENCE.getId();
+	/**get the sequence*/
+	public AcceleratorSeq getSequence(){
+		return SEQUENCE;
+	}
+	
+	/**get the date variable*/
+	public Date getDate(){
+		return TIME;
 	}
 
 	/**get the time*/
