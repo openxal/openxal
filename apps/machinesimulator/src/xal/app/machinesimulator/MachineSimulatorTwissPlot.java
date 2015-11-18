@@ -59,6 +59,7 @@ public class MachineSimulatorTwissPlot{
 	 */
 	
 	private void configureGraph( final BasicGraphData graphData, final String keyPath ){
+		final String keyPathForOld = keyPath.substring(4);
 		for( int parameterIndex=0;parameterIndex<PARAMETERS.size();parameterIndex++ ){
 			if( PARAMETERS.get( parameterIndex ).isThisParameter( keyPath ) ){
 				//configure the graphic name
@@ -75,6 +76,26 @@ public class MachineSimulatorTwissPlot{
 					break;
 				case "Z":
 					graphData.setLineDashPattern( 11.0f );//z plane
+					break;
+				default:
+					break;
+				}
+			}
+			//configure the graph for old simulation results
+			else if ( PARAMETERS.get( parameterIndex ).isThisParameter( keyPathForOld ) ) {
+				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), "Old-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld ) );
+				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex+1 ) );
+				
+				//configure the graphic line pattern
+				switch ( PARAMETERS.get( parameterIndex ).getPlane( keyPathForOld ) ) {
+				case "X":
+					graphData.setLineDashPattern( null );//x plane for old
+					break;
+				case "Y":
+					graphData.setLineDashPattern( 3.0f );//y plane for old
+					break;
+				case "Z":
+					graphData.setLineDashPattern( 11.0f );//z plane for old
 					break;
 				default:
 					break;

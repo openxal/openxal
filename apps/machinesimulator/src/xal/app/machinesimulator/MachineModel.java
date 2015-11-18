@@ -115,32 +115,37 @@ public class MachineModel implements DataListener {
         return _simulation;
     }
     
-    /**Get the most recent simulation for specified sequence in the selected history record except the new one*/
-    private MachineSimulation getHistorySimulation( final AcceleratorSeq seq ){
-    	MachineSimulation machineSimulation = null;
-    	List<SimulationHistoryRecord> historyRecords = SIMULATION_HISTORY_RECORDS.subList( 1, SIMULATION_HISTORY_RECORDS.size() );
-    	for( SimulationHistoryRecord record: historyRecords ){
-    		if( record.getSelectState() && record.getSequence().getId().equals( seq.getId() ) ){
-    			machineSimulation = SIMULATION_HISTORY_RESULTS.get( seq ).get( record.getDate() );
-    			break;
-    		}		
+    /**Get the most recent two simulations for specified sequence in the selected history record*/
+    public MachineSimulation[] getHistorySimulation( final AcceleratorSeq seq ){
+    	MachineSimulation[] machineSimulations = new MachineSimulation[2];
+    	int index = 0;
+    	if( SIMULATION_HISTORY_RECORDS.size() != 0 ){
+        	for( SimulationHistoryRecord record: SIMULATION_HISTORY_RECORDS ){
+        		if( record.getSelectState() && record.getSequence().getId().equals( seq.getId() ) ){
+        			machineSimulations[index++] = SIMULATION_HISTORY_RESULTS.get( seq ).get( record.getDate() );
+        			if ( index == 2 ) break;
+        		}		
+        	}
     	}
-    	return machineSimulation;
+    	return machineSimulations;
     }
     
-    /***/
-    public  List<?> getSimulationRecords( final AcceleratorSeq seq, final MachineSimulation simulation ){
-    	List<?> simulationRecords = null;
+    /**get the simulation records, if there is a simulation history record which is selected 
+     *return the combination of new and selected history records. 
+     */
+    public List<MachineSimulationHistoryRecord> getSimulationRecords( final MachineSimulation newSimulation, final MachineSimulation oldSimulation ){
     	List<MachineSimulationHistoryRecord> simulationHistoryRecords = new ArrayList<MachineSimulationHistoryRecord>();
-    	if ( getHistorySimulation( seq ) == null ) simulationRecords = simulation.getSimulationRecords();
-    	else {
-    		for ( int index = 0; index<simulation.getSimulationRecords().size();index++ ){
-    			simulationHistoryRecords.add( new MachineSimulationHistoryRecord( simulation.getSimulationRecords().get( index ), getHistorySimulation(seq).getSimulationRecords().get( index ) ) );
+    	for ( int index = 0; index<newSimulation.getSimulationRecords().size();index++ ){
+    		if ( oldSimulation != null ){
+    			simulationHistoryRecords.add( new MachineSimulationHistoryRecord( newSimulation.getSimulationRecords().get( index ), oldSimulation.getSimulationRecords().get( index ) ) );
     		}
-    		simulationRecords = simulationHistoryRecords;
+    		else {
+    			simulationHistoryRecords.add( new MachineSimulationHistoryRecord( newSimulation.getSimulationRecords().get( index ) ) );
+    		}
+    		
     	}
-    	
-    	return simulationRecords;
+   
+    	return simulationHistoryRecords;
     }
     
     /**get the simulation history record*/

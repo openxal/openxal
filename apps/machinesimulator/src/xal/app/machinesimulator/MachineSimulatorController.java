@@ -27,7 +27,7 @@ import xal.tools.dispatch.DispatchTimer;
  */
 public class MachineSimulatorController implements MachineModelListener {
      /** simulated states table model */
-     final private KeyValueFilteredTableModel<MachineSimulationRecord> STATES_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<MachineSimulationHistoryRecord> STATES_TABLE_MODEL;
      /**accelerator node table model*/
      final private KeyValueFilteredTableModel<NodePropertyRecord> SEQUENCE_TABLE_MODEL;
      /**history record table model*/
@@ -63,7 +63,8 @@ public class MachineSimulatorController implements MachineModelListener {
 	/**constructor */
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
 		
-		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationRecord>();
+		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationHistoryRecord>();
+		
 		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
 		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
@@ -167,15 +168,23 @@ public class MachineSimulatorController implements MachineModelListener {
         STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
         for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
             STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol() );
+            
+            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), "Old-"+scalarParameter.getSymbol() );
            }
         for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),vectorParameter.getSymbolForX());
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(),vectorParameter.getSymbolForY());
         	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(),vectorParameter.getSymbolForZ());
+        	   
+        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForX(),"<html>Old-"+vectorParameter.getSymbolForX().substring(6) );
+        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForY(),"<html>Old-"+vectorParameter.getSymbolForY().substring(6) );
+        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForZ(),"<html>Old-"+vectorParameter.getSymbolForZ().substring(6) );
            }
         //set the filter field for states table
         STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
+        
+		  STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
        
 /**************************configure the plot view**************************************/
         final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
@@ -213,30 +222,49 @@ public class MachineSimulatorController implements MachineModelListener {
 					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
 					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
 				}
+				
+				//create the combination keyPath used for comparing new and old simulation results
+				final List<String> combParameterKeyPathsList = new ArrayList<String>(2*parameterKeyPathsList.size());
+				for( final String path:parameterKeyPathsList){
+					combParameterKeyPathsList.add( path );
+					combParameterKeyPathsList.add( "old."+path );
+				}
+				
+				//determine the final keyPaths by history simulation record select state
+				final List<String> parameterKeyPathsForTableList;
+				
+				if( MODEL.getHistorySimulation( MODEL.getSequence() )[1] != null ){
+					parameterKeyPathsForTableList = combParameterKeyPathsList;
+				}
+				else {
+					parameterKeyPathsForTableList = parameterKeyPathsList;
+				}
 
+				
 				//turn the keyPath list to string array
-				final String[] parameterKeyPaths= new String[parameterKeyPathsList.size()];
-				parameterKeyPathsList.toArray(parameterKeyPaths);
+				final String[] parameterKeyPathsForTable= new String[parameterKeyPathsForTableList.size()];
+				parameterKeyPathsForTableList.toArray( parameterKeyPathsForTable );
 
-				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
-				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class,parameterKeyPaths );
+
+				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, parameterKeyPathsForTable );
 				
 
-				final String[] parameterKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPaths.length];
+				final String[] allKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPathsForTable.length];
 				// add standard parameters at the start
-				System.arraycopy( standardParameterKeys, 0, parameterKeyPathsForTable, 0, standardParameterKeys.length );
+				System.arraycopy( standardParameterKeys, 0, allKeyPathsForTable, 0, standardParameterKeys.length );
 				// append scalar and vector parameters after standard parameters
-				System.arraycopy( parameterKeyPaths, 0, parameterKeyPathsForTable, standardParameterKeys.length, parameterKeyPaths.length );
+				System.arraycopy( parameterKeyPathsForTable, 0, allKeyPathsForTable, standardParameterKeys.length, parameterKeyPathsForTable.length );
 
-				STATES_TABLE_MODEL.setKeyPaths( parameterKeyPathsForTable );
+				STATES_TABLE_MODEL.setKeyPaths( allKeyPathsForTable );
+//				STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords( MODEL.getHistorySimulation( MODEL.getSequence() )[0], MODEL.getHistorySimulation( MODEL.getSequence() )[1] ) );
 
 				/**************   configure plot view   ****************/
 
 				twissParametersPlot.removeAllGraphData();
 				//setup plot panel and show the selected parameters' graph
-				if( parameterKeyPaths.length > 0 && MODEL.getSimulation() != null ){
-					configureParametersData( MODEL.getSimulation().getSimulationRecords(), parameterKeyPaths );
-					for( final String parameterKey:parameterKeyPaths ){
+				if( parameterKeyPathsForTable.length > 0 && MODEL.getSimulation() != null ){
+					configureParametersData(  MODEL.getSimulationRecords( MODEL.getSimulation(), MODEL.getHistorySimulation( MODEL.getSequence() )[1] ), parameterKeyPathsForTable );
+					for( final String parameterKey:parameterKeyPathsForTable ){
 						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
 					}
 				}
@@ -292,8 +320,9 @@ public class MachineSimulatorController implements MachineModelListener {
                 if( MODEL.getSequence() != null ){
                 	final MachineSimulation simulation = MODEL.runSimulation();
                 	
-                  STATES_TABLE_MODEL.setRecords( simulation.getSimulationRecords() );                  
-                  _positions=simulation.getAllPosition();
+                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( MODEL.getSequence() )[1] ) );
+                
+                	_positions=simulation.getAllPosition();
                   
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
                   historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords() );
@@ -407,7 +436,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		String[] keyPathsForValues = new String[valueNumber];
 		String[] allKeyPaths = new String[historyDataKeyPaths.length+keyPathsForValues.length];
 		for( int index = 0; index<valueNumber;index++){
-			HISTORY_DATA_TABLE_MODEL.setColumnName( "Values."+index , "ValueRecord"+index );
+			HISTORY_DATA_TABLE_MODEL.setColumnName( "Values."+index , "Value Record--"+index );
 			keyPathsForValues[index] = "Values."+index;
 		}
 		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, keyPathsForValues);
