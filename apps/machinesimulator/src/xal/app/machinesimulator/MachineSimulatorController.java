@@ -33,7 +33,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**history record table model*/
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
      /**history data table model*/
-     final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<NodePropertySnapshot> HISTORY_DATA_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -55,8 +55,6 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<NodePropertyRecord> nodePropertyRecords;
      /** the position list of elements*/
      private List<Double> _positions;
-     /**the keyPaths for history data*/
-     private String[] historyDataKeyPaths = new String[2];
 
 
 
@@ -67,7 +65,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
-		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
+		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertySnapshot>();
 		
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
@@ -118,25 +116,30 @@ public class MachineSimulatorController implements MachineModelListener {
         final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
         historyRecordTable.setModel(HISTORY_RECORD_TABLE_MODEL);
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("SelectState", "select");
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("Sequence.Id", "Sequence" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("DateTime", "Time" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("RecordName", "Recordname" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("selectState", "select");
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("sequence.id", "Sequence" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("dateTime", "Time" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("recordName", "Recordname" );
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "SelectState");
-        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "SelectState", "Sequence.Id", "DateTime", "RecordName");
-        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "RecordName", true );
-        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "SelectState", true );
+        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "selectState");
+        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "selectState", "sequence.id", "dateTime", "recordName");
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "selectState", true );
         
         //configure history data table
         final JTable historyDataTable = (JTable)windowReference.getView( "History Data Table" );
         historyDataTable.setModel( HISTORY_DATA_TABLE_MODEL );
         
-        HISTORY_DATA_TABLE_MODEL.setColumnName( "AcceleratorNode.Id" , "Node" );
-        HISTORY_DATA_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
-        historyDataKeyPaths[0] = "AcceleratorNode.Id";
-        historyDataKeyPaths[1] =  "PropertyName";
+        HISTORY_DATA_TABLE_MODEL.setColumnName( "acceleratorNode.id" , "Node" );
+        HISTORY_DATA_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+        HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "value" );
         
+        final String[] historyDataKeyPaths = new String[3];
+        historyDataKeyPaths[0] = "acceleratorNode.id";
+        historyDataKeyPaths[1] =  "propertyName";
+        historyDataKeyPaths[2] = "value";
+        
+        HISTORY_DATA_TABLE_MODEL.setKeyPaths( historyDataKeyPaths );
         
 /******************configure the sequence table view*************************************/
         
@@ -144,20 +147,20 @@ public class MachineSimulatorController implements MachineModelListener {
         sequenceTable.setModel( SEQUENCE_TABLE_MODEL ); 
         
         //set the column name of the sequence table
-        SEQUENCE_TABLE_MODEL.setColumnName( "AcceleratorNode.Id", "Node" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "PropertyName", "Property" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "DesignValue", "Design Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "LiveValue", "Live Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName("TestValue", "Test Value");
+        SEQUENCE_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "designValue", "Design Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName( "liveValue", "Live Value" );
+        SEQUENCE_TABLE_MODEL.setColumnName("testValue", "Test Value");
         
         //set the filter field for sequence table
         SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "AcceleratorNode.Id" );
+        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
          
         //configure the sequence table model
-		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "DesignValue", "LiveValue", "TestValue" );
-		  SEQUENCE_TABLE_MODEL.setKeyPaths( "AcceleratorNode.Id", "PropertyName", "DesignValue", "LiveValue", "TestValue" );
-		  SEQUENCE_TABLE_MODEL.setColumnEditable( "TestValue", true );
+		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
+		  SEQUENCE_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
+		  SEQUENCE_TABLE_MODEL.setColumnEditable( "testValue", true );
 
 /**********************configure the states table view***********************************/
 	     //get components
@@ -321,11 +324,12 @@ public class MachineSimulatorController implements MachineModelListener {
                 	final MachineSimulation simulation = MODEL.runSimulation();
                 	
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( MODEL.getSequence() )[1] ) );
-                
-                	_positions=simulation.getAllPosition();
+                  
+                	historyRecordSelectStateChanged( MODEL.getNodePropertySnapshot(), "Lastest Value");
+                	
+                  _positions=simulation.getAllPosition();
                   
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
-                  historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords() );
                  
                   PARAMETER_HANDLER.actionPerformed( null );
                      }
@@ -431,21 +435,9 @@ public class MachineSimulatorController implements MachineModelListener {
 	}
 
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords ) {
-		int valueNumber = nodePropertyHistoryRecords.get(0).getValues().length;
-		String[] keyPathsForValues = new String[valueNumber];
-		String[] allKeyPaths = new String[historyDataKeyPaths.length+keyPathsForValues.length];
-		for( int index = 0; index<valueNumber;index++){
-			HISTORY_DATA_TABLE_MODEL.setColumnName( "Values."+index , "Value Record--"+index );
-			keyPathsForValues[index] = "Values."+index;
-		}
-		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, keyPathsForValues);
-		System.arraycopy( historyDataKeyPaths, 0, allKeyPaths, 0, historyDataKeyPaths.length );
-		System.arraycopy( keyPathsForValues, 0, allKeyPaths, historyDataKeyPaths.length, keyPathsForValues.length );
-		
-		HISTORY_DATA_TABLE_MODEL.setKeyPaths( allKeyPaths );
-		
-		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+	public void historyRecordSelectStateChanged( final List<NodePropertySnapshot> nodePropertySnapshots, final String name ) {
+		HISTORY_DATA_TABLE_MODEL.setColumnName( "value", name );
+		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertySnapshots );
 
 	}
 	

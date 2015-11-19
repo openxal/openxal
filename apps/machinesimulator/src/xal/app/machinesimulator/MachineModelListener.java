@@ -18,6 +18,6 @@ public interface MachineModelListener {
 	public void modelScenarioChanged(final MachineModel model);
 	
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords );
+	public void historyRecordSelectStateChanged( final List<NodePropertySnapshot> nodePropertySnapshots, final String name );
 
 }

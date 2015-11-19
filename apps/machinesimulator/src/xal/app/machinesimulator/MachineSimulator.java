@@ -251,14 +251,6 @@ public class MachineSimulator implements DataListener {
 	}
 	
 	/**
-	 * get the propertyValuesRecordForNodes
-	 * @return
-	 */
-	public Map<AcceleratorNode, Map<String, Double>> getPropertyValuesRecordForNodes(){
-		return propertyValuesRecordForNodes;
-	}
-	
-	/**
 	 * configure the modelInputs with the list of NodePropertyRecord which holds the ModelInput instance
 	 * @param nodePropertyRecords The list of NodePropertyRecord
 	 * @throws SynchronizationException 
