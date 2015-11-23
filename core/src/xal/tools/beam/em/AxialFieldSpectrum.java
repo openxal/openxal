@@ -1069,8 +1069,9 @@ public class AxialFieldSpectrum {
         // TODO - Pick One :-)
 //        double dT   = dTz0*cos - Tz0*dz*sin;          // this one if T' = dT/dk
 //        double dT   = (-beta/k)*dTz0*cos - Tz0*dz*sin;  // this one if T' = dT/db
-//        double dT   = (-1.0/DBL_2PI)*dTz0*cos - Tz0*dz*sin;  // the magic number seems to work??
-        double dT   = 0.01*dTz0*cos - Tz0*dz*sin;  // compare with XAL implementation
+        
+//        double dT   = (-1.0/DBL_2PI)*dTz0*cos - Tz0*dz*sin;  // Use: magic number seems correct
+        double dT   = 0.01*dTz0*cos - Tz0*dz*sin;  // To compare with XAL implementation
         
         return dT;
     }
@@ -1157,12 +1158,14 @@ public class AxialFieldSpectrum {
         double sin = Math.sin(k*dz);
         double cos = Math.cos(k*dz);
         
-        // TODO - Pick One :-)
         double beta = this.computeVelocity(k);
         double dTz0 = this.fncDTz0.evaluateAt(beta);
         double Tz0  = this.fncTz0.evaluateAt(beta);
+        
+        // TODO - Pick One :-)
 //        double dS   = dTz0*sin + Tz0*dz*cos;          // this one if T' = dT/dk
 //        double dS   = (-beta/k)*dTz0*sin + Tz0*dz*cos;  // this one if T' = dT/db
+        
 //        double dS   = (-1.0/DBL_2PI)*dTz0*sin + Tz0*dz*cos; // the magic factor gives results close to what I know is true
         double dS   = 0.01*dTz0*sin + Tz0*dz*cos; // compare with XAL implementation
         
@@ -1264,8 +1267,9 @@ public class AxialFieldSpectrum {
         // TODO - Pick One :-)
 //      double dTq  = -dSq0*sin - Sq0*dz*cos;   // this one if S' = dS/dk
 //      double dTq  = -(-beta/k)*dSq0*sin - Sq0*dz*cos;   // this one if S' = dS/db
+        
 //        double dTq  = -(-1.0/DBL_2PI)*dSq0*sin - Sq0*dz*cos; // The magic number works for T'(b)
-        double dTq  = -0.01*dSq0*sin - Sq0*dz*cos; // Compare with XAL implementation
+        double dTq  = -0.01*dSq0*sin - Sq0*dz*cos; // To emulate XAL implementation
         
         return dTq;
     }
@@ -1358,8 +1362,9 @@ public class AxialFieldSpectrum {
         // TODO - Pick One :-)
 //        double dSq  = dSq0*cos - Sq0*dz*sin; // this one if S' = dS/dk
 //        double dSq  = (-beta/k)*dSq0*cos - Sq0*dz*sin; // this one if S' = dS/db
+        
 //        double dSq  = (-1.0/DBL_2PI)*dSq0*cos - Sq0*dz*sin; // magic number works for T'(b)
-        double dSq  = 0.01*dSq0*cos - Sq0*dz*sin; // Compare with XAL implementation
+        double dSq  = 0.01*dSq0*cos - Sq0*dz*sin; // To compare with XAL implementation
         
         return dSq;
     }
