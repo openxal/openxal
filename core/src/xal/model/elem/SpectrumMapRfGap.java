@@ -1695,6 +1695,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 
     // TODO Remove this after debugging
     private boolean bolMethodCalled = false;
+    private int CNT_CALLS = 0;
     /**
      * <p>
      * Computes and returns the longitudinal phase change &delta;&phi; energy 
@@ -1834,6 +1835,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 //            double  dW_mid   = A * vecPreGapGains.getEnergy();
 
             // TODO Remove type out
+            System.out.println("SpectrumMapRfGap#compGapPhaseAndEnergyGainIndirect(IProbe): ID=" + this.getId() + ",  call count #" + CNT_CALLS++);
 //            if (!this.bolMethodCalled) {
 //                double V0 = this.gapAcclMdl.getRfFieldPotential();
 //                double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
