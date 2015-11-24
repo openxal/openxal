@@ -1638,7 +1638,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
     }
 
     // TODO Remove this after debugging
-    private boolean bolMethodCalled = false;
+    private boolean bolMethodCalled = true;
     private int CNT_CALLS = 0;
     /**
      * <p>
@@ -1767,7 +1767,6 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
         double d_phi_new = -(qAEL/Er)*r_mid*k_mid*(this.getGapOffset() - this.getGapLength()/2.0);
 
         // TODO Remove type out
-        System.out.println("IdealRfGap#compGapPhaseAndEnergyGainIndirect(IProbe): ID=" + this.getId() + ",  call count #" + CNT_CALLS++);
         if (!this.bolMethodCalled) {
             double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
             double db = 0.01*bi;
@@ -1834,6 +1833,7 @@ public class IdealRfGap extends ThinElement implements IRfGap, IRfCavityCell {
             
             this.bolMethodCalled = true;
         }
+//        System.out.println("IdealRfGap#compGapPhaseAndEnergyGainIndirect(IProbe): ID=" + this.getId() + ", dphi=" + d_phi + ", dW=" + dW + ", call count #" + CNT_CALLS++);
         
         return new EnergyVariables(d_phi, dW);
     }
