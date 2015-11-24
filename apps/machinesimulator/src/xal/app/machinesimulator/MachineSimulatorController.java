@@ -6,8 +6,10 @@ package xal.app.machinesimulator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 
@@ -17,6 +19,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
 import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
+import xal.smf.AcceleratorSeq;
 import xal.tools.data.KeyValueAdaptor;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.dispatch.DispatchTimer;
@@ -33,7 +36,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**history record table model*/
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
      /**history data table model*/
-     final private KeyValueFilteredTableModel<NodePropertySnapshot> HISTORY_DATA_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -46,7 +49,8 @@ public class MachineSimulatorController implements MachineModelListener {
      final private List<VectorParameter> VECTOR_PARAMETERS;
      /**timer to sync the live value*/
      final private DispatchTimer VALUE_SYNC_TIME;
-     /**all the modelinputs variables*/
+     /**the sequence*/
+     private AcceleratorSeq _sequence;
      /**sync period in milliseconds*/
      private long _syncPeriod;
      /** the plotter*/
@@ -55,6 +59,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<NodePropertyRecord> nodePropertyRecords;
      /** the position list of elements*/
      private List<Double> _positions;
+     /**the key paths for history data table model*/
+     private String[] historyDataKeyPaths;
 
 
 
@@ -65,7 +71,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
-		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertySnapshot>();
+		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
 		
 		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
@@ -132,14 +138,10 @@ public class MachineSimulatorController implements MachineModelListener {
         
         HISTORY_DATA_TABLE_MODEL.setColumnName( "acceleratorNode.id" , "Node" );
         HISTORY_DATA_TABLE_MODEL.setColumnName( "propertyName", "Property" );
-        HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "value" );
         
-        final String[] historyDataKeyPaths = new String[3];
+         historyDataKeyPaths = new String[2];
         historyDataKeyPaths[0] = "acceleratorNode.id";
-        historyDataKeyPaths[1] =  "propertyName";
-        historyDataKeyPaths[2] = "value";
-        
-        HISTORY_DATA_TABLE_MODEL.setKeyPaths( historyDataKeyPaths );
+        historyDataKeyPaths[1] = "propertyName";
         
 /******************configure the sequence table view*************************************/
         
@@ -195,7 +197,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 		//synoptic display of nodes
 		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
-		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, MODEL.getSequence() );
+		final XALSynopticPanel xalSynopticPanel = FunctionGraphsXALSynopticAdaptor.assignXALSynopticViewTo( twissParametersPlot, _sequence );
 		synopticBox.removeAll();
 		synopticBox.add( xalSynopticPanel );
 		synopticBox.validate();
@@ -236,7 +238,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				//determine the final keyPaths by history simulation record select state
 				final List<String> parameterKeyPathsForTableList;
 				
-				if( MODEL.getHistorySimulation( MODEL.getSequence() )[1] != null ){
+				if( MODEL.getHistorySimulation( _sequence )[1] != null ){
 					parameterKeyPathsForTableList = combParameterKeyPathsList;
 				}
 				else {
@@ -259,19 +261,19 @@ public class MachineSimulatorController implements MachineModelListener {
 				System.arraycopy( parameterKeyPathsForTable, 0, allKeyPathsForTable, standardParameterKeys.length, parameterKeyPathsForTable.length );
 
 				STATES_TABLE_MODEL.setKeyPaths( allKeyPathsForTable );
-//				STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords( MODEL.getHistorySimulation( MODEL.getSequence() )[0], MODEL.getHistorySimulation( MODEL.getSequence() )[1] ) );
 
 				/**************   configure plot view   ****************/
 
 				twissParametersPlot.removeAllGraphData();
 				//setup plot panel and show the selected parameters' graph
 				if( parameterKeyPathsForTable.length > 0 && MODEL.getSimulation() != null ){
-					configureParametersData(  MODEL.getSimulationRecords( MODEL.getSimulation(), MODEL.getHistorySimulation( MODEL.getSequence() )[1] ), parameterKeyPathsForTable );
+					MachineSimulation[] simulations = MODEL.getHistorySimulation( _sequence );
+					configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
 					for( final String parameterKey:parameterKeyPathsForTable ){
 						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey );
 					}
 				}
-				xalSynopticPanel.setAcceleratorSequence( MODEL.getSequence() );
+				xalSynopticPanel.setAcceleratorSequence( _sequence );
 			}
 		};
 
@@ -322,13 +324,12 @@ public class MachineSimulatorController implements MachineModelListener {
                 System.out.println( "running the model..." );                
                 if( MODEL.getSequence() != null ){
                 	final MachineSimulation simulation = MODEL.runSimulation();
-                	
-                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( MODEL.getSequence() )[1] ) );
-                  
-                	historyRecordSelectStateChanged( MODEL.getNodePropertySnapshot(), "Lastest Value");
-                	
-                  _positions=simulation.getAllPosition();
-                  
+                	_positions=simulation.getAllPosition();
+                	//set records of states table
+                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
+                  //set records and configure history data table
+                	historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence), MODEL.getColumnNames().get(_sequence));
+                	//set records for history record table
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
                  
                   PARAMETER_HANDLER.actionPerformed( null );
@@ -360,7 +361,8 @@ public class MachineSimulatorController implements MachineModelListener {
 					removed++;
 				}
 			}
-
+			
+			HISTORY_DATA_TABLE_MODEL.setRecords(null);
 			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
 		});
 		
@@ -381,8 +383,20 @@ public class MachineSimulatorController implements MachineModelListener {
 			for ( int index = 0; index < records.size();index++){
 				records.get( index ).setSelectState( false );
 			}
-			
+			HISTORY_DATA_TABLE_MODEL.setRecords(null);
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
+		});
+		
+		final JButton compareButton = (JButton)windowReference.getView( "Compare Results" );
+		compareButton.addActionListener( event -> {
+			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
+			if ( simulations[0] != null ){
+				STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulations[0], simulations[1]));
+				
+				PARAMETER_HANDLER.actionPerformed( null );
+			}
+			else JOptionPane.showMessageDialog(windowReference.getWindow(), "You need to select record(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);
+			
 		});
 
     }
@@ -409,6 +423,7 @@ public class MachineSimulatorController implements MachineModelListener {
     /**event indicates that the sequence has changed*/
     public void modelSequenceChanged( final MachineModel model ) {
     	if( model.getSequence() != null ){
+        	_sequence = model.getSequence();
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
@@ -426,7 +441,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 	/**event indicates that the scenario has changed*/
 	public void modelScenarioChanged( final MachineModel model) {
-		if( model.getSequence() != null ){
+		if( _sequence != null ){
 			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
 			SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
 			VALUE_SYNC_TIME.resume();
@@ -435,9 +450,23 @@ public class MachineSimulatorController implements MachineModelListener {
 	}
 
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertySnapshot> nodePropertySnapshots, final String name ) {
-		HISTORY_DATA_TABLE_MODEL.setColumnName( "value", name );
-		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertySnapshots );
+	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords, final Map<Date, String> columnName ) {
+		int columnNumber = columnName.size();
+		String[] name = new String[columnNumber];
+		columnName.values().toArray( name );
+		String[] valuePathList = new String[columnNumber];
+		for ( int index = 0;index<columnNumber; index++ ){
+			valuePathList[index] = "values."+index;
+			HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, name[index]);
+		}
+		
+		String[] keyPaths = new String[historyDataKeyPaths.length+valuePathList.length];
+		System.arraycopy(historyDataKeyPaths, 0, keyPaths, 0, historyDataKeyPaths.length);
+		System.arraycopy(valuePathList, 0, keyPaths, historyDataKeyPaths.length, valuePathList.length);
+		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, valuePathList );
+		HISTORY_DATA_TABLE_MODEL.setKeyPaths(keyPaths);
+		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+		
 
 	}
 	

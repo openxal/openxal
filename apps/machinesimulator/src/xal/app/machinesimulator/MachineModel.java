@@ -10,9 +10,11 @@ package xal.app.machinesimulator;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Map;
 
 import xal.model.ModelException;
 import xal.smf.AcceleratorNode;
@@ -32,6 +34,10 @@ public class MachineModel implements DataListener {
 	final private MachineModelListener EVENT_PROXY;
 	/**the simulation history records*/
 	final private LinkedList<SimulationHistoryRecord> SIMULATION_HISTORY_RECORDS;
+	/**the selected history record of node property values to show*/
+	final private Map<AcceleratorSeq, List<NodePropertyHistoryRecord>> NODE_VALUES_TO_SHOW;
+	/**the colum name of node property history values table*/
+	final private Map<AcceleratorSeq,Map<Date, String>> COLUMN_NAME;
    /** simulator */
    final private MachineSimulator SIMULATOR;
    /** accelerator sequence on which to run the simulations */
@@ -54,6 +60,10 @@ public class MachineModel implements DataListener {
 		SIMULATOR = new MachineSimulator( null );
 		
 		SIMULATION_HISTORY_RECORDS = new LinkedList<SimulationHistoryRecord>();
+		
+		NODE_VALUES_TO_SHOW = new LinkedHashMap<AcceleratorSeq, List<NodePropertyHistoryRecord>>();
+		
+		COLUMN_NAME = new LinkedHashMap<AcceleratorSeq, Map<Date, String>>();
 		
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, MachineModelListener.class );
 
@@ -145,11 +155,15 @@ public class MachineModel implements DataListener {
     	return SIMULATION_HISTORY_RECORDS;
     }
 	
-    /**get the values snapshot used for simulation*/
-    public List<NodePropertySnapshot> getNodePropertySnapshot(){
-    	return nodePropertySnapshots;
+    /**get the selected values history records used for simulation */
+    public Map<AcceleratorSeq, List<NodePropertyHistoryRecord>> getNodePropertyHistoryRecords(){
+    	return NODE_VALUES_TO_SHOW;
     }
     
+    /**get the column names which are going to set in the history data table*/
+    public Map<AcceleratorSeq,Map<Date, String>> getColumnNames(){
+    	return COLUMN_NAME;
+    }
 	/** Run the simulation and record the result and the values used for simulation */
 	public MachineSimulation runSimulation() {
 		//configure
@@ -162,8 +176,14 @@ public class MachineModel implements DataListener {
 			Date time = new Date();		
 			//record the values used for simulation
 			nodePropertySnapshots = createValuesSnapshot( nodePropertyRecords, SIMULATOR );
+			//record column name for the table
+			if ( COLUMN_NAME.get(_sequence) == null ) COLUMN_NAME.put(_sequence, new LinkedHashMap<Date, String>());
 			//record the simulation history
-			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ,nodePropertySnapshots, _simulation) );			
+			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ,nodePropertySnapshots, _simulation) );		
+			
+			if ( NODE_VALUES_TO_SHOW.get(_sequence) == null ) NODE_VALUES_TO_SHOW.put( _sequence, new ArrayList<NodePropertyHistoryRecord>());		
+			changeHistoryRecordToShow( _sequence, time, true, nodePropertySnapshots );
+			
 		}
 		
 		return _simulation;
@@ -177,9 +197,27 @@ public class MachineModel implements DataListener {
 			String property = record.getPropertyName();
 			double value = simulator.getPropertyValuesRecord().get( node ).get( property );
 			nodePropertySnapshots.add( new NodePropertySnapshot( node, property, value ) );
+		}		
+		return nodePropertySnapshots;
+	}
+	
+	/**add or delete values of NodePropertyHistoryRecord according to the select state of simulation history records*/
+	private List<NodePropertyHistoryRecord> changeHistoryRecordToShow( final AcceleratorSeq seq, final Date time,  final Boolean selectState, final List<NodePropertySnapshot> snapshots ){
+		List<NodePropertyHistoryRecord> records = NODE_VALUES_TO_SHOW.get( seq );
+		if ( records.size() == 0 ){			
+			for ( final NodePropertySnapshot snapshot:snapshots){
+				AcceleratorNode node = snapshot.getAcceleratorNode();
+				String propertyName = snapshot.getPropertyName();
+				records.add( new NodePropertyHistoryRecord( node, propertyName ) );
+			}
 		}
 		
-		return nodePropertySnapshots;
+		for ( int index = 0 ; index<records.size(); index++ ){			
+			double value = snapshots.get( index ).getValue();
+			if ( selectState ) records.get( index ).addValue( time, value );
+			else records.get( index ).removeValue( time );
+		}		
+		return records;
 	}
 
 
@@ -251,6 +289,7 @@ public class MachineModel implements DataListener {
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		recordName = getSequence().getId()+getDateTime();
 		selectState = true;
+		COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 	}
 	
 	/**get the select state*/
@@ -260,7 +299,11 @@ public class MachineModel implements DataListener {
 	
 	/**set the select state*/
 	public void setSelectState( final Boolean select ){
-		if ( select ) EVENT_PROXY.historyRecordSelectStateChanged( VALUES_SNAPSHOT, recordName );
+		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);	
+		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
+		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get(SEQUENCE), COLUMN_NAME.get(SEQUENCE) );
+		
 		selectState = select;
 	}
 	
@@ -296,6 +339,8 @@ public class MachineModel implements DataListener {
 
 	/**set the record name*/
 	public void setRecordName( final String newName ){
+		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get(SEQUENCE), COLUMN_NAME.get(SEQUENCE) );
 		recordName = newName;
 	}
 		

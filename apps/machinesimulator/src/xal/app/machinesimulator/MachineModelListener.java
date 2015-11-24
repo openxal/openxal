@@ -3,7 +3,9 @@
  */
 package xal.app.machinesimulator;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author luxiaohan
@@ -18,6 +20,6 @@ public interface MachineModelListener {
 	public void modelScenarioChanged(final MachineModel model);
 	
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertySnapshot> nodePropertySnapshots, final String name );
+	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords, final Map<Date, String> columnName );
 
 }

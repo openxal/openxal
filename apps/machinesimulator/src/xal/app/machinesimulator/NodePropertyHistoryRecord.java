@@ -19,17 +19,13 @@ public class NodePropertyHistoryRecord {
 	final private AcceleratorNode NODE;
 	/**property name*/
 	final private String PROPERTY_NAME;
-	/**the list of values*/
-	final private Map<Date,Double> VALUES;
 	/**the list of values to show*/
 	final private Map<Date, Double> VALUES_SHOW;
 	
 	/**Constructor*/
 	public NodePropertyHistoryRecord( final AcceleratorNode node, final String propertyName ){
-		NODE = node;
-		
+		NODE = node;	
 		PROPERTY_NAME = propertyName;
-		VALUES = new LinkedHashMap<Date,Double>();
 		VALUES_SHOW = new LinkedHashMap<Date,Double>();
 	}
 	
@@ -58,18 +54,12 @@ public class NodePropertyHistoryRecord {
 	
 	/**add a value to the value list*/
 	public void addValue( final Date time, final double value ){
-		VALUES.put( time, value );
 		VALUES_SHOW.put( time, value );
 	}
 	
 	/**remove the value with specified time key*/
 	public void removeValue( final Date time ){
 		VALUES_SHOW.remove( time );
-	}
-	
-	/**re-add the value with specified time key*/
-	public void reAddValue( final Date time ){
-		VALUES_SHOW.put( time, VALUES.get( time ) );
 	}
 	
 
