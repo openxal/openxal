@@ -1835,7 +1835,7 @@ public class SpectrumMapRfGap extends ThinElement implements IRfGap, IRfCavityCe
 //            double  dW_mid   = A * vecPreGapGains.getEnergy();
 
             // TODO Remove type out
-            System.out.println("SpectrumMapRfGap#compGapPhaseAndEnergyGainIndirect(IProbe): ID=" + this.getId() + ",  call count #" + CNT_CALLS++);
+//            System.out.println("SpectrumMapRfGap#compGapPhaseAndEnergyGainIndirect(IProbe): ID=" + this.getId() + ",  call count #" + CNT_CALLS++);
 //            if (!this.bolMethodCalled) {
 //                double V0 = this.gapAcclMdl.getRfFieldPotential();
 //                double ki = DBL_2PI /(bi*IElement.LightSpeed/this.getFrequency());
