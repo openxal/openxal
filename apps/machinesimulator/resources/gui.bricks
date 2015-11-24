@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Sat Nov 14 17:05:02 CST 2015" version="1.0.0">
+<BricksDocument date="Tue Nov 24 16:01:42 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="874" tag="MainWindow" width="1442">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -147,6 +147,10 @@
                             <ViewNode tag="Unselect All">
                                 <ViewProxy type="javax.swing.JButton"/>
                                 <BeanProperty name="text" value="Unselect All"/>
+                            </ViewNode>
+                            <ViewNode tag="Compare Results">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Compare Results"/>
                             </ViewNode>
                             <ViewNode tag="Panel">
                                 <ViewProxy type="javax.swing.JPanel"/>
