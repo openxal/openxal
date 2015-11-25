@@ -2,19 +2,34 @@
  * Created on Feb 19, 2004
  *
  */
-package xal.tools.math.poly;
+package xal.tools.math.fnc.poly;
+
+import xal.tools.math.ElementaryFunction;
+import xal.tools.math.fnc.ISmoothRealFunction;
 
 /**
+ * <p>
  * Represents a polynomial object with real coefficients over one real
  * variable.  This class is meant more as an encapsulation of a polynomial
  * function rather than an algebraic object, as is implemented in the
  * <code>JSci</code> mathematical/science package.
+ * </p>
+ * <p>
+ * Note that if the zero-argument constructor is used one is essentially
+ * left with a <code>null</code> object. There will be no allocated coefficient
+ * storage until the <code>{@link #setCoefArray(double[])}</code> method is
+ * call.  Consequently, any operations called prior to that time will throw
+ * a null pointer exception.
+ * </p>
  *
- * @author Chris Allen
- *
+ * @author Christopher Allen
+ * @since Feb 19, 2004
+ * @version Sep 25, 2015
  */
-public class UnivariateRealPolynomial {
+public class RealUnivariatePolynomial implements ISmoothRealFunction {
 
+    
+    
     /*
      *  Local Attributes
      */
@@ -27,11 +42,10 @@ public class UnivariateRealPolynomial {
       * Initialization
       */
 
-
     /**
      * Creates an empty polynomial object, the zero polynomial.
      */
-    public UnivariateRealPolynomial() {
+    public RealUnivariatePolynomial() {
     }
 
     /**
@@ -40,7 +54,7 @@ public class UnivariateRealPolynomial {
      * @param iOrder
      * @return
      */
-    public UnivariateRealPolynomial(double[] arrCoef)   {
+    public RealUnivariatePolynomial(double[] arrCoef)   {
         this.setCoefArray(arrCoef);
     }
 
@@ -56,9 +70,8 @@ public class UnivariateRealPolynomial {
 
 
     /*
-     * Attribute Queries
+     *  Polynomial operations
      */
-
 
     /**
      * Return the degree of the polynomial.  That is, the highest
@@ -100,14 +113,15 @@ public class UnivariateRealPolynomial {
     }
 
 
-
     /*
-     *  Polynomial operations
+     * ISmoothRealFunction Interface
      */
 
     /**
-     * Evaluate the polynomial for the specifed value of the indeterminate.
-     * If the coefficient vector has not been specified this
+     * Evaluate the polynomial for the specified value of the indeterminate.
+     * If the coefficient vector has not been specified this method returns
+     * zero.
+     * 
      * @param   dblVal      indeterminate value to evaluate the polynomial
      *
      * @author Chris Allen
@@ -126,37 +140,112 @@ public class UnivariateRealPolynomial {
     }
 
     /**
-     * Evaluate derivative of the polynomial for the specifed value of the indeterminate.
-     * If the coefficient vector has not been specified this
+     * Evaluate the polynomial derivative for the specified value of the indeterminate.
+     * If the coefficient vector has not been specified this method returns zero.
+     * Note that the result has one less order of accuracy than the underlying
+     * polynomial.
+     * 
      * @param   dblVal      indeterminate value to evaluate the polynomial
      *
-     * @author Chris Allen
+     * @author Christopher Allen
+     * @version Nov 26, 2014
      */
-    public double evaluateDerivativeAt(double dblVal) {
+    public double derivativeAt(double dblVal) {
         if (this.m_arrCoef == null)
             return 0.0;
 
         int     N = this.m_arrCoef.length;      // number of coefficients
-        double  dblAccum = 0.0;                 // accumulator
+        double  dblPow = 1.0;                 // the the nomial
+        double  dblSum = 0.0;                 // accumulator
 
-        for (int n=N-1; n>=1; n--) {
-					dblAccum += this.getCoef(n) * n* Math.pow(dblVal, n-1);
-				}
+        for (int n=1; n<N; n++) {
+            double      dblCoef = n * this.getCoef(n);
+            
+            dblSum += dblCoef*dblPow;
+            
+            dblPow *= dblVal;
+        }
 
-        return dblAccum;
+        return dblSum;
     }
 
+    /**
+     *
+     * @see xal.tools.math.fnc.ISmoothRealFunction#derivativeAt(int, double)
+     *
+     * @since  Sep 25, 2015   by Christopher K. Allen
+     */
+    @Override
+    public double derivativeAt(int nOrder, double dblLoc) throws IllegalArgumentException {
+        
+        // Check if the order of the derivative is greater than the degree of the polynomial
+        if (nOrder > this.getDegree())
+            return 0.0;
+        
+        // Compute the derivative by starting at the polynomial coefficient with index equal to the
+        //  order of the derivative.  The monomial coefficient is the combinatoric of the coefficient
+        //  degree with the derivative order
+        double      x_k    = 1.0;        // monomial of order k - n
+        double      dblSum = 0.0;        // accumulator for polynomial summation
+        for (int k=0; k<=this.getDegree(); k++) {
+            if (k<nOrder)
+                continue;
+            
+            double  kFac   = ElementaryFunction.factorial(k);
+            double  kmnFac = ElementaryFunction.factorial(k - nOrder);
+            double  ck = kFac/kmnFac;
+            
+            double  ak = this.getCoef(k);
+            double  tk = ck * ak * x_k;
+            
+            dblSum += tk;
+            
+            x_k *= dblLoc;
+        }
+        
+        return dblSum;
+    }
 
+    
+//  /**
+//  * Evaluate derivative of the polynomial for the specified value of the indeterminate.
+//  * If the coefficient vector has not been specified this method returns zero.
+//  * 
+//  * @param   dblVal      indeterminate value to evaluate the polynomial
+//  *
+//  * @author Chris Allen
+//  */
+// public double evaluateDerivativeAt(double dblVal) {
+//     if (this.m_arrCoef == null)
+//         return 0.0;
+//
+//     int     N = this.m_arrCoef.length;      // number of coefficients
+//     double  dblAccum = 0.0;                 // accumulator
+//
+//     for (int n=N-1; n>=1; n--) {
+//               dblAccum += this.getCoef(n) * n* Math.pow(dblVal, n-1);
+//           }
+//
+//     return dblAccum;
+// }
+
+
+    
+    /*
+     * Algebraic Operations
+     */
+    
     /**
      * Nondestructively add two polynomials.  The current polynomial and the
      * argument are added according to standard definitions (i.e., the
-     * coefficient array is added vectorily).
+     * coefficient array is added vectorally).
      *
      * @param   polyAddend  polynomial to be added to this
+     * 
      * @return              a new polynomial object representing the sum
      */
-    public UnivariateRealPolynomial plus(UnivariateRealPolynomial polyAddend)  {
-        UnivariateRealPolynomial    polySum;
+    public RealUnivariatePolynomial plus(RealUnivariatePolynomial polyAddend)  {
+//        RealUnivariatePolynomial    polySum;
 
         int nLen = Math.max(polyAddend.getDegree(), this.getDegree()) + 1;
         double[]  arrCoef = new double[nLen];
@@ -165,7 +254,7 @@ public class UnivariateRealPolynomial {
             arrCoef[n] = this.getCoef(n) + polyAddend.getCoef(n);
         }
 
-        return new UnivariateRealPolynomial(arrCoef);
+        return new RealUnivariatePolynomial(arrCoef);
     }
 
     /**
@@ -175,8 +264,8 @@ public class UnivariateRealPolynomial {
      * @param polyFac   polynomial to be multiplied by this
      * @return          a new polynomial object representing the product
      */
-    public UnivariateRealPolynomial times(UnivariateRealPolynomial polyFac) {
-        UnivariateRealPolynomial    polyProd;
+    public RealUnivariatePolynomial times(RealUnivariatePolynomial polyFac) {
+//        RealUnivariatePolynomial    polyProd;
 
         int nLen = polyFac.getDegree() * this.getDegree() + 1;
         double[]  arrCoef = new double[nLen];
@@ -191,15 +280,13 @@ public class UnivariateRealPolynomial {
             arrCoef[n] = dblAccum;
         }
 
-        return new UnivariateRealPolynomial(arrCoef);
+        return new RealUnivariatePolynomial(arrCoef);
     }
 
 
     /*
-     * Testing and Debugging
+     * Object Overrides
      */
-
-
 
     /**
      * Construct and return a textual representation of the contents of this
@@ -222,12 +309,13 @@ public class UnivariateRealPolynomial {
     }
 
 
+    
     /**
      * Testing driver
      */
     public static void main(String args[])  {
-        UnivariateRealPolynomial    poly1 = new UnivariateRealPolynomial( new double[]{1.0,2.0,3.0} );
-        UnivariateRealPolynomial    poly2 = new UnivariateRealPolynomial( new double[]{1.1,1.2,1.3} );
+        RealUnivariatePolynomial    poly1 = new RealUnivariatePolynomial( new double[]{1.0,2.0,3.0} );
+        RealUnivariatePolynomial    poly2 = new RealUnivariatePolynomial( new double[]{1.1,1.2,1.3} );
 
         System.out.println("poly1 = " + poly1.toString());
         System.out.println("poly2 = " + poly2.toString());

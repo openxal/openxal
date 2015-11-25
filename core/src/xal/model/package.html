@@ -3,6 +3,11 @@
 <head>
 <meta charset="US-ASCII">
 <title>Online Model</title>
+<style type="text/css">
+<!--
+.tab { margin-left: 40px; }
+-->
+</style>
 </head>
 <body>
 <h1>The Online Model</h1>
@@ -213,8 +218,8 @@ of the start element, and will be returned with a call to
 <code>Trajectory#statesForElement(String)</code>.
 </p>
  
-<h2>Processing Simulation Results</h2>
 <p>
+<h2>Processing Simulation Results</h2>
 There are a variety of tools for processing the simulation results of the online model.  
 In particular there is a suite of tools in the <code>xal.tools.beam.calc</code> package that
 performs direct calculations on the <code>Trajectory</code> objects produced in the simulation.
@@ -223,6 +228,67 @@ the trajectory.  For example, the class <code>CalculationsOnMachines</code> expe
 <code>TransferMapState</code> objects since such states are completely determined by the
 beamline, and not any beam.  The components of <code>xal.tools.beam.calc</code> are
 well documented and we refer the reader to the Javadoc for this package.
+</p>
+<h2>New Acceleration Model</h2>
+<h3>Compatibility</h3>
+<p>Currently the acceleration model of the online model is being upgraded.  This action
+includes modification of the lattice generator, addition of nested modeling elements analogous
+to the nested hardware objects of the SMF hierarchy, addition of longitudinal phase variables,
+addition of a RF cavity, and a complete refactoring of the RF gap element.  The old modeling 
+element <code>IdealRfGap</code> was replaced with the new implementation
+<code>SpectralMapRfGap</code>.  There are two
+new and very important classes in the refactoring, AxialFieldSpectrum representing the
+axial RF field spectrum and related quantities, and AcceleratingRfGap which handles all the
+dynamics calculations of the RF gap.  It was necessary to alter these two classes in order
+to emulate the previous acceleration dynamics.  These modifications are listed below and must
+be converted back in order to utilize the full acceleration model.  
+</p>
+<p>
+As of November, 2015 the new RF acceleration model has been configured to emulate the
+previous acceleration model. To utilize all the features of the new model the following
+issues are identified:
+</p>
+<p>
+<b><code>AxialFieldSpectrum</code></b>
+<ul>
+<li>Private method <code>dkTzfromDkTz0(double)</code> used for backward compatibility must be switched
+to use <tt>magic number</tt> implementation.
+<li>Private method <code>dkTzfromDkTz0(double)</code> used for backward compatibility must be switched
+to use <tt>magic number</tt> implementation.
+<li>Private method <code>dkTqFromDkSq0(double></code> used for backward compatibility must be switched
+to use <tt>magic number</tt> implementation.
+<li>Private method <code>dkSqFromDkSq0(double></code> used for backward compatibility must be switched
+to use <tt>magic number</tt> implementation.
+</UL>
+<p/>
+<p>
+<b><code>AcceleratingRfGap</code></b>
+<ul>
+No changes necessary at this time.
+</ul>
+</p>
+<p>
+<b><code>SpectrumMapRfGap</code></b>
+<ul>
+<li>Private method <code>compGapPhaseAndEnergyGainIndirect(IProbe)</code> has multiple issues. There
+are many type outs to be removed as necessary.  The old method computes the "mid-gap wave number"
+then the phase and energy gains from that value.  The new method computes the gap gains directly
+for the upstream (pre-gap) and downstream (post-gap) regions then sums them for the full values.
+There are <code>TODO</code> comments marking the necessary changes.  Look for the local variables
+<code>DELTA_PHASE_CORRECTION</code> and <code>theEnergyGain</code>.
+</ul>
+</p>
+<p>
+<h3>New Spectral Quantities</h3>
+The new acceleration model also requires new spectral quantities other than the conventional 
+transit time factors <i>T</i>(<i>k</i>) and <i>S</i>(<i>k</i>).  They are termed the
+<i>quadrature transit time factors</i> <i>T<sub>q</sub></i>(<i>k</i>) and 
+<i>S<sub>q</sub></i>(<i>k</i>).  The additional quantities can
+be provided using an "optics_extra" file if they are not available in the XDXF file.  These
+quantities must be computed off line in a similar fashion as are the conventional transit time
+factors.  For a complete set of RF cavity field spectral quantities the online model requires
+<i>T</i>(<i>k</i>), <i>S</i>(<i>k</i>), <i>T<sub>q</sub></i>(<i>k</i>), <i>S<sub>q</sub></i>(<i>k</i>),
+and their derivatives.  Polynomial approximations are used for all.
 </p>
 </body>
 

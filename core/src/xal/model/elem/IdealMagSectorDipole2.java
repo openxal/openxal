@@ -13,9 +13,9 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
 import xal.tools.beam.optics.QuadrupoleLens;
 import xal.tools.math.ElementaryFunction;
-
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IElectromagnet;
 
 /**
  * <p>Represents a bending magnetic dipole magnet for a beam in a sector 
@@ -49,6 +49,7 @@ import xal.model.ModelException;
  * 
  * @see xal.model.elem.IdealMagSectorDipole2
  * @see xal.model.elem.ThickDipole
+ * 
  */
 public class IdealMagSectorDipole2 extends ThickElectromagnet {
 
@@ -942,7 +943,7 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
      *  
      *  @author Christopher K. Allen
      *  
-     *  @see    IdealMagSectorDipole#compCurrentAngle(doube)
+     *  @see    IdealMagSectorDipole2#compCurrentAngle(doube)
      */
     @SuppressWarnings("unused")
     private double approxCurrentAngle(double s) {

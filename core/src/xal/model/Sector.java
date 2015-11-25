@@ -9,21 +9,26 @@ import xal.model.elem.ElementSeq;
 
 
 /**
- * Represents a logical sector of beamline.
+ * Represents a logical sector of beamline.  This is essentially a semantic
+ * concept since it simply extends the <code>ElementSeq</code> base class.
  * 
  * @author Christopher K. Allen
+ * @since  May 20, 2004
  */
 public class Sector extends ElementSeq {
 
     
     /*
-     *  Global Attributes
+     *  Global Constants
      */
     
     /** the string type identifier for all Sector objects */
     public static final String      s_strType = "Sector";
     
     
+    /*
+     * Initialization
+     */
     
     /**
      * Default constructor.  The <code>Sector</code> object is empty and has 

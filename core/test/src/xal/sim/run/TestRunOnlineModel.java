@@ -29,10 +29,25 @@ import xal.smf.data.XMLDataManager;
 
 
 /**
+ * <p>
  * Check operation of the XAL online model.
+ * <p/>
+ * <p>
+ * Use Java virtual machine command line switch
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=cpu=times</tt>
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=heap=dump,format=b</tt>
+ * <br/>
+ * <br/>
+ * to create <code>java.hprof.TMP</code> files for profiling.
+ * </p>
  *
  * @author Christopher K. Allen
  * @since   Jul 30, 2012
+ * @version Dec 15, 2014
  */
 public class TestRunOnlineModel {
 
@@ -321,10 +336,14 @@ public class TestRunOnlineModel {
         
         for (S state : trjData) {
             
-            String strId = state.getElementId();
-            double dblW  = state.getKineticEnergy();
+            String strId  = state.getElementId();
+            double dblPos = state.getPosition();
+            double dblW   = state.getKineticEnergy();
+            double dblPhs = state.getLongitudinalPhase(); 
             
-            System.out.println(strId + ": W = " + dblW);
+            dblPhs = (180.0/Math.PI) * Math.IEEEremainder(dblPhs, 2.0*Math.PI);
+            
+            System.out.println(strId + ": s=" + dblPos + ", phi=" + dblPhs + ", W=" + dblW);
         }
 
         System.out.println();

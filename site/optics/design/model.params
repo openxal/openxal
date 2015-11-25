@@ -225,6 +225,7 @@
             <attribute isPrimaryKey="false" name="elem" type="java.lang.String" defaultValue="" />
             <attribute isPrimaryKey="false" name="s" type="java.lang.Double" defaultValue="0" />
             <attribute isPrimaryKey="false" name="t" type="java.lang.Double" defaultValue="0" />
+            <attribute isPrimaryKey="false" name="phase" type="java.lang.Double" defaultValue="0" />
         </schema>
         <record name="MEBT" species="HMINUS" W="2.5E6"/>
         <record name="DTL1" species="HMINUS" W="2.5E6"/>

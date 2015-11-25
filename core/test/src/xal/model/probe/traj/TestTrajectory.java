@@ -20,6 +20,7 @@ import xal.model.IAlgorithm;
 import xal.model.IComponent;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.elem.Element;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
@@ -36,7 +37,18 @@ import xal.test.ResourceTools;
 import xal.tools.beam.PhaseVector;
 
 /**
+ * <p>
  * Class of test cases for class <code>{@link Trajectory}</code>.
+ * <p/>
+ * <p>
+ * Use Java virtual machine command line switch
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=cpu=times</tt>
+ * <br/>
+ * <br/>
+ * to create <code>java.hprof.TMP</code> files for profiling.
+ * </p>
  *
  * @author Christopher K. Allen
  * @since  Aug 25, 2014
@@ -55,8 +67,8 @@ public class TestTrajectory {
 
     
     /** Accelerator sequence used for testing */
-    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-//    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     
     
     /** Bending Dipole ID */
@@ -176,7 +188,10 @@ public class TestTrajectory {
         PSTR_OUTPUT.println("ELEMENTS contained in MODEL");
         while (itrCmps.hasNext()) {
             IComponent cmp = itrCmps.next();
-            PSTR_OUTPUT.println("  " + index + " " + cmp.getId());
+            if (cmp instanceof Element)
+                PSTR_OUTPUT.println("  " + index + " " + (Element)cmp);
+            else
+                PSTR_OUTPUT.println("  " + index + " " + cmp.getId());
             index++;
         }
     }
@@ -298,7 +313,7 @@ public class TestTrajectory {
     }
     
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement_OLD(java.lang.String)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
      */
     @Test
     public final void testStatesForElement_OLD() {

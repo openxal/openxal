@@ -16,6 +16,7 @@ import xal.tools.beam.optics.DriftSpace;
 import xal.tools.beam.optics.QuadrupoleLens;
 import xal.tools.math.r3.R3x3;
 import xal.model.IProbe;
+import xal.model.elem.sync.IElectromagnet;
 
 
 /**
