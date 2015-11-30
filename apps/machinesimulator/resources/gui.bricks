@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Nov 24 16:01:42 CST 2015" version="1.0.0">
+<BricksDocument date="Thu Nov 26 16:31:46 CST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="874" tag="MainWindow" width="1442">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1282">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
@@ -127,96 +127,115 @@
                         <BeanProperty name="text" value="Clear All"/>
                     </ViewNode>
                 </ViewNode>
-                <ViewNode tag="Tabbed Pane">
-                    <ViewProxy type="javax.swing.JTabbedPane"/>
-                    <ViewNode tag="History Table View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="History Table"/>
-                        <ViewNode tag="Control Box">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <BeanProperty height="28" name="maximumSize" width="32973"/>
-                            <ViewNode tag="Remove Button">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value="Remove"/>
-                            </ViewNode>
-                            <ViewNode tag="Select All">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="name" value="Select All"/>
-                                <BeanProperty name="text" value="Select All"/>
-                            </ViewNode>
-                            <ViewNode tag="Unselect All">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value="Unselect All"/>
-                            </ViewNode>
-                            <ViewNode tag="Compare Results">
-                                <ViewProxy type="javax.swing.JButton"/>
-                                <BeanProperty name="text" value="Compare Results"/>
-                            </ViewNode>
-                            <ViewNode tag="Panel">
-                                <ViewProxy type="javax.swing.JPanel"/>
-                                <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
-                                <BeanProperty name="focusable" value="true"/>
-                                <BeanProperty name="inheritsPopupMenu" value="false"/>
-                                <BeanProperty name="focusCycleRoot" value="false"/>
-                                <BeanProperty height="38" name="minimumSize" width="1000"/>
-                            </ViewNode>
-                        </ViewNode>
+                <ViewNode tag="Table Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="Split Pane">
+                        <ViewProxy type="javax.swing.JSplitPane"/>
+                        <BeanProperty name="oneTouchExpandable" value="true"/>
                         <ViewNode tag="History Table Box">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <ViewNode tag="History Pane">
-                                <ViewProxy type="javax.swing.JSplitPane"/>
-                                <BeanProperty name="continuousLayout" value="true"/>
-                                <BeanProperty name="autoscrolls" value="false"/>
-                                <BeanProperty name="focusCycleRoot" value="false"/>
-                                <BeanProperty height="200" name="minimumSize" width="400"/>
-                                <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
-                                <BeanProperty name="oneTouchExpandable" value="true"/>
-                                <ViewNode tag="History Record Pane">
-                                    <ViewProxy type="javax.swing.JScrollPane"/>
-                                    <ViewNode tag="History Record Table">
-                                        <ViewProxy type="javax.swing.JTable"/>
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <BeanProperty height="453" name="preferredSize" width="1000"/>
+                            <BeanProperty name="name" value="Vertical Box"/>
+                            <BeanProperty height="64" name="minimumSize" width="418"/>
+                            <ViewNode tag="Control Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <BeanProperty height="28" name="maximumSize" width="32973"/>
+                                <BeanProperty height="38" name="minimumSize" width="20"/>
+                                <ViewNode tag="Remove Button">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Remove"/>
+                                </ViewNode>
+                                <ViewNode tag="Select All">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="name" value="Select All"/>
+                                    <BeanProperty name="text" value="Select All"/>
+                                </ViewNode>
+                                <ViewNode tag="Unselect All">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Unselect All"/>
+                                </ViewNode>
+                                <ViewNode tag="Compare Results">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="text" value="Compare Results"/>
+                                </ViewNode>
+                                <ViewNode tag="Panel">
+                                    <ViewProxy type="javax.swing.JPanel"/>
+                                    <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
+                                    <BeanProperty name="focusable" value="true"/>
+                                    <BeanProperty name="inheritsPopupMenu" value="false"/>
+                                    <BeanProperty name="focusCycleRoot" value="false"/>
+                                    <BeanProperty height="38" name="minimumSize" width="1000"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="History Record Pane">
+                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <ViewNode tag="History Record Table">
+                                    <ViewProxy type="javax.swing.JTable"/>
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="run state Box">
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <ViewNode tag="Tabbed Pane">
+                                <ViewProxy type="javax.swing.JTabbedPane"/>
+                                <BeanProperty height="455" name="preferredSize" width="25005"/>
+                                <BeanProperty height="112" name="minimumSize" width="120"/>
+                                <ViewNode tag="History Table View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="History Table"/>
+                                    <ViewNode tag="History Data Pane">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="History Data Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
                                     </ViewNode>
                                 </ViewNode>
-                                <ViewNode tag="History Data Pane">
-                                    <ViewProxy type="javax.swing.JScrollPane"/>
-                                    <ViewNode tag="History Data Table">
-                                        <ViewProxy type="javax.swing.JTable"/>
+                                <ViewNode tag="Sequence Table View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="Sequence Table"/>
+                                    <ViewNode tag="Sequence Table Scroller">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="Sequence Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="States Table View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="States Table"/>
+                                    <ViewNode tag="States Table Scroller">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="States Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="States Plot View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="States Plot"/>
+                                    <ViewNode tag="Plot Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="maximumSize" width="32973"/>
+                                        <ViewNode tag="Show Difference">
+                                            <ViewProxy type="javax.swing.JCheckBox"/>
+                                            <BeanProperty name="label" value="item"/>
+                                            <BeanProperty name="text" value="Show Difference"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="States Plot">
+                                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                                    </ViewNode>
+                                    <ViewNode tag="SynopticContainer">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="40" name="preferredSize" width="25000"/>
+                                        <BeanProperty height="41" name="maximumSize" width="30000"/>
+                                        <BeanProperty height="39" name="minimumSize" width="100"/>
                                     </ViewNode>
                                 </ViewNode>
                             </ViewNode>
-                        </ViewNode>
-                    </ViewNode>
-                    <ViewNode tag="Sequence Table View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="Sequence Table"/>
-                        <ViewNode tag="Sequence Table Scroller">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
-                            <ViewNode tag="Sequence Table">
-                                <ViewProxy type="javax.swing.JTable"/>
-                            </ViewNode>
-                        </ViewNode>
-                    </ViewNode>
-                    <ViewNode tag="States Table View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="States Table"/>
-                        <ViewNode tag="States Table Scroller">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
-                            <ViewNode tag="States Table">
-                                <ViewProxy type="javax.swing.JTable"/>
-                            </ViewNode>
-                        </ViewNode>
-                    </ViewNode>
-                    <ViewNode tag="States Plot View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="States Plot"/>
-                        <ViewNode tag="States Plot">
-                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
-                        </ViewNode>
-                        <ViewNode tag="SynopticContainer">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <BeanProperty height="40" name="preferredSize" width="25000"/>
-                            <BeanProperty height="41" name="maximumSize" width="30000"/>
-                            <BeanProperty height="39" name="minimumSize" width="100"/>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>

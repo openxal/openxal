@@ -23,7 +23,8 @@ public class MachineSimulatorTwissPlot{
 	final private List<Parameter> PARAMETERS;
 	
 	/**constructor*/
-	public MachineSimulatorTwissPlot( final FunctionGraphsJPanel twissParametersPlot, final List<ScalarParameter>scalarParameters, final List<VectorParameter>vectorParameters  ){
+	public MachineSimulatorTwissPlot( final FunctionGraphsJPanel twissParametersPlot,
+			final List<ScalarParameter>scalarParameters, final List<VectorParameter>vectorParameters  ) {
 		TWISS_PARAMETERS_PLOT=twissParametersPlot;
 		PARAMETERS=new ArrayList<Parameter>( scalarParameters.size() + vectorParameters.size() );
 		//put scalar and vector parameter together
@@ -39,7 +40,8 @@ public class MachineSimulatorTwissPlot{
 	 * @param twissParameterValues parameter's value of all the elements
 	 * @param keypath the key path of parameter which is selected
 	 */
-	public void showTwissPlot( final List<Double> position, final List<Double> twissParameterValues, final String keyPath ){
+	public void showTwissPlot( final List<Double> position, final List<Double> twissParameterValues,
+			final String keyPath, final String legend ){
 		double[] position1= new double[position.size()];
 		double[] twissParameterValues1= new double[twissParameterValues.size()];
 		for( int index=0; index < position.size(); index++ ){
@@ -47,7 +49,7 @@ public class MachineSimulatorTwissPlot{
 			twissParameterValues1[index]=twissParameterValues.get( index );
 		}
 		BasicGraphData twissParameterPlotData= new BasicGraphData();
-		configureGraph( twissParameterPlotData, keyPath );
+		configureGraph( twissParameterPlotData, keyPath, legend );
 		
 	   twissParameterPlotData.updateValues( position1, twissParameterValues1 );
 		TWISS_PARAMETERS_PLOT.addGraphData( twissParameterPlotData );
@@ -58,12 +60,13 @@ public class MachineSimulatorTwissPlot{
 	 * @param keyPath  the key path to identify which parameter it is
 	 */
 	
-	private void configureGraph( final BasicGraphData graphData, final String keyPath ){
+	private void configureGraph( final BasicGraphData graphData, final String keyPath, final String legend ) {
 		final String keyPathForOld = keyPath.substring(4);
 		for( int parameterIndex=0;parameterIndex<PARAMETERS.size();parameterIndex++ ){
 			if( PARAMETERS.get( parameterIndex ).isThisParameter( keyPath ) ){
 				//configure the graphic name
-				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), PARAMETERS.get( parameterIndex ).getParameterName( keyPath ) );
+				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
+						legend+"-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPath ) );
 				// configure the graphic color
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex ) );
 				//configure the graphic line pattern
@@ -83,7 +86,8 @@ public class MachineSimulatorTwissPlot{
 			}
 			//configure the graph for old simulation results
 			else if ( PARAMETERS.get( parameterIndex ).isThisParameter( keyPathForOld ) ) {
-				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), "Old-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld ) );
+				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
+						legend+"-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld ) );
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex+1 ) );
 				
 				//configure the graphic line pattern
@@ -108,7 +112,7 @@ public class MachineSimulatorTwissPlot{
      /**configure plot panel
       *@param twissParametersPlot the plot panel
       */	
-	private void configurePlotPanel( final FunctionGraphsJPanel twissParametersPlot ){
+	private void configurePlotPanel( final FunctionGraphsJPanel twissParametersPlot ) {
 		
 		//labels
 		twissParametersPlot.setName( "" );

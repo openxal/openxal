@@ -4,8 +4,8 @@
 package xal.app.machinesimulator;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import xal.smf.AcceleratorNode;
 
@@ -26,7 +26,7 @@ public class NodePropertyHistoryRecord {
 	public NodePropertyHistoryRecord( final AcceleratorNode node, final String propertyName ){
 		NODE = node;	
 		PROPERTY_NAME = propertyName;
-		VALUES_SHOW = new LinkedHashMap<Date,Double>();
+		VALUES_SHOW = new TreeMap<Date,Double>();
 	}
 	
 	/**get the sequence name which the node belong to*/

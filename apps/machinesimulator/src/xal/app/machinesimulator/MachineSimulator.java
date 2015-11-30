@@ -47,8 +47,10 @@ public class MachineSimulator implements DataListener {
 	
 	/**the list of ModelInput*/
 	private List<ModelInput> modelInputs;
-	/***/
+	/**the actual property values used for simulation*/
 	private Map<AcceleratorNode, Map<String, Double>> propertyValuesRecordForNodes;
+	/**the number of running times*/
+	private int runNumber=0;
 
     
 	/** Constructor */
@@ -300,6 +302,11 @@ public class MachineSimulator implements DataListener {
     	return propertyValuesRecordForNodes;
     }
     
+    /**Return the number of running time*/
+    public int getRunNumber(){
+    	return runNumber;
+    }
+    
 	/**
 	 * Run the simulation.
 	 * @return the generated simulation or null if the run failed.
@@ -312,6 +319,8 @@ public class MachineSimulator implements DataListener {
             _scenario.setProbe( probe );
 			_scenario.resync();
 			_scenario.run();
+			
+			runNumber++;
 			
 			return new MachineSimulation( probe );
 		}
