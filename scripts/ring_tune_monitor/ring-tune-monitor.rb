@@ -30,9 +30,13 @@ java_import 'xal.smf.TimingCenter'
 java_import 'xal.ca.ConnectionListener'
 java_import 'xal.ca.Channel'
 java_import 'xal.ca.IEventSinkValTime'
-java_import 'xal.ca.Monitor'
 java_import 'xal.tools.apputils.ImageCaptureManager'
 java_import 'xal.extension.fit.DampedSinusoidFit'
+
+# wrap certain constructs in XAL module to avoid symbol conflicts with some Ruby constructs
+module XAL
+	java_import 'xal.ca.Monitor'
+end
 
 
 module Java
@@ -50,6 +54,7 @@ module Java
 	java_import 'javax.swing.ButtonGroup'
 	java_import 'javax.swing.Timer'
 end
+
 
 
 TUNE_FORMAT = DecimalFormat.new( "0.00000" )
@@ -114,7 +119,7 @@ class WaveformMonitor
 	
 	def connectionMade( channel )
 		if @monitor == nil
-			@monitor = channel.addMonitorValTime( self, Monitor::VALUE )
+			@monitor = channel.addMonitorValTime( self, XAL::Monitor::VALUE )
 			Channel::flushIO
 		end
 	end
