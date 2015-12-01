@@ -32,7 +32,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /** simulated states table model */
      final private KeyValueFilteredTableModel<MachineSimulationHistoryRecord> STATES_TABLE_MODEL;
      /**accelerator node table model*/
-     final private KeyValueFilteredTableModel<NodePropertyRecord> SEQUENCE_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<NodePropertyRecord> NEW_PARAMETERS_TABLE_MODEL;
      /**history record table model*/
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
      /**history data table model*/
@@ -75,7 +75,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationHistoryRecord>();
 		
-		SEQUENCE_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
+		NEW_PARAMETERS_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
 		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
 		
@@ -133,7 +133,7 @@ public class MachineSimulatorController implements MachineModelListener {
         final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
         historyRecordTable.setModel(HISTORY_RECORD_TABLE_MODEL);
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("selectState", "select");
+        HISTORY_RECORD_TABLE_MODEL.setColumnName("selectState", "Compare");
         HISTORY_RECORD_TABLE_MODEL.setColumnName("sequence.id", "Sequence" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("dateTime", "Time" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("recordName", "Recordname" );
@@ -159,24 +159,24 @@ public class MachineSimulatorController implements MachineModelListener {
         
 /******************configure the sequence table view*************************************/
         
-        final JTable sequenceTable = (JTable)windowReference.getView( "Sequence Table" );
-        sequenceTable.setModel( SEQUENCE_TABLE_MODEL ); 
+        final JTable sequenceTable = (JTable)windowReference.getView( "New Run Parameters" );
+        sequenceTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
         
         //set the column name of the sequence table
-        SEQUENCE_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "propertyName", "Property" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "designValue", "Design Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName( "liveValue", "Live Value" );
-        SEQUENCE_TABLE_MODEL.setColumnName("testValue", "Test Value");
+        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
+        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "designValue", "Design Value" );
+        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "liveValue", "Live Value" );
+        NEW_PARAMETERS_TABLE_MODEL.setColumnName("testValue", "Test Value");
         
         //set the filter field for sequence table
-        SEQUENCE_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-        SEQUENCE_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
+        NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
+        NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
          
         //configure the sequence table model
-		  SEQUENCE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
-		  SEQUENCE_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
-		  SEQUENCE_TABLE_MODEL.setColumnEditable( "testValue", true );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
 
 /**********************configure the states table view***********************************/
 	     //get components
@@ -369,35 +369,24 @@ public class MachineSimulatorController implements MachineModelListener {
             }
         });
 
-      //configure the phase slip check box
-		final JCheckBox phaseSlipCheckbox = (JCheckBox)windowReference.getView( "Phase Slip Checkbox" );
-		phaseSlipCheckbox.setSelected( MODEL.getSimulator().getUseRFGapPhaseSlipCalculation() );
-		phaseSlipCheckbox.addActionListener( new ActionListener() {
-			public void actionPerformed( final ActionEvent event ) {
-				MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( phaseSlipCheckbox.isSelected() );
-			}
-		});
 		
 		//configure the remove button of the history record view
 		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
 		removeButton.addActionListener( event -> {		
-			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();			
-			int recordNumber = records.size();
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
 			int removed = 0;
-			for( int index = 0; index < recordNumber; index++ ){			
-				if( records.get( index-removed ).getSelectState() ) {					
-					records.get( index-removed ).setSelectState( false );
-					records.remove( index-removed );
-					removed++;
-				}
+			int[] selRows = historyRecordTable.getSelectedRows();
+			for( int index = 0; index < selRows.length; index++ ){
+				records.get( selRows[index]-removed ).setSelectState( false );
+				records.remove( selRows[index]-removed );
+				removed++;
 			}
-			
-			HISTORY_DATA_TABLE_MODEL.setRecords(null);
+			if ( records.size() == 0 ) HISTORY_DATA_TABLE_MODEL.setRecords( null );
 			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
 		});
 		
 		//configure the select all button
-		final JButton selectAllButton = (JButton)windowReference.getView( "Select All" );
+		final JButton selectAllButton = (JButton)windowReference.getView( "Check All" );
 		selectAllButton.addActionListener( event -> {
 			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
 			for ( int index = 0; index < records.size();index++){
@@ -407,7 +396,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		});
 		
 		//configure the unselect all button
-		final JButton unselectAllButton = (JButton)windowReference.getView( "Unselect All" );
+		final JButton unselectAllButton = (JButton)windowReference.getView( "Uncheck All" );
 		unselectAllButton.addActionListener( event -> {
 			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
 			for ( int index = 0; index < records.size();index++){
@@ -415,21 +404,6 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 			HISTORY_DATA_TABLE_MODEL.setRecords(null);
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
-		});
-		
-		//configure the compare button of history record table view
-		final JButton compareButton = (JButton)windowReference.getView( "Compare Results" );
-		compareButton.addActionListener( event -> {
-			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
-			if ( simulations[0] != null ){
-				PARAMETER_HANDLER.actionPerformed( null );
-			}
-			else {
-				String sequenceName = _sequence != null ? _sequence.getId() : "";
-				JOptionPane.showMessageDialog(windowReference.getWindow(),
-						"You need to select "+sequenceName+" record(s) \n or change the sequence first","Warning!",JOptionPane.PLAIN_MESSAGE);
-			}
-			
 		});
 		
 		//configure the show difference check box of plot view
@@ -498,7 +472,7 @@ public class MachineSimulatorController implements MachineModelListener {
     
     /**get a runnalbe that syncs the values */
     private Runnable getLiveValueSynchronizer(){
-    	return () -> SEQUENCE_TABLE_MODEL.fireTableRowsUpdated( 0, SEQUENCE_TABLE_MODEL.getRowCount() - 1  ); 
+    	return () -> NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, NEW_PARAMETERS_TABLE_MODEL.getRowCount() - 1  ); 
     }
 
     /**event indicates that the sequence has changed*/
@@ -506,7 +480,7 @@ public class MachineSimulatorController implements MachineModelListener {
     	if( model.getSequence() != null ){
         	_sequence = model.getSequence();
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
-    		SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
+    		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
@@ -524,7 +498,7 @@ public class MachineSimulatorController implements MachineModelListener {
 	public void modelScenarioChanged( final MachineModel model) {
 		if( _sequence != null ){
 			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
-			SEQUENCE_TABLE_MODEL.setRecords( nodePropertyRecords );
+			NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
 			VALUE_SYNC_TIME.resume();
 		}
 		

@@ -97,6 +97,15 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	 */
 	public void customizeCommands( Commander commander ) {
 		
+		//register calculate phase slip button
+		final ToggleButtonModel calculatePhaseSlip = new ToggleButtonModel();
+		calculatePhaseSlip.setSelected( true );
+		calculatePhaseSlip.addActionListener ( event -> {
+			MODEL.getSimulator().setUseRFGapPhaseSlipCalculation( calculatePhaseSlip.isSelected() );
+		});
+		
+		commander.registerModel( "calculate-phase-slip", calculatePhaseSlip );
+		
 		// register use_design button
 		USE_DESIGN.setSelected(true);
 		USE_DESIGN.addActionListener( new ActionListener() {
