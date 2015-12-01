@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Thu Nov 26 16:31:46 CST 2015" version="1.0.0">
+<BricksDocument date="Tue Dec 01 09:11:52 CST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1282">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1289">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
@@ -13,12 +13,6 @@
                     <ViewNode tag="Run Button">
                         <ViewProxy type="javax.swing.JButton"/>
                         <BeanProperty name="text" value="Run"/>
-                    </ViewNode>
-                    <ViewNode tag="Phase Slip Checkbox">
-                        <ViewProxy type="javax.swing.JCheckBox"/>
-                        <BeanProperty name="text" value="Calculate Phase Slip"/>
-                        <BeanProperty name="selected" value="false"/>
-                        <BeanProperty name="toolTipText" value="Perform the full RF gap phase slip calculation"/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
@@ -143,20 +137,19 @@
                                 <BeanProperty height="38" name="minimumSize" width="20"/>
                                 <ViewNode tag="Remove Button">
                                     <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="toolTipText" value="Remove selected rows"/>
                                     <BeanProperty name="text" value="Remove"/>
                                 </ViewNode>
-                                <ViewNode tag="Select All">
+                                <ViewNode tag="Check All">
                                     <ViewProxy type="javax.swing.JButton"/>
                                     <BeanProperty name="name" value="Select All"/>
-                                    <BeanProperty name="text" value="Select All"/>
+                                    <BeanProperty name="text" value="Check All"/>
+                                    <BeanProperty name="toolTipText" value="Check All rows"/>
                                 </ViewNode>
-                                <ViewNode tag="Unselect All">
+                                <ViewNode tag="Uncheck All">
                                     <ViewProxy type="javax.swing.JButton"/>
-                                    <BeanProperty name="text" value="Unselect All"/>
-                                </ViewNode>
-                                <ViewNode tag="Compare Results">
-                                    <ViewProxy type="javax.swing.JButton"/>
-                                    <BeanProperty name="text" value="Compare Results"/>
+                                    <BeanProperty name="toolTipText" value="Uncheck All rows"/>
+                                    <BeanProperty name="text" value="Uncheck All"/>
                                 </ViewNode>
                                 <ViewNode tag="Panel">
                                     <ViewProxy type="javax.swing.JPanel"/>
@@ -180,22 +173,22 @@
                                 <ViewProxy type="javax.swing.JTabbedPane"/>
                                 <BeanProperty height="455" name="preferredSize" width="25005"/>
                                 <BeanProperty height="112" name="minimumSize" width="120"/>
+                                <ViewNode tag="New Run Parameters View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="New Run Parameters"/>
+                                    <ViewNode tag="New Run Parameters Scroller">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="New Run Parameters">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
                                 <ViewNode tag="History Table View">
                                     <ViewProxy type="javax.swing.Box_Vertical"/>
                                     <BeanProperty name="name" value="History Table"/>
                                     <ViewNode tag="History Data Pane">
                                         <ViewProxy type="javax.swing.JScrollPane"/>
                                         <ViewNode tag="History Data Table">
-                                            <ViewProxy type="javax.swing.JTable"/>
-                                        </ViewNode>
-                                    </ViewNode>
-                                </ViewNode>
-                                <ViewNode tag="Sequence Table View">
-                                    <ViewProxy type="javax.swing.Box_Vertical"/>
-                                    <BeanProperty name="name" value="Sequence Table"/>
-                                    <ViewNode tag="Sequence Table Scroller">
-                                        <ViewProxy type="javax.swing.JScrollPane"/>
-                                        <ViewNode tag="Sequence Table">
                                             <ViewProxy type="javax.swing.JTable"/>
                                         </ViewNode>
                                     </ViewNode>
