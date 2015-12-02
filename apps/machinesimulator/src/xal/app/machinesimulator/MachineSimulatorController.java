@@ -35,7 +35,7 @@ public class MachineSimulatorController implements MachineModelListener {
      final private KeyValueFilteredTableModel<NodePropertyRecord> NEW_PARAMETERS_TABLE_MODEL;
      /**history record table model*/
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
-     /**history data table model*/
+     /**parameter history table model*/
      final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
@@ -211,24 +211,27 @@ public class MachineSimulatorController implements MachineModelListener {
 				MachineSimulation[] simulations = MODEL.getHistorySimulation( _sequence );
 				//configure the column name of states table
 		        for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
-		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), LEGEND_NAME[0]+"-"+scalarParameter.getSymbol() );
+		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" - "+LEGEND_NAME[0] );
 		            
-		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), LEGEND_NAME[1]+"-"+scalarParameter.getSymbol() );
+		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" - "+LEGEND_NAME[1] );
 		           }
 		        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
-		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(), 
-		        			   "<html>"+LEGEND_NAME[0]+"-"+vectorParameter.getSymbolForX().substring(6) );
+		        	   String symbX = vectorParameter.getSymbolForX();
+		        	   String symbY = vectorParameter.getSymbolForY();
+		        	   String symbZ = vectorParameter.getSymbolForZ();
+		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),
+		        			   symbX.substring(0, symbX.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(), 
-		        			   "<html>"+LEGEND_NAME[0]+"-"+vectorParameter.getSymbolForY().substring(6) );
+		        			   symbY.substring(0, symbY.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(), 
-		        			   "<html>"+LEGEND_NAME[0]+"-"+vectorParameter.getSymbolForZ().substring(6) );
+		        			   symbZ.substring(0, symbZ.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
 		        	   
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForX(), 
-		        			   "<html>"+LEGEND_NAME[1]+"-"+vectorParameter.getSymbolForX().substring(6) );
+		        			   symbX.substring(0, symbX.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForY(), 
-		        			   "<html>"+LEGEND_NAME[1]+"-"+vectorParameter.getSymbolForY().substring(6) );
+		        			   symbY.substring(0, symbY.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForZ(), 
-		        			   "<html>"+LEGEND_NAME[1]+"-"+vectorParameter.getSymbolForZ().substring(6) );
+		        			   symbZ.substring(0, symbZ.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
 		           }
 				
 				// array of standard parameters to display
@@ -297,6 +300,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				showDifference.setSelected(false);
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
 					configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
+					_positions = simulations[0].getAllPositions();
 					for( final String parameterKey:parameterKeyPathsForTable ){
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
 						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey, legName );
@@ -349,13 +353,13 @@ public class MachineSimulatorController implements MachineModelListener {
         // configure the run button
         final JButton runButton = (JButton)windowReference.getView( "Run Button" );
         runButton.addActionListener( new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {
-                System.out.println( "running the model..." );                
+            public void actionPerformed( final ActionEvent event ) {                
                 if( MODEL.getSequence() != null ){
+                   System.out.println( "running the model..." );
                 	final MachineSimulation simulation = MODEL.runSimulation();
-                	_positions=simulation.getAllPositions();
                   //set records and configure history data table
-                  historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence), MODEL.getColumnNames().get(_sequence));
+                  historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
+                		  MODEL.getColumnNames().get(_sequence), _sequence );
                 	//set records of states table
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
                 	//set records for history record table
@@ -505,7 +509,9 @@ public class MachineSimulatorController implements MachineModelListener {
 	}
 
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords, final Map<Date, String> columnName ) {
+	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
+			final Map<Date, String> columnName, final AcceleratorSeq seq ) {
+		
 		int columnNumber = columnName.size();		
 		String[] name = new String[columnNumber];
 		columnName.values().toArray( name );
@@ -521,6 +527,8 @@ public class MachineSimulatorController implements MachineModelListener {
 		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, valuePathList );
 		HISTORY_DATA_TABLE_MODEL.setKeyPaths(keyPaths);
 		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+		
+		_sequence = seq;
 
 		refresh.actionPerformed(null);
 		

@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Dec 01 09:11:52 CST 2015" version="1.0.0">
+<BricksDocument date="Wed Dec 02 14:57:38 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1289">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -185,7 +185,7 @@
                                 </ViewNode>
                                 <ViewNode tag="History Table View">
                                     <ViewProxy type="javax.swing.Box_Vertical"/>
-                                    <BeanProperty name="name" value="History Table"/>
+                                    <BeanProperty name="name" value="Parameter History"/>
                                     <ViewNode tag="History Data Pane">
                                         <ViewProxy type="javax.swing.JScrollPane"/>
                                         <ViewNode tag="History Data Table">
