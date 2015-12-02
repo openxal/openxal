@@ -21,21 +21,19 @@ import xal.model.alg.TransferMapTracker;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.TransferMapProbe;
-import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.TransferMapState;
 import xal.model.probe.traj.Trajectory;
-import xal.test.ResourceManager;
+import xal.model.probe.traj.TransferMapState;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
+import xal.smf.data.XMLDataManager;
 import xal.tools.beam.PhaseMatrix;
+import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.beam.Twiss3D;
-import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.math.r3.R3;
 
 /**
@@ -52,7 +50,7 @@ public class TestCalculationsOnRings {
      */
     
     /** Output file location */
-    static private String             STR_OUTPUT = TestCalculationsOnRings.class.getName().replace('.', '/') + ".txt";
+    static private String             STR_OUTPUT = TestCalculationsOnRings.class.getName() + ".txt";
     
     /** String identifier for accelerator sequence used in testing */
     static private String            STR_SEQ_ID       = "Ring";
@@ -104,10 +102,12 @@ public class TestCalculationsOnRings {
         
         try {
             
-            File fileOutput = ResourceManager.getOutputFile(STR_OUTPUT);
+            File fileOutput = xal.test.ResourceManager.getOutputFile(TestCalculationsOnRings.class, STR_OUTPUT);
             OWTR_OUTPUT = new FileWriter(fileOutput);
             
-            ACCEL_TEST   = ResourceManager.getTestAccelerator();
+//            ACCEL_TEST   = ResourceManager.getTestAccelerator();
+            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
+            
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);
             MODEL_TEST.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);

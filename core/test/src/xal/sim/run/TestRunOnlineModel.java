@@ -65,11 +65,11 @@ public class TestRunOnlineModel {
 
     
     /** Output file location */
-    static private String           STR_FILE_OUTPUT = TestRunOnlineModel.class.getName().replace('.', '/') + ".txt";
+    static private String           STR_FILE_OUTPUT = TestRunOnlineModel.class.getName() + ".txt";
     
     
     /** URL where we are dumping the output */
-    static public File              FILE_OUTPUT    = ResourceManager.getOutputFile(STR_FILE_OUTPUT);
+    static public File              FILE_OUTPUT    = ResourceManager.getOutputFile(TestRunOnlineModel.class, STR_FILE_OUTPUT);
     
     
     /** String identifier for accelerator sequence used in testing */

@@ -11,8 +11,10 @@ package xal.test;
 import java.net.URL;
 import java.io.File;
 
+import xal.model.probe.traj.TestParticleProbeTrajectory;
 import xal.smf.Accelerator;
 import xal.smf.data.XMLDataManager;
+import xal.tools.beam.calc.TestCalculationsOnRings;
 
 
 /** ResourceManager is not a test suite, but rather it is a utility used by test suites to load recources from the common test resources package. */
@@ -82,6 +84,28 @@ public class ResourceManager {
 		outputFile.getParentFile().mkdirs();
 		//System.out.println( "Output File: " + outputFile.getAbsolutePath() );
 		return outputFile;
+	}
+	
+	/**
+	 * Return the output file with the given name and path determined by the package name of the
+	 * provided class.  That is, starting from the "root" of the output file directory the returned
+	 * file location follows the package structure of the class with the file itself identified by the 
+	 * given name located within the final directory.
+	 *  
+	 * @param clsPath      path location taken with respect to the output directory
+	 * @param strFileName  name of the file within the given path
+	 * 
+	 * @return             file have the given path and name within the output directory
+	 *
+	 * @since  Dec 1, 2015,   Christopher K. Allen
+	 */
+	static public File getOutputFile( final Class<?> clsPath, final String strFileName) {
+        String  strPack     = clsPath.getPackage().getName();
+        String  strPathRel  = strPack.replace('.', '/');
+        String  strPathFile = strPathRel + '/' + strFileName; 
+        File    fileOutput  = xal.test.ResourceManager.getOutputFile(strPathFile);
+        
+	    return fileOutput;
 	}
 
 

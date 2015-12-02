@@ -67,10 +67,10 @@ public class TestParticleProbeTrajectory {
     
     
     /** Flag used for indicating whether to type out to stout or file */
-    private static final boolean        BOL_TYPE_STOUT = true;
+    private static final boolean        BOL_TYPE_STOUT = false;
     
     /** Flag used for running tests involving live accelerator */
-    private static final boolean        BOL_MAKE_PLOTS = true;
+    private static final boolean        BOL_MAKE_PLOTS = false;
     
     /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
     private static final boolean        BOL_COMPARE = false;
@@ -86,8 +86,8 @@ public class TestParticleProbeTrajectory {
     static final private String         STR_CFGFILE_PROD = "/site/optics/production/main.xal";
     
     
-    /** Location of the output file */
-    static final private String         STR_FILENAME_OUTPUT = "ParticleTrajOutput.txt";
+    /** Output file name */
+    static final private String         STR_FILENAME_OUTPUT = TestParticleProbeTrajectory.class.getName() + ".txt";
 
    
     
@@ -303,14 +303,14 @@ public class TestParticleProbeTrajectory {
         Iterator<IComponent> itrCmps = latTest.globalIterator();
         
         int index = 0;
-        System.out.println();
-        System.out.println("ELEMENTS contained in MODEL");
+        PRN_OUTPUT.println();
+        PRN_OUTPUT.println("ELEMENTS contained in MODEL");
         while (itrCmps.hasNext()) {
             IComponent cmp = itrCmps.next();
             if (cmp instanceof Element)
-                System.out.println("  " + index + " " + (Element)cmp);
+                PRN_OUTPUT.println("  " + index + " " + (Element)cmp);
             else
-                System.out.println("  " + index + " " + cmp.getId());
+                PRN_OUTPUT.println("  " + index + " " + cmp.getId());
             index++;
         }
     }

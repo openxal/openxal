@@ -53,7 +53,7 @@ public class TestScenario {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         
-        Scenario.setDebugging(true);
+//        Scenario.setDebugging(true);
         
     }
 

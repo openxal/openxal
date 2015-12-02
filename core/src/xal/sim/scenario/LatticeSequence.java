@@ -716,7 +716,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             indSeqPosition++;
             
             if (bolDebug) {
-                this.ostrDebug.println("ScenarioGenerator#generateLatticeSequence(): " + 
+                this.ostrDebug.println("LatticeSequence#populateLatticeSeq(): " + 
                                         latElem.toString() + 
                                        ", thin=" + 
                                         latElem.isThin()

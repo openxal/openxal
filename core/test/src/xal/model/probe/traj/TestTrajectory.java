@@ -8,6 +8,7 @@ package xal.model.probe.traj;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +32,7 @@ import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
-import xal.test.ResourceTools;
 import xal.tools.beam.PhaseVector;
 
 /**
@@ -63,12 +62,13 @@ public class TestTrajectory {
     /** Flag used for indicating whether to type out to stout or file */
     private static final boolean        BOL_TYPE_STOUT = false;
     
-    
+    /** Output file name */
+    static final private String         STR_FILENAME_OUTPUT = TestTrajectory.class.getName() + ".txt";
 
     
     /** Accelerator sequence used for testing */
-//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+//    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
     
     
     /** Bending Dipole ID */
@@ -125,10 +125,15 @@ public class TestTrajectory {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         
-        if (BOL_TYPE_STOUT) 
+        if (BOL_TYPE_STOUT) {
             PSTR_OUTPUT = System.out;
-        else
-            PSTR_OUTPUT = ResourceTools.createOutputStream(TestTrajectory.class);
+            
+        } else {
+            
+            File fileOutput = ResourceManager.getOutputFile(TestTrajectory.class, STR_FILENAME_OUTPUT);
+            
+            PSTR_OUTPUT = new PrintStream(fileOutput);
+        }
         
         try {
 //            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();

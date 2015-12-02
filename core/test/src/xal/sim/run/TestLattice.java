@@ -4,11 +4,14 @@
  * Author  : Christopher K. Allen
  * Since   : Aug 25, 2014
  */
-package xal.model;
+package xal.sim.run;
 
 import static org.junit.Assert.fail;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.junit.AfterClass;
@@ -19,6 +22,10 @@ import xal.extension.widgets.olmplot.GraphFrame;
 import xal.extension.widgets.olmplot.PLANE;
 import xal.extension.widgets.olmplot.ParticleCurve;
 import xal.extension.widgets.plot.FunctionGraphsJPanel;
+import xal.model.IAlgorithm;
+import xal.model.IComponent;
+import xal.model.Lattice;
+import xal.model.ModelException;
 import xal.model.elem.Element;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
@@ -34,6 +41,7 @@ import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 import xal.tools.beam.PhaseVector;
 
 /**
@@ -49,15 +57,24 @@ public class TestLattice {
      * Global Constants
      */
     
-    /** Accelerator sequence used for testing */
-//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
-    public static final String     STR_ACCL_SEQ_ID = "SCLMed";
-//    public static final String     STR_ACCL_SEQ_ID = "CCL1";
+    /** Location of the output file */
+    static final private String    STR_FILENAME_OUTPUT = TestLattice.class.getName() + ".txt";
+
+    
+    /** Flag used for indicating whether to type out to stout or file */
+    private static final boolean    BOL_TYPE_STOUT = false;
     
     /** Flag for making plots of the simulation */
-    public static final boolean BOL_MAKE_PLOTS  = true;    
+    public static final boolean     BOL_MAKE_PLOTS  = false;    
+
     
     /** Bending Dipole ID */
+    /** Accelerator sequence used for testing */
+//  public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+  public static final String     STR_ACCL_SEQ_ID = "SCLMed";
+//  public static final String     STR_ACCL_SEQ_ID = "CCL1";
+  
+  
     public static final String      STR_DH1_ID = "HEBT_Mag:DH11";
     
     /** Bending Dipole ID */
@@ -67,6 +84,10 @@ public class TestLattice {
     /*
      * Global Resources
      */
+    
+    /** The file where we send the testing output */
+    private static PrintStream    PRN_OUTPUT;
+    
     
     /** Accelerator hardware under test */
     private static Accelerator    ACCEL_TEST;
@@ -124,6 +145,14 @@ public class TestLattice {
             PROBE_XFER = ProbeFactory.getTransferMapProbe(SEQ_TEST, algor);
             PROBE_ENV.initialize();
             
+            if (BOL_TYPE_STOUT) {
+                PRN_OUTPUT = PRN_OUTPUT;
+            } else {
+                File       fileOut = ResourceManager.getOutputFile(TestLattice.class, STR_FILENAME_OUTPUT);
+                
+                PRN_OUTPUT = new PrintStream(fileOut);
+            }
+            
         } catch (ModelException | InstantiationException e) {
 
             fail("Unable to create Scenario");
@@ -160,14 +189,14 @@ public class TestLattice {
         Iterator<IComponent> itrCmps = latTest.globalIterator();
         
         int index = 0;
-        System.out.println();
-        System.out.println("ELEMENTS contained in MODEL");
+        PRN_OUTPUT.println();
+        PRN_OUTPUT.println("ELEMENTS contained in MODEL");
         while (itrCmps.hasNext()) {
             IComponent cmp = itrCmps.next();
             if (cmp instanceof Element)
-                System.out.println("  " + index + " " + (Element)cmp);
+                PRN_OUTPUT.println("  " + index + " " + (Element)cmp);
             else
-                System.out.println("  " + index + " " + cmp.getId());
+                PRN_OUTPUT.println("  " + index + " " + cmp.getId());
             index++;
         }
     }
@@ -183,17 +212,17 @@ public class TestLattice {
     public final void testSimulation() {
         Trajectory<ParticleProbeState>  trjPartc = this.runModel(PROBE_PARTC);
         
-        System.out.println();
-        System.out.println("PARTICLE PROBE STATES retrieved iteration using the Iterable<> interface");
+        PRN_OUTPUT.println();
+        PRN_OUTPUT.println("PARTICLE PROBE STATES retrieved iteration using the Iterable<> interface");
         int index = 0;
         for (ParticleProbeState state : trjPartc) {
-            System.out.println("  " + index 
+            PRN_OUTPUT.println("  " + index 
                     + " " + state.getElementId()
                     + " from " + state.getHardwareNodeId() );
-            System.out.println("    position  " + state.getPosition());
-            System.out.println("    energy    " + state.getKineticEnergy());
-            System.out.println("    phase     " + (180.0/Math.PI)*state.getLongitudinalPhase());
-            System.out.println("    phase|360 " + (180.0/Math.PI) *Math.IEEEremainder(state.getLongitudinalPhase(), 2.0*Math.PI) );
+            PRN_OUTPUT.println("    position  " + state.getPosition());
+            PRN_OUTPUT.println("    energy    " + state.getKineticEnergy());
+            PRN_OUTPUT.println("    phase     " + (180.0/Math.PI)*state.getLongitudinalPhase());
+            PRN_OUTPUT.println("    phase|360 " + (180.0/Math.PI) *Math.IEEEremainder(state.getLongitudinalPhase(), 2.0*Math.PI) );
             index++;
         }
     }
