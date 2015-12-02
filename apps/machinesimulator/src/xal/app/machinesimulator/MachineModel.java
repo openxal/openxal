@@ -159,6 +159,24 @@ public class MachineModel implements DataListener {
     public List<SimulationHistoryRecord> getSimulationHistoryRecords(){
     	return SIMULATION_HISTORY_RECORDS;
     }
+    
+    /**get the sequence of the first selected history record*/
+    public AcceleratorSeq getFirstSeq() {
+    	List<AcceleratorSeq> seqs = new ArrayList<AcceleratorSeq>();
+    	AcceleratorSeq seq = _sequence;
+    	boolean hasSame = false;
+    	if( SIMULATION_HISTORY_RECORDS.size() != 0 ) {
+    		for ( SimulationHistoryRecord record : SIMULATION_HISTORY_RECORDS ) {   			
+    			if ( record.getSelectState() ) {
+    				seqs.add( record.getSequence() );
+    				hasSame = _sequence.getId().equals( record.getSequence().getId() );
+    			}
+    		}
+    		
+    		if ( seqs.size() != 0 && !hasSame ) seq = seqs.get(0);
+    	}
+    	return seq;
+    }
 	
     /**get the selected values history records used for simulation */
     public Map<AcceleratorSeq, List<NodePropertyHistoryRecord>> getNodePropertyHistoryRecords(){
@@ -313,7 +331,8 @@ public class MachineModel implements DataListener {
 		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);	
 		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get(SEQUENCE), COLUMN_NAME.get(SEQUENCE) );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( SEQUENCE ), COLUMN_NAME.get( SEQUENCE ), getFirstSeq() );
+
 	}
 	
 	/**get the sequence*/
@@ -349,7 +368,8 @@ public class MachineModel implements DataListener {
 	/**set the record name*/
 	public void setRecordName( final String newName ){
 		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get(SEQUENCE), COLUMN_NAME.get(SEQUENCE) );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( SEQUENCE ), COLUMN_NAME.get( SEQUENCE ), getFirstSeq() );
+
 		recordName = newName;
 	}
 		

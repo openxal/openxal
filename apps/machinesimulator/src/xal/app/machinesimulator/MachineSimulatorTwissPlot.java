@@ -66,7 +66,7 @@ public class MachineSimulatorTwissPlot{
 			if( PARAMETERS.get( parameterIndex ).isThisParameter( keyPath ) ){
 				//configure the graphic name
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
-						legend+"-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPath ) );
+						PARAMETERS.get( parameterIndex ).getParameterName( keyPath )+"-"+legend );
 				// configure the graphic color
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex ) );
 				//configure the graphic line pattern
@@ -87,7 +87,7 @@ public class MachineSimulatorTwissPlot{
 			//configure the graph for old simulation results
 			else if ( PARAMETERS.get( parameterIndex ).isThisParameter( keyPathForOld ) ) {
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
-						legend+"-"+PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld ) );
+						PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld )+"-"+legend );
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex+1 ) );
 				
 				//configure the graphic line pattern
