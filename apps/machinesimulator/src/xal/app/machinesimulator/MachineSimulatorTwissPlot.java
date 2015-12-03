@@ -31,7 +31,7 @@ public class MachineSimulatorTwissPlot{
 		PARAMETERS.addAll( scalarParameters );
 		PARAMETERS.addAll( vectorParameters );
 		
-	   configurePlotPanel( twissParametersPlot );	
+	   configurePlotPanel();	
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class MachineSimulatorTwissPlot{
 			if( PARAMETERS.get( parameterIndex ).isThisParameter( keyPath ) ){
 				//configure the graphic name
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
-						PARAMETERS.get( parameterIndex ).getParameterName( keyPath )+"-"+legend );
+						PARAMETERS.get( parameterIndex ).getParameterName( keyPath )+" : "+legend );
 				// configure the graphic color
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex ) );
 				//configure the graphic line pattern
@@ -87,7 +87,7 @@ public class MachineSimulatorTwissPlot{
 			//configure the graph for old simulation results
 			else if ( PARAMETERS.get( parameterIndex ).isThisParameter( keyPathForOld ) ) {
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
-						PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld )+"-"+legend );
+						PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld )+" : "+legend );
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex+1 ) );
 				
 				//configure the graphic line pattern
@@ -109,21 +109,24 @@ public class MachineSimulatorTwissPlot{
 		
 	}
 	
-     /**configure plot panel
-      *@param twissParametersPlot the plot panel
-      */	
-	private void configurePlotPanel( final FunctionGraphsJPanel twissParametersPlot ) {
+    /**configure plot panel*/	
+	private void configurePlotPanel() {
 		
 		//labels
-		twissParametersPlot.setName( "" );
-		twissParametersPlot.setAxisNameX( "Position(m)" );
+		TWISS_PARAMETERS_PLOT.setName( "" );
+		TWISS_PARAMETERS_PLOT.setAxisNameX( "Position(m)" );
 		
 		//add legend support
-		twissParametersPlot.setLegendButtonVisible( true );
-		twissParametersPlot.setLegendBackground( Color.white );
+		TWISS_PARAMETERS_PLOT.setLegendButtonVisible( true );
+		TWISS_PARAMETERS_PLOT.setLegendBackground( Color.white );
 		//add popup menu to the plot panel
-		SimpleChartPopupMenu.addPopupMenuTo( twissParametersPlot );
+		SimpleChartPopupMenu.addPopupMenuTo( TWISS_PARAMETERS_PLOT );
 
 		}
+	
+	/**set the name of the plot panel*/
+	public void setName( final String name ) {
+		TWISS_PARAMETERS_PLOT.setName( name );
+	}
 
 }
