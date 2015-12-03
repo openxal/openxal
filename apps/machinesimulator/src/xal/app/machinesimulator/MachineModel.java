@@ -331,7 +331,8 @@ public class MachineModel implements DataListener {
 		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);	
 		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( SEQUENCE ), COLUMN_NAME.get( SEQUENCE ), getFirstSeq() );
+		AcceleratorSeq seq = getFirstSeq();
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq );
 
 	}
 	
@@ -368,7 +369,8 @@ public class MachineModel implements DataListener {
 	/**set the record name*/
 	public void setRecordName( final String newName ){
 		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( SEQUENCE ), COLUMN_NAME.get( SEQUENCE ), getFirstSeq() );
+		AcceleratorSeq seq = getFirstSeq();
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq );
 
 		recordName = newName;
 	}

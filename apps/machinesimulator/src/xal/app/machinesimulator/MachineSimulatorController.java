@@ -194,7 +194,7 @@ public class MachineSimulatorController implements MachineModelListener {
        
 /**************************configure the plot view**************************************/
         final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
-        _machineSimulatorTwissPlot=new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
+        _machineSimulatorTwissPlot = new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
 
 		//synoptic display of nodes
 		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
@@ -205,33 +205,61 @@ public class MachineSimulatorController implements MachineModelListener {
 
 /***************************Check boxes action**************************************/
 		
-		final ActionListener PARAMETER_HANDLER = new ActionListener() {
+		//configure the show difference check box of plot view
+		final ActionListener SHOW_DIFFERENCE_HANDELER =  event -> {
+			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
+			if ( showDifference.isSelected() && simulations[0] != null ){
+				if ( simulations[1] != null ){
+					twissParametersPlot.removeAllGraphData();	
+					//Todo:caluate the difference and plot
+					for( int index = 0; index<keyPathsForDifference.size(); index++ ){					
+						final List<Double> newValues = PLOT_DATA.get( keyPathsForDifference.get( index ) );
+						final List<Double> oldValues = PLOT_DATA.get( keyPathsForDifference.get( index+1 ) );
+						final List<Double> differences = new ArrayList<Double>( newValues.size() );
+						for( int valueIndex = 0;valueIndex<newValues.size();valueIndex++ ){							
+							differences.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
+						}
+						final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
+						_machineSimulatorTwissPlot.showTwissPlot( _positions, differences, keyPathsForDifference.get( index ), legName );
+						index++;
+					}
+				}
+			}
+			else {
+				showDifference.setSelected(false);
+				refresh.actionPerformed(null);
+			}
+		};
+		
+		showDifference.addActionListener(SHOW_DIFFERENCE_HANDELER);
+		
+		final ActionListener PARAMETER_HANDLER = new ActionListener() {	
 			public void actionPerformed( final ActionEvent event ) {
 				//get the first two simulations which are selected 
 				MachineSimulation[] simulations = MODEL.getHistorySimulation( _sequence );
 				//configure the column name of states table
 		        for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
-		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" - "+LEGEND_NAME[0] );
+		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[0] );
 		            
-		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" - "+LEGEND_NAME[1] );
+		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[1] );
 		           }
 		        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
 		        	   String symbX = vectorParameter.getSymbolForX();
 		        	   String symbY = vectorParameter.getSymbolForY();
 		        	   String symbZ = vectorParameter.getSymbolForZ();
 		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForX(),
-		        			   symbX.substring(0, symbX.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
+		        			   symbX.substring(0, symbX.length()-6)+" : "+LEGEND_NAME[0]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForY(), 
-		        			   symbY.substring(0, symbY.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
+		        			   symbY.substring(0, symbY.length()-6)+" : "+LEGEND_NAME[0]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName(vectorParameter.getKeyPathForZ(), 
-		        			   symbZ.substring(0, symbZ.length()-6)+" - "+LEGEND_NAME[0]+"<html>" );
+		        			   symbZ.substring(0, symbZ.length()-6)+" : "+LEGEND_NAME[0]+"<html>" );
 		        	   
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForX(), 
-		        			   symbX.substring(0, symbX.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
+		        			   symbX.substring(0, symbX.length()-6)+" : "+LEGEND_NAME[1]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForY(), 
-		        			   symbY.substring(0, symbY.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
+		        			   symbY.substring(0, symbY.length()-6)+" : "+LEGEND_NAME[1]+"<html>" );
 		        	   STATES_TABLE_MODEL.setColumnName("old."+vectorParameter.getKeyPathForZ(), 
-		        			   symbZ.substring(0, symbZ.length()-6)+" - "+LEGEND_NAME[1]+"<html>" );
+		        			   symbZ.substring(0, symbZ.length()-6)+" : "+LEGEND_NAME[1]+"<html>" );
 		           }
 				
 				// array of standard parameters to display
@@ -297,7 +325,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 				//setup plot panel and show the selected parameters' graph
 				twissParametersPlot.removeAllGraphData();
-				showDifference.setSelected(false);
+				if ( _sequence != null ) _machineSimulatorTwissPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
 					configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
 					_positions = simulations[0].getAllPositions();
@@ -305,6 +333,8 @@ public class MachineSimulatorController implements MachineModelListener {
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
 						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey, legName );
 					}
+					
+					if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
 				}
 				xalSynopticPanel.setAcceleratorSequence( _sequence );
 			}
@@ -356,16 +386,19 @@ public class MachineSimulatorController implements MachineModelListener {
             public void actionPerformed( final ActionEvent event ) {                
                 if( MODEL.getSequence() != null ){
                    System.out.println( "running the model..." );
+                   _sequence = MODEL.getSequence();
                 	final MachineSimulation simulation = MODEL.runSimulation();
+                	
                   //set records and configure history data table
                   historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
                 		  MODEL.getColumnNames().get(_sequence), _sequence );
+                  
                 	//set records of states table
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
                 	//set records for history record table
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
                  
-                  PARAMETER_HANDLER.actionPerformed( null );
+                  refresh.actionPerformed( null );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
@@ -409,42 +442,10 @@ public class MachineSimulatorController implements MachineModelListener {
 			HISTORY_DATA_TABLE_MODEL.setRecords(null);
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
 		});
-		
-		//configure the show difference check box of plot view
-		final ActionListener SHOW_DIFFERENCE_HANDELER =  event -> {
-			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
-			if ( showDifference.isSelected() && simulations[0] != null ){
-				if ( simulations[1] != null ){
-					twissParametersPlot.removeAllGraphData();	
-					//Todo:caluate the difference and plot
-					for( int index = 0; index<keyPathsForDifference.size(); index++ ){					
-						final List<Double> newValues = PLOT_DATA.get( keyPathsForDifference.get( index ) );
-						final List<Double> oldValues = PLOT_DATA.get( keyPathsForDifference.get( index+1 ) );
-						final List<Double> differences = new ArrayList<Double>( newValues.size() );
-						for( int valueIndex = 0;valueIndex<newValues.size();valueIndex++ ){							
-							differences.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
-						}
-						final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, differences, keyPathsForDifference.get( index ), legName );
-						index++;
-					}
-				}
-				else {
-					JOptionPane.showMessageDialog(windowReference.getWindow(),
-					"You need to select another record to compare","Warning!",JOptionPane.PLAIN_MESSAGE);
-					showDifference.setSelected(false);
-				}
-			}
-			else {
-				showDifference.setSelected(false);
-				PARAMETER_HANDLER.actionPerformed(null);
-			}
-		};
-		
-		showDifference.addActionListener(SHOW_DIFFERENCE_HANDELER);
+
 		
 		//configure the refresh action
-		refresh = event -> {
+		refresh = event -> {		
 			if ( MODEL.getColumnNames().get(_sequence ) != null ){
 				final Map<Date, String> recordName = MODEL.getColumnNames().get(_sequence);
 				final String[] name = new String[recordName.size()];
@@ -456,6 +457,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 
 			PARAMETER_HANDLER.actionPerformed( null );
+			if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed( null );
 		};
 
     }
@@ -512,21 +514,25 @@ public class MachineSimulatorController implements MachineModelListener {
 	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
 			final Map<Date, String> columnName, final AcceleratorSeq seq ) {
 		
-		int columnNumber = columnName.size();		
-		String[] name = new String[columnNumber];
-		columnName.values().toArray( name );
-		String[] valuePathList = new String[columnNumber];
-		for ( int index = 0;index<columnNumber; index++ ){
-			valuePathList[index] = "values."+index;
-			HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, name[index]);
+		if ( nodePropertyHistoryRecords != null && columnName != null ) {
+			int columnNumber = columnName.size();		
+			String[] name = new String[columnNumber];
+			columnName.values().toArray( name );
+			String[] valuePathList = new String[columnNumber];
+			for ( int index = 0;index<columnNumber; index++ ){
+				valuePathList[index] = "values."+index;
+				HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, name[index]);
+			}
+			
+			String[] keyPaths = new String[historyDataKeyPaths.length+valuePathList.length];
+			System.arraycopy(historyDataKeyPaths, 0, keyPaths, 0, historyDataKeyPaths.length);
+			System.arraycopy(valuePathList, 0, keyPaths, historyDataKeyPaths.length, valuePathList.length);
+			HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, valuePathList );
+			HISTORY_DATA_TABLE_MODEL.setKeyPaths(keyPaths);
+			HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
 		}
-		
-		String[] keyPaths = new String[historyDataKeyPaths.length+valuePathList.length];
-		System.arraycopy(historyDataKeyPaths, 0, keyPaths, 0, historyDataKeyPaths.length);
-		System.arraycopy(valuePathList, 0, keyPaths, historyDataKeyPaths.length, valuePathList.length);
-		HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, valuePathList );
-		HISTORY_DATA_TABLE_MODEL.setKeyPaths(keyPaths);
-		HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+		else HISTORY_DATA_TABLE_MODEL.setRecords(null);
+
 		
 		_sequence = seq;
 
