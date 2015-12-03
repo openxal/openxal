@@ -17,7 +17,7 @@ import java.util.Iterator;
  * @author Christopher K. Allen
  *
  */
-public interface IComposite extends IComponent {
+public interface IComposite extends IComponent, Iterable<IComponent> {
     
     
 //    /*
@@ -45,7 +45,12 @@ public interface IComposite extends IComponent {
 //     */
 //    public void initializeFrom(LatticeElement latticeElement);
 //
-//    
+//
+    /*
+     * Properties
+     */
+    
+
     /*
      * Operations
      */
@@ -109,7 +114,6 @@ public interface IComposite extends IComponent {
     public boolean  remove(IComponent iComp);
     
     
-    
     /*
      * Dynamics
      */
@@ -132,5 +136,38 @@ public interface IComposite extends IComponent {
      *  @see    IComponent#propagate(IProbe)
      */
     public void propagate(IProbe probe) throws ModelException;
+    
+
+    /*
+     * State Control
+     */
+    
+    /**
+     * <p>
+     * <h4>Need only be called by implementing classes</h4>
+     * Indicates internally that the composite structure has been modified and
+     * any dependent parameters must be recomputed.  This is needed if these
+     * parameters must be computed upon demand due to dynamic changes in the composite.
+     * In order to avoid expensive re-iteration through large composite structures,
+     * by employing this method a state condition can be set up so that the dependent 
+     * parameters are only recomputed when the composite changes.
+     * </p>
+     * <p>
+     * <ul>
+     * <li>Implementing classes should call this method whenever the composite changes, in particular
+     * whenever <code>{@link #addChild(IComponent)}</code> and <code>{@link #remove(IComponent)}</code>
+     * are called.  
+     * <li>They respond to this call by setting a dirty flag and calls the same
+     * method on their parent object.  
+     * <li>If the dirty flag is set then all dependent parameters
+     * should be recomputed whenever one is requested (after which the flag can be cleared).
+     * </ul>
+     * </p> 
+     *
+     * @since  Dec 3, 2015,   Christopher K. Allen
+     */
+    public void  setDirty();
+    
+    
     
 }

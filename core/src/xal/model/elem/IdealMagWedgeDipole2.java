@@ -443,7 +443,10 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * is generally larger than this value because of the curvature.
      *  
      * @return  physical length through bend in <b>meters</b>
+     * 
+     * @deprecated never used
      */
+    @Deprecated
     public double getPhysicalLength()    {
         return this.getMagBody().getLength();
     }
@@ -453,7 +456,10 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
      * magnet.
      * 
      * @return      design trajectory path length (in meters)
+     * 
+     * @deprecated never used
      */
+    @Deprecated
     public double   getDesignPathLength()   {
         return this.getMagBody().getDesignPathLength();
     }
@@ -461,8 +467,11 @@ public class IdealMagWedgeDipole2 extends ElectromagnetSeq {
     /**
      * Return the bending angle of the magnet's design trajectory.
      * 
-     *  @return     design trajectory bending angle (in radians)
+     * @return     design trajectory bending angle (in radians)
+     * 
+     * @deprecated never used
      */
+    @Deprecated
     public double   getDesignBendingAngle() {
         return this.getMagBody().getDesignBendingAngle();
     }

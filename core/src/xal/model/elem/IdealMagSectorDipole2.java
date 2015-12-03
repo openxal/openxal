@@ -908,7 +908,7 @@ public class IdealMagSectorDipole2 extends ThickElectromagnet {
             return 0.0;
         }
         
-        if (s - L0 > EPS) {
+        if (s > L0 + EPS) {
             System.err.println("IdealMagSectorDipole#compCurrentAngle2(): probe position s=" + s + " is greater than L0, i.e. outside dipole exit");
             
             return theta;

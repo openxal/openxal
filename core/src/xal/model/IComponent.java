@@ -83,6 +83,48 @@ public interface IComponent {
     public double   getLength();
     
     /**
+     * <p>
+     * Return the center position of this component within the immediate parent composite
+     * element.  If there is no parent then this method should return zero.
+     * </p>
+     * <p>
+     * This value is typically a "hardware property," especially if this element models
+     * a hardware node.  That is, the value is specified in the
+     * description of the hardware node and, thus, carries through to the modeling
+     * element.  The situation is different than the property 
+     * <code>{@link #getLatticePosition()}</code> where the position is completely 
+     * dependent upon where the modeling element lies within the overall lattice structure.
+     * </p>
+     * 
+     * @return  center position of this element within the immediate parent container (meters)
+     * 
+     * @since Dec 3, 2015   by Christopher K. Allen
+     */
+    public double getPosition(); 
+    
+    /**
+     * <p>
+     * Return the (center) position of this component within the global lattice structure to which it
+     * belongs.  Note the difference between this parameter and that returned by
+     * <code>IComponent{@link #getLength()}</code> which returns the position with
+     * respect to the direct parent.
+     * </p>
+     * <p>
+     * The returned value is not usually a design parameter, in particular if composites are
+     * pasted together or otherwise form a larger tree structure.  It should be computed
+     * according to the current structure of the global composite structure.
+     * Thus, moving this element in the lattice should change this value. 
+     * </p> 
+     * 
+     * @return  the center position of this component within the entire lattice containing this 
+     *          element (not just the parent)
+     *
+     * @since  Dec 3, 2015,   Christopher K. Allen
+     */
+    public double   getLatticePosition();
+    
+    
+    /**
      * Returns the composite structure (if any) that owns this component.
      * 
      * @return  higher level composite structure built from this component

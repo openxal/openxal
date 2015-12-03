@@ -368,7 +368,7 @@ public class TestCalculationsOnRings {
     @Test
     public void testTurnByTurnResponse() throws IOException {
         String  strElemId1 = "Ring_Inj:Foil";
-        String  strElemId2 = "BEGIN_Ring";
+        String  strElemId2 = "Begin_Of_Ring1";
         int     cntTurns   = 50;
         PhaseVector vecInit = new PhaseVector(0.00,0, 0,0, 0,0);
 

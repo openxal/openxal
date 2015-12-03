@@ -76,7 +76,7 @@ public abstract class Element implements IElement {
 //  sako
     //position in s (m)
     /** This is the center position of the element with the lattice - CKA */
-    private double      dblLatPos;
+    private double      dblPos;
     
     //sako closeElements (for fringe field calculations)
     /** 
@@ -116,7 +116,7 @@ public abstract class Element implements IElement {
         this.m_strType = strType;
         this.m_strId   = strId;
         this.strSmfId = "";
-        this.dblLatPos = 0.0;
+        this.dblPos = 0.0;
         this.cpsParent = null;
     };
     
@@ -151,7 +151,7 @@ public abstract class Element implements IElement {
      * @param dblPos    center position along the design trajectory (meters) 
      */
     public void setPosition(double dblPos) {
-        dblLatPos = dblPos;
+        this.dblPos = dblPos;
     }
     
     /**
@@ -222,7 +222,26 @@ public abstract class Element implements IElement {
      * @return  center position of the element (meters)
      */
     public double getPosition() {
-        return dblLatPos;
+        return dblPos;
+    }
+    
+    /**
+     *
+     * @see xal.model.IComponent#getLatticePosition()
+     *
+     * @since  Dec 3, 2015,  Christopher K. Allen
+     */
+    @Override
+    public double getLatticePosition() {
+        if (this.getParent() == null)
+            return this.getPosition();
+        
+        double  dblLocPos = this.getPosition();
+        double  dblParPos = this.getParent().getLatticePosition();
+        double  dblParLen = this.getParent().getLength();
+        double  dblGblPos = (dblParPos - dblParLen/2.0) + dblLocPos;
+        
+        return dblGblPos;
     }
 
     /**
@@ -333,10 +352,10 @@ public abstract class Element implements IElement {
      */
     public double  compProbeLocation(IProbe probe) {
         
-        double lenElem = this.getLength();      // element length
-        double sCenter = this.getPosition();    // center position w/in lattice
+        double lenElem = this.getLength();          // element length
+        double sCenter = this.getLatticePosition(); // center position w/in lattice
         
-        double sProbe  = probe.getPosition();   // probe position with lattice
+        double sProbe  = probe.getPosition();   // probe position within lattice
         
         double sElem = sProbe - (sCenter - lenElem/2.0);
         
