@@ -163,10 +163,12 @@ public interface IComposite extends IComponent, Iterable<IComponent> {
      * should be recomputed whenever one is requested (after which the flag can be cleared).
      * </ul>
      * </p> 
+     * @param   cmpCaller   the <code>IComponent</code> object calling this method, 
+     *                      or <code>null</code> if the object is not a component
      *
      * @since  Dec 3, 2015,   Christopher K. Allen
      */
-    public void  setDirty();
+    public void  setDirty(IComponent cmpCaller);
     
     
     

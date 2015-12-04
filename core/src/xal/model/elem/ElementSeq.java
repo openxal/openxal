@@ -305,7 +305,7 @@ public abstract class ElementSeq implements IComposite {
      * @return  iterator of <code>IElement</code> interfaces
      */
     public Iterator<IComponent> childIterator() {
-        return this.getCompList().iterator();
+        return this.getForwardCompList().iterator();
     }
     
     
@@ -577,7 +577,8 @@ public abstract class ElementSeq implements IComposite {
     @Override
     public void setParent(IComposite cpsParent) {
         this.cpsParent = cpsParent;
-        this.setDirty();
+        this.setDirty(this);
+        this.getParent().setDirty(this);
     }
 
     
@@ -603,7 +604,7 @@ public abstract class ElementSeq implements IComposite {
      */
     @Override
     public void propagate(IProbe probe) throws ModelException {
-        for(IComponent comp : getCompList()) {
+        for(IComponent comp : getForwardCompList()) {
             comp.propagate(probe);
         }
     }
@@ -671,7 +672,7 @@ public abstract class ElementSeq implements IComposite {
      */ 
     @Override
     public Iterator<IComponent> localIterator() {
-        return this.getCompList().iterator();
+        return this.getForwardCompList().iterator();
     }
      
     /**
@@ -697,7 +698,7 @@ public abstract class ElementSeq implements IComposite {
      *  @return         number of direct descendants
      */
     @Override
-    public int  getChildCount() { return this.getCompList().size(); };
+    public int  getChildCount() { return this.getForwardCompList().size(); };
     
     /**
      *  Get the child IComponent interface at location 
@@ -709,7 +710,7 @@ public abstract class ElementSeq implements IComposite {
      */
     @Override
     public IComponent getChild(int indChild) {
-        return this.getCompList().get(indChild);
+        return this.getForwardCompList().get(indChild);
     }
     
     /**
@@ -728,40 +729,47 @@ public abstract class ElementSeq implements IComposite {
      */
     @Override
     public void addChild(IComponent iComp)   {
-        this.getCompList().add(iComp);
+        this.getForwardCompList().add(iComp);
         this.getReverseCompList().add(0, iComp);
-        this.setDirty();
         iComp.setParent(this);
+        if (iComp instanceof IComposite)
+            ((IComposite)iComp).setDirty(this);
+
+        this.setDirty(this);
     }
     
     /**
      * Remove an element from the entire tree.  The element can be a single
      * leaf node or a composite node.
      *
-     * @param  iComp    IComponent object to be removed
+     * @param  iCmp    IComponent object to be removed
      * 
      * @return  return true if element was found and removed, false otherwise
      */
     @Override
-    public boolean remove(IComponent iComp)    {
+    public boolean remove(IComponent iCmp)    {
         
         // Inspect each child for specified element
-        Iterator<IComponent> iterList = this.getCompList().iterator();
-        while (iterList.hasNext())   {                   
-            IComponent iChild = iterList.next();
+        for (IComponent iChild : this)   {                   
             
-            if (iChild == iComp)   {                // is this child the one?
-                iterList.remove();                   // remove it and return
+            if (iChild == iCmp)   {                // is this child the one?
+                this.getForwardCompList().remove(iCmp);
+                this.getReverseCompList().remove(iCmp);
                 
-                this.setDirty();
+                iCmp.setParent(null);
                 
+                this.setDirty(this);
+                
+                if (iCmp instanceof IComposite) 
+                    ((IComposite)iCmp).setDirty(this);
+                    
                 return true;                        
             }
             
             if (iChild instanceof IComposite)  {        // if child is composite
-                IComposite iSubComp = (IComposite)iChild;
-                if( iSubComp.remove(iComp) )            // check its children
-                    return true;                        // setDirty() is called by iSubComp
+                if (  ((IComposite)iChild).remove(iCmp)  )  // true to remove it
+                    return true;                            // it was a child of my child 
+                                                            //    and was removed
             }
         }
         
@@ -775,16 +783,22 @@ public abstract class ElementSeq implements IComposite {
      * @since  Dec 3, 2015,  Christopher K. Allen
      */
     @Override
-    public void setDirty() {
+    public void setDirty(IComponent cmpCaller) {
+        
+        // Set the dirty flag
         this.bolDirty = true;
         
-        if (this.getParent() != null)
-            this.getParent().setDirty();
-        
-        for (IComponent cmp : this) {
-            if (cmp instanceof IComposite)
-                ((IComposite)cmp).setDirty();
-        }
+//        // Let my parent know I have been changed
+//        if (this.getParent() != null)
+//            this.getParent().setDirty(this);
+//        
+//        // Let my children know I have been changed
+//        for (IComponent cmp : this) {
+//            if (cmp == cmpCaller)       // one of my children might have invoked this operation
+//                break;
+//            if (cmp instanceof IComposite)
+//                ((IComposite)cmp).setDirty(this);
+//        }
     }
 
     
@@ -825,7 +839,7 @@ public abstract class ElementSeq implements IComposite {
     public String   toString() {
 
         StringBuffer         bufOutput = new StringBuffer();
-        Iterator<IComponent> iterCmps  = this.getCompList().iterator();
+        Iterator<IComponent> iterCmps  = this.getForwardCompList().iterator();
         
         bufOutput.append("Sequence ID: " + this.getId() + '\n');
         
@@ -871,7 +885,7 @@ public abstract class ElementSeq implements IComposite {
         os.println("  type code=" + this.m_strType + ", class type=" + this.getClass().getName());
         os.println();
         
-        Iterator<IComponent> iter = this.getCompList().iterator();
+        Iterator<IComponent> iter = this.getForwardCompList().iterator();
         
         while (iter.hasNext())  {
             IElement ifc = (IElement)iter.next();
@@ -906,7 +920,7 @@ public abstract class ElementSeq implements IComposite {
     /**
      *  Return the internal list of components
      */
-    protected List<IComponent> getCompList()  { 
+    protected List<IComponent> getForwardCompList()  { 
         return m_lstCompsForward; 
     }
     

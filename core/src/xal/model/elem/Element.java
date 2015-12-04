@@ -216,35 +216,6 @@ public abstract class Element implements IElement {
     };
     
     /**
-     * Return the center position of the element along the design trajectory.
-     * This is the position with the containing lattice.
-     * 
-     * @return  center position of the element (meters)
-     */
-    public double getPosition() {
-        return dblPos;
-    }
-    
-    /**
-     *
-     * @see xal.model.IComponent#getLatticePosition()
-     *
-     * @since  Dec 3, 2015,  Christopher K. Allen
-     */
-    @Override
-    public double getLatticePosition() {
-        if (this.getParent() == null)
-            return this.getPosition();
-        
-        double  dblLocPos = this.getPosition();
-        double  dblParPos = this.getParent().getLatticePosition();
-        double  dblParLen = this.getParent().getLength();
-        double  dblGblPos = (dblParPos - dblParLen/2.0) + dblLocPos;
-        
-        return dblGblPos;
-    }
-
-    /**
      * Get the horizontal misalignment
      * 
      * @return  the misalignment (in meters)
@@ -462,8 +433,39 @@ public abstract class Element implements IElement {
      *  implement this because it is undetermined whether or not this is a thin
      *  or thick element.
      */
+    @Override
     public abstract double getLength();
     
+    /**
+     * Return the center position of the element along the design trajectory.
+     * This is the position with the containing lattice.
+     * 
+     * @return  center position of the element (meters)
+     */
+    @Override
+    public double getPosition() {
+        return dblPos;
+    }
+    
+    /**
+     *
+     * @see xal.model.IComponent#getLatticePosition()
+     *
+     * @since  Dec 3, 2015,  Christopher K. Allen
+     */
+    @Override
+    public double getLatticePosition() {
+        if (this.getParent() == null)
+            return this.getPosition();
+        
+        double  dblLocPos = this.getPosition();
+        double  dblParPos = this.getParent().getLatticePosition();
+        double  dblParLen = this.getParent().getLength();
+        double  dblGblPos = (dblParPos - dblParLen/2.0) + dblLocPos;
+        
+        return dblGblPos;
+    }
+
     /**
      * @return  returns the composite structure owning this element, 
      *          or <code>null</code> if this component is isolated
@@ -486,6 +488,7 @@ public abstract class Element implements IElement {
     @Override
     public void setParent(IComposite cpsParent) {
         this.cpsParent = cpsParent;
+        this.cpsParent.setDirty(this);
     }
 
     /** 

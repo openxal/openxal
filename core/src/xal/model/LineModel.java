@@ -163,7 +163,7 @@ public class LineModel extends ElementSeq {
         double s = 0;
         boolean started = false;
         
-        for(IComponent comp : getCompList()) {
+        for(IComponent comp : getForwardCompList()) {
             if (started) {
                 comp.propagate(probe);
                 
@@ -194,7 +194,7 @@ public class LineModel extends ElementSeq {
         double s0 = probe.getPosition();
         double s = 0;
         
-        for(IComponent comp : getCompList()) {
+        for(IComponent comp : getForwardCompList()) {
             double len = comp.getLength();
             
             if(s0 <= s) {

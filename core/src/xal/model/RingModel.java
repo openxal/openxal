@@ -173,7 +173,7 @@ public class RingModel extends ElementSeq {
 		if ( startElementID == null )  return;	// nothing to do
 		
 		int startIndex = 0;
-		final List<IComponent> elements = getCompList();
+		final List<IComponent> elements = getForwardCompList();
 		final int numElements = elements.size();
 		for ( int index = 0 ; index < numElements ; index++ ) {
 			final IComponent element = elements.get( index );
