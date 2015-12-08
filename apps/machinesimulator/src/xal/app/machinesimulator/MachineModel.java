@@ -47,6 +47,10 @@ public class MachineModel implements DataListener {
    private MachineSimulation _simulation;
    /** whatIfconfiguration*/
    private WhatIfConfiguration _whatIfConfiguration;
+   /**BpmsConfiguration*/
+   private BpmsConfiguration _bBpmsConfiguration;
+   /**bpm record*/
+   private List<BpmRecord> bpmRecords;
    /**the list of NodePropertyRecord*/
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history datum snapshot*/
@@ -76,6 +80,7 @@ public class MachineModel implements DataListener {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
         setupWhatIfConfiguration( _sequence );
+		  setupBpmsConfiguration( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
     
@@ -106,6 +111,21 @@ public class MachineModel implements DataListener {
     /** setup WhatIfConfiguration*/
     private void setupWhatIfConfiguration( final AcceleratorSeq sequence ){
     	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence );
+    }
+    
+    /**get the BpmsConfiguration*/
+    public List<BpmRecord> getBpmRecords() {
+    	return bpmRecords;
+    }
+    
+    /**get the BpmsConfiguration*/
+    public BpmsConfiguration getBpmsConfiguration() {
+    	return _bBpmsConfiguration;
+    }
+    
+    /**setup BpmsConfiguration*/
+    private void setupBpmsConfiguration( final AcceleratorSeq sequence ) {
+    	if( sequence != null ) _bBpmsConfiguration = new BpmsConfiguration( sequence );
     }
     
     /**configure the ModelInputs from a list of NodePropertyRecord*/
@@ -177,6 +197,24 @@ public class MachineModel implements DataListener {
     	}
     	return seq;
     }
+    
+    /**get the recent bpm datum*/
+    public List<BpmRecord> getFirstBpmRecords() {
+    	List<BpmRecord> bRecords = new ArrayList<BpmRecord>();
+    	if ( SIMULATION_HISTORY_RECORDS.size() != 0 ) {
+        	for ( SimulationHistoryRecord record : SIMULATION_HISTORY_RECORDS ) {
+        	   AcceleratorSeq	seq1 = record.getSequence();
+        	   AcceleratorSeq seq2 = getFirstSeq();
+        		if ( record.getSelectState() && seq1.getId().equals( seq2.getId() ) ) {
+        			bRecords = record.getBpmRecords();
+        			break;
+        		}
+        	}
+    	}
+    	
+    	return bRecords;
+
+    }
 	
     /**get the selected values history records used for simulation */
     public Map<AcceleratorSeq, List<NodePropertyHistoryRecord>> getNodePropertyHistoryRecords(){
@@ -192,6 +230,7 @@ public class MachineModel implements DataListener {
 		//configure
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
+		bpmRecords = _bBpmsConfiguration.recordBpms();
 		//run
 		_simulation = SIMULATOR.run();
 		//record
@@ -202,7 +241,7 @@ public class MachineModel implements DataListener {
 			//record column name for the table
 			if ( COLUMN_NAME.get(_sequence) == null ) COLUMN_NAME.put(_sequence, new TreeMap<Date, String>());
 			//record the simulation history
-			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ,nodePropertySnapshots, _simulation) );		
+			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ) );		
 			
 			if ( NODE_VALUES_TO_SHOW.get(_sequence) == null ){
 				NODE_VALUES_TO_SHOW.put( _sequence, new ArrayList<NodePropertyHistoryRecord>());		
@@ -300,6 +339,8 @@ public class MachineModel implements DataListener {
 	final private AcceleratorSeq SEQUENCE;
 	/**the record of values assignment to simulation*/
 	final private List<NodePropertySnapshot> VALUES_SNAPSHOT;
+	/**the record of bpms' datum*/
+	final private List<BpmRecord> BPMS_DATUM;
 	/**the simulation result*/
 	final private MachineSimulation SIMULATION;
 	/**record name*/
@@ -308,12 +349,12 @@ public class MachineModel implements DataListener {
 	private Boolean selectState;
 
 	/**Constructor*/
-	public SimulationHistoryRecord( final Date time, final List<NodePropertySnapshot> valuesSnapshot,
-			final MachineSimulation simulation ){
+	public SimulationHistoryRecord( final Date time ){
 		TIME = time;
 		SEQUENCE = _sequence;
-		SIMULATION = simulation;
-		VALUES_SNAPSHOT = valuesSnapshot;
+		SIMULATION = _simulation;
+		VALUES_SNAPSHOT = nodePropertySnapshots;
+		BPMS_DATUM = bpmRecords;
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		recordName = " Run "+SIMULATOR.getRunNumber();
 		selectState = true;
@@ -332,7 +373,7 @@ public class MachineModel implements DataListener {
 		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
 		AcceleratorSeq seq = getFirstSeq();
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq, getFirstBpmRecords() );
 
 	}
 	
@@ -349,6 +390,11 @@ public class MachineModel implements DataListener {
 	/**get the values assignment to simulation*/
 	public List<NodePropertySnapshot> getValuesSnapshot(){
 		return VALUES_SNAPSHOT;
+	}
+	
+	/**get the bpm datum*/
+	public List<BpmRecord> getBpmRecords() {
+		return BPMS_DATUM;
 	}
 	
 	/**get the date variable*/
@@ -370,7 +416,7 @@ public class MachineModel implements DataListener {
 	public void setRecordName( final String newName ){
 		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
 		AcceleratorSeq seq = getFirstSeq();
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq, getFirstBpmRecords() );
 
 		recordName = newName;
 	}

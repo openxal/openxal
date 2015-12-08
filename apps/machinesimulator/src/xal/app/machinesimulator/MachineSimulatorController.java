@@ -37,12 +37,14 @@ public class MachineSimulatorController implements MachineModelListener {
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
      /**parameter history table model*/
      final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
+     /**bpm live table model*/
+     final private KeyValueFilteredTableModel<BpmAgent> BPM_LIVE_TABLE_MODEL;
+     /**bpm record table model*/
+     final private KeyValueFilteredTableModel<BpmRecord> BPM_RECORD_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
      final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
-     /**a map array from parameter's key to plot data list*/
-     final private HashMap<String, List<Double>> PLOT_DATA;
      /**the scalar parameters*/
      final private List<ScalarParameter> SCALAR_PARAMETERS;
      /**the vector parameters*/
@@ -51,6 +53,8 @@ public class MachineSimulatorController implements MachineModelListener {
      final private DispatchTimer VALUE_SYNC_TIME;
      /**the legend name*/
      final private String[] LEGEND_NAME;
+     /**a map array from parameter's key to plot data list*/
+     private HashMap<String, List<Double>> plotData;
      /**the sequence*/
      private AcceleratorSeq _sequence;
      /**sync period in milliseconds*/
@@ -59,6 +63,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /**the list of NodePropertyRecord*/
      private List<NodePropertyRecord> nodePropertyRecords;
+     /**the list of bpm*/
+     private List<BpmRecord> bpmsDatum;
      /** the position list of elements*/
      private List<Double> _positions;
      /**the key paths for history data table model*/
@@ -74,14 +80,16 @@ public class MachineSimulatorController implements MachineModelListener {
 	public  MachineSimulatorController(final MachineSimulatorDocument document,final WindowReference windowReference) {
 		
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationHistoryRecord>();
-		
 		NEW_PARAMETERS_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
 		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
 		
+		BPM_LIVE_TABLE_MODEL = new KeyValueFilteredTableModel<BpmAgent>();
+		BPM_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<BpmRecord>();
+		
+		
 		LEGEND_NAME = new String[2];
 		
-		PLOT_DATA = new HashMap<String,List<Double>>();
 		KEY_VALUE_ADAPTOR= new KeyValueAdaptor();
 		
 		VALUE_SYNC_TIME = DispatchTimer.getCoalescingInstance( DispatchQueue.getMainQueue(), getLiveValueSynchronizer() );
@@ -96,6 +104,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		SCALAR_PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
 		
 		VECTOR_PARAMETERS=new ArrayList<VectorParameter>();
+		VECTOR_PARAMETERS.add(new VectorParameter("Orbit", "", "posCoordinates"));
 		VECTOR_PARAMETERS.add(new VectorParameter("Beta","beta","twissParameters", "beta"));
 		VECTOR_PARAMETERS.add(new VectorParameter("Alpha","alpha","twissParameters", "alpha"));
 		VECTOR_PARAMETERS.add(new VectorParameter("Gamma","gamma","twissParameters", "gamma"));
@@ -117,7 +126,10 @@ public class MachineSimulatorController implements MachineModelListener {
         final JCheckBox xSelectionCheckbox = (JCheckBox)windowReference.getView( "X Selection Checkbox" );
         final JCheckBox ySelectionCheckbox = (JCheckBox)windowReference.getView( "Y Selection Checkbox" );
         final JCheckBox zSelectionCheckbox = (JCheckBox)windowReference.getView( "Z Selection Checkbox" );
-
+        
+        final JCheckBox bpmCheckbox = (JCheckBox)windowReference.getView( "BPM" );
+        
+        final JCheckBox orbitCheckbox = (JCheckBox)windowReference.getView( "Orbit Checkbox" );
         final JCheckBox betaCheckbox = (JCheckBox)windowReference.getView( "Beta Checkbox" );
         final JCheckBox alphaCheckbox = (JCheckBox)windowReference.getView( "Alpha Checkbox" );
         final JCheckBox gammaCheckbox = (JCheckBox)windowReference.getView( "Gamma Checkbox" );
@@ -126,7 +138,24 @@ public class MachineSimulatorController implements MachineModelListener {
         final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
        
         //the show difference checkbox in plot view
-		  final JCheckBox showDifference = (JCheckBox)windowReference.getView( "Show Difference" );
+		  final JCheckBox showDifference = (JCheckBox)windowReference.getView( "Show Difference" );        
+/******************configure the new parameters table view*************************************/
+	        
+	     final JTable sequenceTable = (JTable)windowReference.getView( "New Run Parameters" );
+	     sequenceTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
+	        
+	     //set the column name of the sequence table
+	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
+	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+	        
+	     //set the filter field for sequence table
+	     NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
+	     NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
+	         
+	     //configure the sequence table model
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
         
 /***************configure the history record view*****************************************/
         //configure history record table
@@ -136,7 +165,6 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_RECORD_TABLE_MODEL.setColumnName("selectState", "Compare");
         HISTORY_RECORD_TABLE_MODEL.setColumnName("sequence.id", "Sequence" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("dateTime", "Time" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("recordName", "Recordname" );
         
         HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "selectState");
         HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "selectState", "sequence.id", "dateTime", "recordName");
@@ -153,30 +181,40 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_DATA_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         HISTORY_DATA_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
         
-         historyDataKeyPaths = new String[2];
+        historyDataKeyPaths = new String[2];
         historyDataKeyPaths[0] = "acceleratorNode.id";
         historyDataKeyPaths[1] = "propertyName";
         
-/******************configure the sequence table view*************************************/
+/**********************configure the BPM table view***********************************/
+        final JTable bpmLiveTable = (JTable)windowReference.getView( "BPM Live Table" );
+        bpmLiveTable.setModel( BPM_LIVE_TABLE_MODEL );
         
-        final JTable sequenceTable = (JTable)windowReference.getView( "New Run Parameters" );
-        sequenceTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
+        BPM_LIVE_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        BPM_LIVE_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
         
-        //set the column name of the sequence table
-        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
-        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
-        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "designValue", "Design Value" );
-        NEW_PARAMETERS_TABLE_MODEL.setColumnName( "liveValue", "Live Value" );
-        NEW_PARAMETERS_TABLE_MODEL.setColumnName("testValue", "Test Value");
+        BPM_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
+        BPM_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
         
-        //set the filter field for sequence table
-        NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-        NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
-         
-        //configure the sequence table model
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
-		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
+		  final String[] keyPathsForBpm = {"checkState", "node.id", "position", "xAvg", "yAvg"};
+        
+        BPM_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
+        BPM_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
+        BPM_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
+        BPM_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForBpm);
+        
+        //configure the bpm record table
+        final JTable bpmRecordTable = (JTable)windowReference.getView( "BPM Record Table");
+        bpmRecordTable.setModel( BPM_RECORD_TABLE_MODEL );
+        
+        final String[] keyPathsForBpmRecord = { "node.id", "position", "xAvg", "yAvg"};
+        BPM_RECORD_TABLE_MODEL.setKeyPaths( keyPathsForBpmRecord );
+        
+        BPM_RECORD_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        BPM_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
+        BPM_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
+        BPM_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
+        
+        
 
 /**********************configure the states table view***********************************/
 	     //get components
@@ -205,16 +243,36 @@ public class MachineSimulatorController implements MachineModelListener {
 
 /***************************Check boxes action**************************************/
 		
+		
+		//configure the bpm checkbox action
+		final ActionListener BPM_HANDLER = event -> {
+			final HashMap<String, List<Double>> bpmDataForPlot;
+			final String[] keyPathsForPlot = {"position", "xAvg", "yAvg"};
+			
+			if ( bpmsDatum != null ) {
+				bpmDataForPlot = configureParametersData( bpmsDatum, keyPathsForPlot );
+				List<Double> pos = bpmDataForPlot.get( "position" );
+				if ( xSelectionCheckbox.isSelected() ) {
+					_machineSimulatorTwissPlot.showTwissPlot( pos,  bpmDataForPlot.get( "xAvg" ), "xAvg", "BPM-xAvg : " + LEGEND_NAME[0] );
+				}
+				if ( ySelectionCheckbox.isSelected() ) {
+					_machineSimulatorTwissPlot.showTwissPlot( pos,  bpmDataForPlot.get( "yAvg" ), "yAvg", "BPM-yAvg : " + LEGEND_NAME[0] );
+				}
+			}
+			
+		};
+		
 		//configure the show difference check box of plot view
 		final ActionListener SHOW_DIFFERENCE_HANDELER =  event -> {
 			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
 			if ( showDifference.isSelected() && simulations[0] != null ){
 				if ( simulations[1] != null ){
 					twissParametersPlot.removeAllGraphData();	
+					if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
 					//Todo:caluate the difference and plot
 					for( int index = 0; index<keyPathsForDifference.size(); index++ ){					
-						final List<Double> newValues = PLOT_DATA.get( keyPathsForDifference.get( index ) );
-						final List<Double> oldValues = PLOT_DATA.get( keyPathsForDifference.get( index+1 ) );
+						final List<Double> newValues = plotData.get( keyPathsForDifference.get( index ) );
+						final List<Double> oldValues = plotData.get( keyPathsForDifference.get( index+1 ) );
 						final List<Double> differences = new ArrayList<Double>( newValues.size() );
 						for( int valueIndex = 0;valueIndex<newValues.size();valueIndex++ ){							
 							differences.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
@@ -232,6 +290,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		};
 		
 		showDifference.addActionListener(SHOW_DIFFERENCE_HANDELER);
+
 		
 		final ActionListener PARAMETER_HANDLER = new ActionListener() {	
 			public void actionPerformed( final ActionEvent event ) {
@@ -240,7 +299,6 @@ public class MachineSimulatorController implements MachineModelListener {
 				//configure the column name of states table
 		        for(final ScalarParameter scalarParameter:SCALAR_PARAMETERS){
 		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[0] );
-		            
 		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[1] );
 		           }
 		        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
@@ -276,12 +334,13 @@ public class MachineSimulatorController implements MachineModelListener {
 				if ( zSelectionCheckbox.isSelected() )  planes.add( "Z" );
 				// Add each selected twiss parameter key path to the list of parameters to display
 				for ( final String plane : planes ){
-					if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );
-					if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
-					if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
-					if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
-					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
-					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
+					if ( orbitCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );
+					if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
+					if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
+					if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
+					if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
+					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
+					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(6).getKeyPathToArray().get(plane) );
 				}
 				
 				//create the combination keyPaths used for comparing new and old simulation results
@@ -303,15 +362,12 @@ public class MachineSimulatorController implements MachineModelListener {
 					parameterKeyPathsForTableList = parameterKeyPathsList;
 				}
 
-				
 				//turn the keyPaths list to string array
 				final String[] parameterKeyPathsForTable= new String[parameterKeyPathsForTableList.size()];
 				parameterKeyPathsForTableList.toArray( parameterKeyPathsForTable );
 
-
 				STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, parameterKeyPathsForTable );
 				
-
 				final String[] allKeyPathsForTable = new String[standardParameterKeys.length + parameterKeyPathsForTable.length];
 				// add standard parameters at the start
 				System.arraycopy( standardParameterKeys, 0, allKeyPathsForTable, 0, standardParameterKeys.length );
@@ -325,13 +381,15 @@ public class MachineSimulatorController implements MachineModelListener {
 
 				//setup plot panel and show the selected parameters' graph
 				twissParametersPlot.removeAllGraphData();
+				if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
+				
 				if ( _sequence != null ) _machineSimulatorTwissPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
-					configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
+					plotData = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
 					_positions = simulations[0].getAllPositions();
 					for( final String parameterKey:parameterKeyPathsForTable ){
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, PLOT_DATA.get(parameterKey), parameterKey, legName );
+						_machineSimulatorTwissPlot.showTwissPlot( _positions, plotData.get(parameterKey), parameterKey, legName );
 					}
 					
 					if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
@@ -347,7 +405,10 @@ public class MachineSimulatorController implements MachineModelListener {
         xSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         ySelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         zSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
-
+        
+		bpmCheckbox.addActionListener( PARAMETER_HANDLER );
+        
+        orbitCheckbox.addActionListener( PARAMETER_HANDLER );
         betaCheckbox.addActionListener( PARAMETER_HANDLER );
         alphaCheckbox.addActionListener( PARAMETER_HANDLER );
         gammaCheckbox.addActionListener( PARAMETER_HANDLER );
@@ -391,7 +452,7 @@ public class MachineSimulatorController implements MachineModelListener {
                 	
                   //set records and configure history data table
                   historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
-                		  MODEL.getColumnNames().get(_sequence), _sequence );
+                		  MODEL.getColumnNames().get(_sequence), _sequence, MODEL.getBpmRecords() );
                   
                 	//set records of states table
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
@@ -457,6 +518,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 
 			PARAMETER_HANDLER.actionPerformed( null );
+			
 			if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed( null );
 		};
 
@@ -466,19 +528,24 @@ public class MachineSimulatorController implements MachineModelListener {
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    private <T> void configureParametersData( final List<T> records,final String[] keyPaths ){
-      PLOT_DATA.clear();      
+    private <T> HashMap<String, List<Double>> configureParametersData( final List<T> records,final String[] keyPaths ){
+      final HashMap<String, List<Double>> datum = new HashMap<String, List<Double>>();     
     	for( final String keyPath:keyPaths ){
-    		PLOT_DATA.put( keyPath, new ArrayList<Double>( records.size() ) );
+    		datum.put( keyPath, new ArrayList<Double>( records.size() ) );
     		for( final T record:records ){
-    			PLOT_DATA.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
+    			datum.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
     		}
-    	}   	
+    	}
+    	
+    	return datum;
     }
     
     /**get a runnalbe that syncs the values */
     private Runnable getLiveValueSynchronizer(){
-    	return () -> NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, NEW_PARAMETERS_TABLE_MODEL.getRowCount() - 1  ); 
+    	return () -> {
+    		NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, NEW_PARAMETERS_TABLE_MODEL.getRowCount() - 1  );
+    		BPM_LIVE_TABLE_MODEL.fireTableRowsUpdated(0, BPM_LIVE_TABLE_MODEL.getRowCount() - 1 );;
+    	};
     }
 
     /**event indicates that the sequence has changed*/
@@ -487,6 +554,8 @@ public class MachineSimulatorController implements MachineModelListener {
         	_sequence = model.getSequence();
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
+    		
+    		BPM_LIVE_TABLE_MODEL.setRecords( model.getBpmsConfiguration().getBpms() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
@@ -512,16 +581,16 @@ public class MachineSimulatorController implements MachineModelListener {
 
 	/**event indicates that the history record select state changed*/
 	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
-			final Map<Date, String> columnName, final AcceleratorSeq seq ) {
+			final Map<Date, String> columnName, final AcceleratorSeq seq, final List<BpmRecord> bpms ) {
 		
 		if ( nodePropertyHistoryRecords != null && columnName != null ) {
 			int columnNumber = columnName.size();		
-			String[] name = new String[columnNumber];
-			columnName.values().toArray( name );
+			String[] names = new String[columnNumber];
+			columnName.values().toArray( names );
 			String[] valuePathList = new String[columnNumber];
 			for ( int index = 0;index<columnNumber; index++ ){
 				valuePathList[index] = "values."+index;
-				HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, name[index]);
+				HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, names[index]);
 			}
 			
 			String[] keyPaths = new String[historyDataKeyPaths.length+valuePathList.length];
@@ -533,10 +602,15 @@ public class MachineSimulatorController implements MachineModelListener {
 		}
 		else HISTORY_DATA_TABLE_MODEL.setRecords(null);
 
-		
 		_sequence = seq;
+		
+		bpmsDatum = bpms;
 
 		refresh.actionPerformed(null);
+		
+		BPM_RECORD_TABLE_MODEL.setRecords( bpmsDatum );
+		BPM_RECORD_TABLE_MODEL.setColumnName( "xAvg",  "xAvg : "+LEGEND_NAME[0] );
+		BPM_RECORD_TABLE_MODEL.setColumnName( "yAvg",  "yAvg : "+LEGEND_NAME[0] );
 		
 	}
 	

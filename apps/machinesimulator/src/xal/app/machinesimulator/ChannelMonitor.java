@@ -25,7 +25,7 @@ public class ChannelMonitor implements IEventSinkValue, ConnectionListener {
 	private Monitor monitor;
 	
 	/** the constructor */
-	public ChannelMonitor(Channel channel) { 
+	public ChannelMonitor( Channel channel ) { 
 		this.channel = channel;
 		this.channel.addConnectionListener(this);
 		this.channel.requestConnection();

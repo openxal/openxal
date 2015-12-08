@@ -10,6 +10,7 @@ package xal.app.machinesimulator;
 
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.calc.SimResultsAdaptor;
+import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.math.r3.R3;
 
@@ -24,6 +25,9 @@ public class MachineSimulationRecord {
 
 	/** betatron phase */
 	private final R3 BETATRON_PHASE;
+	
+	/**phase vector*/
+	private final PhaseVector PHASE_VECTOR;
 
 
 	/** Constructor */
@@ -31,6 +35,7 @@ public class MachineSimulationRecord {
 		PROBE_STATE = probeState;
 		TWISS_PARAMETERS = resultsAdaptor.computeTwissParameters( probeState );
 		BETATRON_PHASE = resultsAdaptor.computeBetatronPhase( probeState );
+		PHASE_VECTOR = resultsAdaptor.computeFixedOrbit( probeState );
     }
 
 
@@ -49,6 +54,11 @@ public class MachineSimulationRecord {
 	/** Get the state's beamline position */
 	public double getPosition() {
 		return PROBE_STATE.getPosition();
+	}
+	
+	/**Get the position coordinates*/
+	public R3 getPosCoordinates() {
+		return PHASE_VECTOR.getPosition();
 	}
 
 

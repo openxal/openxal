@@ -43,6 +43,11 @@ public class MachineSimulationHistoryRecord {
 	public double getPosition() {
 		return NEW_RECORD.getPosition();
 	}
+	
+	/**Get the position coordinates*/
+	public R3 getPosCoordinates() {
+		return NEW_RECORD.getPosCoordinates();
+	}
 
 
 	/** get the state's twiss parameters */
