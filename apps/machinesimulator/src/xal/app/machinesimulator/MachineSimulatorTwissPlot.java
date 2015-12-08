@@ -62,8 +62,21 @@ public class MachineSimulatorTwissPlot{
 	
 	private void configureGraph( final BasicGraphData graphData, final String keyPath, final String legend ) {
 		final String keyPathForOld = keyPath.substring(4);
-		for( int parameterIndex=0;parameterIndex<PARAMETERS.size();parameterIndex++ ){
-			if( PARAMETERS.get( parameterIndex ).isThisParameter( keyPath ) ){
+		int parameterIndex = 0;
+		boolean isParameter = false;
+		boolean isParameterForOld = false;
+		for( int index=0; index<PARAMETERS.size(); index++ ){
+			if( PARAMETERS.get( index ).isThisParameter( keyPath ) ) {
+				parameterIndex = index;
+				isParameter = true;
+			}
+			else if( PARAMETERS.get( index ).isThisParameter( keyPathForOld ) ) {
+				parameterIndex = index;
+				isParameterForOld = true;
+			}
+		}
+			
+			if( isParameter ){			
 				//configure the graphic name
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
 						PARAMETERS.get( parameterIndex ).getParameterName( keyPath )+" : "+legend );
@@ -85,7 +98,7 @@ public class MachineSimulatorTwissPlot{
 				}
 			}
 			//configure the graph for old simulation results
-			else if ( PARAMETERS.get( parameterIndex ).isThisParameter( keyPathForOld ) ) {
+			else if ( isParameterForOld ) {
 				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(),
 						PARAMETERS.get( parameterIndex ).getParameterName( keyPathForOld )+" : "+legend );
 				graphData.setGraphColor( IncrementalColors.getColor( parameterIndex+1 ) );
@@ -105,7 +118,24 @@ public class MachineSimulatorTwissPlot{
 					break;
 				}
 			}
-		}
+			//configure the graph which isn't twiss parameter
+			else {
+				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), legend );				
+				//configure the graphic line pattern
+				switch ( keyPath.substring(0, 1).toUpperCase() ) {
+				case "X":
+					graphData.setLineDashPattern( null );//x plane					
+					break;
+				case "Y":
+					graphData.setLineDashPattern( 3.0f );//y plane					
+					break;
+				case "Z":
+					graphData.setLineDashPattern( 11.0f );//z plane
+					break;
+				default:
+					break;
+				}
+			}
 		
 	}
 	

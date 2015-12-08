@@ -120,21 +120,30 @@ public class VectorParameter extends Parameter {
 	 * @return a symbol
 	 */
 	public String getSymbolForX(){
-		return "<html>&"+symbol+";<sub>x</sub></html>";
+		String symbolX;
+		if ( symbol == "" ) symbolX = "<html>"+super.getLabel()+"<sub>x</sub></html>";
+		else symbolX = "<html>&"+symbol+";<sub>x</sub></html>";
+		return symbolX;
 	}
 	/**
 	 * get a symbol for y plane to represent parameter's name 
 	 * @return a symbol
 	 */
 	public String getSymbolForY(){
-		return "<html>&"+symbol+";<sub>y</sub></html>";
+		String symbolY;
+		if ( symbol == "" ) symbolY = "<html>"+super.getLabel()+"<sub>y</sub></html>";
+		else symbolY = "<html>&"+symbol+";<sub>y</sub></html>";
+		return symbolY;
 	}
 	/**
 	 * get a symbol for z plane to represent parameter's name 
 	 * @return a symbol
 	 */
 	public String getSymbolForZ(){
-		return "<html>&"+symbol+";<sub>z</sub></html>";
+		String symbolZ;
+		if ( symbol == "" ) symbolZ = "<html>"+super.getLabel()+"<sub>z</sub></html>";
+		else symbolZ = "<html>&"+symbol+";<sub>z</sub></html>";
+		return symbolZ;
 	}
 	/**
 	 * get the plane of the specified parameter
