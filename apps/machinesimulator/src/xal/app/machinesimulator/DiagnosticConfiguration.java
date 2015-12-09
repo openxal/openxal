@@ -27,8 +27,7 @@ public class DiagnosticConfiguration {
 	
 	/**get the diagnostics from sequence*/
 	private void configure( final AcceleratorSeq seq ) {
-		for ( final AcceleratorNode node : seq.getAllNodes() ) {
-System.out.println(node.getId()+" : "+node.getType());			
+		for ( final AcceleratorNode node : seq.getAllNodes() ) {			
 			if ( node.getStatus() ) {
 				if ( node instanceof BPM ) DIAGS.add( new DiagnosticAgent( (BPM)node ) );
 			}

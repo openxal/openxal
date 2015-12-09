@@ -239,7 +239,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			final HashMap<String, List<Double>> bpmDataForPlot;
 
 			
-			if ( diagDatum != null ) {
+			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {
 				int leg = keyPathsForDiagRecord.length;
 				final String[] keyPathsForPlot = {"position", keyPathsForDiagRecord[leg-1] };
 				bpmDataForPlot = configureParametersData( diagDatum, keyPathsForPlot );
