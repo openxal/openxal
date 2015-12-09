@@ -186,21 +186,21 @@ public interface IProbe {
 //     * @since  Nov 24, 2014
 //     */
 //    public double   getRfGapExitTime();
-    
-    /**
-     * Returns the machine RF phase at the last gap through which the probe propagated.
-     * This value accounts for the RF cavity structure, specifically the phase shifts
-     * due to coupling between coupled cavity structures.
-     *  
-     * @return  phase shift experienced by probe when traversing coupled cavities
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 25, 2014
-     * 
-     * @deprecated  This method was part of an old design
-     */
-    @Deprecated
-    public double   getCoupledCavityPhase();
+//    
+//    /**
+//     * Returns the machine RF phase at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     * 
+//     * @deprecated  This method was part of an old design
+//     */
+//    @Deprecated
+//    public double   getCoupledCavityPhase();
     
     /**
      * Looks up the last probe state created by a modeling
@@ -328,20 +328,20 @@ public interface IProbe {
 //     */
 //    public void setRfGapExitTime(double dblRfGapExitTime);
 //
-    /**
-     * Returns the RF phase at the last gap through which the probe propagated.
-     * This value accounts for the RF cavity structure, specifically the phase shifts
-     * due to coupling between coupled cavity structures.
-     *  
-     * @return  phase shift experienced by probe when traversing coupled cavities
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 25, 2014
-     * 
-     * @deprecated This was part of an old design
-     */
-    @Deprecated
-    public void setCoupledCavityPhaseShift(double dblCavPhsShft);
+//    /**
+//     * Returns the RF phase at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     * 
+//     * @deprecated This was part of an old design
+//     */
+//    @Deprecated
+//    public void setCoupledCavityPhaseShift(double dblCavPhsShft);
     
     
     /*

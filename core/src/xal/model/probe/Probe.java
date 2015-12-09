@@ -219,13 +219,13 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /** Current probe trajHist */
     protected Trajectory<S> trajHist;
     
-    /**
-     * The the currently tracked probe exited the last RF gap - needed when CalcRfGapPhase is <code>true</code> 
-     */
-    private double      dblRfGapExitTime = 0.0;
-    
-    /** The phase shift at the last RF gap due to the coupled cavity structure */
-    private double      dblCavPhsShft = 0.0;
+//    /**
+//     * The the currently tracked probe exited the last RF gap - needed when CalcRfGapPhase is <code>true</code> 
+//     */
+//    private double      dblRfGapExitTime = 0.0;
+//    
+//    /** The phase shift at the last RF gap due to the coupled cavity structure */
+//    private double      dblCavPhsShft = 0.0;
     
 
     
@@ -705,20 +705,20 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 //        return this.dblRfGapExitTime;
 //    }
 //    
-    /**
-     * Returns the RF phase shift at the last gap through which the probe propagated.
-     * This value accounts for the RF cavity structure, specifically the phase shifts
-     * due to coupling between coupled cavity structures.
-     *  
-     * @return  phase shift experienced by probe when traversing coupled cavities
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 25, 2014
-     */
-    @Override
-    public double   getCoupledCavityPhase() {
-        return this.dblCavPhsShft;
-    }
+//    /**
+//     * Returns the RF phase shift at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     */
+//    @Override
+//    public double   getCoupledCavityPhase() {
+//        return this.dblCavPhsShft;
+//    }
     
     /**
      *
@@ -866,20 +866,20 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 //        this.dblRfGapExitTime = dblRfGapExitTime;
 //    }
 //
-    /**
-     * Returns the RF phase at the last gap through which the probe propagated.
-     * This value accounts for the RF cavity structure, specifically the phase shifts
-     * due to coupling between coupled cavity structures.
-     *  
-     * @return  phase shift experienced by probe when traversing coupled cavities
-     *
-     * @author Christopher K. Allen
-     * @since  Nov 25, 2014
-     */
-    @Override
-    public void setCoupledCavityPhaseShift(double dblCavPhsShft) {
-        this.dblCavPhsShft = dblCavPhsShft;
-    }
+//    /**
+//     * Returns the RF phase at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     */
+//    @Override
+//    public void setCoupledCavityPhaseShift(double dblCavPhsShft) {
+//        this.dblCavPhsShft = dblCavPhsShft;
+//    }
     
 
 

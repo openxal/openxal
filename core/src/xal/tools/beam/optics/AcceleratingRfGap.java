@@ -221,10 +221,10 @@ public class AcceleratingRfGap {
 //    /** initial particle wave number coming into the gap fields */
 //    private final double        ki;
 
-    /** length of the gap - used for an initial approximation of mid-gap synch phase 
-     * 
-     * @deprecated  CKA I don't think we'll need this, length is not well defined
-     * */
+//    /** length of the gap - used for an initial approximation of mid-gap synch phase 
+//     * 
+//     * @deprecated  CKA I don't think we'll need this, length is not well defined
+//     * */
 //    private final double        dblGapLen;
     
     /** total potential drop <i>V</i><sub>0</sub> across accelerating gap */

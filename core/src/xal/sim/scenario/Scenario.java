@@ -369,7 +369,7 @@ public class Scenario {
         
         lattice.propagate(probe);
 
-        probe.performPostProcessing();
+//        probe.performPostProcessing();
     }
     
 	

@@ -152,6 +152,7 @@ public class Lattice extends ElementSeq {
      * 
      * @deprecated  This method is never used
      */
+    @Deprecated
     public List<RingModel> getRings()  {
         List<RingModel> lstRings = new LinkedList<RingModel>();
         
@@ -277,7 +278,7 @@ public class Lattice extends ElementSeq {
         System.out.println("Lattice.backPropagate called");
         super.backPropagate(probe);
         
-        probe.performPostProcessing();
+//        probe.performPostProcessing();
     }
     
     /*
