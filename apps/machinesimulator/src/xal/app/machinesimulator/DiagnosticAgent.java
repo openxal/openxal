@@ -10,7 +10,7 @@ import xal.smf.impl.BPM;
  * @author luxiaohan
  *represents a live BPM which may be connected and monitored.
  */
-public class BpmAgent {
+public class DiagnosticAgent {
 	/**the bpm node*/
 	final private BPM NODE;
 	/**the monitor for the channel of x plane*/
@@ -22,7 +22,7 @@ public class BpmAgent {
 	/**check state of this bpm*/
 	private Boolean checkState;
 	
-	public BpmAgent( final BPM node ) {
+	public DiagnosticAgent( final BPM node ) {
 		NODE = node;
 		Channel channelX = NODE.getChannel( BPM.X_AVG_HANDLE );
 		MONITOR_X = createMonitor( channelX );
@@ -56,6 +56,16 @@ public class BpmAgent {
 	/**get the position of this node*/
 	public double getPosition() {
 		return POSITION;
+	}
+	
+	/**get the xAvg handle*/
+	public String getXAvgName() {
+		return BPM.X_AVG_HANDLE;
+	}
+	
+	/**get the yAvg handle*/
+	public String getYAvgName() {
+		return BPM.Y_AVG_HANDLE;
 	}
 	
 	/**returns average X position*/
