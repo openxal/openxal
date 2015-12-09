@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Dec 08 11:36:54 CST 2015" version="1.0.0">
+<BricksDocument date="Wed Dec 09 09:11:41 CST 2015" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="874" tag="MainWindow" width="1442">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1440">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
@@ -219,21 +219,21 @@
                                         </ViewNode>
                                     </ViewNode>
                                 </ViewNode>
-                                <ViewNode tag="BPM Table View">
+                                <ViewNode tag="Diagnostics History View">
                                     <ViewProxy type="javax.swing.Box_Horizontal"/>
-                                    <BeanProperty name="name" value="BPM Table"/>
+                                    <BeanProperty name="name" value="Diagnostics History"/>
                                     <ViewNode tag="Split Pane">
                                         <ViewProxy type="javax.swing.JSplitPane"/>
                                         <BeanProperty name="oneTouchExpandable" value="true"/>
-                                        <ViewNode tag="BPM Live Table Pane">
+                                        <ViewNode tag="Diag Live Table Pane">
                                             <ViewProxy type="javax.swing.JScrollPane"/>
-                                            <ViewNode tag="BPM Live Table">
+                                            <ViewNode tag="Diag Live Table">
                                                 <ViewProxy type="javax.swing.JTable"/>
                                             </ViewNode>
                                         </ViewNode>
-                                        <ViewNode tag="BPM Record Table Pane">
+                                        <ViewNode tag="Diag Record Table Pane">
                                             <ViewProxy type="javax.swing.JScrollPane"/>
-                                            <ViewNode tag="BPM Record Table">
+                                            <ViewNode tag="Diag Record Table">
                                                 <ViewProxy type="javax.swing.JTable"/>
                                             </ViewNode>
                                         </ViewNode>

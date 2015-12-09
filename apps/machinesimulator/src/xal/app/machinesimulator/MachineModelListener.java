@@ -23,6 +23,6 @@ public interface MachineModelListener {
 	
 	/**event indicates that the history record select state changed*/
 	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
-			final Map<Date, String> columnName, final AcceleratorSeq seq, final List<BpmRecord> bpms );
+			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq );
 
 }

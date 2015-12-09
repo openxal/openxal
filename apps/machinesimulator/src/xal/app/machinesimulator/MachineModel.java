@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import xal.app.machinesimulator.DiagnosticConfiguration.DiagnosticSnapshot;
 import xal.model.ModelException;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -37,6 +38,8 @@ public class MachineModel implements DataListener {
 	final private LinkedList<SimulationHistoryRecord> SIMULATION_HISTORY_RECORDS;
 	/**the selected history record of node property values to show*/
 	final private Map<AcceleratorSeq, List<NodePropertyHistoryRecord>> NODE_VALUES_TO_SHOW;
+	/**the selected history records of diagnostic values*/
+	final private Map<AcceleratorSeq, List<DiagnosticRecord>> DIAG_RECORDS;
 	/**the colum name of node property history values table*/
 	final private Map<AcceleratorSeq,Map<Date, String>> COLUMN_NAME;
    /** simulator */
@@ -48,9 +51,7 @@ public class MachineModel implements DataListener {
    /** whatIfconfiguration*/
    private WhatIfConfiguration _whatIfConfiguration;
    /**BpmsConfiguration*/
-   private BpmsConfiguration _bBpmsConfiguration;
-   /**bpm record*/
-   private List<BpmRecord> bpmRecords;
+   private DiagnosticConfiguration _diagnosticConfiguration;
    /**the list of NodePropertyRecord*/
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history datum snapshot*/
@@ -68,6 +69,8 @@ public class MachineModel implements DataListener {
 		
 		NODE_VALUES_TO_SHOW = new LinkedHashMap<AcceleratorSeq, List<NodePropertyHistoryRecord>>();
 		
+		DIAG_RECORDS = new LinkedHashMap<AcceleratorSeq, List<DiagnosticRecord>>();
+		
 		COLUMN_NAME = new LinkedHashMap<AcceleratorSeq, Map<Date, String>>();
 		
 		EVENT_PROXY = MESSAGE_CENTER.registerSource( this, MachineModelListener.class );
@@ -80,7 +83,7 @@ public class MachineModel implements DataListener {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
         setupWhatIfConfiguration( _sequence );
-		  setupBpmsConfiguration( _sequence );
+		  setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
     
@@ -113,19 +116,22 @@ public class MachineModel implements DataListener {
     	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence );
     }
     
-    /**get the BpmsConfiguration*/
-    public List<BpmRecord> getBpmRecords() {
-    	return bpmRecords;
+    /**get the diagnostic records*/
+    public List<DiagnosticRecord> getDiagRecords() {
+    	return DIAG_RECORDS.get( _sequence );
     }
     
-    /**get the BpmsConfiguration*/
-    public BpmsConfiguration getBpmsConfiguration() {
-    	return _bBpmsConfiguration;
+    /**get the DiagnosticConfiguration*/
+    public DiagnosticConfiguration getDiagConfig() {
+    	return _diagnosticConfiguration;
     }
     
-    /**setup BpmsConfiguration*/
-    private void setupBpmsConfiguration( final AcceleratorSeq sequence ) {
-    	if( sequence != null ) _bBpmsConfiguration = new BpmsConfiguration( sequence );
+    /**setup DiagnosticConfiguration*/
+    private void setupDiagConfig( final AcceleratorSeq sequence ) {
+    	if( sequence != null ) {
+    		_diagnosticConfiguration = new DiagnosticConfiguration( sequence );
+    		DIAG_RECORDS.put(_sequence, _diagnosticConfiguration.createDiagRecords() );
+    	}
     }
     
     /**configure the ModelInputs from a list of NodePropertyRecord*/
@@ -168,10 +174,8 @@ public class MachineModel implements DataListener {
         		else {
         			simulationHistoryRecords.add( new MachineSimulationHistoryRecord( newSimulation.getSimulationRecords().get( index ) ) );
         		}
-        		
         	}
     	}
-
     	return simulationHistoryRecords;
     }
     
@@ -198,22 +202,26 @@ public class MachineModel implements DataListener {
     	return seq;
     }
     
-    /**get the recent bpm datum*/
-    public List<BpmRecord> getFirstBpmRecords() {
-    	List<BpmRecord> bRecords = new ArrayList<BpmRecord>();
-    	if ( SIMULATION_HISTORY_RECORDS.size() != 0 ) {
-        	for ( SimulationHistoryRecord record : SIMULATION_HISTORY_RECORDS ) {
-        	   AcceleratorSeq	seq1 = record.getSequence();
-        	   AcceleratorSeq seq2 = getFirstSeq();
-        		if ( record.getSelectState() && seq1.getId().equals( seq2.getId() ) ) {
-        			bRecords = record.getBpmRecords();
-        			break;
-        		}
-        	}
+    /**change the diagnostic datum records to show*/
+    public List<DiagnosticRecord> changeDiagRecords( final AcceleratorSeq seq, final Date time, 
+    		final boolean checkState, final List<DiagnosticSnapshot> snapshots) {
+    	
+    	List<DiagnosticRecord> records = DIAG_RECORDS.get( seq );
+    	for ( int index = 0; index<snapshots.size(); index++ ) {
+    		double valueX = snapshots.get( index ).getXAvg();
+    		double valueY = snapshots.get( index ).getYAvg();
+    		int leg = snapshots.size();
+    		if ( checkState ) {
+    			records.get( index ).addValue(time, valueX);
+    			records.get( index+leg ).addValue(time, valueY);
+    		}
+    		else {
+    			records.get( index ).removeValue( time );
+    			records.get(index+leg).removeValue( time );
+    		}
     	}
     	
-    	return bRecords;
-
+    	return records;
     }
 	
     /**get the selected values history records used for simulation */
@@ -230,7 +238,6 @@ public class MachineModel implements DataListener {
 		//configure
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
-		bpmRecords = _bBpmsConfiguration.recordBpms();
 		//run
 		_simulation = SIMULATOR.run();
 		//record
@@ -247,6 +254,7 @@ public class MachineModel implements DataListener {
 				NODE_VALUES_TO_SHOW.put( _sequence, new ArrayList<NodePropertyHistoryRecord>());		
 			}
 			changeHistoryRecordToShow( _sequence, time, true, nodePropertySnapshots );
+			changeDiagRecords( _sequence, time, true, SIMULATION_HISTORY_RECORDS.getFirst().getDiagSnapshots() );
 			
 		}
 		
@@ -339,8 +347,8 @@ public class MachineModel implements DataListener {
 	final private AcceleratorSeq SEQUENCE;
 	/**the record of values assignment to simulation*/
 	final private List<NodePropertySnapshot> VALUES_SNAPSHOT;
-	/**the record of bpms' datum*/
-	final private List<BpmRecord> BPMS_DATUM;
+	/**the record of diagnostic datum*/
+	final private List<DiagnosticSnapshot> DIAG_SNAPSHOT;
 	/**the simulation result*/
 	final private MachineSimulation SIMULATION;
 	/**record name*/
@@ -354,7 +362,7 @@ public class MachineModel implements DataListener {
 		SEQUENCE = _sequence;
 		SIMULATION = _simulation;
 		VALUES_SNAPSHOT = nodePropertySnapshots;
-		BPMS_DATUM = bpmRecords;
+		DIAG_SNAPSHOT = _diagnosticConfiguration.snapshotValues();
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		recordName = " Run "+SIMULATOR.getRunNumber();
 		selectState = true;
@@ -369,11 +377,12 @@ public class MachineModel implements DataListener {
 	/**set the select state*/
 	public void setSelectState( final Boolean select ){
 		selectState = select;
-		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);	
+		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);
+		changeDiagRecords(SEQUENCE, TIME, select, DIAG_SNAPSHOT);
 		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
 		AcceleratorSeq seq = getFirstSeq();
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq, getFirstBpmRecords() );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ),DIAG_RECORDS.get(seq), seq );
 
 	}
 	
@@ -392,9 +401,9 @@ public class MachineModel implements DataListener {
 		return VALUES_SNAPSHOT;
 	}
 	
-	/**get the bpm datum*/
-	public List<BpmRecord> getBpmRecords() {
-		return BPMS_DATUM;
+	/**get the diag datum*/
+	public List<DiagnosticSnapshot> getDiagSnapshots() {
+		return DIAG_SNAPSHOT;
 	}
 	
 	/**get the date variable*/
@@ -416,7 +425,7 @@ public class MachineModel implements DataListener {
 	public void setRecordName( final String newName ){
 		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
 		AcceleratorSeq seq = getFirstSeq();
-		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), seq, getFirstBpmRecords() );
+		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), DIAG_RECORDS.get(seq), seq );
 
 		recordName = newName;
 	}

@@ -38,9 +38,9 @@ public class MachineSimulatorController implements MachineModelListener {
      /**parameter history table model*/
      final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
      /**bpm live table model*/
-     final private KeyValueFilteredTableModel<BpmAgent> BPM_LIVE_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<DiagnosticAgent> DIAG_LIVE_TABLE_MODEL;
      /**bpm record table model*/
-     final private KeyValueFilteredTableModel<BpmRecord> BPM_RECORD_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<DiagnosticRecord> DIAG_RECORD_TABLE_MODEL;
      /** main model */
      final private MachineModel MODEL;
      /** key value adaptor to get the twiss value from a record for the specified key path */
@@ -63,12 +63,12 @@ public class MachineSimulatorController implements MachineModelListener {
      private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
      /**the list of NodePropertyRecord*/
      private List<NodePropertyRecord> nodePropertyRecords;
-     /**the list of bpm*/
-     private List<BpmRecord> bpmsDatum;
+     /**the list of diagnostic records*/
+     private List<DiagnosticRecord> diagDatum;
+     /**the key paths for diagnostic records*/
+     private String[] keyPathsForDiagRecord;
      /** the position list of elements*/
      private List<Double> _positions;
-     /**the key paths for history data table model*/
-     private String[] historyDataKeyPaths;
      /**the key paths for show difference between two simulation results*/
      private List<String> keyPathsForDifference;
      /**refresh action*/
@@ -84,8 +84,8 @@ public class MachineSimulatorController implements MachineModelListener {
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
 		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
 		
-		BPM_LIVE_TABLE_MODEL = new KeyValueFilteredTableModel<BpmAgent>();
-		BPM_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<BpmRecord>();
+		DIAG_LIVE_TABLE_MODEL = new KeyValueFilteredTableModel<DiagnosticAgent>();
+		DIAG_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<DiagnosticRecord>();
 		
 		
 		LEGEND_NAME = new String[2];
@@ -181,40 +181,30 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_DATA_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         HISTORY_DATA_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
         
-        historyDataKeyPaths = new String[2];
-        historyDataKeyPaths[0] = "acceleratorNode.id";
-        historyDataKeyPaths[1] = "propertyName";
+/**********************configure the diagnostics history view***********************************/
+        final JTable diagLiveTable = (JTable)windowReference.getView( "Diag Live Table" );
+        diagLiveTable.setModel( DIAG_LIVE_TABLE_MODEL );
         
-/**********************configure the BPM table view***********************************/
-        final JTable bpmLiveTable = (JTable)windowReference.getView( "BPM Live Table" );
-        bpmLiveTable.setModel( BPM_LIVE_TABLE_MODEL );
+        DIAG_LIVE_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        DIAG_LIVE_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
         
-        BPM_LIVE_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        BPM_LIVE_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
         
-        BPM_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
-        BPM_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
+		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "xAvg", "yAvg"};
         
-		  final String[] keyPathsForBpm = {"checkState", "node.id", "position", "xAvg", "yAvg"};
+        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
+        DIAG_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
+        DIAG_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
+        DIAG_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForDiagLive);
         
-        BPM_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
-        BPM_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
-        BPM_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
-        BPM_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForBpm);
+        //configure the diagnostic record table
+        final JTable diagRecordTable = (JTable)windowReference.getView( "Diag Record Table");
+        diagRecordTable.setModel( DIAG_RECORD_TABLE_MODEL );
         
-        //configure the bpm record table
-        final JTable bpmRecordTable = (JTable)windowReference.getView( "BPM Record Table");
-        bpmRecordTable.setModel( BPM_RECORD_TABLE_MODEL );
-        
-        final String[] keyPathsForBpmRecord = { "node.id", "position", "xAvg", "yAvg"};
-        BPM_RECORD_TABLE_MODEL.setKeyPaths( keyPathsForBpmRecord );
-        
-        BPM_RECORD_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        BPM_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
-        BPM_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
-        BPM_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
-        
-        
+        DIAG_RECORD_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
+        DIAG_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
+        DIAG_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
 
 /**********************configure the states table view***********************************/
 	     //get components
@@ -247,16 +237,20 @@ public class MachineSimulatorController implements MachineModelListener {
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
 			final HashMap<String, List<Double>> bpmDataForPlot;
-			final String[] keyPathsForPlot = {"position", "xAvg", "yAvg"};
+
 			
-			if ( bpmsDatum != null ) {
-				bpmDataForPlot = configureParametersData( bpmsDatum, keyPathsForPlot );
+			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {
+				int leg = keyPathsForDiagRecord.length;
+				final String[] keyPathsForPlot = {"position", keyPathsForDiagRecord[leg-1] };
+				bpmDataForPlot = configureParametersData( diagDatum, keyPathsForPlot );
 				List<Double> pos = bpmDataForPlot.get( "position" );
+				List<Double> position = pos.subList(0, pos.size()/2);
+				List<Double> datum = bpmDataForPlot.get(keyPathsForPlot[1]);
 				if ( xSelectionCheckbox.isSelected() ) {
-					_machineSimulatorTwissPlot.showTwissPlot( pos,  bpmDataForPlot.get( "xAvg" ), "xAvg", "BPM-xAvg : " + LEGEND_NAME[0] );
+					_machineSimulatorTwissPlot.showTwissPlot( position, datum.subList(0, pos.size()/2), "xAvg", "BPM-xAvg : " + LEGEND_NAME[0] );
 				}
 				if ( ySelectionCheckbox.isSelected() ) {
-					_machineSimulatorTwissPlot.showTwissPlot( pos,  bpmDataForPlot.get( "yAvg" ), "yAvg", "BPM-yAvg : " + LEGEND_NAME[0] );
+					_machineSimulatorTwissPlot.showTwissPlot( position, datum.subList(pos.size()/2, pos.size() ), "yAvg", "BPM-yAvg : " + LEGEND_NAME[0] );
 				}
 			}
 			
@@ -452,7 +446,7 @@ public class MachineSimulatorController implements MachineModelListener {
                 	
                   //set records and configure history data table
                   historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
-                		  MODEL.getColumnNames().get(_sequence), _sequence, MODEL.getBpmRecords() );
+                		  MODEL.getColumnNames().get(_sequence), MODEL.getDiagRecords(), _sequence );
                   
                 	//set records of states table
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
@@ -544,7 +538,7 @@ public class MachineSimulatorController implements MachineModelListener {
     private Runnable getLiveValueSynchronizer(){
     	return () -> {
     		NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, NEW_PARAMETERS_TABLE_MODEL.getRowCount() - 1  );
-    		BPM_LIVE_TABLE_MODEL.fireTableRowsUpdated(0, BPM_LIVE_TABLE_MODEL.getRowCount() - 1 );;
+    		DIAG_LIVE_TABLE_MODEL.fireTableRowsUpdated(0, DIAG_LIVE_TABLE_MODEL.getRowCount() - 1 );;
     	};
     }
 
@@ -555,7 +549,7 @@ public class MachineSimulatorController implements MachineModelListener {
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
     		
-    		BPM_LIVE_TABLE_MODEL.setRecords( model.getBpmsConfiguration().getBpms() );
+    		DIAG_LIVE_TABLE_MODEL.setRecords( model.getDiagConfig().getBpms() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
@@ -581,36 +575,45 @@ public class MachineSimulatorController implements MachineModelListener {
 
 	/**event indicates that the history record select state changed*/
 	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
-			final Map<Date, String> columnName, final AcceleratorSeq seq, final List<BpmRecord> bpms ) {
+			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq ) {
 		
 		if ( nodePropertyHistoryRecords != null && columnName != null ) {
 			int columnNumber = columnName.size();		
 			String[] names = new String[columnNumber];
 			columnName.values().toArray( names );
-			String[] valuePathList = new String[columnNumber];
+			String[] historyDataKeyPaths = new String[columnNumber+2];
+	        historyDataKeyPaths[0] = "acceleratorNode.id";
+	        historyDataKeyPaths[1] = "propertyName";
+			keyPathsForDiagRecord = new String[columnNumber+3];
+			   keyPathsForDiagRecord[0] = "node.id";
+			   keyPathsForDiagRecord[1] = "position";
+			   keyPathsForDiagRecord[2] = "valueName";
 			for ( int index = 0;index<columnNumber; index++ ){
-				valuePathList[index] = "values."+index;
+				historyDataKeyPaths[index+2] = "values."+index;
+				keyPathsForDiagRecord[index+3] = "values."+index;
+				HISTORY_DATA_TABLE_MODEL.setColumnClass( "values."+index, Double.class );
 				HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, names[index]);
+				
+				DIAG_RECORD_TABLE_MODEL.setColumnClass( "values."+index, Double.class );
+				DIAG_RECORD_TABLE_MODEL.setColumnName( "values."+index, names[index] );
 			}
 			
-			String[] keyPaths = new String[historyDataKeyPaths.length+valuePathList.length];
-			System.arraycopy(historyDataKeyPaths, 0, keyPaths, 0, historyDataKeyPaths.length);
-			System.arraycopy(valuePathList, 0, keyPaths, historyDataKeyPaths.length, valuePathList.length);
-			HISTORY_DATA_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, valuePathList );
-			HISTORY_DATA_TABLE_MODEL.setKeyPaths(keyPaths);
+			HISTORY_DATA_TABLE_MODEL.setKeyPaths( historyDataKeyPaths );
 			HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+			
+			DIAG_RECORD_TABLE_MODEL.setKeyPaths( keyPathsForDiagRecord );
+			DIAG_RECORD_TABLE_MODEL.setRecords( dRecords );
 		}
-		else HISTORY_DATA_TABLE_MODEL.setRecords(null);
+		else {
+			HISTORY_DATA_TABLE_MODEL.setRecords( null );
+			DIAG_RECORD_TABLE_MODEL.setRecords( null );
+		}
 
 		_sequence = seq;
 		
-		bpmsDatum = bpms;
+		diagDatum = dRecords;
 
 		refresh.actionPerformed(null);
-		
-		BPM_RECORD_TABLE_MODEL.setRecords( bpmsDatum );
-		BPM_RECORD_TABLE_MODEL.setColumnName( "xAvg",  "xAvg : "+LEGEND_NAME[0] );
-		BPM_RECORD_TABLE_MODEL.setColumnName( "yAvg",  "yAvg : "+LEGEND_NAME[0] );
 		
 	}
 	
