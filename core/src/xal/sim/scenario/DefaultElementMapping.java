@@ -92,8 +92,7 @@ public class DefaultElementMapping extends ElementMapping {
      *
      * @see xal.sim.scenario.ElementMapping#createRfCavityDrift(java.lang.String, double, double, double)
      *
-     * @author Christopher K. Allen
-     * @since  Dec 3, 2014
+     * @since  Dec 3, 2014, Christopher K. Allen
      */
     @Override
     public IComponent createRfCavityDrift(String name, double len, double freq, double mode) {

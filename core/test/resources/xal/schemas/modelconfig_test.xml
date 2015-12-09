@@ -3,6 +3,8 @@
 	<elements>
 		<default type="fake.package.model.Default"/>
 		<drift type="fake.package.model.Drift"/>
+		<rfcavdrift type="fake.package.model.RfCavDrift"/>
+		<sequence type="fake.package.model.Sector"/>
 	</elements>
 	<associations>
 		<map smf="fake.package.Map1" model="fake.package.model.Map1"/>

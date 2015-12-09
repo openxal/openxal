@@ -126,7 +126,7 @@ public class FileBasedElementMapping extends ElementMapping {
         
         // Get the default sequence modeling element used whenever a hardware sequence has no model counterpart
         try {
-            DataAdaptor daSeq = daElements.childAdaptor("default_seq");
+            DataAdaptor daSeq = daElements.childAdaptor("sequence");
             String      strClsNm = daSeq.stringValue("type");
 
             mapHwToModElem.setDefaultSequence(strClsNm);
@@ -150,7 +150,7 @@ public class FileBasedElementMapping extends ElementMapping {
         
         // The the element type used to represent an RF cavity drift space
         try {
-            DataAdaptor   daCavDrift = daElements.childAdaptor("drift_rfcav");
+            DataAdaptor   daCavDrift = daElements.childAdaptor("rfcavdrift");
             String        strClsName = daCavDrift.stringValue("type");
 
             mapHwToModElem.setRfCavityDrift(strClsName);

@@ -3,10 +3,9 @@
 	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
 	<elements>
 		<default type="xal.model.elem.Marker"/>
-		<default_seq type="xal.model.Sector"/>
-		
 		<drift type="xal.model.elem.IdealDrift"/>
-		<drift_rfcav type="xal.model.elem.IdealRfCavityDrift"/>
+		<rfcavdrift type="xal.model.elem.IdealRfCavityDrift"/>
+        <sequence type="xal.model.Sector"/>
 	</elements>
 
 	<associations>
