@@ -120,7 +120,8 @@ public class MachineSimulatorTwissPlot{
 			}
 			//configure the graph which isn't twiss parameter
 			else {
-				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), legend );				
+				graphData.setGraphProperty( TWISS_PARAMETERS_PLOT.getLegendKeyString(), legend );
+				graphData.setGraphColor( IncrementalColors.getColor( 10 ) );
 				//configure the graphic line pattern
 				switch ( keyPath.substring(0, 1).toUpperCase() ) {
 				case "X":

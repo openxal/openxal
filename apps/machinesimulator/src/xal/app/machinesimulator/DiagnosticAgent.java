@@ -4,30 +4,34 @@
 package xal.app.machinesimulator;
 
 import xal.ca.Channel;
-import xal.smf.impl.BPM;
+import xal.smf.AcceleratorNode;
 
 /**
  * @author luxiaohan
- *represents a live BPM which may be connected and monitored.
+ *represents a live diagnostic device which may be connected and monitored.
  */
 public class DiagnosticAgent {
-	/**the bpm node*/
-	final private BPM NODE;
+	/**the diagnostic node*/
+	final private AcceleratorNode NODE;
 	/**the monitor for the channel of x plane*/
 	final private ChannelMonitor MONITOR_X;
 	/**the monitor for the channel of y plane*/
 	final private ChannelMonitor MONITOR_Y;
+	/**the channel handle 1*/
+	final private String HANDLE1;
+	/**the channel handle 2*/
+	final private String HANDLE2;
 	/**the position*/
 	final private double POSITION;
 	/**check state of this bpm*/
 	private Boolean checkState;
 	
-	public DiagnosticAgent( final BPM node ) {
+	public DiagnosticAgent( final AcceleratorNode node , final String handle1, final String handle2 ) {
 		NODE = node;
-		Channel channelX = NODE.getChannel( BPM.X_AVG_HANDLE );
-		MONITOR_X = createMonitor( channelX );
-		Channel channelY = NODE.getChannel( BPM.Y_AVG_HANDLE );
-		MONITOR_Y = createMonitor( channelY );
+		HANDLE1 = handle1;
+		HANDLE2 = handle2;
+		MONITOR_X = createMonitor( NODE.getChannel( handle1 ) );
+		MONITOR_Y = createMonitor( NODE.getChannel( handle2 ) );
 		checkState = true;
 		POSITION = NODE.getPosition();
 	}
@@ -38,8 +42,8 @@ public class DiagnosticAgent {
 		return channelMonitor;
 	}
 	
-	/**get the BPM node*/
-	public BPM getNode() {
+	/**get the node*/
+	public AcceleratorNode getNode() {
 		return NODE;
 	}
 	
@@ -60,12 +64,12 @@ public class DiagnosticAgent {
 	
 	/**get the xAvg handle*/
 	public String getXAvgName() {
-		return BPM.X_AVG_HANDLE;
+		return HANDLE1;
 	}
 	
 	/**get the yAvg handle*/
 	public String getYAvgName() {
-		return BPM.Y_AVG_HANDLE;
+		return HANDLE2;
 	}
 	
 	/**returns average X position*/
