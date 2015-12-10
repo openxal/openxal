@@ -103,9 +103,9 @@ public class VectorParameter extends Parameter {
 	 */
 	public String getParameterName( final String keyPath ) {
 		String label=super.getLabel();
-		if( keyPath.equals( getKeyPathForX() ) ) parameterName=label+"X";
-		if( keyPath.equals( getKeyPathForY() ) ) parameterName=label+"Y";
-		if( keyPath.equals( getKeyPathForZ() ) ) parameterName=label+"Z";
+		if( keyPath.equals( getKeyPathForX() ) ) parameterName=label+".X";
+		if( keyPath.equals( getKeyPathForY() ) ) parameterName=label+".Y";
+		if( keyPath.equals( getKeyPathForZ() ) ) parameterName=label+".Z";
 		return parameterName;
 	}
 	/**

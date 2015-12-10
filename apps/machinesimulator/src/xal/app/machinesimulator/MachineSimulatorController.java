@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,11 @@ public class MachineSimulatorController implements MachineModelListener {
      /**the legend name*/
      final private String[] LEGEND_NAME;
      /**a map array from parameter's key to plot data list*/
-     private HashMap<String, List<Double>> plotData;
+     private Map<String, List<Double>> simDataForPlot;
+     /**diagnostic plot datum*/
+     private Map<String, List<Double>> diagDataForPlot;
+     /**the positions of diagnostic device*/
+     private List<Double> diagPosition;
      /**the sequence*/
      private AcceleratorSeq _sequence;
      /**sync period in milliseconds*/
@@ -70,7 +75,9 @@ public class MachineSimulatorController implements MachineModelListener {
      /** the position list of elements*/
      private List<Double> _positions;
      /**the key paths for show difference between two simulation results*/
-     private List<String> keyPathsForDifference;
+     private List<String> keyPathsForSimDiff;
+     /**the key paths for show difference between two diagnostic records*/
+     private List<String> keyPathsForDiagDiff;
      /**refresh action*/
      private ActionListener refresh;
 
@@ -232,25 +239,33 @@ public class MachineSimulatorController implements MachineModelListener {
 		synopticBox.validate();
 
 /***************************Check boxes action**************************************/
-		
-		
+
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
-			final HashMap<String, List<Double>> bpmDataForPlot;
-
-			
 			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {
 				int leg = keyPathsForDiagRecord.length;
-				final String[] keyPathsForPlot = {"position", keyPathsForDiagRecord[leg-1] };
-				bpmDataForPlot = configureParametersData( diagDatum, keyPathsForPlot );
-				List<Double> pos = bpmDataForPlot.get( "position" );
-				List<Double> position = pos.subList(0, pos.size()/2);
-				List<Double> datum = bpmDataForPlot.get(keyPathsForPlot[1]);
-				if ( xSelectionCheckbox.isSelected() ) {
-					_machineSimulatorTwissPlot.showTwissPlot( position, datum.subList(0, pos.size()/2), "xAvg", "BPM-xAvg : " + LEGEND_NAME[0] );
-				}
-				if ( ySelectionCheckbox.isSelected() ) {
-					_machineSimulatorTwissPlot.showTwissPlot( position, datum.subList(pos.size()/2, pos.size() ), "yAvg", "BPM-yAvg : " + LEGEND_NAME[0] );
+				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
+				for ( int index = 0; index < leg-3; index++ ){
+					keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[leg-1-index] );
+					if ( index == 1 ) break;
+				}				
+				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );				
+				keyPathsForDiagDiff = keyPathsForDiagPlot.subList( 1, keyPathsForDiagPlot.size() );
+				diagDataForPlot = configureParametersData( diagDatum, keyPathsForDiagPlot );
+				List<Double> pos = diagDataForPlot.get( keyPathsForDiagRecord[2] );
+				diagPosition = pos.subList(0, pos.size()/2);
+				int upLimit = keyPathsForDiagPlot.size()-1;
+				for ( int index = 0; index < upLimit; index++ ) {						
+					if ( xSelectionCheckbox.isSelected() ) {
+						_machineSimulatorTwissPlot.showTwissPlot( diagPosition, 
+								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(0, pos.size()/2),
+								"xAvg", "BPM.xAvg : " + LEGEND_NAME[upLimit-1-index] );
+					}
+					if ( ySelectionCheckbox.isSelected() ) {
+						_machineSimulatorTwissPlot.showTwissPlot( diagPosition,
+								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(pos.size()/2, pos.size() ),
+								"yAvg", "BPM.yAvg : " + LEGEND_NAME[upLimit-1-index] );
+					}
 				}
 			}
 			
@@ -261,20 +276,35 @@ public class MachineSimulatorController implements MachineModelListener {
 			MachineSimulation[] simulations = MODEL.getHistorySimulation(_sequence);
 			if ( showDifference.isSelected() && simulations[0] != null ){
 				if ( simulations[1] != null ){
-					twissParametersPlot.removeAllGraphData();	
-					if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
-					//Todo:caluate the difference and plot
-					for( int index = 0; index<keyPathsForDifference.size(); index++ ){					
-						final List<Double> newValues = plotData.get( keyPathsForDifference.get( index ) );
-						final List<Double> oldValues = plotData.get( keyPathsForDifference.get( index+1 ) );
-						final List<Double> differences = new ArrayList<Double>( newValues.size() );
-						for( int valueIndex = 0;valueIndex<newValues.size();valueIndex++ ){							
-							differences.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
+					twissParametersPlot.removeAllGraphData();
+					//show difference between two diagnostic records
+					if ( bpmCheckbox.isSelected() ) {
+						Map<String, List<Double>> diagDiff = calculateDiff( keyPathsForDiagDiff, diagDataForPlot );
+						for( int index = 0; index<keyPathsForDiagDiff.size(); index++ ){
+							final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
+							String keyDiag = keyPathsForDiagDiff.get( index+1 );
+							if ( xSelectionCheckbox.isSelected() ) {
+								_machineSimulatorTwissPlot.showTwissPlot( diagPosition, 
+										diagDiff.get( keyDiag ).subList( 0, diagPosition.size() ),
+										"xAvg", "BPM.xAvg : " + legName );
+							}
+							if ( ySelectionCheckbox.isSelected() ) {
+								_machineSimulatorTwissPlot.showTwissPlot( diagPosition,
+										diagDiff.get( keyDiag ).subList( diagPosition.size(), 2*diagPosition.size() ),
+										"yAvg", "BPM.yAvg : " + legName );
+							}
+							index++;
 						}
+					}
+					//show difference between two simulation results
+					Map<String, List<Double>> simDiff = calculateDiff(keyPathsForSimDiff, simDataForPlot);
+					for( int index = 0; index<keyPathsForSimDiff.size(); index++ ){
 						final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, differences, keyPathsForDifference.get( index ), legName );
+						String keySim = keyPathsForSimDiff.get( index+1 );
+						_machineSimulatorTwissPlot.showTwissPlot( _positions, simDiff.get( keySim ) , keySim, legName );
 						index++;
 					}
+
 				}
 			}
 			else {
@@ -340,11 +370,11 @@ public class MachineSimulatorController implements MachineModelListener {
 				//create the combination keyPaths used for comparing new and old simulation results
 				final List<String> combParameterKeyPathsList = new ArrayList<String>(2*parameterKeyPathsList.size());
 				for( final String path:parameterKeyPathsList){
-					combParameterKeyPathsList.add( path );
 					combParameterKeyPathsList.add( "old."+path );
+					combParameterKeyPathsList.add( path );
 				}
 				
-				keyPathsForDifference = combParameterKeyPathsList;
+				keyPathsForSimDiff = combParameterKeyPathsList;
 				
 				//determine the final keyPaths by history simulation record select state
 				final List<String> parameterKeyPathsForTableList;
@@ -379,11 +409,11 @@ public class MachineSimulatorController implements MachineModelListener {
 				
 				if ( _sequence != null ) _machineSimulatorTwissPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
-					plotData = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTable );
+					simDataForPlot = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTableList );
 					_positions = simulations[0].getAllPositions();
 					for( final String parameterKey:parameterKeyPathsForTable ){
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, plotData.get(parameterKey), parameterKey, legName );
+						_machineSimulatorTwissPlot.showTwissPlot( _positions, simDataForPlot.get(parameterKey), parameterKey, legName );					
 					}
 					
 					if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
@@ -453,7 +483,7 @@ public class MachineSimulatorController implements MachineModelListener {
                 	//set records for history record table
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
                  
-                  refresh.actionPerformed( null );
+//                  refresh.actionPerformed( null );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
@@ -522,16 +552,36 @@ public class MachineSimulatorController implements MachineModelListener {
     * @param records the result of simulation
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    private <T> HashMap<String, List<Double>> configureParametersData( final List<T> records,final String[] keyPaths ){
-      final HashMap<String, List<Double>> datum = new HashMap<String, List<Double>>();     
+    private <T> Map<String, List<Double>> configureParametersData( final List<T> records,final List<String> keyPaths ){
+      final Map<String, List<Double>> datum = new HashMap<String, List<Double>>();     
     	for( final String keyPath:keyPaths ){
     		datum.put( keyPath, new ArrayList<Double>( records.size() ) );
     		for( final T record:records ){
     			datum.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
     		}
-    	}
-    	
+    	}   	
     	return datum;
+    }
+    
+    /**
+     * calculate the difference of two records' datum
+     * @param keyPaths the key paths 
+     * @param datum the datum array include two records' datum
+     * @return the difference datum
+     */
+    private Map<String,List<Double>> calculateDiff( final List<String> keyPaths, final Map<String, List<Double>> datum ) {
+    	Map<String, List<Double>> diffDatum = new HashMap<String, List<Double>>();
+    	for ( int index = 0; index< keyPaths.size(); index++) {
+    		List<Double> newValues = datum.get( keyPaths.get( index+1 ) );
+    		List<Double> oldValues = datum.get( keyPaths.get( index ) );
+    		List<Double> diff = new ArrayList<Double>();
+			for( int valueIndex = 0; valueIndex<newValues.size(); valueIndex++ ){							
+				diff.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
+			}
+			diffDatum.put( keyPaths.get( index+1 ), diff );
+			index++;
+    	}
+    	return diffDatum;
     }
     
     /**get a runnalbe that syncs the values */
@@ -586,8 +636,8 @@ public class MachineSimulatorController implements MachineModelListener {
 	        historyDataKeyPaths[1] = "propertyName";
 			keyPathsForDiagRecord = new String[columnNumber+3];
 			   keyPathsForDiagRecord[0] = "node.id";
-			   keyPathsForDiagRecord[1] = "position";
-			   keyPathsForDiagRecord[2] = "valueName";
+			   keyPathsForDiagRecord[1] = "valueName";
+			   keyPathsForDiagRecord[2] = "position";
 			for ( int index = 0;index<columnNumber; index++ ){
 				historyDataKeyPaths[index+2] = "values."+index;
 				keyPathsForDiagRecord[index+3] = "values."+index;

@@ -29,7 +29,7 @@ public class DiagnosticConfiguration {
 	private void configure( final AcceleratorSeq seq ) {
 		for ( final AcceleratorNode node : seq.getAllNodes() ) {			
 			if ( node.getStatus() ) {
-				if ( node instanceof BPM ) DIAGS.add( new DiagnosticAgent( (BPM)node ) );
+				if ( node instanceof BPM ) DIAGS.add( new DiagnosticAgent( node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE ) );
 			}
 		}
 	}
