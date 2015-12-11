@@ -8,9 +8,9 @@ import java.util.Map;
 
 /**
  * @author luxiaohan
- *this class define a vector parameter with label name,key path which map to the parameter
+ *This class define a Model vector parameter with label name,key path which map to the parameter
  */
-public class VectorParameter extends Parameter {
+public class ModelVectorParameter extends Parameter {
 	/**the key path map to this parameter*/
 	private String keyPath;
 	/**the prefix of the key path*/
@@ -32,7 +32,7 @@ public class VectorParameter extends Parameter {
 	 * @param symbol a symbol to represent the parameter
 	 * @param keyPrefix the prefix of the key path
 	 */
-	public VectorParameter( final String label, final String symbol, final String keyPrefix ) {
+	public ModelVectorParameter( final String label, final String symbol, final String keyPrefix ) {
 		super( label );
 		this.keyPrefix = keyPrefix;
 		this.symbol = symbol;
@@ -45,7 +45,7 @@ public class VectorParameter extends Parameter {
 	 * @param keyPrefix the prefix of the key path
 	 * @param keySuffix the suffix of the key path  
 	 */
-	public VectorParameter(final String label,final String symbol,final String keyPrefix,final String keySuffix ) {
+	public ModelVectorParameter(final String label,final String symbol,final String keyPrefix,final String keySuffix ) {
 		super(label);
 		this.keyPrefix = keyPrefix;
 		this.keySuffix = keySuffix;
@@ -104,12 +104,12 @@ public class VectorParameter extends Parameter {
 	public String getParameterName( final String keyPath ) {
 		String label=super.getLabel();
 		if( keyPath.equals( getKeyPathForX() ) ) parameterName=label+".X";
-		if( keyPath.equals( getKeyPathForY() ) ) parameterName=label+".Y";
-		if( keyPath.equals( getKeyPathForZ() ) ) parameterName=label+".Z";
+		else if( keyPath.equals( getKeyPathForY() ) ) parameterName=label+".Y";
+		else if( keyPath.equals( getKeyPathForZ() ) ) parameterName=label+".Z";
 		return parameterName;
 	}
 	/**
-	 * get a symbol to represent parameter's name 
+	 * get a symbol to represent parameter
 	 * @return a symbol
 	 */
 	public String getSymbol() {
@@ -152,8 +152,8 @@ public class VectorParameter extends Parameter {
 	 */
 	public String getPlane( final String keyPath ){
 		if( keyPath.equals( getKeyPathForX() ) ) plane="X";
-		if( keyPath.equals( getKeyPathForY() ) ) plane="Y";
-		if( keyPath.equals( getKeyPathForZ() ) ) plane="Z";;
+		else if( keyPath.equals( getKeyPathForY() ) ) plane="Y";
+		else if( keyPath.equals( getKeyPathForZ() ) ) plane="Z";;
 		return plane;
 	}
 	/**
