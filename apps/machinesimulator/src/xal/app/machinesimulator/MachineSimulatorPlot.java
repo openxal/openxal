@@ -107,10 +107,5 @@ public class MachineSimulatorPlot{
 		SimpleChartPopupMenu.addPopupMenuTo( PARAMETERS_PLOT );
 
 		}
-	
-	/**set the name of the plot panel*/
-	public void setName( final String name ) {
-		PARAMETERS_PLOT.setName( name );
-	}
 
 }

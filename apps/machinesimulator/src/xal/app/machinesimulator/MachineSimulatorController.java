@@ -416,7 +416,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				twissParametersPlot.removeAllGraphData();
 				if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
 				
-				if ( _sequence != null ) _machineSimulatorPlot.setName( _sequence.getId() );
+				if ( _sequence != null ) twissParametersPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
 					simDataForPlot = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTableList );
 					_positions = simulations[0].getAllPositions();
