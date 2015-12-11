@@ -268,12 +268,12 @@ public class MachineSimulatorController implements MachineModelListener {
 					if ( xSelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition, 
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(0, pos.size()/2),
-								"BPM.X."+(upLimit-1-index), LEGEND_NAME[upLimit-1-index] );
+								(upLimit-1-index)+".BPM.X.", LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition,
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(pos.size()/2, pos.size() ),
-								"BPM.Y."+(upLimit-1-index), LEGEND_NAME[upLimit-1-index] );
+								(upLimit-1-index)+".BPM.Y.", LEGEND_NAME[upLimit-1-index] );
 					}
 				}
 			}
@@ -458,6 +458,8 @@ public class MachineSimulatorController implements MachineModelListener {
         final ActionListener CLEAR_BUTTON=new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {
             	kineticEnergyCheckbox.setSelected(false);
+            	bpmCheckbox.setSelected(false);
+            	orbitCheckbox.setSelected(false);
                 xSelectionCheckbox.setSelected(false);
                 ySelectionCheckbox.setSelected(false);
                 zSelectionCheckbox.setSelected(false);

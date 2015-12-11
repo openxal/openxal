@@ -65,7 +65,7 @@ public class MachineSimulatorPlot{
 			if( PARAMETERS.get( index ).isThisParameter( key ) ) {
 				isParameter = true;
 				parameterIndex = index;
-				if ( keyPath.contains( "old" ) || keyPath.contains( "1" ) ) isParameterForOld = true;
+				if ( keyPath.contains( "old" ) || keyPath.startsWith("1") ) isParameterForOld = true;
 			}
 		}
 			
