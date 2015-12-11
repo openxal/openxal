@@ -48,8 +48,10 @@ public class MachineSimulatorController implements MachineModelListener {
      final private KeyValueAdaptor KEY_VALUE_ADAPTOR;
      /**the scalar parameters*/
      final private List<ScalarParameter> SCALAR_PARAMETERS;
-     /**the vector parameters*/
-     final private List<VectorParameter> VECTOR_PARAMETERS;
+     /**the model vector parameters*/
+     final private List<ModelVectorParameter> MODEL_VECTOR_PARAMETERS;
+     /**the machine vector parameters*/
+     final private List<MachineVectorParameter> MACHINE_VECTOR_PARAMETERS;
      /**timer to sync the live value*/
      final private DispatchTimer VALUE_SYNC_TIME;
      /**the legend name*/
@@ -65,7 +67,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**sync period in milliseconds*/
      private long _syncPeriod;
      /** the plotter*/
-     private MachineSimulatorTwissPlot _machineSimulatorTwissPlot;
+     private MachineSimulatorPlot _machineSimulatorPlot;
      /**the list of NodePropertyRecord*/
      private List<NodePropertyRecord> nodePropertyRecords;
      /**the list of diagnostic records*/
@@ -107,17 +109,20 @@ public class MachineSimulatorController implements MachineModelListener {
       MODEL = document.getModel();
       MODEL.addMachineModelListener(this);
 		
-		SCALAR_PARAMETERS=new ArrayList<ScalarParameter>();
+		SCALAR_PARAMETERS = new ArrayList<ScalarParameter>();
 		SCALAR_PARAMETERS.add(new ScalarParameter("Kinetic Energy", "probeState.kineticEnergy"));
 		
-		VECTOR_PARAMETERS=new ArrayList<VectorParameter>();
-		VECTOR_PARAMETERS.add(new VectorParameter("Orbit", "", "posCoordinates"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Beta","beta","twissParameters", "beta"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Alpha","alpha","twissParameters", "alpha"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Gamma","gamma","twissParameters", "gamma"));
-		VECTOR_PARAMETERS.add(new VectorParameter("Emittance","epsilon","twissParameters", "emittance"));
-		VECTOR_PARAMETERS.add(new VectorParameter("EnvelopeRadius","sigma","twissParameters", "envelopeRadius"));
-		VECTOR_PARAMETERS.add(new VectorParameter("BetatronPhase","phi","betatronPhase"));
+		MACHINE_VECTOR_PARAMETERS = new ArrayList<MachineVectorParameter>();
+		MACHINE_VECTOR_PARAMETERS.add( new MachineVectorParameter( "Bpm", "BPM" ) );
+		
+		MODEL_VECTOR_PARAMETERS = new ArrayList<ModelVectorParameter>();
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "Orbit", "", "posCoordinates" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "Beta","beta","twissParameters", "beta" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "Alpha","alpha","twissParameters", "alpha" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "Gamma","gamma","twissParameters", "gamma" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "Emittance","epsilon","twissParameters", "emittance" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "EnvelopeRadius","sigma","twissParameters", "envelopeRadius" ) );
+		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "BetatronPhase","phi","betatronPhase" ) );
         
       configureMainWindow(windowReference);
 	}
@@ -228,8 +233,12 @@ public class MachineSimulatorController implements MachineModelListener {
 		  STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
        
 /**************************configure the plot view**************************************/
+		  final List<Parameter> parameters = new ArrayList<Parameter>();
+		  parameters.addAll( SCALAR_PARAMETERS );
+		  parameters.addAll( MACHINE_VECTOR_PARAMETERS );
+		  parameters.addAll( MODEL_VECTOR_PARAMETERS );
         final FunctionGraphsJPanel twissParametersPlot = ( FunctionGraphsJPanel ) windowReference.getView( "States Plot" );
-        _machineSimulatorTwissPlot = new MachineSimulatorTwissPlot( twissParametersPlot,SCALAR_PARAMETERS,VECTOR_PARAMETERS );
+        _machineSimulatorPlot = new MachineSimulatorPlot( twissParametersPlot, parameters );
 
 		//synoptic display of nodes
 		final Box synopticBox = ( Box )windowReference.getView( "SynopticContainer" );
@@ -252,19 +261,19 @@ public class MachineSimulatorController implements MachineModelListener {
 				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );				
 				keyPathsForDiagDiff = keyPathsForDiagPlot.subList( 1, keyPathsForDiagPlot.size() );
 				diagDataForPlot = configureParametersData( diagDatum, keyPathsForDiagPlot );
-				List<Double> pos = diagDataForPlot.get( keyPathsForDiagRecord[2] );
+				List<Double> pos = diagDataForPlot.get( keyPathsForDiagRecord[2] );			
 				diagPosition = pos.subList(0, pos.size()/2);
 				int upLimit = keyPathsForDiagPlot.size()-1;
 				for ( int index = 0; index < upLimit; index++ ) {						
 					if ( xSelectionCheckbox.isSelected() ) {
-						_machineSimulatorTwissPlot.showTwissPlot( diagPosition, 
+						_machineSimulatorPlot.showPlot( diagPosition, 
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(0, pos.size()/2),
-								"xAvg", "BPM.xAvg : " + LEGEND_NAME[upLimit-1-index] );
+								"BPM.X."+(upLimit-1-index), LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
-						_machineSimulatorTwissPlot.showTwissPlot( diagPosition,
+						_machineSimulatorPlot.showPlot( diagPosition,
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(pos.size()/2, pos.size() ),
-								"yAvg", "BPM.yAvg : " + LEGEND_NAME[upLimit-1-index] );
+								"BPM.Y."+(upLimit-1-index), LEGEND_NAME[upLimit-1-index] );
 					}
 				}
 			}
@@ -284,14 +293,14 @@ public class MachineSimulatorController implements MachineModelListener {
 							final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
 							String keyDiag = keyPathsForDiagDiff.get( index+1 );
 							if ( xSelectionCheckbox.isSelected() ) {
-								_machineSimulatorTwissPlot.showTwissPlot( diagPosition, 
+								_machineSimulatorPlot.showPlot( diagPosition, 
 										diagDiff.get( keyDiag ).subList( 0, diagPosition.size() ),
-										"xAvg", "BPM.xAvg : " + legName );
+										"BPM.X", legName );
 							}
 							if ( ySelectionCheckbox.isSelected() ) {
-								_machineSimulatorTwissPlot.showTwissPlot( diagPosition,
+								_machineSimulatorPlot.showPlot( diagPosition,
 										diagDiff.get( keyDiag ).subList( diagPosition.size(), 2*diagPosition.size() ),
-										"yAvg", "BPM.yAvg : " + legName );
+										"BPM.Y", legName );
 							}
 							index++;
 						}
@@ -301,7 +310,7 @@ public class MachineSimulatorController implements MachineModelListener {
 					for( int index = 0; index<keyPathsForSimDiff.size(); index++ ){
 						final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
 						String keySim = keyPathsForSimDiff.get( index+1 );
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, simDiff.get( keySim ) , keySim, legName );
+						_machineSimulatorPlot.showPlot( _positions, simDiff.get( keySim ) , keySim, legName );
 						index++;
 					}
 
@@ -325,7 +334,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		            STATES_TABLE_MODEL.setColumnName(scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[0] );
 		            STATES_TABLE_MODEL.setColumnName("old."+scalarParameter.getKeyPath(), scalarParameter.getSymbol()+" : "+LEGEND_NAME[1] );
 		           }
-		        for(final VectorParameter vectorParameter:VECTOR_PARAMETERS){
+		        for(final ModelVectorParameter vectorParameter:MODEL_VECTOR_PARAMETERS){
 		        	   String symbX = vectorParameter.getSymbolForX();
 		        	   String symbY = vectorParameter.getSymbolForY();
 		        	   String symbZ = vectorParameter.getSymbolForZ();
@@ -358,13 +367,13 @@ public class MachineSimulatorController implements MachineModelListener {
 				if ( zSelectionCheckbox.isSelected() )  planes.add( "Z" );
 				// Add each selected twiss parameter key path to the list of parameters to display
 				for ( final String plane : planes ){
-					if ( orbitCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );
-					if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
-					if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
-					if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
-					if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
-					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
-					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( VECTOR_PARAMETERS.get(6).getKeyPathToArray().get(plane) );
+					if ( orbitCheckbox.isSelected() ) parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(0).getKeyPathToArray().get(plane) );
+					if ( betaCheckbox.isSelected() ) parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(1).getKeyPathToArray().get(plane) );
+					if ( alphaCheckbox.isSelected() ) parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(2).getKeyPathToArray().get(plane) );
+					if ( gammaCheckbox.isSelected() )  parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(3).getKeyPathToArray().get(plane) );
+					if ( emittanceCheckbox.isSelected() ) parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(4).getKeyPathToArray().get(plane) );
+					if ( beamSizeCheckbox.isSelected() )  parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(5).getKeyPathToArray().get(plane) );
+					if ( betatronPhaseCheckbox.isSelected() ) parameterKeyPathsList.add( MODEL_VECTOR_PARAMETERS.get(6).getKeyPathToArray().get(plane) );
 				}
 				
 				//create the combination keyPaths used for comparing new and old simulation results
@@ -407,13 +416,13 @@ public class MachineSimulatorController implements MachineModelListener {
 				twissParametersPlot.removeAllGraphData();
 				if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
 				
-				if ( _sequence != null ) _machineSimulatorTwissPlot.setName( _sequence.getId() );
+				if ( _sequence != null ) twissParametersPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
 					simDataForPlot = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTableList );
 					_positions = simulations[0].getAllPositions();
 					for( final String parameterKey:parameterKeyPathsForTable ){
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
-						_machineSimulatorTwissPlot.showTwissPlot( _positions, simDataForPlot.get(parameterKey), parameterKey, legName );					
+						_machineSimulatorPlot.showPlot( _positions, simDataForPlot.get(parameterKey), parameterKey, legName );					
 					}
 					
 					if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);

@@ -4,7 +4,9 @@
 package xal.app.machinesimulator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -18,20 +20,31 @@ public class DiagnosticConfiguration {
 	
 	/**the list of diagnostic device*/
 	final private List<DiagnosticAgent> DIAGS;
+	/**the channel number of the node map with node type*/
+	final private Map<String, Integer> CHAN_NUM;
 	
 	/**Constructor*/
 	public DiagnosticConfiguration( final AcceleratorSeq sequence ) {
 		DIAGS = new ArrayList<DiagnosticAgent>();
+		CHAN_NUM = new HashMap<String, Integer>();
 		configure( sequence );
 	}
 	
 	/**get the diagnostics from sequence*/
 	private void configure( final AcceleratorSeq seq ) {
-		for ( final AcceleratorNode node : seq.getAllNodes() ) {			
+		for ( final AcceleratorNode node : seq.getAllNodes() ) {				
 			if ( node.getStatus() ) {
-				if ( node instanceof BPM ) DIAGS.add( new DiagnosticAgent( node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE ) );
+				if ( node instanceof BPM ){
+					DIAGS.add( new DiagnosticAgent( node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE ) );
+					CHAN_NUM.put( node.getType(), 2 );
+				}
 			}
 		}
+	}
+	
+	/**get the channel number*/
+	public Map<String, Integer> getChanNum() {
+		return CHAN_NUM;
 	}
 	
 	/**get the list of diagnostic*/
