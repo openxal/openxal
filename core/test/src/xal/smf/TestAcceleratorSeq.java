@@ -8,15 +8,15 @@
 
 package xal.smf;
 
+import java.util.List;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import xal.smf.impl.BPM;
 import xal.test.ResourceManager;
-import xal.smf.data.XMLDataManager;
-import xal.smf.impl.*;
-import xal.smf.impl.qualify.*;
-
-import java.util.*;
-import java.net.URL;
-
-import org.junit.*;
 
 
 /** test the AcceleratorSeq class */

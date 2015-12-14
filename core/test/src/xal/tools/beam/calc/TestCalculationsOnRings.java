@@ -28,7 +28,7 @@ import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseMatrix.IND;
 import xal.tools.beam.PhaseVector;
@@ -105,8 +105,8 @@ public class TestCalculationsOnRings {
             File fileOutput = xal.test.ResourceManager.getOutputFile(TestCalculationsOnRings.class, STR_OUTPUT);
             OWTR_OUTPUT = new FileWriter(fileOutput);
             
-//            ACCEL_TEST   = ResourceManager.getTestAccelerator();
-            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
+            ACCEL_TEST   = ResourceManager.getTestAccelerator();
+//            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
             
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);

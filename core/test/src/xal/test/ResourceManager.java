@@ -11,10 +11,8 @@ package xal.test;
 import java.net.URL;
 import java.io.File;
 
-import xal.model.probe.traj.TestParticleProbeTrajectory;
 import xal.smf.Accelerator;
 import xal.smf.data.XMLDataManager;
-import xal.tools.beam.calc.TestCalculationsOnRings;
 
 
 /** ResourceManager is not a test suite, but rather it is a utility used by test suites to load recources from the common test resources package. */

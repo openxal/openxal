@@ -25,7 +25,6 @@ import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
 
 
 /**
@@ -124,7 +123,8 @@ public class TestRunOnlineModel {
     public static void setUpBeforeClass() throws Exception {
         
         try {
-            ACCEL_TEST   = XMLDataManager.acceleratorWithUrlSpec(STRL_URL_ACCEL);
+//            ACCEL_TEST   = XMLDataManager.acceleratorWithUrlSpec(STRL_URL_ACCEL);
+            ACCEL_TEST   = ResourceManager.getTestAccelerator();
             SEQ_TEST     = ACCEL_TEST.findSequence(STR_SEQ_ID);
             MODEL_TEST   = Scenario.newScenarioFor(SEQ_TEST);
             
