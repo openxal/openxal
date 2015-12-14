@@ -1,11 +1,11 @@
 
 /**
- * TestParticleProbeTrajectory.java
+ * TestCompareDesignAndProduction.java
  *
  * Author  : Christopher K. Allen
  * Since   : Sep 12, 2014
  */
-package xal.model.probe.traj;
+package xal.sim.run;
 
 import static org.junit.Assert.fail;
 
@@ -29,19 +29,27 @@ import xal.model.ModelException;
 import xal.model.alg.ParticleTracker;
 import xal.model.elem.Element;
 import xal.model.probe.ParticleProbe;
+import xal.model.probe.traj.ParticleProbeState;
+import xal.model.probe.traj.Trajectory;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
-import xal.tools.ResourceManager;
 import xal.tools.beam.PhaseVector;
 
 /**
  * <p>
- * Class <code>TestParticleProbeTrajectory</code>.
+ * Class <code>TestCompareDesignAndProduction</code>.
  * <p/>
+ * <p>
+ * <h4>NOTE</h4>
+ * This class should be a local simulation test class.  It is not in the form of a JUnit
+ * test suite, able to run independent against test data.  The real use is to compare
+ * the simulations results of the online model for the Open XAL design and product 
+ * configurations.  However, I am leaving it here for the present with the modification
+ * so it simply compares the results of the test accelerator with itself 
+ * (see <code>{@link TestCompareDesignAndProduction#loadAccelerator(String...)}. 
  * <p>
  * Use Java virtual machine command line switch
  * <br/>
@@ -59,7 +67,7 @@ import xal.tools.beam.PhaseVector;
  * @author Christopher K. Allen
  * @since  Sep 12, 2014
  */
-public class TestParticleProbeTrajectory {
+public class TestCompareDesignAndProduction {
 
     /*
      * Global Constants
@@ -87,7 +95,7 @@ public class TestParticleProbeTrajectory {
     
     
     /** Output file name */
-    static final private String         STR_FILENAME_OUTPUT = TestParticleProbeTrajectory.class.getName() + ".txt";
+    static final private String         STR_FILENAME_OUTPUT = TestCompareDesignAndProduction.class.getName() + ".txt";
 
    
     
@@ -164,7 +172,7 @@ public class TestParticleProbeTrajectory {
      * @since  Sep 11, 2014
      */
     private static File createOutputFile(String strFileName) {
-        String  strPack     = TestParticleProbeTrajectory.class.getPackage().getName();
+        String  strPack     = TestCompareDesignAndProduction.class.getPackage().getName();
         String  strPathRel  = strPack.replace('.', '/');
         String  strPathFile = strPathRel + '/' + strFileName; 
         File    fileOutput  = xal.test.ResourceManager.getOutputFile(strPathFile);
