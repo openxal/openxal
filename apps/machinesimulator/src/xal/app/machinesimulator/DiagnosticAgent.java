@@ -3,6 +3,9 @@
  */
 package xal.app.machinesimulator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import xal.ca.Channel;
 import xal.smf.AcceleratorNode;
 
@@ -13,33 +16,40 @@ import xal.smf.AcceleratorNode;
 public class DiagnosticAgent {
 	/**the diagnostic node*/
 	final private AcceleratorNode NODE;
-	/**the monitor for the channel of x plane*/
-	final private ChannelMonitor MONITOR_X;
-	/**the monitor for the channel of y plane*/
-	final private ChannelMonitor MONITOR_Y;
-	/**the channel handle 1*/
-	final private String HANDLE1;
-	/**the channel handle 2*/
-	final private String HANDLE2;
-	/**the position*/
+	/**the monitors map with channel handle*/
+	final private Map<String, ChannelMonitor> MONITORS;
+	/**the channel handle*/
+	final private String[] HANDLE;
+	/**the position of this node in the sequence*/
 	final private double POSITION;
-	/**check state of this bpm*/
+	/**check state of this diagnostic node*/
 	private Boolean checkState;
 	
-	public DiagnosticAgent( final AcceleratorNode node , final String handle1, final String handle2 ) {
+	public DiagnosticAgent( final AcceleratorNode node , final String... handle ) {
 		NODE = node;
-		HANDLE1 = handle1;
-		HANDLE2 = handle2;
-		MONITOR_X = createMonitor( NODE.getChannel( handle1 ) );
-		MONITOR_Y = createMonitor( NODE.getChannel( handle2 ) );
+		HANDLE = handle;
+		MONITORS = createMonitor( getChannel( handle ) );
 		checkState = true;
 		POSITION = NODE.getPosition();
 	}
 	
-	/**create monitor for the specified channel*/
-	private ChannelMonitor createMonitor( final Channel channel ) {
-		ChannelMonitor channelMonitor = new ChannelMonitor( channel );
-		return channelMonitor;
+	/**get the channels*/
+	private Channel[] getChannel( final String[] handles ) {
+		Channel[] channels = new Channel[handles.length];
+		for ( int index = 0; index < handles.length; index++ ){
+			channels[index] = NODE.findChannel( handles[index] );			
+		}
+		return channels;
+	}
+	
+	/**create monitors for the specified channels*/
+	private Map<String, ChannelMonitor> createMonitor( final Channel[] channels ) {
+		Map<String, ChannelMonitor> channelMonitors = new HashMap<String, ChannelMonitor>();
+		for( int channelIndex = 0; channelIndex < channels.length; channelIndex++ ){
+			if ( channels[channelIndex] == null && !channels[channelIndex].isValid() ) channelMonitors.put( HANDLE[channelIndex], null );
+			else channelMonitors.put( HANDLE[channelIndex], new ChannelMonitor( channels[channelIndex] ) );
+		}
+		return channelMonitors;
 	}
 	
 	/**get the node*/
@@ -62,24 +72,19 @@ public class DiagnosticAgent {
 		return POSITION;
 	}
 	
-	/**get the xAvg handle*/
-	public String getXAvgName() {
-		return HANDLE1;
+	/**get all the values' names which represented by the handle*/
+	public String[] getNames() {
+		return HANDLE;
 	}
 	
-	/**get the yAvg handle*/
-	public String getYAvgName() {
-		return HANDLE2;
-	}
-	
-	/**returns average X position*/
-	public double getXAvg() {		
-		return MONITOR_X.getLatestValue();
-	}
-	
-	/**returns average Y position*/
-	public double getYAvg() {
-		return MONITOR_Y.getLatestValue();
+	/**get values of all the channels*/
+	public Double[] getValues() {
+		Double[] values = new Double[HANDLE.length];
+		for ( int index = 0; index < values.length; index++ ){
+			if ( MONITORS.get( HANDLE[index] ) == null ) values[index] = Double.NaN;
+			else values[index] = MONITORS.get( HANDLE[index] ).getLatestValue();
+		}
+		return values;
 	}
 
 }

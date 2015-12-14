@@ -208,8 +208,8 @@ public class MachineModel implements DataListener {
     	
     	List<DiagnosticRecord> records = DIAG_RECORDS.get( seq );
     	for ( int index = 0; index<snapshots.size(); index++ ) {
-    		double valueX = snapshots.get( index ).getXAvg();
-    		double valueY = snapshots.get( index ).getYAvg();
+    		double valueX = snapshots.get( index ).getValues()[0];
+    		double valueY = snapshots.get( index ).getValues()[1];
     		int leg = snapshots.size();
     		if ( checkState ) {
     			records.get( index ).addValue(time, valueX);

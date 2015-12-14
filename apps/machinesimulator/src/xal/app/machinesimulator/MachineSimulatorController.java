@@ -202,10 +202,12 @@ public class MachineSimulatorController implements MachineModelListener {
         
         DIAG_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
         DIAG_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "values.0", "xAvg" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "values.1", "yAvg" );
         
-		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "xAvg", "yAvg"};
+		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "values.0", "values.1"};
         
-        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "xAvg", "yAvg");
+        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "values.0", "values.1");
         DIAG_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
         DIAG_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
         DIAG_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForDiagLive);

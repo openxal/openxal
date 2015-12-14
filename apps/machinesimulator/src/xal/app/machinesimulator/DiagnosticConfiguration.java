@@ -4,7 +4,7 @@
 package xal.app.machinesimulator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class DiagnosticConfiguration {
 	/**Constructor*/
 	public DiagnosticConfiguration( final AcceleratorSeq sequence ) {
 		DIAGS = new ArrayList<DiagnosticAgent>();
-		CHAN_NUM = new HashMap<String, Integer>();
+		CHAN_NUM = new LinkedHashMap<String, Integer>();
 		configure( sequence );
 	}
 	
@@ -55,41 +55,63 @@ public class DiagnosticConfiguration {
 	/**get the snapshot of the diagnostic values*/
 	public List<DiagnosticSnapshot> snapshotValues () {
 		List<DiagnosticSnapshot> snapshots = new ArrayList<DiagnosticSnapshot>();
-		for ( final DiagnosticAgent diag : DIAGS ) {
-			if ( diag.getCheckState() ) {
-				snapshots.add( new DiagnosticSnapshot( diag.getNode(), diag.getXAvg(), diag.getYAvg() ) );
+		for ( final String type : CHAN_NUM.keySet() ) {
+			for ( final DiagnosticAgent diag : DIAGS ) {
+				if ( diag.getNode().getType().equals( type ) ){
+					if ( diag.getCheckState() ) {
+						snapshots.add( new DiagnosticSnapshot( diag.getNode(),diag.getNames(), diag.getValues() ) );
+					}
+					else snapshots.add( new DiagnosticSnapshot( diag.getNode(), diag.getNames() ) );
+				}
 			}
-			else snapshots.add( new DiagnosticSnapshot( diag.getNode(), Double.NaN, Double.NaN ) );
 		}
+
 		return snapshots;
 	}
 	
 	/**record the values of the diagnostics*/
 	public List<DiagnosticRecord> createDiagRecords() {
-		List<DiagnosticRecord> bpmRecords = new ArrayList<DiagnosticRecord>();
-		for ( final DiagnosticAgent diag: DIAGS ){
-			bpmRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getXAvgName() ) );
+		List<DiagnosticRecord> diagRecords = new ArrayList<DiagnosticRecord>();
+		for ( final String type : CHAN_NUM.keySet() ){
+			for ( int chanNum = 0; chanNum < CHAN_NUM.get( type ); chanNum++ ){
+				for ( final DiagnosticAgent diag: DIAGS ){
+					if ( diag.getNode().getType().equals(type) ) {
+						diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames()[chanNum] ) );					
+					}
+				}
+			}
 		}
-		for (final DiagnosticAgent diag: DIAGS) {
-			bpmRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getYAvgName() ) );
-		}
-		
-		return bpmRecords;
+		return diagRecords;
 	}
 	
 	class DiagnosticSnapshot {
 		/**the node*/
 		final private AcceleratorNode NODE;
-		/**the x average position*/
-		final private Double X_AVG;
-		/**the y average position*/
-		final private Double Y_AVG;
+		/**the values*/
+		final private Double[] VALUES;
+		/**the values' name*/
+		final private String[] NAMES;
+		
+		/**Constructor*/
+		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names ) {
+			NODE = node;
+			NAMES = names;
+			VALUES = new Double[names.length];
+			initialValues();
+		}
 		
 		/** Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final Double xAvg, final Double yAvg ) {
+		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names, final Double[] values ) {
 			NODE = node;
-			X_AVG = xAvg;
-			Y_AVG = yAvg;
+			VALUES = values;
+			NAMES = names;
+		}
+		
+		/**initialize the values to Double.NaN*/
+		private void initialValues() {
+			for ( int index = 0; index < VALUES.length; index++ ){
+				VALUES[index] = Double.NaN;
+			}
 		}
 		
 		/**get the node*/
@@ -97,14 +119,14 @@ public class DiagnosticConfiguration {
 			return NODE;
 		}
 		
-		/**get xAvg*/
-		public Double getXAvg() {
-			return X_AVG;
+		/**get the values*/
+		public Double[] getValues() {
+			return VALUES;
 		}
 		
-		/**get yAvg*/
-		public Double getYAvg() {
-			return Y_AVG;
+		/**get the values' name*/
+		public String[] getNames() {
+			return NAMES;
 		}
 		
 	}
