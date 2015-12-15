@@ -130,7 +130,9 @@ public class MachineModel implements DataListener {
     private void setupDiagConfig( final AcceleratorSeq sequence ) {
     	if( sequence != null ) {
     		_diagnosticConfiguration = new DiagnosticConfiguration( sequence );
-    		DIAG_RECORDS.put(_sequence, _diagnosticConfiguration.createDiagRecords() );
+    		if (DIAG_RECORDS.get(_sequence) == null ) {    			
+    			DIAG_RECORDS.put(_sequence, _diagnosticConfiguration.createDiagRecords() );
+    		}
     	}
     }
     
@@ -207,18 +209,19 @@ public class MachineModel implements DataListener {
     		final boolean checkState, final List<DiagnosticSnapshot> snapshots) {
     	
     	List<DiagnosticRecord> records = DIAG_RECORDS.get( seq );
+    	Map<String, Integer> chanNums = _diagnosticConfiguration.getChanNum();
+		int leg = snapshots.size();
     	for ( int index = 0; index<snapshots.size(); index++ ) {
-    		double valueX = snapshots.get( index ).getValues()[0];
-    		double valueY = snapshots.get( index ).getValues()[1];
-    		int leg = snapshots.size();
-    		if ( checkState ) {
-    			records.get( index ).addValue(time, valueX);
-    			records.get( index+leg ).addValue(time, valueY);
+    		for ( int chanIndex = 0; chanIndex < chanNums.get( snapshots.get( index ).getNode().getType() ); chanIndex++ ) {
+        		double value = snapshots.get( index ).getValues()[chanIndex];
+        		if ( checkState ) {
+        			records.get( index+chanIndex*leg ).addValue(time, value);
+        		}
+        		else {
+        			records.get(index+chanIndex*leg).removeValue( time );
+        		}
     		}
-    		else {
-    			records.get( index ).removeValue( time );
-    			records.get(index+leg).removeValue( time );
-    		}
+
     	}
     	
     	return records;

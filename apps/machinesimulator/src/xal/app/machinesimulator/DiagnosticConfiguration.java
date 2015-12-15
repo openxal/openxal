@@ -35,7 +35,7 @@ public class DiagnosticConfiguration {
 		for ( final AcceleratorNode node : seq.getAllNodes() ) {				
 			if ( node.getStatus() ) {
 				if ( node instanceof BPM ){
-					DIAGS.add( new DiagnosticAgent( node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE ) );
+					DIAGS.add( new DiagnosticAgent( seq, node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE, null ) );
 					CHAN_NUM.put( node.getType(), 2 );
 				}
 			}
@@ -75,7 +75,7 @@ public class DiagnosticConfiguration {
 		for ( final String type : CHAN_NUM.keySet() ){
 			for ( int chanNum = 0; chanNum < CHAN_NUM.get( type ); chanNum++ ){
 				for ( final DiagnosticAgent diag: DIAGS ){
-					if ( diag.getNode().getType().equals(type) ) {
+					if ( diag.getNode().getType().equals(type) && diag.getNames()[chanNum] !=null ) {
 						diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames()[chanNum] ) );					
 					}
 				}

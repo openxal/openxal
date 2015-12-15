@@ -219,6 +219,8 @@ public class MachineSimulatorController implements MachineModelListener {
         DIAG_RECORD_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
         DIAG_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
         DIAG_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
+        
+        DIAG_RECORD_TABLE_MODEL.setColumnClass( "position", Double.class );
 
 /**********************configure the states table view***********************************/
 	     //get components
@@ -253,7 +255,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
-			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {
+			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {				
 				int leg = keyPathsForDiagRecord.length;
 				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
 				for ( int index = 0; index < leg-3; index++ ){
@@ -270,12 +272,12 @@ public class MachineSimulatorController implements MachineModelListener {
 					if ( xSelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition, 
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(0, pos.size()/2),
-								(upLimit-1-index)+".BPM.X.", LEGEND_NAME[upLimit-1-index] );
+								(upLimit-1-index)+".BPM.X", LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition,
 								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(pos.size()/2, pos.size() ),
-								(upLimit-1-index)+".BPM.Y.", LEGEND_NAME[upLimit-1-index] );
+								(upLimit-1-index)+".BPM.Y", LEGEND_NAME[upLimit-1-index] );
 					}
 				}
 			}
@@ -426,9 +428,8 @@ public class MachineSimulatorController implements MachineModelListener {
 						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
 						_machineSimulatorPlot.showPlot( _positions, simDataForPlot.get(parameterKey), parameterKey, legName );					
 					}
-					
-					if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
 				}
+				if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
 				xalSynopticPanel.setAcceleratorSequence( _sequence );
 			}
 		};
@@ -441,7 +442,7 @@ public class MachineSimulatorController implements MachineModelListener {
         ySelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         zSelectionCheckbox.addActionListener( PARAMETER_HANDLER );
         
-		bpmCheckbox.addActionListener( PARAMETER_HANDLER );
+		  bpmCheckbox.addActionListener( PARAMETER_HANDLER );
         
         orbitCheckbox.addActionListener( PARAMETER_HANDLER );
         betaCheckbox.addActionListener( PARAMETER_HANDLER );
@@ -640,17 +641,17 @@ public class MachineSimulatorController implements MachineModelListener {
 	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
 			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq ) {
 		
+		int columnNumber = (columnName != null ) ? columnName.size() : 0;
+		String[] historyDataKeyPaths = new String[columnNumber+2];
+        historyDataKeyPaths[0] = "acceleratorNode.id";
+        historyDataKeyPaths[1] = "propertyName";
+		keyPathsForDiagRecord = new String[columnNumber+3];
+		   keyPathsForDiagRecord[0] = "node.id";
+		   keyPathsForDiagRecord[1] = "valueName";
+		   keyPathsForDiagRecord[2] = "position";		
 		if ( nodePropertyHistoryRecords != null && columnName != null ) {
-			int columnNumber = columnName.size();		
 			String[] names = new String[columnNumber];
 			columnName.values().toArray( names );
-			String[] historyDataKeyPaths = new String[columnNumber+2];
-	        historyDataKeyPaths[0] = "acceleratorNode.id";
-	        historyDataKeyPaths[1] = "propertyName";
-			keyPathsForDiagRecord = new String[columnNumber+3];
-			   keyPathsForDiagRecord[0] = "node.id";
-			   keyPathsForDiagRecord[1] = "valueName";
-			   keyPathsForDiagRecord[2] = "position";
 			for ( int index = 0;index<columnNumber; index++ ){
 				historyDataKeyPaths[index+2] = "values."+index;
 				keyPathsForDiagRecord[index+3] = "values."+index;
