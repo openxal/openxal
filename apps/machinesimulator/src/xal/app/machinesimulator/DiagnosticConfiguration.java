@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -75,8 +76,8 @@ public class DiagnosticConfiguration {
 		for ( final String type : CHAN_NUM.keySet() ){
 			for ( int chanNum = 0; chanNum < CHAN_NUM.get( type ); chanNum++ ){
 				for ( final DiagnosticAgent diag: DIAGS ){
-					if ( diag.getNode().getType().equals(type) && diag.getNames()[chanNum] !=null ) {
-						diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames()[chanNum] ) );					
+					if ( diag.getNode().getType().equals(type) && diag.getNames().get( chanNum ) !=null ) {
+						diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames().get( chanNum ) ) );					
 					}
 				}
 			}
@@ -88,20 +89,20 @@ public class DiagnosticConfiguration {
 		/**the node*/
 		final private AcceleratorNode NODE;
 		/**the values*/
-		final private Double[] VALUES;
+		final private Vector<Double> VALUES;
 		/**the values' name*/
-		final private String[] NAMES;
+		final private Vector<String> NAMES;
 		
 		/**Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names ) {
+		public DiagnosticSnapshot( final AcceleratorNode node, final Vector<String> names ) {
 			NODE = node;
 			NAMES = names;
-			VALUES = new Double[names.length];
+			VALUES = new Vector<Double>();
 			initialValues();
 		}
 		
 		/** Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names, final Double[] values ) {
+		public DiagnosticSnapshot( final AcceleratorNode node, final Vector<String> names, final Vector<Double> values ) {
 			NODE = node;
 			VALUES = values;
 			NAMES = names;
@@ -109,8 +110,8 @@ public class DiagnosticConfiguration {
 		
 		/**initialize the values to Double.NaN*/
 		private void initialValues() {
-			for ( int index = 0; index < VALUES.length; index++ ){
-				VALUES[index] = Double.NaN;
+			for ( int index = 0; index < VALUES.size(); index++ ){
+				VALUES.add( Double.NaN );
 			}
 		}
 		
@@ -121,12 +122,12 @@ public class DiagnosticConfiguration {
 		
 		/**get the values*/
 		public Double[] getValues() {
-			return VALUES;
+			return VALUES.toArray( new Double[VALUES.size()] );
 		}
 		
 		/**get the values' name*/
 		public String[] getNames() {
-			return NAMES;
+			return NAMES.toArray( new String[NAMES.size()] );
 		}
 		
 	}

@@ -178,7 +178,7 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_RECORD_TABLE_MODEL.setColumnName("sequence.id", "Sequence" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName("dateTime", "Time" );
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths(Boolean.class, "selectState");
+        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Boolean.class, "selectState" );
         HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "selectState", "sequence.id", "dateTime", "recordName");
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "selectState", true );
@@ -202,12 +202,12 @@ public class MachineSimulatorController implements MachineModelListener {
         
         DIAG_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
         DIAG_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "values.0", "xAvg" );
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "values.1", "yAvg" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueX", "xAvg" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueY", "yAvg" );
         
-		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "values.0", "values.1"};
+		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "valueX", "valueY"};
         
-        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "values.0", "values.1");
+        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "valueX", "valueY");
         DIAG_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
         DIAG_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
         DIAG_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForDiagLive);
@@ -562,8 +562,8 @@ public class MachineSimulatorController implements MachineModelListener {
 
     }
 	
-  /** get the selected parameters' data from simulation records
-    * @param records the result of simulation
+  /** get the selected parameters' data from the specified records
+    * @param records the specified records which hold the data
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
     private <T> Map<String, List<Double>> configureParametersData( final List<T> records,final List<String> keyPaths ){

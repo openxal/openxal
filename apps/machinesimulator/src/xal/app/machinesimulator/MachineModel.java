@@ -212,7 +212,9 @@ public class MachineModel implements DataListener {
     	Map<String, Integer> chanNums = _diagnosticConfiguration.getChanNum();
 		int leg = snapshots.size();
     	for ( int index = 0; index<snapshots.size(); index++ ) {
-    		for ( int chanIndex = 0; chanIndex < chanNums.get( snapshots.get( index ).getNode().getType() ); chanIndex++ ) {
+    		String type = snapshots.get( index ).getNode().getType();
+    		int limit = ( chanNums.get( type ) != null ) ? chanNums.get( type ) : 0;
+    		for ( int chanIndex = 0; chanIndex < limit; chanIndex++ ) {
         		double value = snapshots.get( index ).getValues()[chanIndex];
         		if ( checkState ) {
         			records.get( index+chanIndex*leg ).addValue(time, value);
@@ -222,8 +224,7 @@ public class MachineModel implements DataListener {
         		}
     		}
 
-    	}
-    	
+    	}   	
     	return records;
     }
 	
