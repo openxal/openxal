@@ -26,6 +26,7 @@ from xal.model import *
 from xal.model.probe import *
 from xal.sim.scenario import *
 from xal.tools.beam import *
+from xal.tools.beam.calc import *
 from xal.extension.widgets.plot import *
 from xal.smf.data import *
 from xal.model.alg import *
@@ -374,16 +375,11 @@ class OrbitCorr(Scorer):
 		scenario = Scenario.newScenarioFor(accSeq)
 		scenario.setSynchronizationMode(Scenario.SYNC_MODE_RF_DESIGN)
 
-#		ptracker = EnvelopeTracker()
-#		probe = ProbeFactory.getEnvelopeProbe(accSeq, ptracker)
-
-		ptracker = AlgorithmFactory.createEnvTrackerAdapt( accSeq )
-		probe = ProbeFactory.getEnvelopeProbe( accSeq, ptracker )
+		ptracker = AlgorithmFactory.createTransferMapTracker( accSeq )
+		probe = ProbeFactory.getTransferMapProbe( accSeq, ptracker )
 
 		scenario.setProbe(probe)
 		probe.reset()
-		#probe.setBeamCharge(0.0)
-		probe.setBeamCurrent( 0.0 )
 		scenario.resync()
 		scenario.run()
 		traj = scenario.getTrajectory()
@@ -401,12 +397,14 @@ class OrbitCorr(Scorer):
 			c = 2.997924E+8
 			res_coeff = (L * c) / (W0 * beta * gamma)
 			nQuads = 0
+			dcorr_state = traj.stateForElement(dcorr.getId())
 			for accQuad in self.accQuads:
 				quad = accQuad.getNode()
 				dcorr_pos = self.accSeq.getPosition(dcorr)
 				quad_pos = self.accSeq.getPosition(quad)
 				if(quad_pos > dcorr_pos):
-					phMatr = traj.stateResponse(dcorr.getId(), quad.getId())
+					quad_state = traj.stateForElement(quad.getId())		#TODO: really should get state at center of quad
+					phMatr = CalculationsOnMachines.computeTransferMatrix(dcorr_state, quad_state)	# get the transfer matrix from the corrector to the quad
 					me = 0.
 					if(orientation == "DCH"): me = phMatr.getElem(0, 1)
 					if(orientation == "DCV"): me = phMatr.getElem(2, 3)

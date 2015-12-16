@@ -19,7 +19,6 @@ from java.awt.datatransfer import *
 from xal.tools.statistics import *
 from xal.tools.apputils import *
 from xal.tools.text import *
-#from gov.sns.xal.tools.widgets import *
 from xal.extension.widgets import *
 from xal.extension.widgets.apputils import *
 from xal.extension.widgets.plot import *
@@ -29,7 +28,7 @@ from xal.smf import *
 from xal.smf.impl  import *
 from xal.smf.data import *
 from xal.smf.impl.qualify import *
-#from gov.sns.xal.smf.proxy import *
+from xal.smf.proxy import *
 from xal.model import *
 from xal.model.probe import *
 from xal.model.probe.traj import *
