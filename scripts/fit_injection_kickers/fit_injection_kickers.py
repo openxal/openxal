@@ -31,7 +31,7 @@ from xal.smf import *
 from xal.smf.impl  import *
 from xal.smf.data import *
 from xal.smf.impl.qualify import *
-#from gov.sns.xal.smf.proxy import *
+from xal.smf.proxy import *
 from xal.model import *
 from xal.model.probe import *
 from xal.model.probe.traj import *
