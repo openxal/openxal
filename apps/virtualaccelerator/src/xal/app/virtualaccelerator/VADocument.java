@@ -1165,7 +1165,7 @@ public class VADocument extends AcceleratorDocument implements ActionListener, P
 				bpmYAvgChannel.putValCallback( yAvg, this );
 				//                    bpmYTBTChannel.putValCallback( yTBT, this );  // don't post to channel access until the turn by turn data is generated correctly
 			
-				final double position = bpm.getPosition();
+				final double position = getSelectedSequence().getPosition(bpm);
 				tempBPMp.add(position);
 				tempBPMx.add(xAvg);
 				tempBPMy.add(yAvg);				
