@@ -327,6 +327,9 @@ class PublishController extends AbstractTableModel {
 	
 	/** persistent store front end to the database */
 	final protected PersistentStore PERSISTENT_STORE;
+
+	/** table of parameters to publish */
+	final private JTable PARAMETER_TABLE;
 	
 	
 	/** Constructor */
@@ -338,9 +341,9 @@ class PublishController extends AbstractTableModel {
 		PARAMETERS = new HashMap<String, Object>( ATTRIBUTE_DESCRIPTORS.size() );
 		
 		DIALOG_REFERENCE = GenDocument.getDefaultWindowReference( "TargetBeamParameterDialog", document.getMainWindow() );
-		final JTable table = (JTable)DIALOG_REFERENCE.getView( "BeamParameterTable" );
-		table.setModel( this );
-		
+		PARAMETER_TABLE = (JTable)DIALOG_REFERENCE.getView( "BeamParameterTable" );
+		PARAMETER_TABLE.setModel( this );
+
 		final JButton resetButton = (JButton)DIALOG_REFERENCE.getView( "ResetButton" );
 		resetButton.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
@@ -439,6 +442,12 @@ class PublishController extends AbstractTableModel {
 	
 	/** publish the parameters to the database */
 	protected void publishParameters() throws Exception {
+		// check if users have uncommitted edits and if so commit them now
+		if (PARAMETER_TABLE.isEditing()) {
+			// commit unsaved edits (prevents issue in which user entered text but didn't hit return and their text was lost)
+			PARAMETER_TABLE.getCellEditor().stopCellEditing();
+		}
+
 		final Connection connection = PERSISTENT_STORE.newConnection( DOCUMENT.getMainWindow() );
 		if ( connection != null ) {
 			PERSISTENT_STORE.publishTargetBeamParameters( DOCUMENT.getMainWindow(), PARAMETERS, connection );
