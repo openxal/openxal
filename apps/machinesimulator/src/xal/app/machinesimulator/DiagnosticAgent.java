@@ -2,6 +2,7 @@
  * 
  */
 package xal.app.machinesimulator;
+import java.util.Arrays;
 import java.util.Vector;
 
 import xal.ca.Channel;
@@ -23,6 +24,8 @@ public class DiagnosticAgent {
 	final private Vector<String> HANDLE;
 	/**the position of this node in the sequence*/
 	final private double POSITION;
+	/**the vector of (x,y,z) scales*/
+	final private Vector<Double> SCALES;
 	/**check state of this diagnostic node*/
 	private Boolean checkState;
 	
@@ -31,6 +34,7 @@ public class DiagnosticAgent {
 		NODE = node;
 		SEQUENCE = seq;
 		HANDLE = new Vector<String>(3);
+		SCALES = new Vector<Double>( Arrays.asList( 1.0, 1.0, 1.0 ) );
 		HANDLE.add( xHandle );
 		HANDLE.add( yHandle );
 		HANDLE.add( zHandle );
@@ -57,6 +61,20 @@ public class DiagnosticAgent {
 			}
 		}
 		return channelMonitors;
+	}
+	
+	/**set scales for three planes with common value*/
+	public void setScales( final double scale ) {
+		SCALES.setElementAt( scale, 0 );
+		SCALES.setElementAt( scale, 1 );
+		SCALES.setElementAt( scale, 2 );
+	}
+	
+	/**set scales for three planes with different values*/
+	public void setScales( final double xScale, final double yScale, final double zScale) {
+		SCALES.setElementAt( xScale, 0 );
+		SCALES.setElementAt( yScale, 1 );
+		SCALES.setElementAt( zScale, 2 );
 	}
 	
 	/**get the node*/
@@ -101,24 +119,24 @@ public class DiagnosticAgent {
 		Vector<Double> values = new Vector<Double>( HANDLE.size() );
 		for ( int index = 0; index < HANDLE.size(); index++ ){
 			if ( MONITORS[index] == null ) values.add( Double.NaN );
-			else values.add( MONITORS[index].getLatestValue()/1000 );
+			else values.add( MONITORS[index].getLatestValue()*SCALES.get( index ) );
 		}
 		return values;
 	}
 	
 	/**get the value of x plane*/
 	public Double getValueX() {
-		return ( MONITORS[0] == null ) ? Double.NaN : MONITORS[0].getLatestValue()/1000;
+		return ( MONITORS[0] == null ) ? Double.NaN : MONITORS[0].getLatestValue()*SCALES.get(0);
 	}
 	
 	/**get the value of y plane*/
 	public Double getValueY() {
-		return ( MONITORS[1] == null ) ? Double.NaN : MONITORS[1].getLatestValue()/1000;
+		return ( MONITORS[1] == null ) ? Double.NaN : MONITORS[1].getLatestValue()*SCALES.get(1);
 	}
 	
 	/**get the value of z plane*/
 	public Double getValueZ() {
-		return ( MONITORS[2] == null ) ? Double.NaN : MONITORS[2].getLatestValue()/1000;
+		return ( MONITORS[2] == null ) ? Double.NaN : MONITORS[2].getLatestValue()*SCALES.get(2);
 	}
 
 }

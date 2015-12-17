@@ -21,6 +21,7 @@ import xal.extension.widgets.smf.FunctionGraphsXALSynopticAdaptor;
 import xal.extension.widgets.smf.XALSynopticPanel;
 import xal.extension.widgets.swing.KeyValueFilteredTableModel;
 import xal.smf.AcceleratorSeq;
+import xal.smf.impl.BPM;
 import xal.tools.data.KeyValueAdaptor;
 import xal.tools.dispatch.DispatchQueue;
 import xal.tools.dispatch.DispatchTimer;
@@ -252,7 +253,8 @@ public class MachineSimulatorController implements MachineModelListener {
 		synopticBox.validate();
 
 /***************************Check boxes action**************************************/
-
+		String typeForBPM = BPM.s_strType;
+		String[] paramsForBPM = new String[]{ BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
 			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {				
@@ -265,19 +267,18 @@ public class MachineSimulatorController implements MachineModelListener {
 				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );				
 				keyPathsForDiagDiff = keyPathsForDiagPlot.subList( 1, keyPathsForDiagPlot.size() );
 				diagDataForPlot = configureParametersData( diagDatum, keyPathsForDiagPlot );
-				List<Double> pos = diagDataForPlot.get( keyPathsForDiagRecord[2] );			
-				diagPosition = pos.subList(0, pos.size()/2);
+				diagPosition = filDiagDatum( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(0), diagDataForPlot );				
 				int upLimit = keyPathsForDiagPlot.size()-1;
-				for ( int index = 0; index < upLimit; index++ ) {						
+				for ( int index = 0; index < upLimit; index++ ) {
 					if ( xSelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition, 
-								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(0, pos.size()/2),
-								(upLimit-1-index)+".BPM.X", LEGEND_NAME[upLimit-1-index] );
+								filDiagDatum( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(index+1), diagDataForPlot ),
+								(upLimit-1-index)+typeForBPM+paramsForBPM[0], LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition,
-								diagDataForPlot.get( keyPathsForDiagPlot.get( index+1 ) ).subList(pos.size()/2, pos.size() ),
-								(upLimit-1-index)+".BPM.Y", LEGEND_NAME[upLimit-1-index] );
+								filDiagDatum(typeForBPM, paramsForBPM[1], keyPathsForDiagPlot.get( index+1 ), diagDataForPlot ),
+								(upLimit-1-index)+typeForBPM+paramsForBPM[1], LEGEND_NAME[upLimit-1-index] );
 					}
 				}
 			}
@@ -298,13 +299,13 @@ public class MachineSimulatorController implements MachineModelListener {
 							String keyDiag = keyPathsForDiagDiff.get( index+1 );
 							if ( xSelectionCheckbox.isSelected() ) {
 								_machineSimulatorPlot.showPlot( diagPosition, 
-										diagDiff.get( keyDiag ).subList( 0, diagPosition.size() ),
-										"BPM.X", legName );
+										filDiagDatum(typeForBPM, paramsForBPM[0], keyDiag, diagDiff ),
+										typeForBPM+paramsForBPM[0], legName );
 							}
 							if ( ySelectionCheckbox.isSelected() ) {
 								_machineSimulatorPlot.showPlot( diagPosition,
-										diagDiff.get( keyDiag ).subList( diagPosition.size(), 2*diagPosition.size() ),
-										"BPM.Y", legName );
+										filDiagDatum(typeForBPM, paramsForBPM[1], keyDiag, diagDiff ),
+										typeForBPM+paramsForBPM[1], legName );
 							}
 							index++;
 						}
@@ -598,6 +599,27 @@ public class MachineSimulatorController implements MachineModelListener {
     	return diffDatum;
     }
     
+    /**
+     * filter the diagnostic datum with the node type, parameter and record keyPath 
+     * @param type the type of one node
+     * @param param one parameter of one node
+     * @param keyPath the key path of records
+     * @param datumForFil the data source
+     * @return the filtered values map with specified keyPath
+     */
+    private List<Double> filDiagDatum( final String type, final String param, final String keyPath,
+    		final Map<String, List<Double>> datumForFil ) {
+    	List<Double> filDatum =  new ArrayList<Double>();
+    	List<Double> values = datumForFil.get( keyPath );
+    	for ( int index = 0; index< diagDatum.size(); index++ ) {
+    		DiagnosticRecord record = diagDatum.get( index );
+    		if ( record.getNode().getType().equals( type ) && record.getValueName().equals(param) ) {
+    			filDatum.add( values.get( index ) );
+    		}
+    	}
+    	return filDatum;
+    }
+    
     /**get a runnalbe that syncs the values */
     private Runnable getLiveValueSynchronizer(){
     	return () -> {
@@ -613,7 +635,7 @@ public class MachineSimulatorController implements MachineModelListener {
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
     		
-    		DIAG_LIVE_TABLE_MODEL.setRecords( model.getDiagConfig().getBpms() );
+    		DIAG_LIVE_TABLE_MODEL.setRecords( model.getDiagConfig().getDiagnosticAgents() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	

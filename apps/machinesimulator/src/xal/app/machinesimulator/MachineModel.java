@@ -209,19 +209,22 @@ public class MachineModel implements DataListener {
     		final boolean checkState, final List<DiagnosticSnapshot> snapshots) {
     	
     	List<DiagnosticRecord> records = DIAG_RECORDS.get( seq );
-    	Map<String, Integer> chanNums = _diagnosticConfiguration.getChanNum();
-		int leg = snapshots.size();
+    	int recordIndex = 0;
     	for ( int index = 0; index<snapshots.size(); index++ ) {
-    		String type = snapshots.get( index ).getNode().getType();
-    		int limit = ( chanNums.get( type ) != null ) ? chanNums.get( type ) : 0;
+    		int limit = snapshots.get( index ).getNames().length;
     		for ( int chanIndex = 0; chanIndex < limit; chanIndex++ ) {
-        		double value = snapshots.get( index ).getValues()[chanIndex];
-        		if ( checkState ) {
-        			records.get( index+chanIndex*leg ).addValue(time, value);
-        		}
-        		else {
-        			records.get(index+chanIndex*leg).removeValue( time );
-        		}
+    			if (snapshots.get( index ).getNames()[chanIndex] != null ) {
+            		double value = snapshots.get( index ).getValues()[chanIndex];
+            		if ( checkState ) {
+            			records.get( recordIndex ).addValue(time, value);
+            			recordIndex++;
+            		}
+            		else {
+            			records.get( recordIndex ).removeValue( time );
+            			recordIndex++;
+            		}
+    			}
+
     		}
 
     	}   	

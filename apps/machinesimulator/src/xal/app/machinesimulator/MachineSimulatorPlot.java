@@ -4,6 +4,7 @@
 package xal.app.machinesimulator;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.util.List;
 
 import xal.extension.widgets.apputils.SimpleChartPopupMenu;
@@ -76,16 +77,24 @@ public class MachineSimulatorPlot{
 				//configure the graphic name
 				graphData.setGraphProperty( PARAMETERS_PLOT.getLegendKeyString(),
 						PARAMETERS.get( parameterIndex ).getParameterName( key )+" : "+legend );
-				//configure the graphic line pattern
+				//configure the graphic line and point pattern
+				final double pointMarkLeg = 8.0;
+				final double offset = - pointMarkLeg / 2.0;// point mark offset
 				switch ( PARAMETERS.get( parameterIndex ).getPlane( key ) ) {
 				case "X":
 					graphData.setLineDashPattern( null );//x plane
+					graphData.setGraphPointShape( 
+							new java.awt.geom.Ellipse2D.Double( offset, offset, pointMarkLeg, pointMarkLeg ) );
 					break;
 				case "Y":
 					graphData.setLineDashPattern( 3.0f );//y plane
+					graphData.setGraphPointShape( 
+							new Polygon( new int[]{0, -(int)offset, (int)offset }, new int[]{ (int)offset, -(int)offset, -(int)offset }, 3 ) );
 					break;
 				case "Z":
 					graphData.setLineDashPattern( 11.0f );//z plane
+					graphData.setGraphPointShape( 
+							new java.awt.geom.Rectangle2D.Double(offset, offset, pointMarkLeg, pointMarkLeg ) );
 					break;
 				default:
 					break;

@@ -4,9 +4,7 @@
 package xal.app.machinesimulator;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import xal.smf.AcceleratorNode;
@@ -21,50 +19,54 @@ public class DiagnosticConfiguration {
 	
 	/**the list of diagnostic device*/
 	final private List<DiagnosticAgent> DIAGS;
-	/**the channel number of the node map with node type*/
-	final private Map<String, Integer> CHAN_NUM;
 	
 	/**Constructor*/
 	public DiagnosticConfiguration( final AcceleratorSeq sequence ) {
 		DIAGS = new ArrayList<DiagnosticAgent>();
-		CHAN_NUM = new LinkedHashMap<String, Integer>();
 		configure( sequence );
 	}
 	
 	/**get the diagnostics from sequence*/
 	private void configure( final AcceleratorSeq seq ) {
-		for ( final AcceleratorNode node : seq.getAllNodes() ) {				
+		DIAGS.addAll( registerDevice( seq, "BPM", 0.001, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE, null ) );
+	}
+	
+	/**
+	 * register a new type of diagnostic device from the specified sequence
+	 * @param seq the specified sequence
+	 * @param type the specified type to register
+	 * @param scale the scale to configure the values
+	 * @param handles the existing channel handles of (x,y,z) 
+	 * @return the list of diagnostic device
+	 */
+	private List<DiagnosticAgent> registerDevice( final AcceleratorSeq seq, final String type,
+			final double scale, final String xHandle, final String yHandle, final String zHandle ) {
+		List<DiagnosticAgent> diags = new ArrayList<DiagnosticAgent>();
+		for ( final AcceleratorNode node : seq.getAllNodes() ) {
 			if ( node.getStatus() ) {
-				if ( node instanceof BPM ){
-					DIAGS.add( new DiagnosticAgent( seq, node, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE, null ) );
-					CHAN_NUM.put( node.getType(), 2 );
+				if ( node.getType().equals( type ) ) {
+					DiagnosticAgent agent = new DiagnosticAgent( seq, node, xHandle, yHandle, zHandle );
+					agent.setScales( scale );
+					diags.add( agent );
 				}
 			}
 		}
-	}
-	
-	/**get the channel number*/
-	public Map<String, Integer> getChanNum() {
-		return CHAN_NUM;
+		return diags;
 	}
 	
 	/**get the list of diagnostic*/
-	public List<DiagnosticAgent> getBpms() {
+	public List<DiagnosticAgent> getDiagnosticAgents() {
 		return DIAGS;
 	}
 	
 	/**get the snapshot of the diagnostic values*/
 	public List<DiagnosticSnapshot> snapshotValues () {
 		List<DiagnosticSnapshot> snapshots = new ArrayList<DiagnosticSnapshot>();
-		for ( final String type : CHAN_NUM.keySet() ) {
-			for ( final DiagnosticAgent diag : DIAGS ) {
-				if ( diag.getNode().getType().equals( type ) ){
-					if ( diag.getCheckState() ) {
-						snapshots.add( new DiagnosticSnapshot( diag.getNode(),diag.getNames(), diag.getValues() ) );
-					}
-					else snapshots.add( new DiagnosticSnapshot( diag.getNode(), diag.getNames() ) );
-				}
+		for ( final DiagnosticAgent diag : DIAGS ) {
+			if ( diag.getCheckState() ) {
+				snapshots.add( new DiagnosticSnapshot( diag.getNode(),diag.getNames(), diag.getValues() ) );
 			}
+			else snapshots.add( new DiagnosticSnapshot( diag.getNode(), diag.getNames() ) );
 		}
 
 		return snapshots;
@@ -73,12 +75,10 @@ public class DiagnosticConfiguration {
 	/**record the values of the diagnostics*/
 	public List<DiagnosticRecord> createDiagRecords() {
 		List<DiagnosticRecord> diagRecords = new ArrayList<DiagnosticRecord>();
-		for ( final String type : CHAN_NUM.keySet() ){
-			for ( int chanNum = 0; chanNum < CHAN_NUM.get( type ); chanNum++ ){
-				for ( final DiagnosticAgent diag: DIAGS ){
-					if ( diag.getNode().getType().equals(type) && diag.getNames().get( chanNum ) !=null ) {
-						diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames().get( chanNum ) ) );					
-					}
+		for ( final DiagnosticAgent diag: DIAGS ){
+			for ( int chanNum = 0; chanNum < diag.getNames().size(); chanNum++ ){
+				if ( diag.getNames().get( chanNum ) !=null ) {
+					diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames().get( chanNum ) ) );					
 				}
 			}
 		}
