@@ -257,7 +257,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		String[] paramsForBPM = new String[]{ BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
-			if ( diagDatum != null && keyPathsForDiagRecord.length>3 ) {				
+			if ( diagDatum != null && diagDatum.size() != 0 && keyPathsForDiagRecord.length>3 ) {				
 				int leg = keyPathsForDiagRecord.length;
 				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
 				for ( int index = 0; index < leg-3; index++ ){

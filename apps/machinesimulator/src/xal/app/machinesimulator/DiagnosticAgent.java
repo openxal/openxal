@@ -2,8 +2,6 @@
  * 
  */
 package xal.app.machinesimulator;
-import java.util.Arrays;
-import java.util.Vector;
 
 import xal.ca.Channel;
 import xal.smf.AcceleratorNode;
@@ -21,11 +19,11 @@ public class DiagnosticAgent {
 	/**the monitors*/
 	final private ChannelMonitor[] MONITORS;
 	/**the channel handles*/
-	final private Vector<String> HANDLE;
+	final private String[] HANDLE;
 	/**the position of this node in the sequence*/
 	final private double POSITION;
 	/**the vector of (x,y,z) scales*/
-	final private Vector<Double> SCALES;
+	final private double[] SCALES;
 	/**check state of this diagnostic node*/
 	private Boolean checkState;
 	
@@ -33,12 +31,9 @@ public class DiagnosticAgent {
 			final String xHandle, final String yHandle, final String zHandle ) {
 		NODE = node;
 		SEQUENCE = seq;
-		HANDLE = new Vector<String>(3);
-		SCALES = new Vector<Double>( Arrays.asList( 1.0, 1.0, 1.0 ) );
-		HANDLE.add( xHandle );
-		HANDLE.add( yHandle );
-		HANDLE.add( zHandle );
-		MONITORS = createMonitor( getChannel( HANDLE.toArray( new String[3] ) ) );
+		HANDLE = new String[]{xHandle, yHandle, zHandle};
+		SCALES = new double[]{ 1.0, 1.0, 1.0 };
+		MONITORS = createMonitor( getChannel( HANDLE ) );
 		checkState = true;
 		POSITION = SEQUENCE.getPosition( NODE );
 	}
@@ -64,17 +59,17 @@ public class DiagnosticAgent {
 	}
 	
 	/**set scales for three planes with common value*/
-	public void setScales( final double scale ) {
-		SCALES.setElementAt( scale, 0 );
-		SCALES.setElementAt( scale, 1 );
-		SCALES.setElementAt( scale, 2 );
+	public void setCommonScale( final double scale ) {
+		SCALES[0] = scale;
+		SCALES[1] = scale;
+		SCALES[2] = scale;
 	}
 	
 	/**set scales for three planes with different values*/
 	public void setScales( final double xScale, final double yScale, final double zScale) {
-		SCALES.setElementAt( xScale, 0 );
-		SCALES.setElementAt( yScale, 1 );
-		SCALES.setElementAt( zScale, 2 );
+		SCALES[0] = xScale;
+		SCALES[1] = yScale;
+		SCALES[2] = zScale;
 	}
 	
 	/**get the node*/
@@ -98,45 +93,45 @@ public class DiagnosticAgent {
 	}
 	
 	/**get all the values' names which represented by the handle*/
-	public Vector<String> getNames() {
+	public String[] getNames() {
 		return HANDLE;
 	}
 	
 	/**get the name of x plane*/
 	public String getNameX() {
-		return HANDLE.get(0);
+		return HANDLE[0];
 	}
 	/**get the name of y plane*/	
 	public String getNameY() {
-		return HANDLE.get(1);
+		return HANDLE[1];
 	}
 	/**get the name of z plane*/	
 	public String getNameZ() {
-		return HANDLE.get(2);
+		return HANDLE[2];
 	}
  	/**get values of all the channels,divide 1000 to convert mm to meters，the same below*/
-	public Vector<Double> getValues() {
-		Vector<Double> values = new Vector<Double>( HANDLE.size() );
-		for ( int index = 0; index < HANDLE.size(); index++ ){
-			if ( MONITORS[index] == null ) values.add( Double.NaN );
-			else values.add( MONITORS[index].getLatestValue()*SCALES.get( index ) );
+	public Double[] getValues() {
+		Double[] values = new Double[ HANDLE.length ];
+		for ( int index = 0; index < HANDLE.length; index++ ){
+			if ( MONITORS[index] == null ) values[index] = Double.NaN;
+			else values[index] =  MONITORS[index].getLatestValue()*SCALES[index];
 		}
 		return values;
 	}
 	
 	/**get the value of x plane*/
 	public Double getValueX() {
-		return ( MONITORS[0] == null ) ? Double.NaN : MONITORS[0].getLatestValue()*SCALES.get(0);
+		return ( MONITORS[0] == null ) ? Double.NaN : MONITORS[0].getLatestValue()*SCALES[0];
 	}
 	
 	/**get the value of y plane*/
 	public Double getValueY() {
-		return ( MONITORS[1] == null ) ? Double.NaN : MONITORS[1].getLatestValue()*SCALES.get(1);
+		return ( MONITORS[1] == null ) ? Double.NaN : MONITORS[1].getLatestValue()*SCALES[1];
 	}
 	
 	/**get the value of z plane*/
 	public Double getValueZ() {
-		return ( MONITORS[2] == null ) ? Double.NaN : MONITORS[2].getLatestValue()*SCALES.get(2);
+		return ( MONITORS[2] == null ) ? Double.NaN : MONITORS[2].getLatestValue()*SCALES[2];
 	}
 
 }

@@ -5,7 +5,6 @@ package xal.app.machinesimulator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -28,7 +27,7 @@ public class DiagnosticConfiguration {
 	
 	/**get the diagnostics from sequence*/
 	private void configure( final AcceleratorSeq seq ) {
-		DIAGS.addAll( registerDevice( seq, "BPM", 0.001, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE, null ) );
+		DIAGS.addAll( registerDevices( seq, BPM.s_strType, 0.001, BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE, null ) );
 	}
 	
 	/**
@@ -39,14 +38,14 @@ public class DiagnosticConfiguration {
 	 * @param handles the existing channel handles of (x,y,z) 
 	 * @return the list of diagnostic device
 	 */
-	private List<DiagnosticAgent> registerDevice( final AcceleratorSeq seq, final String type,
+	private List<DiagnosticAgent> registerDevices( final AcceleratorSeq seq, final String type,
 			final double scale, final String xHandle, final String yHandle, final String zHandle ) {
 		List<DiagnosticAgent> diags = new ArrayList<DiagnosticAgent>();
 		for ( final AcceleratorNode node : seq.getAllNodes() ) {
 			if ( node.getStatus() ) {
 				if ( node.getType().equals( type ) ) {
 					DiagnosticAgent agent = new DiagnosticAgent( seq, node, xHandle, yHandle, zHandle );
-					agent.setScales( scale );
+					agent.setCommonScale( scale );
 					diags.add( agent );
 				}
 			}
@@ -76,9 +75,9 @@ public class DiagnosticConfiguration {
 	public List<DiagnosticRecord> createDiagRecords() {
 		List<DiagnosticRecord> diagRecords = new ArrayList<DiagnosticRecord>();
 		for ( final DiagnosticAgent diag: DIAGS ){
-			for ( int chanNum = 0; chanNum < diag.getNames().size(); chanNum++ ){
-				if ( diag.getNames().get( chanNum ) !=null ) {
-					diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames().get( chanNum ) ) );					
+			for ( int chanNum = 0; chanNum < diag.getNames().length; chanNum++ ){
+				if ( diag.getNames()[chanNum] !=null ) {
+					diagRecords.add( new DiagnosticRecord( diag.getNode(), diag.getPosition(), diag.getNames()[chanNum] ) );					
 				}
 			}
 		}
@@ -89,20 +88,20 @@ public class DiagnosticConfiguration {
 		/**the node*/
 		final private AcceleratorNode NODE;
 		/**the values*/
-		final private Vector<Double> VALUES;
+		final private Double[] VALUES;
 		/**the values' name*/
-		final private Vector<String> NAMES;
+		final private String[] NAMES;
 		
 		/**Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final Vector<String> names ) {
+		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names ) {
 			NODE = node;
 			NAMES = names;
-			VALUES = new Vector<Double>();
+			VALUES = new Double[names.length];
 			initialValues();
 		}
 		
 		/** Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final Vector<String> names, final Vector<Double> values ) {
+		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names, final Double[] values ) {
 			NODE = node;
 			VALUES = values;
 			NAMES = names;
@@ -110,8 +109,8 @@ public class DiagnosticConfiguration {
 		
 		/**initialize the values to Double.NaN*/
 		private void initialValues() {
-			for ( int index = 0; index < VALUES.size(); index++ ){
-				VALUES.add( Double.NaN );
+			for ( int index = 0; index < VALUES.length; index++ ){
+				VALUES[index] =  Double.NaN;
 			}
 		}
 		
@@ -122,12 +121,12 @@ public class DiagnosticConfiguration {
 		
 		/**get the values*/
 		public Double[] getValues() {
-			return VALUES.toArray( new Double[VALUES.size()] );
+			return VALUES;
 		}
 		
 		/**get the values' name*/
 		public String[] getNames() {
-			return NAMES.toArray( new String[NAMES.size()] );
+			return NAMES;
 		}
 		
 	}
