@@ -68,7 +68,7 @@ public class ModelConfigTest extends AbstractXMLValidation {
 	
 	@Override
 	protected Schema getSchema() throws Exception {
-		return readSchema(DIR_SCHEMAS+"ModelConfig.xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		return readSchema(DIR_SCHEMAS+"model-impl.xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	}
 	
 	@Override

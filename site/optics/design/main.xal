@@ -1,12 +1,12 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE sources SYSTEM "xdxf.dtd">
 <sources version="2.0">
-	<modelElementConfig_source name="modelElementConfig" url=“model.impl” />
-	<deviceMapping_source name="deviceMapping" url="sns.impl"/>
+	<modelElementConfig_source name="modelElementConfig" url=“sns-model.impl” />
+	<deviceMapping_source name="deviceMapping" url="sns-smf.impl"/>
 	<optics_source name="optics" url="sns.xdxf"/>
 	<hardware_status name="Hardware Status" url="hardware_status.xdxf"/>
 	<timing_source name="timing" url="timing_pvs.tim"/>
-	<tablegroup_source name="modelparams" url="model.params"/>
+	<tablegroup_source name="modelparams" url=“sns-model.params"/>
 	<optics_extra name="alignment" url="alignment.xdxf" />
 	<optics_extra name="Corrector Calibration" url="corrector-polarities.xdxf"/>
 	<optics_extra name="General Device Modifications" url="device-mods.xdxf" />
