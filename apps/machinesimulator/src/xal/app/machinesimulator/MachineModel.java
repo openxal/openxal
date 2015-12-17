@@ -195,7 +195,7 @@ public class MachineModel implements DataListener {
     		for ( SimulationHistoryRecord record : SIMULATION_HISTORY_RECORDS ) {   			
     			if ( record.getSelectState() ) {
     				seqs.add( record.getSequence() );
-    				hasSame = _sequence.getId().equals( record.getSequence().getId() );
+    				if( _sequence.getId().equals( record.getSequence().getId() ) ) hasSame = true;
     			}
     		}
     		
