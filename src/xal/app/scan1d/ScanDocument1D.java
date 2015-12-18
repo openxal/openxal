@@ -6,13 +6,10 @@
 package xal.app.scan1d;
 
 import java.net.*;
-import java.io.*;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -32,7 +29,6 @@ import xal.extension.application.util.PredefinedConfController;
 import xal.extension.application.smf.*;
 
 import xal.service.pvlogger.*;
-import xal.tools.database.*;
 
 /**
  *  ScanDocument1D is a custom XalDocument for 1D scan application. The document
@@ -181,9 +177,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	//-------------------------------------------------
 	//set Accelerator Action related members
 	//-------------------------------------------------
-
-	//accelerator data file
-	private File acceleratorDataFile = null;
 
 	//------------------------------------------
 	//SAVE RESTORE PART
@@ -805,7 +798,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	 *
 	 *@param  url  Description of the Parameter
 	 */
-	@SuppressWarnings( "unchecked" )		// cast needed for Enumeration since PVTreeNode does not support generic types
 	public void saveDocumentAs(URL url) {
 		//this is the place to write document to the persistent storage
 
@@ -1562,7 +1554,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	 *
 	 *@param  deleteIndex  The new colors value
 	 */
-	@SuppressWarnings( "unchecked" )		// cast needed for Enumeration since PVTreeNode does not support generic types
 	private void setColors(int deleteIndex) {
 		for (int i = 0, n = measuredValuesV.size(); i < n; i++) {
 			MeasuredValue mv_tmp = measuredValuesV.get(i);
@@ -1854,16 +1845,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 		 */
 		protected JPanel getJPanel() {
 			return paramPV_Panel;
-		}
-
-
-		/**
-		 *  Gets the format attribute of the ParameterPV_Controller object
-		 *
-		 *@return    The format value
-		 */
-		protected DecimalFormat getFormat() {
-			return valueFormat;
 		}
 
 
