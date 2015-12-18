@@ -1,23 +1,11 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Wed Dec 09 09:11:41 CST 2015" version="1.0.0">
+<BricksDocument date="Fri Dec 18 09:37:06 CST 2015" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="873" tag="MainWindow" width="1440">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
                 <ViewProxy type="javax.swing.Box_Vertical"/>
-                <ViewNode tag="Controls Bar">
-                    <ViewProxy type="javax.swing.Box_Horizontal"/>
-                    <BeanProperty name="inheritsPopupMenu" value="false"/>
-                    <BeanProperty height="28" name="maximumSize" width="32973"/>
-                    <ViewNode tag="Run Button">
-                        <ViewProxy type="javax.swing.JButton"/>
-                        <BeanProperty name="text" value="Run"/>
-                    </ViewNode>
-                    <ViewNode tag="Horizontal Glue">
-                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
-                    </ViewNode>
-                </ViewNode>
                 <ViewNode tag="Table Filter Box">
                     <ViewProxy type="javax.swing.Box_Horizontal"/>
                     <ViewNode tag="Label">

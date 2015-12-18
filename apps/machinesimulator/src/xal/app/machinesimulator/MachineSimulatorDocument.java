@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.*;
 
+import javax.swing.AbstractAction;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 import xal.extension.application.*;
@@ -18,6 +19,8 @@ import xal.smf.*;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.data.*;
 import xal.extension.bricks.WindowReference;
+import xal.extension.widgets.apputils.SimpleProbeEditor;
+import xal.model.probe.Probe;
 import xal.sim.scenario.Scenario;
 
 
@@ -44,6 +47,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
    final MachineModel MODEL;
    /** controller*/
    final MachineSimulatorController MACHINE_SIMULATOR_CONTROLLER;
+   /***/
+   private Probe<?> baseProbe;
    
    
     /** Empty Constructor */
@@ -96,6 +101,38 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	 * @param commander  The commander with which to register the custom commands.
 	 */
 	public void customizeCommands( Commander commander ) {
+		
+		//run model action
+		final AbstractAction runModelAction = new AbstractAction( "run-model" ) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				MACHINE_SIMULATOR_CONTROLLER.runModel();
+			}
+		};
+		
+		commander.registerAction( runModelAction );
+		
+		//probe editor
+		final AbstractAction probeEditor = new AbstractAction( "probe-editor" ) {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent e) {
+				if ( baseProbe != null ) {
+					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow(), baseProbe );					
+					baseProbe = probeEditor.getProbe();
+
+					Probe<?> currentProbe = baseProbe.copy();
+					currentProbe.initialize();
+					MODEL.getSimulator().setEntranceProbe( currentProbe );
+                }
+                else {
+                    //Sequence has not been selected
+                    displayError("Probe Editor Error", "You must select a sequence before attempting to edit the probe.");
+                }
+			}
+		};
+		
+		commander.registerAction( probeEditor );
 		
 		//register calculate phase slip button
 		final ToggleButtonModel calculatePhaseSlip = new ToggleButtonModel();
@@ -188,6 +225,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             if( USE_READ_BACK.isSelected() ) MODEL.setUseFieldReadback( true );
             if( USE_SET.isSelected() ) MODEL.setUseFieldReadback( false );
             setHasChanges( true );
+            
+            baseProbe = MODEL.getSimulator().getEntranceProbe();
         }
         catch ( Exception exception ) {
             exception.printStackTrace();

@@ -57,6 +57,8 @@ public class MachineSimulatorController implements MachineModelListener {
      final private DispatchTimer VALUE_SYNC_TIME;
      /**the legend name*/
      final private String[] LEGEND_NAME;
+     /**the run action*/
+     private ActionListener runAction;
      /**a map array from parameter's key to plot data list*/
      private Map<String, List<Double>> simDataForPlot;
      /**diagnostic plot datum*/
@@ -126,6 +128,11 @@ public class MachineSimulatorController implements MachineModelListener {
 		MODEL_VECTOR_PARAMETERS.add(new ModelVectorParameter( "BetatronPhase","phi","betatronPhase" ) );
         
       configureMainWindow(windowReference);
+	}
+	
+	/**run the model*/
+	public void runModel() {
+		runAction.actionPerformed( null );
 	}
 
 
@@ -480,9 +487,8 @@ public class MachineSimulatorController implements MachineModelListener {
       ClearButton.addActionListener(CLEAR_BUTTON);
 
 
-        // configure the run button
-        final JButton runButton = (JButton)windowReference.getView( "Run Button" );
-        runButton.addActionListener( new ActionListener() {
+        // configure the run action
+      runAction = new ActionListener() {
             public void actionPerformed( final ActionEvent event ) {                
                 if( MODEL.getSequence() != null ){
                    System.out.println( "running the model..." );
@@ -497,14 +503,12 @@ public class MachineSimulatorController implements MachineModelListener {
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
                 	//set records for history record table
                   HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
-                 
-//                  refresh.actionPerformed( null );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
 
             }
-        });
+        };
 
 		
 		//configure the remove button of the history record view
