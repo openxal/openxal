@@ -6,8 +6,6 @@
 package xal.app.scan1d;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
 import java.net.*;
 
 import xal.extension.application.*;
