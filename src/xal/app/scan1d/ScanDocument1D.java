@@ -1685,7 +1685,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	private class ParameterPV_Controller {
 
 		private ScanVariable scanVariableParameter = null;
-		private JTextField messageTextParamCntrl = new JTextField(10);
 
 		//-------------------------------------------------
 		//GUI elements
@@ -1809,7 +1808,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 		 *@param  messageTextParamCntrl  The new messageTextField value
 		 */
 		protected void setMessageTextField(JTextField messageTextParamCntrl) {
-			this.messageTextParamCntrl = messageTextParamCntrl;
 			scanVariableParameter.setMessageTextField(messageTextParamCntrl);
 		}
 
