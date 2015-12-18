@@ -202,7 +202,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	private String snapshotIdString = "Last Snapshot Id: ";
 	private JLabel snapshotIdLabel = new JLabel("No Snapshot", JLabel.LEFT);
 	private long snapshotId = -1;
-	private boolean pvLogged = false;
 
 
 	/**
@@ -485,10 +484,8 @@ public class ScanDocument1D extends AcceleratorDocument {
 			if (pv_logger_id != null && pv_logger_id.intValue("Id") > 0) {
 				snapshotId = pv_logger_id.intValue("Id");
 				snapshotIdLabel.setText(snapshotIdString + snapshotId + "  ");
-				pvLogged = true;
 			} else {
 				snapshotId = -1;
-				pvLogged = false;
 				snapshotIdLabel.setText(noSnapshotIdString);
 			}
 
@@ -1149,10 +1146,8 @@ public class ScanDocument1D extends AcceleratorDocument {
 					comments = comments + " = Scan1D =";
 					snapshotId = rL.takeAndPublishSnapshot( "default", comments);
 					if(snapshotId > 0){
-						pvLogged = true;
 						snapshotIdLabel.setText(snapshotIdString + snapshotId + "  ");
 					} else {
-						pvLogged = false;
 						snapshotIdLabel.setText("Unsuccessful PV Logging");
 					}
 				}
@@ -1162,7 +1157,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					snapshotId = -1;
-					pvLogged = false;
 					snapshotIdLabel.setText(noSnapshotIdString);
 				}
 			});
