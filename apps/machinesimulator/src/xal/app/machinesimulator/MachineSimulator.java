@@ -109,6 +109,11 @@ public class MachineSimulator implements DataListener {
         }
     }
     
+    /**Get the scenario*/
+    public Scenario getScenario() {
+    	return _scenario;
+    }
+    
 	/** Set the synchronization mode */    
     public void setSynchronizationMode(final String newMode){   	
     	if(_scenario != null) _scenario.setSynchronizationMode(newMode);
@@ -270,7 +275,7 @@ public class MachineSimulator implements DataListener {
 
     	for( NodePropertyRecord record : nodePropertyRecords){
     		try {
-				propertyValueForNode.put(record.getAcceleratorNode(), _scenario.propertiesForNode(record.getAcceleratorNode()));
+				propertyValueForNode.put( record.getAcceleratorNode(), _scenario.propertiesForNode( record.getAcceleratorNode() ) );
 			} catch (SynchronizationException e) {
 				e.printStackTrace();
 			}
@@ -291,7 +296,7 @@ public class MachineSimulator implements DataListener {
     	}
     	
     	for( final ModelInput newInput:newInputs ){
-    		_scenario.setModelInput(newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
+    		_scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
     	}
     	
     	modelInputs = newInputs;
@@ -343,11 +348,21 @@ public class MachineSimulator implements DataListener {
     
     
     /** Instructs the receiver to update its data based on the given adaptor. */
-    public void update( final DataAdaptor adaptor ) {
+    public void update( final DataAdaptor adaptor ) {   	
+    	setUseFieldReadback( adaptor.booleanValue( "useFieldReadBack" ) );
+    	runNumber = adaptor.intValue( "runNum" );
+    	if ( _scenario != null && adaptor.hasAttribute( "synchMode" ) ){
+    		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
+    	}
     }
     
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {    	
+    	adaptor.setValue( "useFieldReadBack", _useFieldReadback );
+    	adaptor.setValue( "runNum", runNumber );
+    	adaptor.setValue( "entranceProbe", _entranceProbe );
+    	adaptor.setValue( "synchMode", _scenario.getSynchronizationMode() );
+    	adaptor.setValue( "modelInput",  modelInputs );
     }
 }

@@ -10,13 +10,18 @@ package xal.app.machinesimulator;
 
 import xal.model.probe.traj.ProbeState;
 import xal.tools.beam.calc.SimResultsAdaptor;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.math.r3.R3;
 
 
 /** MachineSimulation is the simulation result for a simulation on an accelerator sequence  */
-public class MachineSimulationRecord {
+public class MachineSimulationRecord implements DataListener {
+	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "MachineSimulationRecord"; 
+	
 	/** probe state wrapped by this record */
 	private final ProbeState<?> PROBE_STATE;
 
@@ -71,5 +76,21 @@ public class MachineSimulationRecord {
 	/** get the state's betatron phase */
 	public R3 getBetatronPhase() {
 		return BETATRON_PHASE;
+	}
+	
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update(DataAdaptor adaptor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write(DataAdaptor adaptor) {
+
 	}
 }

@@ -100,14 +100,14 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	 * Register custom actions for the commands of this application
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	public void customizeCommands( Commander commander ) {
-		
+	public void customizeCommands( Commander commander ) {		
 		//run model action
 		final AbstractAction runModelAction = new AbstractAction( "run-model" ) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				MACHINE_SIMULATOR_CONTROLLER.runModel();
+				setHasChanges( true );
 			}
 		};
 		
@@ -124,6 +124,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 					Probe<?> currentProbe = baseProbe.copy();
 					currentProbe.initialize();
 					MODEL.getSimulator().setEntranceProbe( currentProbe );
+					
+					setHasChanges( true );
                 }
                 else {
                     //Sequence has not been selected
@@ -138,8 +140,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_DESIGN.setSelected(true);
 		USE_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-				MODEL.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
+				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
 				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "use-design",USE_DESIGN );
@@ -149,6 +153,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
 				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "use-rf_design",USE_RF_DESIGN );
@@ -158,6 +164,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
 				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "use-channel",USE_CHANNEL );
@@ -168,6 +176,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( false );
 				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "fieldSet",USE_SET );
@@ -177,6 +187,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( true );
 				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "fieldReadback",USE_READ_BACK );
@@ -233,7 +245,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     
     /** Instructs the receiver to update its data based on the given adaptor. */
-    public void update( final DataAdaptor adaptor ) {
+    public void update( final DataAdaptor adaptor ) {   	
 		if ( adaptor.hasAttribute( "acceleratorPath" ) ) {
 			final String acceleratorPath = adaptor.stringValue( "acceleratorPath" );
 			final Accelerator accelerator = applySelectedAcceleratorWithDefaultPath( acceleratorPath );
@@ -246,16 +258,25 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
         final DataAdaptor modelAdaptor = adaptor.childAdaptor( MachineModel.DATA_LABEL );
         if ( modelAdaptor != null )  MODEL.update( modelAdaptor );
+        
+        if ( MODEL.getSequence() != null ) {
+            if ( MODEL.getSimulator().getUseFieldReadback() ) USE_READ_BACK.setSelected( true );      
+            final String synchMode = MODEL.getSimulator().getScenario().getSynchronizationMode();
+            if ( synchMode.equals( Scenario.SYNC_MODE_LIVE ) ) USE_CHANNEL.setSelected( true );
+            else if ( synchMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) USE_RF_DESIGN.setSelected( true );
+            MODEL.modelScenarioChanged();
+        }
+
     }
     
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {   	
         adaptor.setValue( "version", "1.0.0" );
         adaptor.setValue( "date", new java.util.Date().toString() );
-		
-        adaptor.writeNode( MODEL );
-		
+	     
+        if( MODEL.getSequence() != null ) adaptor.writeNode( MODEL );
+        
 		if ( getAccelerator() != null ) {
 			adaptor.setValue( "acceleratorPath", getAcceleratorFilePath() );
 			

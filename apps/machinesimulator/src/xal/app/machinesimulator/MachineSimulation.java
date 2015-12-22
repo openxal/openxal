@@ -16,10 +16,14 @@ import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.tools.beam.calc.SimpleSimResultsAdaptor;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 
 /** MachineSimulation is the simulation result for a simulation on an accelerator sequence  */
-public class MachineSimulation {
+public class MachineSimulation implements DataListener {
+	 /** the data adaptor label used for reading and writing this document */
+	 static public final String DATA_LABEL = "MachineSimulation"; 
     /** states for every element */
     final List<MachineSimulationRecord> SIMULATION_RECORDS;
     
@@ -50,4 +54,20 @@ public class MachineSimulation {
     	}
     	return allPositions;
     }
+    
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update(DataAdaptor adaptor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write(DataAdaptor adaptor) {
+		adaptor.writeNodes( SIMULATION_RECORDS );
+	}
 }

@@ -29,11 +29,6 @@ public class NodePropertyHistoryRecord {
 		VALUES_SHOW = new TreeMap<Date,Double>();
 	}
 	
-	/**get the sequence name which the node belong to*/
-	public String getSequenceName(){
-		return NODE.getParent().getId();
-	}
-	
 	/**get the node*/
 	public AcceleratorNode getAcceleratorNode(){
 		return NODE;

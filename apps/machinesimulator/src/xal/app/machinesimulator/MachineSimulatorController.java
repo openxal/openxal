@@ -58,7 +58,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**the legend name*/
      final private String[] LEGEND_NAME;
      /**the run action*/
-     private ActionListener runAction;
+     private AbstractAction runAction;
      /**a map array from parameter's key to plot data list*/
      private Map<String, List<Double>> simDataForPlot;
      /**diagnostic plot datum*/
@@ -180,16 +180,16 @@ public class MachineSimulatorController implements MachineModelListener {
 /***************configure the history record view*****************************************/
         //configure history record table
         final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
-        historyRecordTable.setModel(HISTORY_RECORD_TABLE_MODEL);
+        historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("selectState", "Compare");
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("sequence.id", "Sequence" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName("dateTime", "Time" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "checkState", "Compare" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "sequence.id", "Sequence" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "dateTime", "Time" );
         
-        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Boolean.class, "selectState" );
-        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "selectState", "sequence.id", "dateTime", "recordName");
+        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Boolean.class, "checkState" );
+        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "checkState", "sequence.id", "dateTime", "recordName");
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
-        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "selectState", true );
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
         
         //configure history data table
         final JTable historyDataTable = (JTable)windowReference.getView( "History Data Table" );
@@ -488,8 +488,9 @@ public class MachineSimulatorController implements MachineModelListener {
 
 
         // configure the run action
-      runAction = new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {                
+      runAction = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+			public void actionPerformed( final ActionEvent event ) {                
                 if( MODEL.getSequence() != null ){
                    System.out.println( "running the model..." );
                    _sequence = MODEL.getSequence();
@@ -497,12 +498,12 @@ public class MachineSimulatorController implements MachineModelListener {
                 	
                   //set records and configure history data table
                   historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
-                		  MODEL.getColumnNames().get(_sequence), MODEL.getDiagRecords(), _sequence );
+                		  MODEL.getColumnNames().get( _sequence), MODEL.getDiagRecords(), _sequence );
                   
                 	//set records of states table
                 	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
                 	//set records for history record table
-                  HISTORY_RECORD_TABLE_MODEL.setRecords(MODEL.getSimulationHistoryRecords());
+                  HISTORY_RECORD_TABLE_MODEL.setRecords( MODEL.getSimulationHistoryRecords() );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
@@ -518,7 +519,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			int removed = 0;
 			int[] selRows = historyRecordTable.getSelectedRows();
 			for( int index = 0; index < selRows.length; index++ ){
-				records.get( selRows[index]-removed ).setSelectState( false );
+				records.get( selRows[index]-removed ).setCheckState( false );
 				records.remove( selRows[index]-removed );
 				removed++;
 			}
@@ -531,7 +532,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		selectAllButton.addActionListener( event -> {
 			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
 			for ( int index = 0; index < records.size();index++){
-				records.get( index ).setSelectState( true );
+				records.get( index ).setCheckState( true );
 			}
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, records.size()-1 );;
 		});
@@ -541,7 +542,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		unselectAllButton.addActionListener( event -> {
 			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
 			for ( int index = 0; index < records.size();index++){
-				records.get( index ).setSelectState( false );
+				records.get( index ).setCheckState( false );
 			}
 			HISTORY_DATA_TABLE_MODEL.setRecords(null);
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
@@ -645,7 +646,7 @@ public class MachineSimulatorController implements MachineModelListener {
     	
     	//unselect all the history records when changing the sequence 
 		for ( int index = 0; index < model.getSimulationHistoryRecords().size();index++){
-			model.getSimulationHistoryRecords().get( index ).setSelectState( false );
+			model.getSimulationHistoryRecords().get( index ).setCheckState( false );
 		}
 		
 		HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, model.getSimulationHistoryRecords().size()-1 );

@@ -152,7 +152,7 @@ public class MachineModel implements DataListener {
     	int index = 0;
     	if( SIMULATION_HISTORY_RECORDS.size() != 0 ){
         	for( SimulationHistoryRecord record: SIMULATION_HISTORY_RECORDS ){
-        		if( record.getSelectState() && record.getSequence().getId().equals( seq.getId() ) ){
+        		if( record.getCheckState() && record.getSequence().getId().equals( seq.getId() ) ){
         			machineSimulations[index++] = record.getSimulation();
         			if ( index == 2 ) break;
         		}		
@@ -193,7 +193,7 @@ public class MachineModel implements DataListener {
     	boolean hasSame = false;
     	if( SIMULATION_HISTORY_RECORDS.size() != 0 ) {
     		for ( SimulationHistoryRecord record : SIMULATION_HISTORY_RECORDS ) {   			
-    			if ( record.getSelectState() ) {
+    			if ( record.getCheckState() ) {
     				seqs.add( record.getSequence() );
     				if( _sequence.getId().equals( record.getSequence().getId() ) ) hasSame = true;
     			}
@@ -263,8 +263,7 @@ public class MachineModel implements DataListener {
 			changeHistoryRecordToShow( _sequence, time, true, nodePropertySnapshots );
 			changeDiagRecords( _sequence, time, true, SIMULATION_HISTORY_RECORDS.getFirst().getDiagSnapshots() );
 			
-		}
-		
+		}	
 		return _simulation;
 	}
 	
@@ -281,9 +280,9 @@ public class MachineModel implements DataListener {
 		return nodePropertySnapshots;
 	}
 	
-	/**add or delete values of NodePropertyHistoryRecord according to the select state of simulation history records*/
+	/**add or delete values of NodePropertyHistoryRecord according to the checked state of simulation history records*/
 	private List<NodePropertyHistoryRecord> changeHistoryRecordToShow( final AcceleratorSeq seq, final Date time,
-			final Boolean selectState, final List<NodePropertySnapshot> snapshots ){
+			final Boolean checkedState, final List<NodePropertySnapshot> snapshots ){
 		List<NodePropertyHistoryRecord> records = NODE_VALUES_TO_SHOW.get( seq );
 		if ( records.size() == 0 ){			
 			for ( final NodePropertySnapshot snapshot:snapshots){
@@ -295,7 +294,7 @@ public class MachineModel implements DataListener {
 		
 		for ( int index = 0 ; index<records.size(); index++ ){			
 			double value = snapshots.get( index ).getValue();
-			if ( selectState ) records.get( index ).addValue( time, value );
+			if ( checkedState ) records.get( index ).addValue( time, value );
 			else records.get( index ).removeValue( time );
 		}		
 		return records;
@@ -316,6 +315,7 @@ public class MachineModel implements DataListener {
     
     /** Instructs the receiver to update its data based on the given adaptor. */
     public void update( final DataAdaptor adaptor ) {
+    	
         final DataAdaptor simulatorAdaptor = adaptor.childAdaptor( MachineSimulator.DATA_LABEL );
         if ( simulatorAdaptor != null )  SIMULATOR.update( simulatorAdaptor );
     }
@@ -323,7 +323,8 @@ public class MachineModel implements DataListener {
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
     public void write( final DataAdaptor adaptor ) {
-        adaptor.writeNode( SIMULATOR );
+    	adaptor.writeNode( SIMULATOR );
+    	adaptor.writeNodes( SIMULATION_HISTORY_RECORDS );
     }
     
 	/**
@@ -344,9 +345,10 @@ public class MachineModel implements DataListener {
 	}
 
 /**to record the simulation history*/
- class SimulationHistoryRecord{
-	 
-	 /**The time when run simulation*/
+ class SimulationHistoryRecord implements DataListener {
+	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "SimulationHistoryRecord"; 
+	/**The time when run simulation*/
 	final private Date TIME;
 	/**time format*/
 	final private DateFormat DATE_FORMAT;
@@ -360,8 +362,8 @@ public class MachineModel implements DataListener {
 	final private MachineSimulation SIMULATION;
 	/**record name*/
 	private String recordName;
-	/**select state*/
-	private Boolean selectState;
+	/**checked state*/
+	private Boolean checkState;
 
 	/**Constructor*/
 	public SimulationHistoryRecord( final Date time ){
@@ -372,21 +374,21 @@ public class MachineModel implements DataListener {
 		DIAG_SNAPSHOT = _diagnosticConfiguration.snapshotValues();
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		recordName = " Run "+SIMULATOR.getRunNumber();
-		selectState = true;
+		checkState = true;
 		COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 	}
 	
-	/**get the select state*/
-	public Boolean getSelectState(){
-		return selectState;
+	/**get the check state*/
+	public Boolean getCheckState(){
+		return checkState;
 	}
 	
-	/**set the select state*/
-	public void setSelectState( final Boolean select ){
-		selectState = select;
-		changeHistoryRecordToShow(SEQUENCE, TIME, select, VALUES_SNAPSHOT);
-		changeDiagRecords(SEQUENCE, TIME, select, DIAG_SNAPSHOT);
-		if ( select ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
+	/**set the check state*/
+	public void setCheckState( final Boolean check ){
+		checkState = check;
+		changeHistoryRecordToShow(SEQUENCE, TIME, check, VALUES_SNAPSHOT);
+		changeDiagRecords(SEQUENCE, TIME, check, DIAG_SNAPSHOT);
+		if ( check ) COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
 		else COLUMN_NAME.get(SEQUENCE).remove(TIME);
 		AcceleratorSeq seq = getFirstSeq();
 		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ),DIAG_RECORDS.get(seq), seq );
@@ -430,11 +432,31 @@ public class MachineModel implements DataListener {
 
 	/**set the record name*/
 	public void setRecordName( final String newName ){
-		COLUMN_NAME.get(SEQUENCE).replace(TIME, newName);
+		COLUMN_NAME.get( SEQUENCE ).replace(TIME, newName);
 		AcceleratorSeq seq = getFirstSeq();
 		EVENT_PROXY.historyRecordSelectStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), DIAG_RECORDS.get(seq), seq );
 
 		recordName = newName;
+	}
+
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update(DataAdaptor adaptor) {
+		
+	}
+
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write(DataAdaptor adaptor) {
+		adaptor.setValue( "time", TIME.getTime() );
+		adaptor.setValue( "recordName", recordName );
+		adaptor.setValue( "acceleratorPath", SEQUENCE );
+		adaptor.writeNodes( VALUES_SNAPSHOT );
+		adaptor.writeNodes( DIAG_SNAPSHOT );
+		adaptor.writeNode( SIMULATION );
 	}
 		
 }

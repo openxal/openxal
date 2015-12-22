@@ -9,6 +9,8 @@ import java.util.List;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.BPM;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  * @author luxiaohan
@@ -84,7 +86,9 @@ public class DiagnosticConfiguration {
 		return diagRecords;
 	}
 	
-	class DiagnosticSnapshot {
+	class DiagnosticSnapshot implements DataListener {
+		/** the data adaptor label used for reading and writing this document */
+		static public final String DATA_LABEL = "DiagnosticSnapshot"; 
 		/**the node*/
 		final private AcceleratorNode NODE;
 		/**the values*/
@@ -127,6 +131,23 @@ public class DiagnosticConfiguration {
 		/**get the values' name*/
 		public String[] getNames() {
 			return NAMES;
+		}
+		
+
+		/** provides the name used to identify the class in an external data source. */
+		public String dataLabel() {
+			return DATA_LABEL;
+		}
+
+		/** Instructs the receiver to update its data based on the given adaptor. */
+		public void update(DataAdaptor adaptor) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/** Instructs the receiver to write its data to the adaptor for external storage. */
+		public void write(DataAdaptor adaptor) {
+
 		}
 		
 	}

@@ -4,14 +4,17 @@
 package xal.app.machinesimulator;
 
 import xal.smf.AcceleratorNode;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  * @author luxiaohan
  *record the value used for simulation
  */
-public class NodePropertySnapshot {
+public class NodePropertySnapshot implements DataListener {
 	
-	
+	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "NodePropertySnapshot";
 	/**accelerator node*/
 	final private AcceleratorNode NODE;
 	/**property name*/
@@ -44,6 +47,22 @@ public class NodePropertySnapshot {
 	/**get the value*/
 	public double getValue(){	
 		return VALUE;
+	}
+
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update(DataAdaptor adaptor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write(DataAdaptor adaptor) {
+
 	}
 
 }
