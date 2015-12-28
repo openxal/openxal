@@ -518,7 +518,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
         if (daptTraj == null)
             throw new ParsingException("Trajectory#readFrom() - DataAdaptor contains no trajectory node");
         
-        String type = container.stringValue(Trajectory.TYPE_LABEL);
+        String type = daptTraj.stringValue(Trajectory.TYPE_LABEL);
         Trajectory<? extends ProbeState<?>> trajectory;
         try {
             Class<?> trajectoryClass = Class.forName(type);

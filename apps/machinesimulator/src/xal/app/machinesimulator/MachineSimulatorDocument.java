@@ -47,9 +47,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
    final MachineModel MODEL;
    /** controller*/
    final MachineSimulatorController MACHINE_SIMULATOR_CONTROLLER;
-   /***/
-   private Probe<?> baseProbe;
-   
    
     /** Empty Constructor */
     public MachineSimulatorDocument() {
@@ -117,6 +114,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		final AbstractAction probeEditor = new AbstractAction( "probe-editor" ) {
 			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent e) {
+				Probe<?> baseProbe = MODEL.getSimulator().getEntranceProbe();
 				if ( baseProbe != null ) {
 					final SimpleProbeEditor probeEditor = new SimpleProbeEditor( getMainWindow(), baseProbe );					
 					baseProbe = probeEditor.getProbe();
@@ -221,14 +219,14 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** Handle the selected sequence changed event by displaying the elements of the selected sequence in the main window. */
     public void selectedSequenceChanged() {
-        try {
+        try {        	
             MODEL.setSequence( getSelectedSequence() );
             if( USE_RF_DESIGN.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
             if( USE_CHANNEL.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
             if( USE_READ_BACK.isSelected() ) MODEL.setUseFieldReadback( true );
             if( USE_SET.isSelected() ) MODEL.setUseFieldReadback( false );
             setHasChanges( true );
-            baseProbe = MODEL.getSimulator().getEntranceProbe();
+
         }
         catch ( Exception exception ) {
             exception.printStackTrace();
@@ -244,7 +242,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     
     /** Instructs the receiver to update its data based on the given adaptor. */
-    public void update( final DataAdaptor adaptor ) {   	
+    public void update( final DataAdaptor adaptor ) {
 		if ( adaptor.hasAttribute( "acceleratorPath" ) ) {
 			final String acceleratorPath = adaptor.stringValue( "acceleratorPath" );
 			final Accelerator accelerator = applySelectedAcceleratorWithDefaultPath( acceleratorPath );

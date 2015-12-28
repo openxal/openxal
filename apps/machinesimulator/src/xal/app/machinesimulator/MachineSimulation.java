@@ -15,6 +15,7 @@ import java.util.List;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
+import xal.model.xml.ParsingException;
 import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
@@ -26,10 +27,31 @@ public class MachineSimulation implements DataListener {
 	 static public final String DATA_LABEL = "MachineSimulation"; 
     /** states for every element */
     final List<MachineSimulationRecord> SIMULATION_RECORDS;
+    /**the trajectory*/
+    private Trajectory<?> trajectory;
     
 	/** Constructor */
     public MachineSimulation( final Probe<?> probe ) {
-        final Trajectory<?> trajectory = probe.getTrajectory();
+        trajectory = probe.getTrajectory();
+		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
+
+        SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
+        final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
+        while ( stateIter.hasNext() ) {
+            final ProbeState<?> state = stateIter.next();
+			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
+            SIMULATION_RECORDS.add( simulationRecord );
+        }
+    }
+    
+    /**Constructor with adaptor*/
+    public MachineSimulation ( final DataAdaptor adaptor ) {    	
+    	try {
+			trajectory = Trajectory.readFrom( adaptor );
+		} catch (ParsingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
 
         SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
@@ -46,7 +68,7 @@ public class MachineSimulation implements DataListener {
         return SIMULATION_RECORDS;
     }
  
-/** get all the element's position in selected sequence ----xiaohan add*/
+    /** get all the element's position in selected sequence ----xiaohan add*/
     public List<Double> getAllPositions(){
       List<Double> allPositions = new ArrayList<Double>(SIMULATION_RECORDS.size());
     	for(final MachineSimulationRecord record:SIMULATION_RECORDS){
@@ -62,12 +84,10 @@ public class MachineSimulation implements DataListener {
 
 	/** Instructs the receiver to update its data based on the given adaptor. */
 	public void update(DataAdaptor adaptor) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
-	public void write(DataAdaptor adaptor) {
-		adaptor.writeNodes( SIMULATION_RECORDS );
+	public void write( DataAdaptor adaptor ) {		
+		trajectory.save( adaptor );
 	}
 }

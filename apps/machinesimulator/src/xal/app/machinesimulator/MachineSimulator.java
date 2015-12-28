@@ -13,6 +13,7 @@ import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
+import xal.model.xml.ParsingException;
 import xal.sim.scenario.*;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
@@ -319,8 +320,7 @@ public class MachineSimulator implements DataListener {
 	public MachineSimulation run() {
 		try {
 			_isRunning = true;
-			final Probe<?> probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
-
+			final Probe<?> probe = copyProbe( _entranceProbe );	// perform a deep copy of the entrance probe leaving the entrance probe unmodified
             _scenario.setProbe( probe );
 			_scenario.resync();
 			_scenario.run();
@@ -355,6 +355,13 @@ public class MachineSimulator implements DataListener {
     	if ( _scenario != null && adaptor.hasAttribute( "synchMode" ) ){
     		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
     	}
+    	
+    	try {
+			_entranceProbe = Probe.readFrom( adaptor );
+		} catch (ParsingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     
@@ -363,7 +370,6 @@ public class MachineSimulator implements DataListener {
     	adaptor.setValue( "useFieldReadBack", _useFieldReadback );
     	adaptor.setValue( "runNum", runNumber );
     	adaptor.setValue( "synchMode", _scenario.getSynchronizationMode() );
-    	
-    	adaptor.setValue( "entranceProbe", _entranceProbe );
+    	_entranceProbe.save( adaptor );
     }
 }

@@ -362,7 +362,7 @@ public class MachineModel implements DataListener {
 	/**the records of diagnostic data*/
 	final private List<DiagnosticSnapshot> DIAG_SNAPSHOTS;
 	/**the simulation result*/
-	final private MachineSimulation SIMULATION;
+	private MachineSimulation SIMULATION;
 	/**record name*/
 	private String recordName;
 	/**checked state*/
@@ -477,6 +477,9 @@ public class MachineModel implements DataListener {
 		for ( final DataAdaptor diagSnapshotsAdaptor : diagSnapshotsAdaptors ) {
 			DIAG_SNAPSHOTS.add( new DiagnosticSnapshot( diagSnapshotsAdaptor ) );
 		}
+		
+		final DataAdaptor simAdaptor = adaptor.childAdaptor( MachineSimulation.DATA_LABEL );	
+		SIMULATION = new MachineSimulation( simAdaptor );
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
