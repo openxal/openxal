@@ -47,7 +47,7 @@ import xal.tools.beam.PhaseVector;
  *  <p>
  *  Homogeneous coordinates are parameterizations of the projective spaces <b>P</b><sup><i>n</i></sup>.
  *  They are
- *  useful here to allow vector transpositions, normally produced by vector addition, to 
+ *  useful here to allow vector translations, normally produced by vector addition, to 
  *  be represented as matrix multiplications.  These operations can be embodied by 
  *  <code>PhaseMatrix</code>.  Thus, <code>PhaseMatrix</code> objects can represent any 
  *  linear operation, including translation, on <code>PhaseVector</code> objects.
@@ -61,13 +61,6 @@ import xal.tools.beam.PhaseVector;
  *  @see    SquareMatrix
  *  @see    PhaseVector
  *  @see    CovarianceMatrix
- */
-/**
- * Class <code></code>.
- *
- *
- * @author Christopher K. Allen
- * @since  Oct 16, 2013
  */
 public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Serializable {
 

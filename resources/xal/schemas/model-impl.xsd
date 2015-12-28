@@ -18,6 +18,8 @@
 						<xs:sequence>
 							<xs:element name="default" type="className"/>
 							<xs:element name="drift" type="className"/>
+							<xs:element name="rfcavdrift" type="className" minOccurs="0"/>
+                            <xs:element name="sequence" type="className" minOccurs="0"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

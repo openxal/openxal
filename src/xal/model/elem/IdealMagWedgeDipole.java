@@ -28,7 +28,9 @@ import xal.smf.impl.Bend;
  * @see xal.model.elem#IdealMagSectorDipole
  * @see xal.model.elem#IdealMagDipoleFace
  *
+ * @deprecated  This class has been replaced by <code>IdealMagWedgeDipole2</code>
  */
+@Deprecated
 public class IdealMagWedgeDipole extends ElectromagnetSeq {
 
 
@@ -309,7 +311,7 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
 		
-		Bend magnet = (Bend) element.getNode();		
+		Bend magnet = (Bend) element.getHardwareNode();		
 
 		// xal.model.elem.ThickDipole xalDipole =
 		// new xal.model.elem.ThickDipole();

@@ -9,7 +9,7 @@ import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.RfCavityBucket;
 import xal.smf.attr.RfGapBucket;
 import xal.smf.impl.qualify.ElementTypeManager;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 
 /**
@@ -273,6 +273,16 @@ public class RfGap extends AcceleratorNode {
     
     /** 
      * return Rf Gap Length
+     * 
+     *  <p>
+     *  <h4>CKA NOTES:</h4>
+     *  &middot; I believe this is the length of the overall gap cell
+     *  structure, not just the gap itself.
+     *  <br/>
+     *  &middot; Specifically, it is the distance from one gap center
+     *  to the next in an accelerating structure.
+     *  </p>
+     *
      */
     public double getGapLength() {
         return m_bucRfGap.getLength() ;
@@ -309,8 +319,26 @@ public class RfGap extends AcceleratorNode {
  
  // the RfGapDataSource interface methods:
 
-   /** return a polynomial fit of the transit time factor as a function of beta */  
-    public UnivariateRealPolynomial getTTFFit() { 
+   /** 
+    * return a polynomial fit of the transit time factor as a function of beta
+    *  
+    * <p>
+    * <h4>CKA NOTES:</h4>
+    * &middot; It appears to me that the returned value of <i>T</i>'(&beta;) is 
+    * in the units of <b>centimeters</b>.
+    * <br/>
+    * &middot; The units for the transit time factor <i>T</i>(&beta;) are in
+    * <b>meters</b>.
+    * <br/>
+    * &middot; This is a confusing inconsistency and hopefully we can resolve this
+    * in the future.
+    * <br/>
+    * &middot; The modeling element <code>IdealRfGap</code> uses the magic number
+    * of 0.01 as a factor in front of <code>{@link #getTTFPrimeFit()}</code>.
+    * </p>
+    * 
+    */  
+    public RealUnivariatePolynomial getTTFFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
 	if(isEndCell()) {
 		return rfCav.getTTFFitEnd();
@@ -319,61 +347,121 @@ public class RfGap extends AcceleratorNode {
 	else
 		return rfCav.getTTFFit();
     }
-   /** return a polynomial fit of the TTF-prime factor as a function of beta */  
-    public UnivariateRealPolynomial getTTFPrimeFit() { 
+
+    /** 
+     * return a polynomial fit of the TTF-prime factor as a function of beta
+     * 
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * &middot; It appears to me that the returned value of <i>T</i>'(&beta;) is 
+     * in the units of <b>centimeters</b>.
+     * <br/>
+     * &middot; The units for the transit time factor <i>T</i>(&beta;) are in
+     * <b>meters</b>.
+     * <br/>
+     * &middot; This is a confusing inconsistency and hopefully we can resolve this
+     * in the future.
+     * <br/>
+     * &middot; The modeling element <code>IdealRfGap</code> uses the magic number
+     * of 0.01 as a factor in front of <code>{@link #getTTFPrimeFit()}</code>.
+     * <br/>
+     * &middot; Equally distressing is that the code within <code>IdealRfGap</code>,
+     * the modeling element for an RF gap, treats this value as if it where the
+     * derivative with respect to wave number <i>k</i>.  That is, the returned
+     * value here is &part;<i>T</i>(&beta;)/&part;<i>k</i>.
+     * </p>
+     * 
+     */  
+    public RealUnivariatePolynomial getTTFPrimeFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
-	if (isEndCell())
-		return rfCav.getTTFPrimeFitEnd();
-		//return rfCav.getTTFPrimeFit();
-	else
-		return rfCav.getTTFPrimeFit();
+        if (isEndCell())
+            return rfCav.getTTFPrimeFitEnd();
+        //return rfCav.getTTFPrimeFit();
+        else
+            return rfCav.getTTFPrimeFit();
     } 
- 
-  /** return a polynomial fit of the S factor as a function of beta */  
-    public UnivariateRealPolynomial getSFit() { 
+
+    /** 
+     * return a polynomial fit of the S factor as a function of beta 
+     * 
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * &middot; It appears to me that the returned value of <i>S</i>'(&beta;) is 
+     * in the units of <b>centimeters</b>.
+     * <br/>
+     * &middot; The units for the transit time factor <i>S</i>(&beta;) are in
+     * <b>meters</b>.
+     * <br/>
+     * &middot; This is a confusing inconsistency and hopefully we can resolve this
+     * in the future.
+     * <br/>
+     * &middot; The modeling element <code>IdealRfGap</code> uses the magic number
+     * of 0.01 as a factor in front of <code>{@link #getSTFPrimeFit()}</code>.
+     * </p>
+     * 
+     */  
+    public RealUnivariatePolynomial getSFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
-	if (isEndCell())
-		return rfCav.getSTFFitEnd();
-		//return rfCav.getSTFFit();
-	else
-		return rfCav.getSTFFit();
+        if (isEndCell())
+            return rfCav.getSTFFitEnd();
+        //return rfCav.getSTFFit();
+        else
+            return rfCav.getSTFFit();
     }
-   /** return a polynomial fit of the S-prime factor as a function of beta */  
-    public UnivariateRealPolynomial getSPrimeFit() { 
+    
+    /** 
+     * return a polynomial fit of the S-prime factor as a function of beta 
+     * 
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * &middot; It appears to me that the returned value of <i>S</i>'(&beta;) is 
+     * in the units of <b>centimeters</b>.
+     * <br/>
+     * &middot; The units for the transit time factor <i>S</i>(&beta;) are in
+     * <b>meters</b>.
+     * <br/>
+     * &middot; This is a confusing inconsistency and hopefully we can resolve this
+     * in the future.
+     * <br/>
+     * &middot; The modeling element <code>IdealRfGap</code> uses the magic number
+     * of 0.01 as a factor in front of <code>{@link #getSTFPrimeFit()}</code>.
+     * </p>
+     * 
+     */  
+    public RealUnivariatePolynomial getSPrimeFit() { 
         RfCavity rfCav = (RfCavity) this.getParent();
-	if (isEndCell()) 
-		return rfCav.getSTFPrimeFitEnd();
-		//return rfCav.getSTFPrimeFit();
-	
-	else
-		return rfCav.getSTFPrimeFit();
+        if (isEndCell()) 
+            return rfCav.getSTFPrimeFitEnd();
+        //return rfCav.getSTFPrimeFit();
+
+        else
+            return rfCav.getSTFPrimeFit();
     }    
-    
- 
-	/** returns 0 if the gap is part of a 0 mode cavity structure (e.g. DTL)
-	* returns 1 if the gap is part of a pi mode cavity (e.g. CCL, Superconducting)
-	*/
-	
-	public double getStructureMode() {
-		RfCavity rfCav = (RfCavity) this.getParent();
-		return rfCav.getStructureMode();
-	}    
-    
+
+    /** returns 0 if the gap is part of a 0 mode cavity structure (e.g. DTL)
+     * returns 1 if the gap is part of a pi mode cavity (e.g. CCL, Superconducting)
+     */
+
+    public double getStructureMode() {
+        RfCavity rfCav = (RfCavity) this.getParent();
+        return rfCav.getStructureMode();
+    }    
+
     /** 
      *  these may be different, for example, for a DTL cavity 
      * @return the offset of the gap center from the cell center (m) 
      */
     public double getGapOffset() { 
-	    return  m_bucRfGap.getGapOffset();
+        return  m_bucRfGap.getGapOffset();
     }
-    
+
     /** sets the flag indicating whether this is the first gap in a cavity */
     public void setFirstGap(boolean tf) { firstGap = tf;}
-    
+
     /** returns whether this is the first gap of a cavity string */
     public boolean isFirstGap() {return firstGap;}
-    
-    /** returns whether this is the first gap of a cavity string */
+
+    /** returns whether this is the <b>last</b> gap of a cavity string */
     public boolean isEndCell() {
 	    if (m_bucRfGap.getEndCell() == 1)
 		    return true;

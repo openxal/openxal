@@ -10,12 +10,13 @@ import java.io.PrintWriter;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IRfGap;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.RfGap;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.RelativisticParameterConverter;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 /**
  *  <p>
@@ -136,22 +137,22 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	/**
 	 *  fit of the TTF vs. beta
 	 */
-	private UnivariateRealPolynomial TTFFit;
+	private RealUnivariatePolynomial TTFFit;
 
 	/**
 	 *  fit of the TTF-prime vs. beta
 	 */
-	private UnivariateRealPolynomial TTFPrimeFit;
+	private RealUnivariatePolynomial TTFPrimeFit;
 
 	/**
 	 *  fit of the S factor vs. beta
 	 */
-	private UnivariateRealPolynomial SFit;
+	private RealUnivariatePolynomial SFit;
 
 	/**
 	 *  fit of the S-prime vs. beta
 	 */
-	private UnivariateRealPolynomial SPrimeFit;
+	private RealUnivariatePolynomial SPrimeFit;
 
 	/**
 	 *  Creates a new instance of IdealRfGap
@@ -673,7 +674,7 @@ public class IdealRfGap extends ThinElement implements IRfGap {
 	@Override
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);		
-		RfGap rfgap = (RfGap) element.getNode();
+		RfGap rfgap = (RfGap) element.getHardwareNode();
 		
 	    // Initialize from source values
 	    initialGap = rfgap.isFirstGap();

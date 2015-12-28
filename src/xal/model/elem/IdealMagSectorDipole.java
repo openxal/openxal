@@ -12,11 +12,10 @@ import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
 import xal.tools.beam.optics.QuadrupoleLens;
-
 import xal.tools.math.ElementaryFunction;
-
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IElectromagnet;
 
 /**
  * Represents a thick magnetic dipole magnet for a beam in a sector 
@@ -37,7 +36,10 @@ import xal.model.ModelException;
  * 
  * @see "D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)"
  * @see "H. Wiedemann, Particle Accelerator Physics I, 2nd Ed. (Springer, 1999)"   
+ *     
+ * @deprecated  This class has been replaced by <code>IdealMagSectorDipole2</code>
  */
+@Deprecated
 public class IdealMagSectorDipole extends ThickElectromagnet {
 
 

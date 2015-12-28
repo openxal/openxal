@@ -88,11 +88,19 @@ public final class ElementaryFunction {
     }
     
     /**
+     * <p>
      * Test if two <code>double</code> precision numbers are in the same ball
      * of radius <i>r</i>.
+     * </p>
+     * <p>
+     * <h4>NOTES CKA</h4>
+     * &middot; This is really a distance function and not a topological one.
+     * </p>
      * 
-     * @param   x    double precision number
-     * @param   y    double precision number
+     * 
+     * @param   x   double precision number
+     * @param   y   double precision number
+     * @param   r   radius defining the size of the neighborhood
      * 
      * @return  true of |<i>y</i> - <i>x</i>| <= <i>r</i>, false otherwise
      */
@@ -145,7 +153,7 @@ public final class ElementaryFunction {
         
         int     intFac = 1;
         
-        for (int i=n; i>0; i++)  
+        for (int i=n; i>0; i--)  
             intFac *= i;
             
         return intFac;
