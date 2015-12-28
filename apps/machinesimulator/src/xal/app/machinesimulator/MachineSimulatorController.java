@@ -61,7 +61,7 @@ public class MachineSimulatorController implements MachineModelListener {
      private AbstractAction runAction;
      /**a map array from parameter's key to plot data list*/
      private Map<String, List<Double>> simDataForPlot;
-     /**diagnostic plot datum*/
+     /**diagnostic plot data*/
      private Map<String, List<Double>> diagDataForPlot;
      /**the positions of diagnostic device*/
      private List<Double> diagPosition;
@@ -74,7 +74,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**the list of NodePropertyRecord*/
      private List<NodePropertyRecord> nodePropertyRecords;
      /**the list of diagnostic records*/
-     private List<DiagnosticRecord> diagDatum;
+     private List<DiagnosticRecord> diagData;
      /**the key paths for diagnostic records*/
      private String[] keyPathsForDiagRecord;
      /** the position list of elements*/
@@ -133,6 +133,11 @@ public class MachineSimulatorController implements MachineModelListener {
 	/**run the model*/
 	public void runModel() {
 		runAction.actionPerformed( null );
+	}
+	
+	/**change simulation history records*/
+	public void changeSimHistoryRecords ( final List<SimulationHistoryRecord> simHistoryRecords ) {
+		HISTORY_RECORD_TABLE_MODEL.setRecords( simHistoryRecords );
 	}
 
 
@@ -195,11 +200,11 @@ public class MachineSimulatorController implements MachineModelListener {
         final JTable historyDataTable = (JTable)windowReference.getView( "History Data Table" );
         historyDataTable.setModel( HISTORY_DATA_TABLE_MODEL );
         
-        HISTORY_DATA_TABLE_MODEL.setColumnName( "acceleratorNode.id" , "Node" );
+        HISTORY_DATA_TABLE_MODEL.setColumnName( "nodeId" , "Node" );
         HISTORY_DATA_TABLE_MODEL.setColumnName( "propertyName", "Property" );
         
         HISTORY_DATA_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        HISTORY_DATA_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
+        HISTORY_DATA_TABLE_MODEL.setMatchingKeyPaths( "nodeId" );
         
 /**********************configure the diagnostics history view***********************************/
         final JTable diagLiveTable = (JTable)windowReference.getView( "Diag Live Table" );
@@ -264,7 +269,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		String[] paramsForBPM = new String[]{ BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
-			if ( diagDatum != null && diagDatum.size() != 0 && keyPathsForDiagRecord.length>3 ) {				
+			if ( diagData != null && diagData.size() != 0 && keyPathsForDiagRecord.length>3 ) {				
 				int leg = keyPathsForDiagRecord.length;
 				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
 				for ( int index = 0; index < leg-3; index++ ){
@@ -273,18 +278,18 @@ public class MachineSimulatorController implements MachineModelListener {
 				}				
 				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );				
 				keyPathsForDiagDiff = keyPathsForDiagPlot.subList( 1, keyPathsForDiagPlot.size() );
-				diagDataForPlot = configureParametersData( diagDatum, keyPathsForDiagPlot );
-				diagPosition = filDiagDatum( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(0), diagDataForPlot );				
+				diagDataForPlot = configureParametersData( diagData, keyPathsForDiagPlot );
+				diagPosition = filDiagData( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(0), diagDataForPlot );				
 				int upLimit = keyPathsForDiagPlot.size()-1;
 				for ( int index = 0; index < upLimit; index++ ) {
 					if ( xSelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition, 
-								filDiagDatum( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(index+1), diagDataForPlot ),
+								filDiagData( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(index+1), diagDataForPlot ),
 								(upLimit-1-index)+typeForBPM+paramsForBPM[0], LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
 						_machineSimulatorPlot.showPlot( diagPosition,
-								filDiagDatum(typeForBPM, paramsForBPM[1], keyPathsForDiagPlot.get( index+1 ), diagDataForPlot ),
+								filDiagData(typeForBPM, paramsForBPM[1], keyPathsForDiagPlot.get( index+1 ), diagDataForPlot ),
 								(upLimit-1-index)+typeForBPM+paramsForBPM[1], LEGEND_NAME[upLimit-1-index] );
 					}
 				}
@@ -306,12 +311,12 @@ public class MachineSimulatorController implements MachineModelListener {
 							String keyDiag = keyPathsForDiagDiff.get( index+1 );
 							if ( xSelectionCheckbox.isSelected() ) {
 								_machineSimulatorPlot.showPlot( diagPosition, 
-										filDiagDatum(typeForBPM, paramsForBPM[0], keyDiag, diagDiff ),
+										filDiagData(typeForBPM, paramsForBPM[0], keyDiag, diagDiff ),
 										typeForBPM+paramsForBPM[0], legName );
 							}
 							if ( ySelectionCheckbox.isSelected() ) {
 								_machineSimulatorPlot.showPlot( diagPosition,
-										filDiagDatum(typeForBPM, paramsForBPM[1], keyDiag, diagDiff ),
+										filDiagData(typeForBPM, paramsForBPM[1], keyDiag, diagDiff ),
 										typeForBPM+paramsForBPM[1], legName );
 							}
 							index++;
@@ -497,13 +502,13 @@ public class MachineSimulatorController implements MachineModelListener {
                 	final MachineSimulation simulation = MODEL.runSimulation();
                 	
                   //set records and configure history data table
-                  historyRecordSelectStateChanged( MODEL.getNodePropertyHistoryRecords().get(_sequence),
+                  historyRecordCheckStateChanged( MODEL.getNodePropertyHistoryRecords().get( _sequence ),
                 		  MODEL.getColumnNames().get( _sequence), MODEL.getDiagRecords(), _sequence );
                   
                 	//set records of states table
-                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords(simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
-                	//set records for history record table
-                  HISTORY_RECORD_TABLE_MODEL.setRecords( MODEL.getSimulationHistoryRecords() );
+                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords( simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
+                	//change records for history record table
+                  changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
                      }
                 else JOptionPane.showMessageDialog(windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
@@ -573,56 +578,56 @@ public class MachineSimulatorController implements MachineModelListener {
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
     private <T> Map<String, List<Double>> configureParametersData( final List<T> records,final List<String> keyPaths ){
-      final Map<String, List<Double>> datum = new HashMap<String, List<Double>>();     
+      final Map<String, List<Double>> data = new HashMap<String, List<Double>>();     
     	for( final String keyPath:keyPaths ){
-    		datum.put( keyPath, new ArrayList<Double>( records.size() ) );
+    		data.put( keyPath, new ArrayList<Double>( records.size() ) );
     		for( final T record:records ){
-    			datum.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
+    			data.get(keyPath).add( (Double)KEY_VALUE_ADAPTOR.valueForKeyPath( record,keyPath ) );
     		}
     	}   	
-    	return datum;
+    	return data;
     }
     
     /**
-     * calculate the difference of two records' datum
+     * calculate the difference of two records' data
      * @param keyPaths the key paths 
-     * @param datum the datum array include two records' datum
-     * @return the difference datum
+     * @param data the data array include two records' data
+     * @return the difference data
      */
-    private Map<String,List<Double>> calculateDiff( final List<String> keyPaths, final Map<String, List<Double>> datum ) {
-    	Map<String, List<Double>> diffDatum = new HashMap<String, List<Double>>();
+    private Map<String,List<Double>> calculateDiff( final List<String> keyPaths, final Map<String, List<Double>> data ) {
+    	Map<String, List<Double>> diffData = new HashMap<String, List<Double>>();
     	for ( int index = 0; index< keyPaths.size(); index++) {
-    		List<Double> newValues = datum.get( keyPaths.get( index+1 ) );
-    		List<Double> oldValues = datum.get( keyPaths.get( index ) );
+    		List<Double> newValues = data.get( keyPaths.get( index+1 ) );
+    		List<Double> oldValues = data.get( keyPaths.get( index ) );
     		List<Double> diff = new ArrayList<Double>();
 			for( int valueIndex = 0; valueIndex<newValues.size(); valueIndex++ ){							
 				diff.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
 			}
-			diffDatum.put( keyPaths.get( index+1 ), diff );
+			diffData.put( keyPaths.get( index+1 ), diff );
 			index++;
     	}
-    	return diffDatum;
+    	return diffData;
     }
     
     /**
-     * filter the diagnostic datum with the node type, parameter and record keyPath 
+     * filter the diagnostic data with the node type, parameter and record keyPath 
      * @param type the type of one node
      * @param param one parameter of one node
      * @param keyPath the key path of records
-     * @param datumForFil the data source
+     * @param dataForFil the data source
      * @return the filtered values map with specified keyPath
      */
-    private List<Double> filDiagDatum( final String type, final String param, final String keyPath,
-    		final Map<String, List<Double>> datumForFil ) {
-    	List<Double> filDatum =  new ArrayList<Double>();
-    	List<Double> values = datumForFil.get( keyPath );
-    	for ( int index = 0; index< diagDatum.size(); index++ ) {
-    		DiagnosticRecord record = diagDatum.get( index );
+    private List<Double> filDiagData( final String type, final String param, final String keyPath,
+    		final Map<String, List<Double>> dataForFil ) {
+    	List<Double> filData =  new ArrayList<Double>();
+    	List<Double> values = dataForFil.get( keyPath );
+    	for ( int index = 0; index< diagData.size(); index++ ) {
+    		DiagnosticRecord record = diagData.get( index );
     		if ( record.getNode().getType().equals( type ) && record.getValueName().equals(param) ) {
-    			filDatum.add( values.get( index ) );
+    			filData.add( values.get( index ) );
     		}
     	}
-    	return filDatum;
+    	return filData;
     }
     
     /**get a runnalbe that syncs the values */
@@ -644,6 +649,7 @@ public class MachineSimulatorController implements MachineModelListener {
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
     	}
     	
+    	if ( model.getSimulationHistoryRecords().size() == 0 ) refresh.actionPerformed( null );
     	//unselect all the history records when changing the sequence 
 		for ( int index = 0; index < model.getSimulationHistoryRecords().size();index++){
 			model.getSimulationHistoryRecords().get( index ).setCheckState( false );
@@ -665,12 +671,12 @@ public class MachineSimulatorController implements MachineModelListener {
 	}
 
 	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
+	public void historyRecordCheckStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
 			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq ) {
 		
 		int columnNumber = (columnName != null ) ? columnName.size() : 0;
 		String[] historyDataKeyPaths = new String[columnNumber+2];
-        historyDataKeyPaths[0] = "acceleratorNode.id";
+        historyDataKeyPaths[0] = "nodeId";
         historyDataKeyPaths[1] = "propertyName";
 		keyPathsForDiagRecord = new String[columnNumber+3];
 		   keyPathsForDiagRecord[0] = "node.id";
@@ -702,7 +708,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 		_sequence = seq;
 		
-		diagDatum = dRecords;
+		diagData = dRecords;
 
 		refresh.actionPerformed(null);
 		

@@ -221,14 +221,13 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
     
     /** Handle the selected sequence changed event by displaying the elements of the selected sequence in the main window. */
     public void selectedSequenceChanged() {
-        try {        	
+        try {
             MODEL.setSequence( getSelectedSequence() );
             if( USE_RF_DESIGN.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
             if( USE_CHANNEL.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
             if( USE_READ_BACK.isSelected() ) MODEL.setUseFieldReadback( true );
             if( USE_SET.isSelected() ) MODEL.setUseFieldReadback( false );
             setHasChanges( true );
-            
             baseProbe = MODEL.getSimulator().getEntranceProbe();
         }
         catch ( Exception exception ) {
@@ -265,7 +264,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             if ( synchMode.equals( Scenario.SYNC_MODE_LIVE ) ) USE_CHANNEL.setSelected( true );
             else if ( synchMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) USE_RF_DESIGN.setSelected( true );
             MODEL.modelScenarioChanged();
-        }
+            }
+        
+        MACHINE_SIMULATOR_CONTROLLER.changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
 
     }
     

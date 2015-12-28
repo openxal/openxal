@@ -11,7 +11,7 @@ import xal.smf.AcceleratorNode;
 
 /**
  * @author luxiaohan
- *Record diagnostic data
+ *Record diagnostic data 
  */
 public class DiagnosticRecord {
 	/**the node to record*/

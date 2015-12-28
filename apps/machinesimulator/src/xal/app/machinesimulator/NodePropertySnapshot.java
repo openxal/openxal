@@ -3,7 +3,6 @@
  */
 package xal.app.machinesimulator;
 
-import xal.smf.AcceleratorNode;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
 
@@ -15,28 +14,30 @@ public class NodePropertySnapshot implements DataListener {
 	
 	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "NodePropertySnapshot";
-	/**accelerator node*/
-	final private AcceleratorNode NODE;
+	/**accelerator node id*/
+	final private String NODE_ID;
 	/**property name*/
 	final private String PROPERTY_NAME;
 	/**the value*/
 	final private double VALUE;
 	
 	/**Constructor*/
-	public NodePropertySnapshot( final AcceleratorNode node, final String propertyName, final double value ){
-		NODE = node;		
+	public NodePropertySnapshot( final String nodeId, final String propertyName, final double value ){
+		NODE_ID = nodeId;		
 		PROPERTY_NAME = propertyName;
 		VALUE = value ;
 	}
 	
-	/**get the sequence name which the node belong to*/
-	public String getSequenceName(){
-		return NODE.getParent().getId();
+	/**Constructor with adaptor*/
+	public NodePropertySnapshot ( final DataAdaptor adaptor ) {
+		NODE_ID = adaptor.hasAttribute( "nodeId" ) ? adaptor.stringValue( "nodeId" ) : "*Data missing*";
+		PROPERTY_NAME = adaptor.hasAttribute( "propertyName" ) ? adaptor.stringValue( "propertyName" ) : "*Data missing*";
+		VALUE = adaptor.hasAttribute( "value" ) ? adaptor.doubleValue( "value" ) : Double.NaN;
 	}
 	
-	/**get the node*/
-	public AcceleratorNode getAcceleratorNode(){
-		return NODE;
+	/**get the node id*/
+	public String getNodeId(){
+		return NODE_ID;
 	}
 	
 	/**get property name*/
@@ -56,13 +57,13 @@ public class NodePropertySnapshot implements DataListener {
 
 	/** Instructs the receiver to update its data based on the given adaptor. */
 	public void update(DataAdaptor adaptor) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
 	public void write(DataAdaptor adaptor) {
-
+		adaptor.setValue( "nodeId", NODE_ID );
+		adaptor.setValue( "propertyName", PROPERTY_NAME );
+		adaptor.setValue( "value", VALUE );
 	}
 
 }

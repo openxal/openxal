@@ -9,8 +9,6 @@ import java.util.List;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.BPM;
-import xal.tools.data.DataAdaptor;
-import xal.tools.data.DataListener;
 
 /**
  * @author luxiaohan
@@ -65,9 +63,9 @@ public class DiagnosticConfiguration {
 		List<DiagnosticSnapshot> snapshots = new ArrayList<DiagnosticSnapshot>();
 		for ( final DiagnosticAgent diag : DIAGS ) {
 			if ( diag.getCheckState() ) {
-				snapshots.add( new DiagnosticSnapshot( diag.getNode(),diag.getNames(), diag.getValues() ) );
+				snapshots.add( new DiagnosticSnapshot( diag.getNode().getId(),diag.getNames(), diag.getValues() ) );
 			}
-			else snapshots.add( new DiagnosticSnapshot( diag.getNode(), diag.getNames() ) );
+			else snapshots.add( new DiagnosticSnapshot( diag.getNode().getId(), diag.getNames() ) );
 		}
 
 		return snapshots;
@@ -84,72 +82,6 @@ public class DiagnosticConfiguration {
 			}
 		}
 		return diagRecords;
-	}
-	
-	class DiagnosticSnapshot implements DataListener {
-		/** the data adaptor label used for reading and writing this document */
-		static public final String DATA_LABEL = "DiagnosticSnapshot"; 
-		/**the node*/
-		final private AcceleratorNode NODE;
-		/**the values*/
-		final private Double[] VALUES;
-		/**the values' name*/
-		final private String[] NAMES;
-		
-		/**Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names ) {
-			NODE = node;
-			NAMES = names;
-			VALUES = new Double[names.length];
-			initialValues();
-		}
-		
-		/** Constructor*/
-		public DiagnosticSnapshot( final AcceleratorNode node, final String[] names, final Double[] values ) {
-			NODE = node;
-			VALUES = values;
-			NAMES = names;
-		}
-		
-		/**initialize the values to Double.NaN*/
-		private void initialValues() {
-			for ( int index = 0; index < VALUES.length; index++ ){
-				VALUES[index] =  Double.NaN;
-			}
-		}
-		
-		/**get the node*/
-		public AcceleratorNode getNode() {
-			return NODE;
-		}
-		
-		/**get the values*/
-		public Double[] getValues() {
-			return VALUES;
-		}
-		
-		/**get the values' name*/
-		public String[] getNames() {
-			return NAMES;
-		}
-		
-
-		/** provides the name used to identify the class in an external data source. */
-		public String dataLabel() {
-			return DATA_LABEL;
-		}
-
-		/** Instructs the receiver to update its data based on the given adaptor. */
-		public void update(DataAdaptor adaptor) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/** Instructs the receiver to write its data to the adaptor for external storage. */
-		public void write(DataAdaptor adaptor) {
-
-		}
-		
 	}
 
 }

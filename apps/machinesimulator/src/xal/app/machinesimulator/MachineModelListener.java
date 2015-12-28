@@ -21,8 +21,8 @@ public interface MachineModelListener {
 	/**event indicates that the scenario has changed*/
 	public void modelScenarioChanged(final MachineModel model);
 	
-	/**event indicates that the history record select state changed*/
-	public void historyRecordSelectStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
+	/**event indicates that the history record check state changed*/
+	public void historyRecordCheckStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
 			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq );
 
 }

@@ -7,31 +7,29 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import xal.smf.AcceleratorNode;
-
 /**
  * @author luxiaohan
- * record the values used for simulation
+ * record the values used for simulations
  */
 public class NodePropertyHistoryRecord {
 	
-	/**accelerator node*/
-	final private AcceleratorNode NODE;
+	/**accelerator node id*/
+	final private String NODE_ID;
 	/**property name*/
 	final private String PROPERTY_NAME;
 	/**the list of values to show*/
 	final private Map<Date, Double> VALUES_SHOW;
 	
 	/**Constructor*/
-	public NodePropertyHistoryRecord( final AcceleratorNode node, final String propertyName ){
-		NODE = node;	
+	public NodePropertyHistoryRecord( final String nodeId, final String propertyName ){
+		NODE_ID = nodeId;	
 		PROPERTY_NAME = propertyName;
 		VALUES_SHOW = new TreeMap<Date,Double>();
 	}
 	
-	/**get the node*/
-	public AcceleratorNode getAcceleratorNode(){
-		return NODE;
+	/**get the node id*/
+	public String getNodeId(){
+		return NODE_ID;
 	}
 	
 	/**get property name*/

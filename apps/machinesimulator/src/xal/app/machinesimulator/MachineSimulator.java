@@ -291,11 +291,11 @@ public class MachineSimulator implements DataListener {
      * @param newInputs The new modelInputs which we are going to set
      */
     private void changeModelInputs( final List<ModelInput> oldInputs, final List<ModelInput> newInputs ){
-    	for( final ModelInput oldInput:oldInputs ){
+    	for( final ModelInput oldInput : oldInputs ){
     		_scenario.removeModelInput( oldInput.getAcceleratorNode(), oldInput.getProperty() );
     	}
     	
-    	for( final ModelInput newInput:newInputs ){
+    	for( final ModelInput newInput : newInputs ){
     		_scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
     	}
     	
@@ -348,9 +348,10 @@ public class MachineSimulator implements DataListener {
     
     
     /** Instructs the receiver to update its data based on the given adaptor. */
-    public void update( final DataAdaptor adaptor ) {   	
-    	setUseFieldReadback( adaptor.booleanValue( "useFieldReadBack" ) );
-    	runNumber = adaptor.intValue( "runNum" );
+    public void update( final DataAdaptor adaptor ) {
+    	boolean useFieldRb = adaptor.hasAttribute( "useFieldReadBack" ) ? adaptor.booleanValue( "useFieldReadBack" ) : false;
+    	setUseFieldReadback( useFieldRb );
+    	if ( adaptor.hasAttribute( "runNum" ) ) runNumber = adaptor.intValue( "runNum" );
     	if ( _scenario != null && adaptor.hasAttribute( "synchMode" ) ){
     		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
     	}
@@ -361,8 +362,8 @@ public class MachineSimulator implements DataListener {
     public void write( final DataAdaptor adaptor ) {    	
     	adaptor.setValue( "useFieldReadBack", _useFieldReadback );
     	adaptor.setValue( "runNum", runNumber );
-    	adaptor.setValue( "entranceProbe", _entranceProbe );
     	adaptor.setValue( "synchMode", _scenario.getSynchronizationMode() );
-    	adaptor.setValue( "modelInput",  modelInputs );
+    	
+    	adaptor.setValue( "entranceProbe", _entranceProbe );
     }
 }

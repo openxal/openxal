@@ -110,8 +110,8 @@ public class DiagnosticAgent {
 		return HANDLE[2];
 	}
  	/**get values of all the channels,divide 1000 to convert mm to meters，the same below*/
-	public Double[] getValues() {
-		Double[] values = new Double[ HANDLE.length ];
+	public double[] getValues() {
+		double[] values = new double[ HANDLE.length ];
 		for ( int index = 0; index < HANDLE.length; index++ ){
 			if ( MONITORS[index] == null ) values[index] = Double.NaN;
 			else values[index] =  MONITORS[index].getLatestValue()*SCALES[index];
@@ -120,17 +120,17 @@ public class DiagnosticAgent {
 	}
 	
 	/**get the value of x plane*/
-	public Double getValueX() {
+	public double getValueX() {
 		return ( MONITORS[0] == null ) ? Double.NaN : MONITORS[0].getLatestValue()*SCALES[0];
 	}
 	
 	/**get the value of y plane*/
-	public Double getValueY() {
+	public double getValueY() {
 		return ( MONITORS[1] == null ) ? Double.NaN : MONITORS[1].getLatestValue()*SCALES[1];
 	}
 	
 	/**get the value of z plane*/
-	public Double getValueZ() {
+	public double getValueZ() {
 		return ( MONITORS[2] == null ) ? Double.NaN : MONITORS[2].getLatestValue()*SCALES[2];
 	}
 
