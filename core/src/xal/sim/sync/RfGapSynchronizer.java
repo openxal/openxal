@@ -6,7 +6,7 @@ package xal.sim.sync;
 import java.util.Map;
 
 import xal.model.IElement;
-import xal.model.elem.IRfGap;
+import xal.model.elem.sync.IRfGap;
 import xal.smf.proxy.RfGapPropertyAccessor;
 
 /**

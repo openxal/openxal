@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IElectromagnet;
 import xal.tools.beam.PhaseMap;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.DriftSpace;
@@ -50,7 +51,7 @@ public class IdealDrift extends ThickElement {
 	
 	
     /*
-     *  Global Attributes
+     *  Global Constants
      */
     
     /** string type identifier for all IdealDrift objects */
@@ -74,6 +75,19 @@ public class IdealDrift extends ThickElement {
      * Initialization
      */
     
+    /**
+     * Constructor for subclasses of <code>IdealDrift</code>.
+     *  
+     * @param strType   string type identifier of the child class
+     * @param strId     string identifier of the child object
+     * @param dblLen    length of the new drift object
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    protected IdealDrift(String strType, String strId, double dblLen) {
+        super(strType, strId, dblLen);
+    }
+
     /** 
      *  Creates a new instance of IdealDrift 
      *
@@ -85,15 +99,18 @@ public class IdealDrift extends ThickElement {
     };
     
     /** 
-     *  JavaBean constructor - creates a new unitialized instance of IdealDrift
+     *  JavaBean constructor - creates a new uninitialized instance of IdealDrift
      *
      *  <b>BE CAREFUL</b>
      */
     public IdealDrift() {
         super(s_strType);
     };
+    
 
-
+    /*
+     * Attribute Queries
+     */
     
     /**
      * I guess this is the strength of the adjacent PMQ quadrupole

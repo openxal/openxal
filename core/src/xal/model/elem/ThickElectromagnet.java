@@ -1,5 +1,6 @@
 package xal.model.elem;
 
+import xal.model.elem.sync.IElectromagnet;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.Magnet;
 
@@ -92,7 +93,7 @@ public abstract class ThickElectromagnet extends ThickElement implements IElectr
    @Override
 	public void initializeFrom(LatticeElement latticeElement) {
 	   	super.initializeFrom(latticeElement);
-	   	Magnet magnetNode =  (Magnet)latticeElement.getNode();			
+	   	Magnet magnetNode =  (Magnet)latticeElement.getHardwareNode();			
 		int orientation = IElectromagnet.ORIENT_NONE;
 		if (magnetNode.isHorizontal()) {
 			orientation = IElectromagnet.ORIENT_HOR;

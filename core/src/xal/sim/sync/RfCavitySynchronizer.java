@@ -6,10 +6,12 @@ package xal.sim.sync;
 import java.util.Map;
 
 import xal.model.IElement;
-import xal.model.elem.IRfCavity;
+import xal.model.elem.sync.IRfCavity;
 import xal.smf.proxy.RfCavityPropertyAccessor;
 
 /**
+ * TODO CKA Add PROPERTY_FREQUENCY property synchronizer??
+ * 
  * @author Craig McChesney
  */
 public class RfCavitySynchronizer implements Synchronizer {

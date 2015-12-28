@@ -88,7 +88,7 @@ public class RfCavityBucket extends AttributeBucket {
     /** quadratic fit coefficients for the "S transit time factor" prime as a function of beta for the end cells (constant, linear, quad) */
     private Attribute   m_attSTFPrime_endCoefs;
     
-    /** flag for the structure type (0 or pi mode) */
+    /** flag for the structure type (0 or pi mode) (CKA pi mode has a value 1/2) */
     private Attribute m_attStructureMode;
     
     /** quality factor with all external contribution */

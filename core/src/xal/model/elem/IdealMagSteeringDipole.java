@@ -306,7 +306,7 @@ public class IdealMagSteeringDipole extends ThinElectromagnet {
 	@Override
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
-		Magnet magnet = (Magnet) element.getNode();
+		Magnet magnet = (Magnet) element.getHardwareNode();
 		setEffLength(magnet.getEffLength());		
 	}
 }

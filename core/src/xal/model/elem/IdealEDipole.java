@@ -806,7 +806,7 @@ public class IdealEDipole extends ThickElectrostatic
   public void initializeFrom(LatticeElement element) {
 	super.initializeFrom(element);				
 	 
-	EDipole edp = (EDipole) element.getNode();
+	EDipole edp = (EDipole) element.getHardwareNode();
 	double len_sect = element.getLength();		
 	double len_path0 = edp.getDfltPathLength();
 	double ang_bend0 = edp.getDfltBendAngle() * Math.PI / 180.0;

@@ -118,19 +118,94 @@ public class Lattice extends ElementSeq {
     }
     
 
+    /*
+     *  Attribute Queries
+     */
+    
+    /**
+     *  Get the version of the lattice
+     *  
+     *  @return     lattice revision number
+     */
+    public String   getVersion()        { return m_strVersion==null? "":m_strVersion; }
+    
+    /**
+     *  Get the author of the lattice definition
+     *
+     *  @return     lattice author
+     */
+    public String   getAuthor()         { return m_strAuthor==null? "":m_strAuthor; }
+    
+    /**
+     *  Get the date of lattice description
+     *
+     *  @return     lattice model date
+     */
+    public String   getDate()           { return m_strDate==null? "":m_strDate; }
+    
+    
+    
+    /**
+     * Return a list of the <code>RingModel</code> objects contained in this model.
+     *  
+     * @return  ordered list of all <code>RingModel</code> objects within model
+     * 
+     * @deprecated  This method is never used
+     */
+    @Deprecated
+    public List<RingModel> getRings()  {
+        List<RingModel> lstRings = new LinkedList<RingModel>();
+        
+        Iterator<IComponent> iterLoc = this.localIterator();
+        while (iterLoc.hasNext())   {
+            IComponent  iComp = iterLoc.next();
+            
+            if (iComp instanceof RingModel) 
+                lstRings.add((RingModel)iComp);
+        }
+        
+        return lstRings;
+    }
 
     /**
-     * This does nothing at the moment.
-     * <strike>Add a new line to the model</strike>.
+     * Return a list of the <code>LineModel</code> objects contained in this model.
+     *  
+     * @return  ordered list of all <code>LineModel</code> objects within model
      * 
-     * @param mdlLine   ignored
-     * 
-     * @see xal.model.IComponent#propagate(xal.model.IProbe)
-     */    
-    public void addLine(LineModel mdlLine)  {
+     * @deprecated This method is never used.
+     */
+    @Deprecated
+    public List<LineModel> getLines()  {
+        List<LineModel> lstRings = new LinkedList<LineModel>();
         
+        Iterator<IComponent> iterLoc = this.localIterator();
+        while (iterLoc.hasNext())   {
+            IComponent  iComp = iterLoc.next();
+            
+            if (iComp instanceof LineModel) 
+                lstRings.add((LineModel)iComp);
+        }
+        
+        return lstRings;
     }
+        
     
+    /*
+     * Operations
+     */
+    
+//    /**
+//     * This does nothing at the moment.
+//     * <strike>Add a new line to the model</strike>.
+//     * 
+//     * @param mdlLine   ignored
+//     * 
+//     * @see xal.model.IComponent#propagate(xal.model.IProbe)
+//     */    
+//    public void addLine(LineModel mdlLine)  {
+//        
+//    }
+//    
     
     /*
      *  IComposite Interface
@@ -144,10 +219,19 @@ public class Lattice extends ElementSeq {
 //    public String getType() { return s_strType==null? "":s_strType; }
     
     /**
+     * <p>
      *  Propagate a probe through the lattice.  The probe is first initialized by calling
      *  the <code>initialize()</code> method of the probe then updated by calling the
      *  <code>update()</code> method in order to save the initial state of the probe 
      *  into its trajectory.
+     *  </p>
+     *  <p>
+     *  I have removed the pre- and post- process from this method and put it into
+     *  the <code>{@link Scenario}</code> class, specifically the 
+     *  <code>{@link Scenario#run()}</code> method.  Changing the state of a
+     *  probe is not the agenda of a model element (or element sequence), only
+     *  of an algorithm object.
+     *  </p>  
      *
      *  @param  probe   the state of the probe will be advance using the elements dynamics
      *
@@ -156,12 +240,12 @@ public class Lattice extends ElementSeq {
     @Override
     public void propagate(IProbe probe) throws ModelException {   
 
-        probe.initialize();
-        probe.update();
+//        probe.initialize();
+//        probe.update();
 //        System.out.println("Lattice.propaget called");
         super.propagate(probe);
-		
-		probe.performPostProcessing();
+//		
+//		probe.performPostProcessing();
     }
     
     /**
@@ -194,81 +278,12 @@ public class Lattice extends ElementSeq {
         System.out.println("Lattice.backPropagate called");
         super.backPropagate(probe);
         
-        probe.performPostProcessing();
+//        probe.performPostProcessing();
     }
-    
-    /*
-     *  Lattice Operations
-     */
-    
-    /**
-     *  Get the version of the lattice
-     *  
-     *  @return     lattice revision number
-     */
-    public String   getVersion()        { return m_strVersion==null? "":m_strVersion; }
-    
-    /**
-     *  Get the author of the lattice definition
-     *
-     *  @return     lattice author
-     */
-    public String   getAuthor()         { return m_strAuthor==null? "":m_strAuthor; }
-    
-    /**
-     *  Get the date of lattice description
-     *
-     *  @return     lattice model date
-     */
-    public String   getDate()           { return m_strDate==null? "":m_strDate; }
-    
-    
-    
-    /**
-     * Return a list of the <code>RingModel</code> objects contained in this model.
-     *  
-     * @return  ordered list of all <code>RingModel</code> objects within model
-     */
-    public List<RingModel> getRings()  {
-        List<RingModel> lstRings = new LinkedList<RingModel>();
-        
-        Iterator<IComponent> iterLoc = this.localIterator();
-        while (iterLoc.hasNext())   {
-            IComponent  iComp = iterLoc.next();
-            
-            if (iComp instanceof RingModel) 
-                lstRings.add((RingModel)iComp);
-        }
-        
-        return lstRings;
-    }
-
-        
-    /**
-     * Return a list of the <code>LineModel</code> objects contained in this model.
-     *  
-     * @return  ordered list of all <code>LineModel</code> objects within model
-     */
-    public List<LineModel> getLines()  {
-        List<LineModel> lstRings = new LinkedList<LineModel>();
-        
-        Iterator<IComponent> iterLoc = this.localIterator();
-        while (iterLoc.hasNext())   {
-            IComponent  iComp = iterLoc.next();
-            
-            if (iComp instanceof LineModel) 
-                lstRings.add((LineModel)iComp);
-        }
-        
-        return lstRings;
-    }
-        
-    
     
     /*
      *  Testing and Debugging
      */
-    
     
     /**
      * Returns a DOM document for the lattice.
