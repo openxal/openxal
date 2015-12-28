@@ -12,7 +12,6 @@ import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.ParticleProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
 
 import junit.framework.Test;

@@ -23,7 +23,6 @@ import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
 import xal.test.ResourceTools;
 import xal.tools.beam.PhaseMatrix;

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ModelConfig.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="model-impl.xsd">
 	<elements>
 		<default type="fake.package.model.Default"/>
 		<drift type="fake.package.model.Drift"/>
+		<rfcavdrift type="fake.package.model.RfCavDrift"/>
+		<sequence type="fake.package.model.Sector"/>
 	</elements>
 	<associations>
 		<map smf="fake.package.Map1" model="fake.package.model.Map1"/>

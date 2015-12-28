@@ -14,6 +14,7 @@
  */
 package xal.model.elem;
 
+import xal.model.elem.sync.IElectromagnet;
 import xal.smf.Accelerator;
 
 /**

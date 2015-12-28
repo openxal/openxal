@@ -16,7 +16,7 @@ import xal.smf.attr.AttributeBucket;
 import xal.smf.attr.RfCavityBucket;
 import xal.smf.impl.qualify.ElementTypeManager;
 import xal.tools.data.DataAdaptor;
-import xal.tools.math.poly.UnivariateRealPolynomial;
+import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
 
 
 
@@ -60,10 +60,12 @@ public class RfCavity extends AcceleratorSeq {
      * </p>
      * <h3>NOTE:</h3>
      * <p>
-     *  I don't understand the point of this, an 
-     * <code>RfCavityStruct</code> is an <code>AcceleratorSeq</code> which is
+     * An <code>RfCavityStruct</code> is an <code>AcceleratorSeq</code> which is
      * already an ordered list of <code>AcceleratorNode</code>s.  This
      * attribute and any reliance on it seems dangerously redundant.
+     * <h4>NOTE:</h4>
+     * This appears to be used to process the gaps and only the gaps within this
+     * cavity structure. 
      * </p>
      */
     protected List<RfGap> _gaps;  // rf gaps within this multi-gap device
@@ -102,7 +104,9 @@ public class RfCavity extends AcceleratorSeq {
     
     /** Register accelerator node type for qualification */
     private static void registerType() {
-        ElementTypeManager.defaultManager().registerTypes( RfCavity.class, s_strType, "rfcavity" );
+        ElementTypeManager typeManager = ElementTypeManager.defaultManager();
+        typeManager.registerType( RfCavity.class, s_strType );
+        typeManager.registerType( RfCavity.class, "rfcavity" );
     }
     
     
@@ -335,6 +339,8 @@ public class RfCavity extends AcceleratorSeq {
 	
     
     /**
+     * CKA - Never used
+     * 
      * @return default (design) average cavity TTF 
      * (averaged over all RF gaps in the cavity)
      */
@@ -506,51 +512,51 @@ public class RfCavity extends AcceleratorSeq {
     }
     
     /** return a polynomial fit of the transit time factor as a function of beta */  
-    public UnivariateRealPolynomial getTTFFit() { 
+    public RealUnivariatePolynomial getTTFFit() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getTTFCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getTTFCoefs());
     }
 
     /** return a polynomial fit of the transit time factor prime as a function of beta */  
-    public UnivariateRealPolynomial getTTFPrimeFit() { 
+    public RealUnivariatePolynomial getTTFPrimeFit() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getTTFPrimeCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getTTFPrimeCoefs());
     }   
     
     /** return a polynomial fit of the "S" transit time factor as a function of beta */  
-    public UnivariateRealPolynomial getSTFFit() { 
+    public RealUnivariatePolynomial getSTFFit() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getSTFCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getSTFCoefs());
     }
 
     /** return a polynomial fit of the "S" transit time factor prime as a function of beta */  
-    public UnivariateRealPolynomial getSTFPrimeFit() { 
+    public RealUnivariatePolynomial getSTFPrimeFit() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getSTFPrimeCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getSTFPrimeCoefs());
     } 
       
    /** return a polynomial fit of the transit time factor for end cells as a function of beta */  
-    public UnivariateRealPolynomial getTTFFitEnd() { 
+    public RealUnivariatePolynomial getTTFFitEnd() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getTTF_endCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getTTF_endCoefs());
     }
 
     /** return a polynomial fit of the transit time factor prime for end cells as a function of beta */  
-    public UnivariateRealPolynomial getTTFPrimeFitEnd() { 
+    public RealUnivariatePolynomial getTTFPrimeFitEnd() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getTTFPrime_endCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getTTFPrime_endCoefs());
     }   
     
     /** return a polynomial fit of the "S" transit time factor for end cells as a function of beta */  
-    public UnivariateRealPolynomial getSTFFitEnd() { 
+    public RealUnivariatePolynomial getSTFFitEnd() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getSTF_endCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getSTF_endCoefs());
     }
 
     /** return a polynomial fit of the "S" transit time factor prime for end cells as a function of beta */  
-    public UnivariateRealPolynomial getSTFPrimeFitEnd() { 
+    public RealUnivariatePolynomial getSTFPrimeFitEnd() { 
 	    RfCavityBucket rfCavBuc = this.getRfField();
-	    return new UnivariateRealPolynomial(rfCavBuc.getSTFPrime_endCoefs());
+	    return new RealUnivariatePolynomial(rfCavBuc.getSTFPrime_endCoefs());
     } 
     
  	/** returns 0 if the gap is part of a 0 mode cavity structure (e.g. DTL)

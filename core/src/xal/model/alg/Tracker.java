@@ -339,11 +339,15 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /** version of this algorithm */
     private int                 m_intVersion;
     
-    /** list of all probe classes recognized by this algorithm */
+    /** 
+     * List of all probe classes recognized by this algorithm 
+     */
     private List<Class<? extends IProbe>>   m_lstProbes;
 
-     /** flag to track the beam phase in multi gap cavities */
-     private boolean            m_bolCalcRfGapPhase = false;
+    /** 
+     * flag to track the beam phase in multi gap cavities 
+     */
+    private boolean            m_bolCalcRfGapPhase = false;
 
     /*
      * Tracker Settings
@@ -394,12 +398,14 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     /** 
      * The tracking position of the within the current element    
      */
-    private double      m_dblPosElem = 0;
+    private double      m_dblPosElem = 0.0;
     
     /**
-     * Class type of the probe
+     * Class type of the current probe.
+     * @deprecated This property is never used 
      */
-    private Class<? extends IProbe> probeType;
+    @Deprecated
+    private Class<? extends IProbe>         probeType;
     
     /*
      * Initialization
@@ -515,8 +521,41 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         return this.bolInclStopElem;
     }
     
+//    /**
+//     * TODO CKA - Remove, never used.
+//     * 
+//     * @author Christopher K. Allen
+//     * @since  Oct 20, 2014
+//     */
+//    public Class<? extends IProbe> getProbeType() {
+//        return probeType;
+//    }
+    
+    
+    /*
+     *  Abstract Methods
+     */
+    
     /**
-     * TODO CKA - Remove, never used.
+     * <p>
+     * The implementation must propagate the probe through the element 
+     * according to the dynamics of the 
+     * specific algorithm.  Derived classes must implement this method but the
+     * <code>Tracker</code> base provided convenient methods for this implementation.
+     * </p>
+     * <p>
+     * NOTE:
+     * <br/>The protected method 
+     * <code>advanceProbe(IProbe, IElement, double)</code>
+     * is available for derived classes.  It is a convenience method
+     * for performing many of the common tasks in the forward propagation 
+     * of any probe.  Thus, its use is not required.
+     * </p>
+     *
+     *  @param  probe   probe to propagate
+     *  @param  elem    element acting on probe
+     *
+     *  @exception  ModelException  invalid probe type or error in advancing probe
      * 
      * @author Christopher K. Allen
      * @since  Oct 20, 2014
@@ -848,26 +887,32 @@ public abstract class Tracker implements IAlgorithm, IArchive {
     {
 
         // Initial conditions of the probe
-        double  s0 = probe.getPosition();
-        double  t0 = probe.getTime();
-        double  W0 = probe.getKineticEnergy();
+        double  s0   = probe.getPosition();
+        double  t0   = probe.getTime();
+        double  phi0 = probe.getLongitinalPhase();
+        double  W0   = probe.getKineticEnergy();
         
         // Properties of the element
-        double  L  = dblLen;
-        double  dT = elem.elapsedTime(probe, dblLen);
-        double  dW = elem.energyGain(probe, dblLen);
+        double  dL   = dblLen;
+        double  dT   = elem.elapsedTime(probe, dblLen);
+        double  dphi = elem.longitudinalPhaseAdvance(probe, dblLen);
+        double  dW   = elem.energyGain(probe, dblLen);
         
         // Advance the probe position and energy
-        double  s1 = s0 + L;
-        double  t1 = t0 + dT;
-        double  W1 = W0 + dW;
+        double  s1   = s0 + dL;
+        double  t1   = t0 + dT;
+        double  phi1 = phi0 + dphi;
+        double  W1   = W0 + dW;
         
         probe.setPosition(s1);
         probe.setTime(t1);
+        probe.setLongitudinalPhase(phi1);
         probe.setKineticEnergy(W1);
         
+        // The algorithm "element position" is also set in Element#propagate() ??!!
+        this.setElemPosition(this.getElemPosition() + dL);
+
         // Update probe trajectory
-        this.setElemPosition(this.getElemPosition() + L);
         if (this.getProbeUpdatePolicy() == Tracker.UPDATE_ALWAYS)
             probe.update();
     };

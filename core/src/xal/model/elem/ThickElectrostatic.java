@@ -1,5 +1,6 @@
 package xal.model.elem;
 
+import xal.model.elem.sync.IElectrostatic;
 import xal.sim.scenario.LatticeElement;
 import xal.smf.impl.Electrostatic;
 
@@ -116,7 +117,7 @@ public abstract class ThickElectrostatic extends ThickElement implements IElectr
    @Override
 	public void initializeFrom(LatticeElement latticeElement) {
 	   	super.initializeFrom(latticeElement);
-	   	Electrostatic magnetNode =  (Electrostatic)latticeElement.getNode();			
+	   	Electrostatic magnetNode =  (Electrostatic)latticeElement.getHardwareNode();			
 		int orientation = IElectrostatic.ORIENT_NONE;
 		if (magnetNode.isHorizontal()) {
 			orientation = IElectrostatic.ORIENT_HOR;
