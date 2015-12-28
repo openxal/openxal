@@ -40,12 +40,12 @@ import java.util.Date;
  * @author  Christopher K. Allen
  */
 public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive {
+
+    
     /*
-     * global attributes
+     * Global Constants
      */
      
-    /* for archive operations*/
-    
     /** element tag for probe data */
     public static final String PROBE_LABEL = "probe";
     
@@ -83,38 +83,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     
     
     /*
-     *  Local Attributes
+     * Global Methods
      */
-    
-    /** User comment associated with probe */
-    private String  m_strComment = "";
-    
-    /** Time stamp associated with probe */
-    private Date    m_dateStamp = new Date();
-
-	/** Species name */
-	private String m_speciesName = "";
-
-    /** toggle trajHist tracking for a probe */
-    private boolean         bolTrack = true;
-    
-    /** initial state of probe, set when initialize is called */
-    private S               stateInit;
-    
-    /** current state of the probe - defines the probe */
-    protected S             stateCurrent;
-    
-    /** Current probe trajHist */
-    protected Trajectory<S> trajHist;
-    
-    /** algorithm providing probe dynamics */
-    private IAlgorithm  algTracker = null;
-    
-    
-    /*
-     * Factory Methods
-     */
-    
     
     /**
      * Read the contents of the supplied <code>DataAdaptor</code> and return
@@ -201,11 +171,63 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
             return null;
             
         }
-		
-//		pNew.initializeFrom( probeInit );
+        
+//      pNew.initializeFrom( probeInit );
     }
+    
+    
+    
+    /*
+     *  Local Attributes
+     */
+    
+    //
+    //  Probe Properties
+    //
+    
+    /** User comment associated with probe */
+    private String      m_strComment = "";
+    
+    /** Time stamp associated with probe */
+    private Date        m_dateStamp = new Date();
+
+	/** Species name */
+	private String     m_speciesName = "";
+
 	
+	//
+	// Probe Settings
+	//
 	
+    /** toggle trajHist tracking for a probe */
+    private boolean         bolTrack = true;
+
+    /** algorithm providing probe dynamics */
+    private IAlgorithm  algTracker = null;
+    
+    
+    //
+    // Probe State
+    //
+    
+    /** initial state of probe, set when initialize is called */
+    private S               stateInit;
+    
+    /** current state of the probe - defines the probe */
+    protected S             stateCurrent;
+    
+    /** Current probe trajHist */
+    protected Trajectory<S> trajHist;
+    
+//    /**
+//     * The the currently tracked probe exited the last RF gap - needed when CalcRfGapPhase is <code>true</code> 
+//     */
+//    private double      dblRfGapExitTime = 0.0;
+//    
+//    /** The phase shift at the last RF gap due to the coupled cavity structure */
+//    private double      dblCavPhsShft = 0.0;
+    
+
     
     /*
      *  Abstract Methods
@@ -245,59 +267,16 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * @throws ParsingException error encountered reading the DataAdaptor
      */
     protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
-    
-    /**
-     * This method returns a clone of the current state of this probe.
-     * That is, the <code>ProbeState</code> object is a representation of this
-     * probe at the moment this method was called.
-     * 
-     * @return  a deep copy of the current state of this probe
-     *
-     * @author Christopher K. Allen
-     * @since  Jun 26, 2014
-     */
-    public S cloneCurrentProbeState() {
-        return this.stateCurrent.copy();
-    }
+   
     
     /*
      * ---------------------------------------------------------------
      */
-   
     
     /**
      * Creates a deep copy of the probe
      */
     public abstract Probe<S> copy();
-    
-    
-    /**
-     * Applies the properties of the state that is passed in to the current
-     * state of the probe.
-     * 
-     * @param state - the state to apply to the probe
-     * 
-     * @author Jonathan M. Freed
-     * @since Jul 9, 2014
-     */
-    /**
-     * Apply the contents of ProbeState to update my current state.  Subclass
-     * implementations should call super.applyState to ensure superclass
-     * state is applied.
-     * 
-     * @param state     <code>ProbeState</code> object containing new probe state data
-     */
-    public void applyState(S state) {
-    	this.stateCurrent = state.copy();
-    	
-//        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
-//        setSpeciesCharge(state.getSpeciesCharge());
-//
-//        setCurrentElement(state.getElementId());
-//        setPosition(state.getPosition());
-//        setTime(state.getTime());
-//        setKineticEnergy(state.getKineticEnergy());
-    }
     
     
     /**
@@ -330,7 +309,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     /*
      *  Initialization
      */
-    
     
     /** 
      *  Creates a new instance of Probe.
@@ -371,54 +349,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.deepCopy(probe);
     }
     
-
-    /**
-     * Initialize this probe from the one specified.
-     * 
-     * @param probe the probe from which to initialize this one
-     * 
-     * @deprecated  This method is only called from child class overrides
-     *              which are never called themselves.
-     */
-    @Deprecated
-    protected void initializeFrom( final Probe<S> probe ) {
-        final S initialState = probe.getTrajectory().initialState();
-        if ( initialState != null ) {
-            applyState( initialState );         
-        }
-        
-        setAlgorithm( probe.getAlgorithm() );
-        setTimestamp( new Date() );
-        setComment( probe.getComment() );
-    }
-    
-    
-
-    /**
-    * <p>
-    * Resets the probe to the saved initial state, if there is one and clears
-    * the trajHist.
-    * </p>
-    * <h3>CKA NOTES:</h3>
-    * <p>
-    * These notes concern the refactoring of the probe component
-    * in order to tighten the typing.
-    * <br>
-    * <br>
-    * &middot; The new behavior should be the same as before, only 
-    * the implementation differs.  The current state is set to a clone
-    * of the (previously saved) initial state.
-    * &middot; The trajectory is cleared.
-    * </p>
-    */
-    public void reset() {
-    	if (stateInit != null) { 
-    		this.stateCurrent = stateInit.copy();
-        }
-        this.trajHist = this.createTrajectory();
-//        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
-    }
-
     /**
      *  Provide a user comment associated with the probe
      *
@@ -461,6 +391,98 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public void setTracking(boolean bolTrack) { this.bolTrack = bolTrack; };
 
     
+    /**
+     * Initialize this probe from the one specified.
+     * 
+     * @param probe the probe from which to initialize this one
+     * 
+     * @deprecated  This method is only called from child class overrides
+     *              which are never called themselves.
+     */
+    @Deprecated
+    protected void initializeFrom( final Probe<S> probe ) {
+        final S initialState = probe.getTrajectory().initialState();
+        if ( initialState != null ) {
+            applyState( initialState );         
+        }
+        
+        setAlgorithm( probe.getAlgorithm() );
+        setTimestamp( new Date() );
+        setComment( probe.getComment() );
+    }
+    
+
+    /*
+     * Operations
+     */
+
+    /**
+     * This method returns a clone of the current state of this probe.
+     * That is, the <code>ProbeState</code> object is a representation of this
+     * probe at the moment this method was called.
+     * 
+     * @return  a deep copy of the current state of this probe
+     *
+     * @author Christopher K. Allen
+     * @since  Jun 26, 2014
+     */
+    public S cloneCurrentProbeState() {
+        return this.stateCurrent.copy();
+    }
+    
+    /**
+     * Applies the properties of the state that is passed in to the current
+     * state of the probe.
+     * 
+     * @param state - the state to apply to the probe
+     * 
+     * @author Jonathan M. Freed
+     * @since Jul 9, 2014
+     */
+    /**
+     * Apply the contents of ProbeState to update my current state.  Subclass
+     * implementations should call super.applyState to ensure superclass
+     * state is applied.
+     * 
+     * @param state     <code>ProbeState</code> object containing new probe state data
+     */
+    public void applyState(S state) {
+        this.stateCurrent = state.copy();
+        
+//        setSpeciesRestEnergy(state.getSpeciesRestEnergy());
+//        setSpeciesCharge(state.getSpeciesCharge());
+//
+//        setCurrentElement(state.getElementId());
+//        setPosition(state.getPosition());
+//        setTime(state.getTime());
+//        setKineticEnergy(state.getKineticEnergy());
+    }
+    
+    /**
+     * <p>
+     * Resets the probe to the saved initial state, if there is one and clears
+     * the trajHist.
+     * </p>
+     * <p>
+     * <h4>CKA NOTES:</h4>
+     * These notes concern the refactoring of the probe component
+     * in order to tighten the typing.
+     * <br/>
+     * <br/>
+     * &middot; The new behavior should be the same as before, only 
+     * the implementation differs.  The current state is set to a clone
+     * of the (previously saved) initial state.
+     * &middot; The trajectory is cleared.
+     * </p>
+     */
+    public void reset() {
+        if (stateInit != null) { 
+            this.stateCurrent = stateInit.copy();
+        }
+        this.trajHist = this.createTrajectory();
+        //        this.getAlgorithm().initialize(); // CKA - I think these should be uncommented
+    }
+
     
     /*
      *  Data Query
@@ -481,16 +503,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
 	@NoEdit	// editors should not access this property
     public Date     getTimestamp()              { return m_dateStamp; };
 
-    /**
-     *  Get the state history of the probe.
-     * 
-     *  @return     Trajectory object of the proper sub-type for the probe type 
-     */
-	@NoEdit	// editors should not access this property
-    public Trajectory<S> getTrajectory() {
-        return trajHist; 
-    }
-    
     /** 
      * Returns the momentum
      * 
@@ -499,12 +511,62 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public double getMomentum() {
         return this.stateCurrent.getMomentum();
     }
+
+    /**
+     * Returns the current state object maintained by this probe.  The state
+     * object contains all the defining state information at the current
+     * simulation trajectory location.
+     * 
+     * @return     the current state of this probe
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 18, 2014
+     */
+    public S getCurrentState() {
+        return this.stateCurrent;
+    }
     
+    /**
+     *  Get the state history of the probe.
+     * 
+     *  @return     Trajectory object of the proper sub-type for the probe type 
+     */
+    @NoEdit // editors should not access this property
+    public Trajectory<S> getTrajectory() {
+        return trajHist; 
+    }
     
+
     /*
      *  IProbe Interface
      */
 
+    /**
+     * <p>
+     * Returns the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @return      the probe phase &phi; with respect to the machine RF frequency
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 17, 2014
+     */
+    @Override
+    public double   getLongitinalPhase() {
+        return this.getCurrentState().getLongitudinalPhase();
+    }
+    
 	/**
 	 * returns the species name
 	 * @return species name
@@ -540,6 +602,17 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public String getCurrentElement() { 
     	return this.stateCurrent.getElementId();
+    }
+    
+    /**
+     *
+     * @see xal.model.IProbe#getCurrentElementTypeId()
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public String getCurrentElementTypeId() {
+        return this.stateCurrent.getElementTypeId();
     }
     
     /**
@@ -579,7 +652,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public double   getTime()   {
         return this.stateCurrent.getTime();
     }
-    
+	
     /**
      *  Return the kinetic energy of the probe.  Depending upon the probe type,
      *  this could be the actual kinetic energy of a single constituent particle,
@@ -592,7 +665,6 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     public double getKineticEnergy()   { 
 		return this.stateCurrent.getKineticEnergy();
 	}
-
     
     /** 
      *  Returns the probe velocity normalized to the speed of light. 
@@ -608,14 +680,57 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      *  Returns the relativistic parameter corresponding to the probe 
      *  velocity.
      *  The relativistic factor is given by the formulae
-     *      gamma =  (Kinetic Energy/Rest Energy) + 1 
-     *            = sqrt[1/(1-v^2/c^2)]
+     *  <br/>
+     *  <br/>
+     *  &nbsp; &nbsp; &gamma; =  (<i>W</i>/<i>mc</i><sup>2</sup>) + 1 
+     *                        = [1/(1-&beta;<sup>2</sup>)]<sup>1/2</sup>
      *
-     *  @return     probe relatistic factor (<b>unitless</b>)
+     *  @return     probe relativistic factor (<b>unitless</b>)
      */
     @Override
     public double getGamma() { 
     	return this.stateCurrent.getGamma();
+    }
+
+//    /**
+//     * Returns the time at which the probe being tracked exited the last RF gap.
+//     * 
+//     * @return      probe time at which the last RF gap was exited (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    @Override
+//    public double   getRfGapExitTime() {
+//        return this.dblRfGapExitTime;
+//    }
+//    
+//    /**
+//     * Returns the RF phase shift at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     */
+//    @Override
+//    public double   getCoupledCavityPhase() {
+//        return this.dblCavPhsShft;
+//    }
+    
+    /**
+     *
+     * @see xal.model.IProbe#lookupLastStateFor(java.lang.String)
+     *
+     * @since  Dec 17, 2014   by Christopher K. Allen
+     */
+    public ProbeState<?> lookupLastStateFor(String strElemTypeId) {
+        Trajectory<S>   trjProbe  = this.getTrajectory();
+        ProbeState<?>   stateLast = trjProbe.peakLastByType(strElemTypeId);
+        
+        return stateLast;
     }
 
     /**
@@ -626,6 +741,17 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     @Override
     public void setCurrentElement(String id) {
     	this.stateCurrent.setElementId(id);
+    }
+    
+    /**
+     *
+     * @see xal.model.IProbe#setCurrentElementTypeId(java.lang.String)
+     *
+     * @since  Dec 16, 2014   by Christopher K. Allen
+     */
+    @Override
+    public void setCurrentElementTypeId(String strTypeId) {
+        this.stateCurrent.setElementTypeId(strTypeId);
     }
     
     /**
@@ -668,6 +794,33 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
 
     /**
+     * <p>
+     * Set the longitudinal phase of this probe with respect to the RF phase.  
+     * Typically used to account for phase delay/advance in cavities incurred due to 
+     * finite propagation time.  For example  
+     * <br/>
+     * <br/>
+     * &nbsp; &nbsp; &phi; &#8796; &phi;<sub>0</sub> - &Delta;&phi; 
+     * <br/>
+     * <br/>
+     * where &Delta;&phi; =  2&pi;<i>f</i>&Delta;<i/>t</i> is the phase delay due 
+     * to elapsed time &Delta;<i>t</i>, <i>f</i> is the cavity 
+     * resonant frequency, and &phi;<sub>0</sub> is the operating phase of the cavity (w.r.t.
+     * the synchronous particle).
+     * </p>
+     * 
+     * @param dblPhsLng     the phase delay &Delta;&phi; incurred from probe
+     *                          propagate between RF cavities
+     *
+     * @author Christopher K. Allen
+     * @since  Nov 17, 2014
+     */
+    @Override
+    public void setLongitudinalPhase(double dblPhsLng) {
+        this.stateCurrent.setLongitudinalPhase(dblPhsLng);
+    }
+
+    /**
      *  Set the current kinetic energy of the probe.
      *
      *  @param  W       new probe kinetic energy (<b>electron-volts</b>)
@@ -699,7 +852,35 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         this.stateCurrent.setSpeciesRestEnergy(Er); 
     }
 
-
+//    /**
+//     * Sets the time at which the currently tracked probe exited the
+//     * last RF gap structure it propagated through.
+//     * 
+//     * @param dblRfGapExitTime      gap exit time (in seconds)
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 24, 2014
+//     */
+//    @Override
+//    public void setRfGapExitTime(double dblRfGapExitTime) {
+//        this.dblRfGapExitTime = dblRfGapExitTime;
+//    }
+//
+//    /**
+//     * Returns the RF phase at the last gap through which the probe propagated.
+//     * This value accounts for the RF cavity structure, specifically the phase shifts
+//     * due to coupling between coupled cavity structures.
+//     *  
+//     * @return  phase shift experienced by probe when traversing coupled cavities
+//     *
+//     * @author Christopher K. Allen
+//     * @since  Nov 25, 2014
+//     */
+//    @Override
+//    public void setCoupledCavityPhaseShift(double dblCavPhsShft) {
+//        this.dblCavPhsShft = dblCavPhsShft;
+//    }
+    
 
 
 
@@ -773,7 +954,8 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * Subclasses should override this method to perform any required post processing upon completion 
      * of algorithm processing.  This method implementation does nothing.
      * 
-     * @deprecated     I don't think this gets used.
+     * @deprecated     This method is called in several places I don't think it ever is implemented
+     *                 to do anything.
      */
     @Deprecated
     @Override

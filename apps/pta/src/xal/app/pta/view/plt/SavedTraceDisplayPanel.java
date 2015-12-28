@@ -814,7 +814,7 @@ public class SavedTraceDisplayPanel extends JPanel {
             
 			this.ivlAvgLng = new Interval(dblMin, dblMax);
 			
-		} catch (MathException e) {
+		} catch (IllegalArgumentException e) {
 		    
 			e.printStackTrace();
 			MainApplication.getEventLogger().logError(this.getClass(), "Unable to create trace averaging interval");
@@ -829,7 +829,7 @@ public class SavedTraceDisplayPanel extends JPanel {
             
 			this.ivlAvgBgn = new Interval(dblMin, dblMax);
 			
-		} catch (MathException e) {
+		} catch (IllegalArgumentException e) {
 
 		    e.printStackTrace();
             MainApplication.getEventLogger().logError(this.getClass(), "Unable to create trace averaging interval");

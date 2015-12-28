@@ -13,7 +13,10 @@ import xal.model.elem.ElementSeq;
  * Or in other words, and accelerator <em>line</em>.
  * 
  * @author Christopher K. Allen
+ * 
+ * @deprecated  This class is never used
  */
+@Deprecated
 public class LineModel extends ElementSeq {
     
 
@@ -160,7 +163,7 @@ public class LineModel extends ElementSeq {
         double s = 0;
         boolean started = false;
         
-        for(IComponent comp : getCompList()) {
+        for(IComponent comp : getForwardCompList()) {
             if (started) {
                 comp.propagate(probe);
                 
@@ -191,7 +194,7 @@ public class LineModel extends ElementSeq {
         double s0 = probe.getPosition();
         double s = 0;
         
-        for(IComponent comp : getCompList()) {
+        for(IComponent comp : getForwardCompList()) {
             double len = comp.getLength();
             
             if(s0 <= s) {

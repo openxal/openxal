@@ -161,7 +161,7 @@ public class ModelConfigTest extends AbstractXMLValidation {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete configuration element should not be successful!");
 		} catch(Exception e) {
-//			assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
+			assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
 			assertFalse(e.getMessage().contains("{drift}"));
 		}
 		
@@ -181,7 +181,7 @@ public class ModelConfigTest extends AbstractXMLValidation {
             validator.validate(new DOMSource(document));
             fail("Validation with incomplete configuration element should not be successful!");
         } catch(Exception e) {
-//            assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
+            assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
             assertFalse(e.getMessage().contains("rfcavdrift"));
         }
         

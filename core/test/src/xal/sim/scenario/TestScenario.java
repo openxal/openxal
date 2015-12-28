@@ -22,12 +22,11 @@ import org.junit.Test;
 
 import xal.model.IAlgorithm;
 import xal.model.ModelException;
-import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
-import xal.test.ResourceManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
+import xal.test.ResourceManager;
 
 /**
  * Testing scenario generation for the Open XAL online model.
@@ -39,8 +38,8 @@ public class TestScenario {
 
     
     /** Accelerator sequence used for testing */
-//    public static final String     STR_ACCL_SEQ_ID = "MEBT";
-    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
+    public static final String     STR_ACCL_SEQ_ID = "MEBT";
+//    public static final String     STR_ACCL_SEQ_ID = "HEBT2";
     
     
     
@@ -53,6 +52,9 @@ public class TestScenario {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        
+//        Scenario.setDebugging(true);
+        
     }
 
     /**
@@ -150,16 +152,19 @@ public class TestScenario {
 
     /**
      * Test method for {@link xal.sim.scenario.Scenario#run()}.
+     * 
+     * @throws InstantiationException   algorithm creation failed 
      */
     @Test
-    public void testRunViaLoad() {
+    public void testRunViaLoad() throws InstantiationException {
         Accelerator     accel = ResourceManager.getTestAccelerator();
         AcceleratorSeq  seq   = accel.getSequence(STR_ACCL_SEQ_ID);
         
         try {
+            
             Scenario        model = Scenario.newScenarioFor(seq);
 
-            IAlgorithm      algor = new EnvTrackerAdapt();
+            IAlgorithm      algor = AlgorithmFactory.createEnvTrackerAdapt(seq);
             algor.load(seq.getEntranceID(), accel.editContext());
             
             EnvelopeProbe   probe = ProbeFactory.getEnvelopeProbe(seq, algor);

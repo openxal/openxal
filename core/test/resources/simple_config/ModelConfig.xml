@@ -1,9 +1,12 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ModelConfig.xsd">
+<!-- >configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw" -->
     <elements>
         <default type="xal.model.elem.Marker"/>
         <drift type="xal.model.elem.IdealDrift"/>
+        <rfcavdrift type="xal.model.elem.IdealRfCavityDrift"/>
+        <sequence type="xal.model.Sector"/>
     </elements>
     
     <associations>

@@ -4,16 +4,15 @@
  * Created on November 1, 2002, 4:53 PM
  */
 
-package xal.model.elem;
+package xal.model.elem.sync;
 
-import xal.model.*;
 
 /**
  *  This interface defines the common properties of all electrostatic elements.
  *
  * @author  Carla Benatti, adapted from Christopher K. Allen's IElectromagnet.java
  */
-public interface IElectrostatic /*extends IElement*/ {
+public interface IElectrostatic  {
     
     /*
      *  Orientation Enumeration
@@ -43,7 +42,7 @@ public interface IElectrostatic /*extends IElement*/ {
     /**
      *  Get the voltage applied to the electrostatic device
      *
-     *  @return     Voltage (in <b>kV</b>).
+     *  @return     Voltage (in <bold>kV</bold>).
      */
     public double getVoltage();
     
@@ -61,7 +60,7 @@ public interface IElectrostatic /*extends IElement*/ {
     /**
      *  Set the voltage applied to the electrostatic device.
      *
-     *  @param  dblVoltage    Voltage (in <b>kV</b>).
+     *  @param  dblVoltage    Voltage (in <bold>kV</bold>).
      */
     public void setVoltage(double dblVoltage);
     

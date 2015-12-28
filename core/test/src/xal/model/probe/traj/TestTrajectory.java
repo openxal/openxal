@@ -8,6 +8,7 @@ package xal.model.probe.traj;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import xal.model.IAlgorithm;
 import xal.model.IComponent;
 import xal.model.Lattice;
 import xal.model.ModelException;
+import xal.model.elem.Element;
 import xal.model.probe.EnvelopeProbe;
 import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
@@ -30,13 +32,22 @@ import xal.sim.scenario.Scenario;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
-import xal.smf.data.XMLDataManager;
 import xal.test.ResourceManager;
-import xal.test.ResourceTools;
 import xal.tools.beam.PhaseVector;
 
 /**
+ * <p>
  * Class of test cases for class <code>{@link Trajectory}</code>.
+ * <p/>
+ * <p>
+ * Use Java virtual machine command line switch
+ * <br/>
+ * <br/>
+ * &nbsp; &nbsp; <tt>java -agentlib:hprof=cpu=times</tt>
+ * <br/>
+ * <br/>
+ * to create <code>java.hprof.TMP</code> files for profiling.
+ * </p>
  *
  * @author Christopher K. Allen
  * @since  Aug 25, 2014
@@ -51,7 +62,8 @@ public class TestTrajectory {
     /** Flag used for indicating whether to type out to stout or file */
     private static final boolean        BOL_TYPE_STOUT = false;
     
-    
+    /** Output file name */
+    static final private String         STR_FILENAME_OUTPUT = TestTrajectory.class.getName() + ".txt";
 
     
     /** Accelerator sequence used for testing */
@@ -113,10 +125,15 @@ public class TestTrajectory {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         
-        if (BOL_TYPE_STOUT) 
+        if (BOL_TYPE_STOUT) {
             PSTR_OUTPUT = System.out;
-        else
-            PSTR_OUTPUT = ResourceTools.createOutputStream(TestTrajectory.class);
+            
+        } else {
+            
+            File fileOutput = ResourceManager.getOutputFile(TestTrajectory.class, STR_FILENAME_OUTPUT);
+            
+            PSTR_OUTPUT = new PrintStream(fileOutput);
+        }
         
         try {
 //            ACCEL_TEST = XMLDataManager.loadDefaultAccelerator();
@@ -176,7 +193,10 @@ public class TestTrajectory {
         PSTR_OUTPUT.println("ELEMENTS contained in MODEL");
         while (itrCmps.hasNext()) {
             IComponent cmp = itrCmps.next();
-            PSTR_OUTPUT.println("  " + index + " " + cmp.getId());
+            if (cmp instanceof Element)
+                PSTR_OUTPUT.println("  " + index + " " + (Element)cmp);
+            else
+                PSTR_OUTPUT.println("  " + index + " " + cmp.getId());
             index++;
         }
     }
@@ -298,7 +318,7 @@ public class TestTrajectory {
     }
     
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement_OLD(java.lang.String)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#statesForElement(java.lang.String)}.
      */
     @Test
     public final void testStatesForElement_OLD() {
