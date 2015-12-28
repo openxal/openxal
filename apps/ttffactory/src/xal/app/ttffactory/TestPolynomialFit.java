@@ -146,7 +146,7 @@ public class TestPolynomialFit {
     }
 
     /**
-     *  Test mimicing the polynomial fitting in class <code>PolynomialFit</code>. 
+     *  Test mimicking the polynomial fitting in class <code>PolynomialFit</code>. 
      *
      * @since  Jul 28, 2015   by Christopher K. Allen
      */
