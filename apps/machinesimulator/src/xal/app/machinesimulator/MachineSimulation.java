@@ -15,7 +15,6 @@ import java.util.List;
 import xal.model.probe.Probe;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.calc.SimpleSimResultsAdaptor;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataListener;
@@ -34,7 +33,7 @@ public class MachineSimulation implements DataListener {
     public MachineSimulation( final Probe<?> probe ) {
         trajectory = probe.getTrajectory();
 		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
-
+		
         SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
         final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
         while ( stateIter.hasNext() ) {
@@ -46,20 +45,13 @@ public class MachineSimulation implements DataListener {
     
     /**Constructor with adaptor*/
     public MachineSimulation ( final DataAdaptor adaptor ) {    	
-    	try {
-			trajectory = Trajectory.readFrom( adaptor );
-		} catch (ParsingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
 
-        SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
-        final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
-        while ( stateIter.hasNext() ) {
-            final ProbeState<?> state = stateIter.next();
-			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
-            SIMULATION_RECORDS.add( simulationRecord );
+		final List<DataAdaptor> simRecordAdaptors = adaptor.childAdaptors(MachineSimulationRecord.DATA_LABEL);
+
+        SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( simRecordAdaptors.size() );
+        for ( final DataAdaptor simRecordAdaptor : simRecordAdaptors ) {
+			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( simRecordAdaptor );
+         SIMULATION_RECORDS.add( simulationRecord );
         }
     }
     
@@ -87,7 +79,7 @@ public class MachineSimulation implements DataListener {
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
-	public void write( DataAdaptor adaptor ) {		
-		trajectory.save( adaptor );
+	public void write( DataAdaptor adaptor ) {
+		adaptor.writeNodes(SIMULATION_RECORDS);
 	}
 }

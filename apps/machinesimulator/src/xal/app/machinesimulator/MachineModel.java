@@ -129,8 +129,8 @@ public class MachineModel implements DataListener {
     private void setupDiagConfig( final AcceleratorSeq sequence ) {
     	if( sequence != null ) {
     		_diagnosticConfiguration = new DiagnosticConfiguration( sequence );
-    		if (DIAG_RECORDS.get(_sequence) == null ) {    			
-    			DIAG_RECORDS.put(_sequence, _diagnosticConfiguration.createDiagRecords() );
+    		if (DIAG_RECORDS.get( sequence ) == null ) {    			
+    			DIAG_RECORDS.put( sequence, _diagnosticConfiguration.createDiagRecords() );
     		}
     	}
     }
@@ -206,7 +206,7 @@ public class MachineModel implements DataListener {
     /**change the diagnostic data records to show*/
     public List<DiagnosticRecord> changeDiagRecords( final AcceleratorSeq seq, final Date time, 
     		final boolean checkState, final List<DiagnosticSnapshot> snapshots) {
-    	
+
     	List<DiagnosticRecord> records = DIAG_RECORDS.get( seq );
     	int recordIndex = 0;
     	for ( int index = 0; index<snapshots.size(); index++ ) {
@@ -283,7 +283,8 @@ public class MachineModel implements DataListener {
 	private List<NodePropertyHistoryRecord> changeHistoryRecordToShow( final AcceleratorSeq seq, final Date time,
 			final Boolean checkedState, final List<NodePropertySnapshot> snapshots ){
 		List<NodePropertyHistoryRecord> records = NODE_VALUES_TO_SHOW.get( seq );
-		if ( records.size() == 0 ){			
+		
+		if ( records.size() == 0 ){		
 			for ( final NodePropertySnapshot snapshot:snapshots){
 				String node = snapshot.getNodeId();
 				String propertyName = snapshot.getPropertyName();
@@ -394,7 +395,6 @@ public class MachineModel implements DataListener {
 		VALUES_SNAPSHOT = new ArrayList<NodePropertySnapshot>();
 		DIAG_SNAPSHOTS = new ArrayList<DiagnosticSnapshot>();
 
-		if ( COLUMN_NAME.get( SEQUENCE ) == null ) COLUMN_NAME.put( SEQUENCE, new TreeMap<Date, String>());
 		update( adaptor );
 	}
 	
@@ -410,7 +410,7 @@ public class MachineModel implements DataListener {
 		changeDiagRecords( SEQUENCE, TIME, check, DIAG_SNAPSHOTS );
 		if ( check ) COLUMN_NAME.get( SEQUENCE ).put( TIME, recordName );
 		else COLUMN_NAME.get( SEQUENCE).remove( TIME );
-		AcceleratorSeq seq = getFirstSeq();
+		AcceleratorSeq seq = getFirstSeq();			
 		EVENT_PROXY.historyRecordCheckStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ),DIAG_RECORDS.get(seq), seq );
 
 	}
@@ -453,7 +453,7 @@ public class MachineModel implements DataListener {
 	/**set the record name*/
 	public void setRecordName( final String newName ){
 		COLUMN_NAME.get( SEQUENCE ).replace(TIME, newName);
-		AcceleratorSeq seq = getFirstSeq();
+		AcceleratorSeq seq = getFirstSeq();	
 		EVENT_PROXY.historyRecordCheckStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), DIAG_RECORDS.get(seq), seq );
 
 		recordName = newName;
@@ -480,6 +480,14 @@ public class MachineModel implements DataListener {
 		
 		final DataAdaptor simAdaptor = adaptor.childAdaptor( MachineSimulation.DATA_LABEL );	
 		SIMULATION = new MachineSimulation( simAdaptor );
+		
+
+		if ( COLUMN_NAME.get( SEQUENCE ) == null ) COLUMN_NAME.put( SEQUENCE, new TreeMap<Date, String>());
+		if ( NODE_VALUES_TO_SHOW.get( SEQUENCE ) == null ){
+			NODE_VALUES_TO_SHOW.put( SEQUENCE, new ArrayList<NodePropertyHistoryRecord>());		
+		}
+		
+		setupDiagConfig( SEQUENCE );
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */

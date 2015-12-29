@@ -76,7 +76,7 @@ public class DiagnosticSnapshot implements DataListener {
 	public void update(DataAdaptor adaptor) {
 		for ( int index = 0; index < NAMES.length; index++ ) {
 			if ( adaptor.hasAttribute( "valueNames."+index ) ) {
-				NAMES[index] = adaptor.stringValue( "valuesNames."+index );
+				NAMES[index] = adaptor.stringValue( "valueNames."+index );
 				VALUES[index] = adaptor.doubleValue( "values."+index );
 			}
 		}
@@ -90,7 +90,7 @@ public class DiagnosticSnapshot implements DataListener {
 		for ( int index = 0; index < NAMES.length; index++ ){
 			if ( NAMES[index] != null ) {
 				adaptor.setValue( "valueNames."+index, NAMES[index] );
-				adaptor.setValue( "values."+index, VALUES[index]  );
+				adaptor.setValue( "values."+index, VALUES[index] );
 			}
 		}
 	}
