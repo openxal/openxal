@@ -7,6 +7,7 @@ import xal.tools.data.IArchive;
 import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 
+import java.lang.reflect.Constructor;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,11 +22,14 @@ import java.util.TreeMap;
 /**
  * Manages the history for a probe.  Saves <code>ProbeState</code> objects,
  * each of which reflects the state of the <code>Probe</code> at a particular
- * point in time.
+ * point in time.  The entire set of states then forms the trajectory of the 
+ * associated probe through the machine model under simulation.
+ * 
+ * @param   S   the <code>ProbeState</code>-derived type indicating the class of objects
+ *              to be stored in this container
  * 
  * @author Craig McChesney
  * @author Christopher K. Allen
- * (cosmetic enhancements)
  * @version $id:
  * 
  */
@@ -35,19 +39,25 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * Global Constants
      */
 
-    // *********** I/O Support
+    // 
+    // Persistence
+    //
 
-    /** XML element tag for trajectory */
+    /** data node tag for trajectory */
     public final static String TRAJ_LABEL = "trajectory";
     
-    /** XML element tag for trajectory concrete type */
-    private final static String TYPE_LABEL = "type";
+    /** data attribute tag for trajectory concrete type */
+    private final static String TYPE_TRAJ_TAG = "type";
     
-    /** XML element tag for time stamp data */
-    private static final String TIMESTAMP_LABEL = "timestamp";
+    /** data attribute tag for probe state concrete type */
+    private final static String TYPE_STATE_TAG = "datatype";
     
-    /** XML element tag for user comment data */
-    private static final String DESCRIPTION_LABEL = "description";
+    
+    /** data attribute tag for time stamp */
+    private static final String TIMESTAMP_TAG = "timestamp";
+    
+    /** data attribute tag for user comment string */
+    private static final String COMMENT_TAG = "description";
 
 
     /*
@@ -318,167 +328,6 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
         }
     }
     
-//    /**
-//     * <p>
-//     * Maintains a list of probe states for every each element class.  Each element
-//     * class is refined as the collection is built.  States are placed into the map
-//     * using the modeling element ID as the key.  If it is found that that element ID
-//     * is similar to an existing element ID, than the state is entered into the element
-//     * ID class.  By similar, we mean that one ID string can be contained within another
-//     * ID (or is equal to).
-//     * </p>
-//     * <p>
-//     * The idea is that each element ID class is then representative of probe states associated
-//     * with a single hardware node.  See {@link IdentifierEquivClass} for another explanation.  
-//     * </p>
-//     * 
-//     * @param <S>   probe state type for particular probe trajectory
-//     * 
-//     * @author Christopher K. Allen
-//     * @since  Jun 5, 2013
-//     */
-//    private static class ElementStateMap<S extends ProbeState<S>>  {
-//        
-//        /*
-//         * Local Attributes
-//         */
-//        
-//        /** map from element prefix to element states */
-//        private final Map<String, RealNumericIndexer<S>>    mapStateList;
-//        
-//        /** the last map entry to be accessed (added to) */
-//        private Map.Entry<String, RealNumericIndexer<S>>    entryLast;
-//        
-//        
-//        /*
-//         * Initialization
-//         */
-//        
-//        /**
-//         * Creates a new uninitialized instance of <code>ElementStateMap</code>.
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Jun 5, 2013
-//         */
-//        public ElementStateMap() {
-//
-//            // Create the comparator for ordering the tree map nodes
-//            //  Then create the map itself
-//            Comparator<String>  cmpIdClsOrder = new Comparator<String>() {
-//
-//                @Override
-//                public int compare(String id1, String id2) {
-//                    return id1.compareTo(id2);
-//                }
-//            };
-//            
-//            this.mapStateList = new TreeMap<String, RealNumericIndexer<S>>(cmpIdClsOrder);
-//            
-//            // Create a blank last map entry
-//            String                  ideEmpty   = new String("");
-//            RealNumericIndexer<S>   setIdEmpty = new RealNumericIndexer<S>();
-//            
-//            this.mapStateList.put(ideEmpty, setIdEmpty);
-//            this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(ideEmpty, setIdEmpty);
-//        }
-//
-//        
-//        /*
-//         * Operations
-//         */
-//        
-//        /**
-//         * <p>
-//         * Enters the given probe state into the map using the element ID as the 
-//         * initial key.  Note that this key can be changed internally if the
-//         * element ID belongs to an element ID class already identified.
-//         * </p>
-//         * <p>
-//         * To improve efficiency the method checks if the given element ID is the same
-//         * (same equivalence class, that is) as the last one provided in the previous call
-//         * to this method.  A reference to the list of elements for that ID is kept
-//         * on hand so a full map search is not used.
-//         * </p>
-//         * 
-//         * @param strElemId     string identifier of the modeling element associated with the probe state
-//         * @param state         probe state to be entered into the map
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Jun 5, 2013
-//         */
-//        public void putState(String strElemId, S state) {
-//            
-//            // Create the ID class for the element ID (needed for indexing elements)
-//            //  and get the position of the state within the sequence (needed for indexing states within elements)
-//            String                    idElem = strElemId;
-//            double                    dblPos = state.getPosition();
-//            
-//            // The state is a member of the last equivalence class accessed
-//            if ( this.entryLast.getKey().equals(idElem) ) {
-//                RealNumericIndexer<S> setStates = this.entryLast.getValue();
-//                
-//                setStates.add(dblPos, state);
-//                return;
-//            }
-//            
-//            // This is a new equivalence class - that is, different then the last accessed
-//            //  Get the list of states corresponding to the ID class
-//            RealNumericIndexer<S>    setStates = this.mapStateList.get(idElem);
-//            
-//            // If there is no list for this ID class, create one and add it to the map
-//            if (setStates == null) {
-//                setStates = new RealNumericIndexer<S>();
-//                
-//                this.mapStateList.put(idElem, setStates);
-//            }
-//            
-//            // Add the given state to the list
-//            setStates.add(dblPos, state);
-//            
-//            // Save the last list to be accessed
-//            this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(idElem, setStates);
-//        }
-//        
-//        /**
-//         * Returns a list of probe states corresponding to the identifier
-//         * class containing the given modeling element ID.
-//         * 
-//         * @param strElemId     model element identifier
-//         * 
-//         * @return              all the probe states which are associated with the given element ID and its class,
-//         *                      or <code>null</code> if there are none
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Jun 5, 2013
-//         */
-//        public RealNumericIndexer<S>  getStates(String strElemId) {
-//            RealNumericIndexer<S> lstStates = this.mapStateList.get(strElemId);
-//            
-//            return lstStates;
-//        }
-//        
-//        /**
-//         * Return all the states managed by this map as a list.
-//         * 
-//         * @return      all probe states managed by this element state map
-//         *
-//         * @author Christopher K. Allen
-//         * @since  Aug 26, 2014
-//         */
-//        public List<S>  getAllStates() {
-//            List<S>     lstStates = new LinkedList<S>();
-//            Collection< RealNumericIndexer<S> > setLists = this.mapStateList.values();
-//            
-//            for (RealNumericIndexer<S> rni : setLists) {
-//                Iterator<S> iter = rni.iterator();
-//                while (iter.hasNext()) {
-//                    S state = iter.next();
-//                    lstStates.add(state);
-//                }
-//            }
-//            return lstStates;
-//        }
-//    }
 
 
     /*
@@ -488,31 +337,64 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      // I think this will have to be rewritten once the other trajectory classes
      //   are gone since there will be no way to instantiate [newInstance()]
      /**
-      * Read the contents of the supplied <code>DataAdaptor</code> and return
-      * an instance of the appropriate Trajectory species.
+      * Return a new instance of the appropriately typed <code>Trajectory</code> object  
+      * initialized with the data contained in the given data source.
       * 
-      * @param container <code>DataAdaptor</code> to read a Trajectory from
-      * @return a Trajectory for the contents of the DataAdaptor
-      * @throws ParsingException error encountered reading the DataAdaptor
+      * @param daptSrc  data source containing trajectory information
+      * 
+      * @return         new <code>Trajectory<code> instance initialized from the data source
+      * 
+      * @throws ParsingException    malformed data stare
       */
      @SuppressWarnings("unchecked")
-     public static Trajectory<? extends ProbeState<?>> readFrom(DataAdaptor container)
-         throws ParsingException {
-         DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
-         if (daptTraj == null)
-             throw new ParsingException("Trajectory#readFrom() - DataAdaptor contains no trajectory node");
+     public static <S extends ProbeState<S>> Trajectory<S> createFrom(DataAdaptor daptSrc) throws ParsingException {
+
+         // Get the trajectory node, bail out if not there
+         DataAdaptor daptTraj = daptSrc.childAdaptor(Trajectory.TRAJ_LABEL);
+         if (daptTraj == null) {
+             ParsingException e = new ParsingException("Trajectory#createFrom() - DataAdaptor contains no trajectory node");
+             e.printStackTrace();
+             
+             throw e;
+         }
          
-         String type = container.stringValue(Trajectory.TYPE_LABEL);
-         Trajectory<? extends ProbeState<?>> trajectory;
+         // Need to check for the type attributes 
+         //  If there are missing we have no way
+         if (!daptTraj.hasAttribute(TYPE_TRAJ_TAG)) {
+             ParsingException e = new ParsingException("Trajectory node must conatain trajectory type attribute " + TYPE_TRAJ_TAG);
+             e.printStackTrace();
+
+             throw e;
+         }
+         if (!daptTraj.hasAttribute(TYPE_STATE_TAG)) {
+             ParsingException e = new ParsingException("Trajectory node must conatain probe state type attribute " + TYPE_STATE_TAG);
+             e.printStackTrace();
+
+             throw e;
+         }
+
+         // Everything looks good so far, let's get the class types and see if we can 
+         //  instantiate a new trajectory object.  This is all reflection so if anything
+         //  goes wrong here it's simply a crash and burn.  Otherwise return the new trajectory.
          try {
-             Class<?> trajectoryClass = Class.forName(type);
-             trajectory = (Trajectory<? extends ProbeState<?>>) trajectoryClass.newInstance();
+             String         strTypeTraj = daptTraj.stringValue(TYPE_TRAJ_TAG);
+             Class<?>       clsTraj     = Class.forName(strTypeTraj);
+             Constructor<?> ctorTraj    = clsTraj.getConstructor(Class.class);
+             
+             String     strTypeState  = daptTraj.stringValue(TYPE_STATE_TAG);
+             Class<?>   clsState      = Class.forName(strTypeState);    
+             Object     arrCtorArgs[] = { clsState };
+             
+             Trajectory<S> trjNew = (Trajectory<S>) ctorTraj.newInstance(arrCtorArgs);
+             
+             trjNew.load(daptTraj);
+             
+             return trjNew;
+             
          } catch (Exception e) {
              e.printStackTrace();
              throw new ParsingException(e.getMessage());
          }
-         trajectory.load(daptTraj);
-         return trajectory;
      }
 
      
@@ -528,7 +410,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     private Date                    timestamp = new Date();
 
     
-    /** Type class of the underlying state objects */
+    /** Type class of the underlying probe state objects */
     private final Class<S>           clsStates;
     
 
@@ -560,8 +442,8 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * object of the underlying <code>ProbeState</code> type, <code><b>S</b></code>.
      * 
      * 
-     * @param clsStates - the <code>Class&lt;S&gt;</code> object of the underlying
-     * 		<code>ProbeState</code> type
+     * @param S         the template type of <code>ProbeState</code> object that the new trajectory will manage
+     * @param clsStates the class type the <code>ProbeState</code> derived managed objects
      * 
      * @since Jul 1, 2014
      */
@@ -588,7 +470,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     public void setTimestamp(long lngTimeStamp) { timestamp = new Date(lngTimeStamp);  }
 
     /** 
-     * Gets the <code>Class&lt;S&gt;</code> object of the generic type <b><code>S</code></b>. 
+     * Gets the class type of the probe states forming the trajectory. 
      * 
      * @return a <code>Class&lt;S&gt;</code> object for the class <b><code>S</code></b>
      * 
@@ -643,7 +525,11 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * </p>
      * 
      * @param state     new state addition to trajectory
+     * 
+     * @deprecated  this method is replaced with <code>{@link #addState(ProbeState)}</code> which
+     *              is more appropriately named
      */
+	@Deprecated
     public void saveState( final S state ) {
         this.addState(state);
     }
@@ -671,6 +557,15 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
         return state;
     }
 
+    /**
+     * Return the last state in the trajectory with the given type.
+     * 
+     * @param strElemTypeId class name of the desired probe state type
+     * 
+     * @return              final probe state in the trajectory of the given type
+     *
+     * @since  Dec 29, 2015,   Christopher K. Allen
+     */
     public S    peakLastByType(String strElemTypeId) {
         List<S> lstStatesForType  = this.mapElemTypeToStates.getStates(strElemTypeId);
         int     cntStates         = lstStatesForType.size();
@@ -1151,11 +1046,65 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @author Christopher K. Allen
      * @since  Oct 28, 2013
      */
+    @Override
     public Iterator<S> iterator() {
         return this.rniStateHistory.iterator();
     }
 
-    // *********** debugging
+
+    /*
+     * IArchive Interface
+     */
+
+    /**
+     * Adds a representation of this Trajectory and its state history to the supplied <code>DataAdaptor</code>.
+     * @param container <code>DataAdaptor</code> in which to add <code>Trajectory</code> data
+     */
+    @Override
+    public void save(DataAdaptor container) {
+        DataAdaptor trajNode = container.createChild(TRAJ_LABEL);
+        trajNode.setValue(TYPE_TRAJ_TAG, getClass().getName());
+        trajNode.setValue(TYPE_STATE_TAG, this.getStateClass().getName());
+        trajNode.setValue(TIMESTAMP_TAG, new Double(getTimestamp().getTime()));
+        if (getDescription().length() > 0)
+            trajNode.setValue(COMMENT_TAG, getDescription());
+//        addPropertiesTo(trajNode);
+        addStatesTo(trajNode);
+    }
+
+    /**
+     * Load the current <code>Trajectory</code> object with the state history
+     * information in the <code>DataAdaptor</code> object.
+     * 
+     *  @param  daptSrc   <code>DataAdaptor</code> from which state history is extracted
+     * 
+     *  @exception  DataFormatException     mal-formated data in <code>DataAdaptor</code>
+     */
+    @Override
+    public void load(DataAdaptor daptSrc) throws DataFormatException {
+//        DataAdaptor daptTraj = daptSrc.childAdaptor(Trajectory.TRAJ_LABEL);
+//        if (daptTraj == null)
+//            throw new DataFormatException("Trajectory#load() - DataAdaptor contains no trajectory node");
+        DataAdaptor daptTraj = daptSrc;
+
+        if (daptTraj.hasAttribute(TIMESTAMP_TAG)) {
+            long lngTime = new Double(daptTraj.doubleValue(TIMESTAMP_TAG)).longValue();
+            setTimestamp(lngTime);
+        }
+        if (daptTraj.hasAttribute(COMMENT_TAG))
+            setDescription(daptTraj.stringValue(COMMENT_TAG));
+        
+        try {
+//            readPropertiesFrom(daptTraj);
+            readStatesFrom(daptTraj);
+            
+        } catch (ParsingException e) {
+            e.printStackTrace();
+            throw new DataFormatException( "Exception loading from adaptor: " + e.getMessage());
+            
+        }
+    }
+
 
     /*
      * Object Overrides
@@ -1180,75 +1129,36 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
     }
 
     
-    /*
-     * IArchive Interface
-     */
-
-    /**
-     * Adds a representation of this Trajectory and its state history to the supplied <code>DataAdaptor</code>.
-     * @param container <code>DataAdaptor</code> in which to add <code>Trajectory</code> data
-     */
-    public void save(DataAdaptor container) {
-        DataAdaptor trajNode = container.createChild(TRAJ_LABEL);
-        trajNode.setValue(TYPE_LABEL, getClass().getName());
-        trajNode.setValue(TIMESTAMP_LABEL, new Double(getTimestamp().getTime()));
-        if (getDescription().length() > 0)
-            trajNode.setValue(DESCRIPTION_LABEL, getDescription());
-        addPropertiesTo(trajNode);
-        addStatesTo(trajNode);
-    }
-
-    /**
-     * Load the current <code>Trajectory</code> object with the state history
-     * information in the <code>DataAdaptor</code> object.
-     * 
-     *  @param  container   <code>DataAdaptor</code> from which state history is extracted
-     * 
-     *  @exception  DataFormatException     malformated data in <code>DataAdaptor</code>
-     */
-    public void load(DataAdaptor container) throws DataFormatException {
-//        DataAdaptor daptTraj = container.childAdaptor(Trajectory.TRAJ_LABEL);
-//        if (daptTraj == null)
-//            throw new DataFormatException("Trajectory#load() - DataAdaptor contains no trajectory node");
-        DataAdaptor daptTraj = container;
-
-        long time =
-            new Double(daptTraj.doubleValue(TIMESTAMP_LABEL)).longValue();
-        setTimestamp(time);
-        setDescription(daptTraj.stringValue(DESCRIPTION_LABEL));
-        try {
-            readPropertiesFrom(daptTraj);
-            readStatesFrom(daptTraj);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            throw new DataFormatException(
-                "Exception loading from adaptor: " + e.getMessage());
-        }
-    }
-
-
-    // ************* abstract protocol specification
-    //
-    // The problem is, that there are no sub classes.
-    //
-
-    /**
-     * Override this method in subclasses to add subclass-specific properties to
-     * the output.  Subclass implementations should call super.addPropertiesTo
-     * so that superclass implementations are executed.
-     * 
-     * @param container the <code>DataAdaptor</code> to add properties to
-     */
-    protected void addPropertiesTo(DataAdaptor container) {}
-
-    /**
-     * Allow subclasses to read subclass-specific properties from the <code>
-     * DataAdaptor</code>.  Implementations should call super.readPropertiesFrom
-     * to ensure that superclass implementations are executed.
-     * 
-     * @param container <code>DataAdaptor</code> to read properties from
-     */
-    protected void readPropertiesFrom(DataAdaptor container) throws ParsingException {}
+//    // ************* abstract protocol specification
+//    //
+//    // The problem is, that there are no sub classes.
+//    //
+//
+//    /**
+//     * Override this method in subclasses to add subclass-specific properties to
+//     * the output.  Subclass implementations should call super.addPropertiesTo
+//     * so that superclass implementations are executed.
+//     * 
+//     * @param container the <code>DataAdaptor</code> to add properties to
+//     * 
+//     * @deprecated  legacy method - since <code>Trajectory</code> no longer supports 
+//     *              inheritance there can be no overrides.
+//     */
+//    @Deprecated
+//    protected void addPropertiesTo(DataAdaptor container) {}
+//
+//    /**
+//     * Allow subclasses to read subclass-specific properties from the <code>
+//     * DataAdaptor</code>.  Implementations should call super.readPropertiesFrom
+//     * to ensure that superclass implementations are executed.
+//     * 
+//     * @param container <code>DataAdaptor</code> to read properties from
+//     * 
+//     * @deprecated  legacy method - since <code>Trajectory</code> no longer supports 
+//     *              inheritance there can be no overrides.
+//     */
+//    @Deprecated
+//    protected void readPropertiesFrom(DataAdaptor container) throws ParsingException {}
 
 
 
@@ -1259,32 +1169,35 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * create a <code>ProbeState</code> of the appropriate species, initialized
      * from the contents of the supplied <code>DataAdaptor</code>
      * 
-     * @param container <code>DataAdaptor</code> containing the child state nodes
+     * @param data source containing the child state nodes
      */
     @SuppressWarnings("unchecked")
-	private void readStatesFrom(DataAdaptor container)
-        throws ParsingException {
-        Iterator<? extends DataAdaptor> childNodes = container.childAdaptors().iterator();
+	private void readStatesFrom(DataAdaptor daptSrc) throws ParsingException {
+        
+        Iterator<? extends DataAdaptor> childNodes = daptSrc.childAdaptors().iterator();
         while (childNodes.hasNext()) {
             DataAdaptor childNode = childNodes.next();
+            
             if (!childNode.name().equals(ProbeState.STATE_LABEL)) {
                 throw new ParsingException(
                     "Expected state element, got: " + childNode.name());
             }
             
             //*********************************************************
-            String type = childNode.stringValue(ProbeState.TYPE_LABEL);
-            S probeState;
             try {
-                Class<?> probeStateClass = Class.forName(type);
-                probeState = (S) probeStateClass.newInstance();
+                String strStateType = childNode.stringValue(ProbeState.TYPE_LABEL);
+                
+                Class<?> clsProbeState = Class.forName(strStateType);
+                S probeState = (S) clsProbeState.newInstance();
+                probeState.load(childNode);
+//                saveState(probeState);
+                addState(probeState);
+                
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ParsingException(e.getMessage());
             }
             
-            probeState.load(childNode);
-            saveState(probeState);
         }
     }
 
@@ -1364,4 +1277,173 @@ class IdEquivClass implements Comparator<IdEquivClass> {
         
         return 0;
     }
+
+
 }
+
+
+/*
+ * Storage
+ */
+
+///**
+//* <p>
+//* Maintains a list of probe states for every each element class.  Each element
+//* class is refined as the collection is built.  States are placed into the map
+//* using the modeling element ID as the key.  If it is found that that element ID
+//* is similar to an existing element ID, than the state is entered into the element
+//* ID class.  By similar, we mean that one ID string can be contained within another
+//* ID (or is equal to).
+//* </p>
+//* <p>
+//* The idea is that each element ID class is then representative of probe states associated
+//* with a single hardware node.  See {@link IdentifierEquivClass} for another explanation.  
+//* </p>
+//* 
+//* @param <S>   probe state type for particular probe trajectory
+//* 
+//* @author Christopher K. Allen
+//* @since  Jun 5, 2013
+//*/
+//private static class ElementStateMap<S extends ProbeState<S>>  {
+// 
+// /*
+//  * Local Attributes
+//  */
+// 
+// /** map from element prefix to element states */
+// private final Map<String, RealNumericIndexer<S>>    mapStateList;
+// 
+// /** the last map entry to be accessed (added to) */
+// private Map.Entry<String, RealNumericIndexer<S>>    entryLast;
+// 
+// 
+// /*
+//  * Initialization
+//  */
+// 
+// /**
+//  * Creates a new uninitialized instance of <code>ElementStateMap</code>.
+//  *
+//  * @author Christopher K. Allen
+//  * @since  Jun 5, 2013
+//  */
+// public ElementStateMap() {
+//
+//     // Create the comparator for ordering the tree map nodes
+//     //  Then create the map itself
+//     Comparator<String>  cmpIdClsOrder = new Comparator<String>() {
+//
+//         @Override
+//         public int compare(String id1, String id2) {
+//             return id1.compareTo(id2);
+//         }
+//     };
+//     
+//     this.mapStateList = new TreeMap<String, RealNumericIndexer<S>>(cmpIdClsOrder);
+//     
+//     // Create a blank last map entry
+//     String                  ideEmpty   = new String("");
+//     RealNumericIndexer<S>   setIdEmpty = new RealNumericIndexer<S>();
+//     
+//     this.mapStateList.put(ideEmpty, setIdEmpty);
+//     this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(ideEmpty, setIdEmpty);
+// }
+//
+// 
+// /*
+//  * Operations
+//  */
+// 
+// /**
+//  * <p>
+//  * Enters the given probe state into the map using the element ID as the 
+//  * initial key.  Note that this key can be changed internally if the
+//  * element ID belongs to an element ID class already identified.
+//  * </p>
+//  * <p>
+//  * To improve efficiency the method checks if the given element ID is the same
+//  * (same equivalence class, that is) as the last one provided in the previous call
+//  * to this method.  A reference to the list of elements for that ID is kept
+//  * on hand so a full map search is not used.
+//  * </p>
+//  * 
+//  * @param strElemId     string identifier of the modeling element associated with the probe state
+//  * @param state         probe state to be entered into the map
+//  *
+//  * @author Christopher K. Allen
+//  * @since  Jun 5, 2013
+//  */
+// public void putState(String strElemId, S state) {
+//     
+//     // Create the ID class for the element ID (needed for indexing elements)
+//     //  and get the position of the state within the sequence (needed for indexing states within elements)
+//     String                    idElem = strElemId;
+//     double                    dblPos = state.getPosition();
+//     
+//     // The state is a member of the last equivalence class accessed
+//     if ( this.entryLast.getKey().equals(idElem) ) {
+//         RealNumericIndexer<S> setStates = this.entryLast.getValue();
+//         
+//         setStates.add(dblPos, state);
+//         return;
+//     }
+//     
+//     // This is a new equivalence class - that is, different then the last accessed
+//     //  Get the list of states corresponding to the ID class
+//     RealNumericIndexer<S>    setStates = this.mapStateList.get(idElem);
+//     
+//     // If there is no list for this ID class, create one and add it to the map
+//     if (setStates == null) {
+//         setStates = new RealNumericIndexer<S>();
+//         
+//         this.mapStateList.put(idElem, setStates);
+//     }
+//     
+//     // Add the given state to the list
+//     setStates.add(dblPos, state);
+//     
+//     // Save the last list to be accessed
+//     this.entryLast = new AbstractMap.SimpleEntry<String, RealNumericIndexer<S>>(idElem, setStates);
+// }
+// 
+// /**
+//  * Returns a list of probe states corresponding to the identifier
+//  * class containing the given modeling element ID.
+//  * 
+//  * @param strElemId     model element identifier
+//  * 
+//  * @return              all the probe states which are associated with the given element ID and its class,
+//  *                      or <code>null</code> if there are none
+//  *
+//  * @author Christopher K. Allen
+//  * @since  Jun 5, 2013
+//  */
+// public RealNumericIndexer<S>  getStates(String strElemId) {
+//     RealNumericIndexer<S> lstStates = this.mapStateList.get(strElemId);
+//     
+//     return lstStates;
+// }
+// 
+// /**
+//  * Return all the states managed by this map as a list.
+//  * 
+//  * @return      all probe states managed by this element state map
+//  *
+//  * @author Christopher K. Allen
+//  * @since  Aug 26, 2014
+//  */
+// public List<S>  getAllStates() {
+//     List<S>     lstStates = new LinkedList<S>();
+//     Collection< RealNumericIndexer<S> > setLists = this.mapStateList.values();
+//     
+//     for (RealNumericIndexer<S> rni : setLists) {
+//         Iterator<S> iter = rni.iterator();
+//         while (iter.hasNext()) {
+//             S state = iter.next();
+//             lstStates.add(state);
+//         }
+//     }
+//     return lstStates;
+// }
+//}

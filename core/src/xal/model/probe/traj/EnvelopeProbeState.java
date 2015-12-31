@@ -43,19 +43,32 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
     private static final String VALUE_LABEL = "value";
     
 
+    //
+    // Covariance Matrix
+    //
     
-    /** attribute tag for correlation matrix */
-    private static final String CORR_LABEL = "correlation";
-    
-    protected static final String ALPHA_X_LABEL = "alphaX";
-    protected static final String BETA_X_LABEL = "betaX";
-    protected static final String EMIT_X_LABEL = "emitX";
-    protected static final String ALPHA_Y_LABEL = "alphaY";
-    protected static final String BETA_Y_LABEL = "betaY";
-    protected static final String EMIT_Y_LABEL = "emitY";
-    protected static final String ALPHA_Z_LABEL = "alphaZ";
-    protected static final String BETA_Z_LABEL = "betaZ";
-    protected static final String EMIT_Z_LABEL = "emitZ";
+    /** Attribute tag for covariance matrix */
+    private static final String COV_TAG = "covariance";
+
+    /** 
+     * This is for backward compatibility when "covariance matrix" was 
+     * mistakenly called "correlation matrix" 
+     */
+    private static final String CORR_TAG = "correlation";
+
+    /**
+     * These are value tags for Twiss parameters, which optionally can be used to initialize
+     * the covariance matrix.
+     */
+    private static final String ALPHA_X_TAG = "alphaX";
+    private static final String BETA_X_TAG = "betaX";
+    private static final String EMIT_X_TAG = "emitX";
+    private static final String ALPHA_Y_TAG = "alphaY";
+    private static final String BETA_Y_TAG = "betaY";
+    private static final String EMIT_Y_TAG = "emitY";
+    private static final String ALPHA_Z_TAG = "alphaZ";
+    private static final String BETA_Z_TAG = "betaZ";
+    private static final String EMIT_Z_TAG = "emitZ";
     
 
     /*
@@ -103,15 +116,15 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 //    private Twiss [] twissParams;
     
     
-    /** 
-     * Instead of saving the covariance matrix to a <code>DataAdaptor</code>
-     * the Twiss parameters projected from the covariance matrix are saved.
-     * 
-     * @deprecated  saving only the Twiss parameters leaves and incomplete state and should be avoided
-     */
-    @Deprecated
-    private boolean bolSaveTwiss = false;
-
+//    /** 
+//     * Instead of saving the covariance matrix to a <code>DataAdaptor</code>
+//     * the Twiss parameters projected from the covariance matrix are saved.
+//     * 
+//     * @deprecated  saving only the Twiss parameters leaves and incomplete state and should be avoided
+//     */
+//    @Deprecated
+//    private boolean bolSaveTwiss = false;
+//
 
     
     
@@ -146,7 +159,7 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
     public EnvelopeProbeState(final EnvelopeProbeState prsEnv){
     	super(prsEnv);
     	
-    	this.bolSaveTwiss	= prsEnv.bolSaveTwiss;
+//    	this.bolSaveTwiss	= prsEnv.bolSaveTwiss;
     	this.matCov			= prsEnv.matCov.clone();
     	this.matPert		= prsEnv.matPert.clone();
     	this.matResp		= prsEnv.matResp.clone();
@@ -199,38 +212,38 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * Attribute Setters
      */
     
-    /**
-     * <p>
-     * Changes the behavior of the persistence methods (from the 
-     * <code>DataAdaptor</code> methods).
-     * By setting this flag to <code>true</code> the Twiss
-     * parameter attributes will be saved <b>instead</b> to a <code>DataAdapter</code> 
-     * interface rather that the full correlation matrix.  The default behavior for this class
-     * is to save the correlation matrix.
-     * </p>
-     * <h3>CKA Notes:</h3>
-     * <p>
-     * - This can be dangerous as we have the 
-     * potential to loose a lot of information.  In particular,
-     * if the probe has pasted through a bend or a steering
-     * magnet, the Twiss parameters do not contain enough information
-     * to restart the probe.
-     * <br> 
-     * - This is clearly a kluge; use this method with caution.
-     * It is provided to maintain backward compatibility.
-     * </p>
-     * 
-     * @param   bolSaveTwiss    behavior of save state methods 
-     * 
-     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
-     * 
-     * @deprecated  Storing only the Twiss parameters leaves an incomplete state 
-     *              and may lead to erroneous results
-     */
-    @Deprecated
-    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-        this.bolSaveTwiss = bolSaveTwiss;
-    }
+//    /**
+//     * <p>
+//     * Changes the behavior of the persistence methods (from the 
+//     * <code>DataAdaptor</code> methods).
+//     * By setting this flag to <code>true</code> the Twiss
+//     * parameter attributes will be saved <b>instead</b> to a <code>DataAdapter</code> 
+//     * interface rather that the full correlation matrix.  The default behavior for this class
+//     * is to save the correlation matrix.
+//     * </p>
+//     * <h3>CKA Notes:</h3>
+//     * <p>
+//     * - This can be dangerous as we have the 
+//     * potential to loose a lot of information.  In particular,
+//     * if the probe has pasted through a bend or a steering
+//     * magnet, the Twiss parameters do not contain enough information
+//     * to restart the probe.
+//     * <br> 
+//     * - This is clearly a kluge; use this method with caution.
+//     * It is provided to maintain backward compatibility.
+//     * </p>
+//     * 
+//     * @param   bolSaveTwiss    behavior of save state methods 
+//     * 
+//     * @see EnvelopeProbeState#addPropertiesTo(DataAdaptor)
+//     * 
+//     * @deprecated  Storing only the Twiss parameters leaves an incomplete state 
+//     *              and may lead to erroneous results
+//     */
+//    @Deprecated
+//    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
+//        this.bolSaveTwiss = bolSaveTwiss;
+//    }
     
     /**
      * Set the first-order response matrix of the current element slice
@@ -336,30 +349,30 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
         return matCov;
     }
     
-    /**
-     * Return the save Twiss parameters flag.  If this flag is set then
-     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
-     * object.
-     * 
-     * NOTES: 
-     * This can be dangerous as we have the 
-     * potential to loss a lot of information.  In particular,
-     * if the probe has pasted through a bend or a steering
-     * magnet, the Twiss parameters do not contain enough information
-     * to restart the probe. 
-     * 
-     * @return Twiss parameter save flag
-     * 
-     * @see Probe#save(DataAdaptor)
-     * @see Probe#applyState(ProbeState)
-     * 
-     * @deprecated  associated with the redundant state variable <code>twissParams</code>
-     */
-    @Deprecated
-    public boolean getSaveTwissFlag()   {
-        return this.bolSaveTwiss;
-    }
-    
+//    /**
+//     * Return the save Twiss parameters flag.  If this flag is set then
+//     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
+//     * object.
+//     * 
+//     * NOTES: 
+//     * This can be dangerous as we have the 
+//     * potential to loss a lot of information.  In particular,
+//     * if the probe has pasted through a bend or a steering
+//     * magnet, the Twiss parameters do not contain enough information
+//     * to restart the probe. 
+//     * 
+//     * @return Twiss parameter save flag
+//     * 
+//     * @see Probe#save(DataAdaptor)
+//     * @see Probe#applyState(ProbeState)
+//     * 
+//     * @deprecated  associated with the redundant state variable <code>twissParams</code>
+//     */
+//    @Deprecated
+//    public boolean getSaveTwissFlag()   {
+//        return this.bolSaveTwiss;
+//    }
+//    
     
     
 
@@ -474,15 +487,15 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
         
         Twiss[]   arrTwiss = this.twissParameters();
         
-        envNode.setValue(EnvelopeProbeState.ALPHA_X_LABEL, arrTwiss[0].getAlpha());
-        envNode.setValue(EnvelopeProbeState.BETA_X_LABEL, arrTwiss[0].getBeta());
-        envNode.setValue(EnvelopeProbeState.EMIT_X_LABEL, arrTwiss[0].getEmittance());
-        envNode.setValue(EnvelopeProbeState.ALPHA_Y_LABEL, arrTwiss[1].getAlpha());
-        envNode.setValue(EnvelopeProbeState.BETA_Y_LABEL, arrTwiss[1].getBeta());
-        envNode.setValue(EnvelopeProbeState.EMIT_Y_LABEL, arrTwiss[1].getEmittance());
-        envNode.setValue(EnvelopeProbeState.ALPHA_Z_LABEL, arrTwiss[2].getAlpha());
-        envNode.setValue(EnvelopeProbeState.BETA_Z_LABEL, arrTwiss[2].getBeta());
-        envNode.setValue(EnvelopeProbeState.EMIT_Z_LABEL, arrTwiss[2].getEmittance());           
+        envNode.setValue(EnvelopeProbeState.ALPHA_X_TAG, arrTwiss[0].getAlpha());
+        envNode.setValue(EnvelopeProbeState.BETA_X_TAG, arrTwiss[0].getBeta());
+        envNode.setValue(EnvelopeProbeState.EMIT_X_TAG, arrTwiss[0].getEmittance());
+        envNode.setValue(EnvelopeProbeState.ALPHA_Y_TAG, arrTwiss[1].getAlpha());
+        envNode.setValue(EnvelopeProbeState.BETA_Y_TAG, arrTwiss[1].getBeta());
+        envNode.setValue(EnvelopeProbeState.EMIT_Y_TAG, arrTwiss[1].getEmittance());
+        envNode.setValue(EnvelopeProbeState.ALPHA_Z_TAG, arrTwiss[2].getAlpha());
+        envNode.setValue(EnvelopeProbeState.BETA_Z_TAG, arrTwiss[2].getBeta());
+        envNode.setValue(EnvelopeProbeState.EMIT_Z_TAG, arrTwiss[2].getEmittance());           
     }
     
     
@@ -503,28 +516,30 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
         DataAdaptor envNode = container.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
         //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_LABEL, this.getResponseMatrix().toString());
 //      sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
+
+        envNode.setValue(EnvelopeProbeState.COV_TAG, this.getCovarianceMatrix().toString());
         
-        if (!bolSaveTwiss)
-            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCovarianceMatrix().toString());
-        else {
-            //sako
-//            this.setTwiss(this.twissParameters());
-            
-            Twiss[] twiss = this.twissParameters();
-            envNode.setValue(EnvelopeProbeState.ALPHA_X_LABEL, twiss[0].getAlpha());
-            envNode.setValue(EnvelopeProbeState.BETA_X_LABEL, twiss[0].getBeta());
-            envNode.setValue(EnvelopeProbeState.EMIT_X_LABEL, twiss[0].getEmittance());
-            envNode.setValue(EnvelopeProbeState.ALPHA_Y_LABEL, twiss[1].getAlpha());
-            envNode.setValue(EnvelopeProbeState.BETA_Y_LABEL, twiss[1].getBeta());
-            envNode.setValue(EnvelopeProbeState.EMIT_Y_LABEL, twiss[1].getEmittance());
-            envNode.setValue(EnvelopeProbeState.ALPHA_Z_LABEL, twiss[2].getAlpha());
-            envNode.setValue(EnvelopeProbeState.BETA_Z_LABEL, twiss[2].getBeta());
-            envNode.setValue(EnvelopeProbeState.EMIT_Z_LABEL, twiss[2].getEmittance());           
-            
-            //sako
-            envNode.setValue(EnvelopeProbeState.CORR_LABEL, this.getCovarianceMatrix().toString());
-            
-        }
+//        if (!bolSaveTwiss)
+//            envNode.setValue(EnvelopeProbeState.CORR_TAG, this.getCovarianceMatrix().toString());
+//        else {
+//            //sako
+////            this.setTwiss(this.twissParameters());
+//            
+//            Twiss[] twiss = this.twissParameters();
+//            envNode.setValue(EnvelopeProbeState.ALPHA_X_TAG, twiss[0].getAlpha());
+//            envNode.setValue(EnvelopeProbeState.BETA_X_TAG, twiss[0].getBeta());
+//            envNode.setValue(EnvelopeProbeState.EMIT_X_TAG, twiss[0].getEmittance());
+//            envNode.setValue(EnvelopeProbeState.ALPHA_Y_TAG, twiss[1].getAlpha());
+//            envNode.setValue(EnvelopeProbeState.BETA_Y_TAG, twiss[1].getBeta());
+//            envNode.setValue(EnvelopeProbeState.EMIT_Y_TAG, twiss[1].getEmittance());
+//            envNode.setValue(EnvelopeProbeState.ALPHA_Z_TAG, twiss[2].getAlpha());
+//            envNode.setValue(EnvelopeProbeState.BETA_Z_TAG, twiss[2].getBeta());
+//            envNode.setValue(EnvelopeProbeState.EMIT_Z_TAG, twiss[2].getEmittance());           
+//            
+//            //sako
+//            envNode.setValue(EnvelopeProbeState.CORR_TAG, this.getCovarianceMatrix().toString());
+//            
+//        }
     }
         
     /**
@@ -546,17 +561,17 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
             throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + ENVELOPE_LABEL);
         
 //        Twiss[] twissParams;
-        if (envNode.hasAttribute(EnvelopeProbeState.ALPHA_X_LABEL)) {
+        if (envNode.hasAttribute(EnvelopeProbeState.ALPHA_X_TAG)) {
             Twiss[] twiss = new Twiss[3];
-            twiss[0] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_X_LABEL), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_X_LABEL),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_X_LABEL));
-            twiss[1] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Y_LABEL), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_Y_LABEL),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_Y_LABEL));
-            twiss[2] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Z_LABEL), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_Z_LABEL),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_Z_LABEL));
+            twiss[0] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_X_TAG), 
+                    envNode.doubleValue(EnvelopeProbeState.BETA_X_TAG),
+                    envNode.doubleValue(EnvelopeProbeState.EMIT_X_TAG));
+            twiss[1] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Y_TAG), 
+                    envNode.doubleValue(EnvelopeProbeState.BETA_Y_TAG),
+                    envNode.doubleValue(EnvelopeProbeState.EMIT_Y_TAG));
+            twiss[2] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Z_TAG), 
+                    envNode.doubleValue(EnvelopeProbeState.BETA_Z_TAG),
+                    envNode.doubleValue(EnvelopeProbeState.EMIT_Z_TAG));
 //            this.setTwiss(twiss);
 //            twissParams = twiss;
             
@@ -585,13 +600,18 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
                 
             }
             
-        } else if (envNode.hasAttribute(EnvelopeProbeState.CORR_LABEL))   {
-            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_LABEL));
+        } else if (envNode.hasAttribute(EnvelopeProbeState.COV_TAG))   {
+            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.COV_TAG));
             this.setCovariance(matChi);
             // initialize the state twiss parameters from the correlation matrix
 //            twissParams = matChi.computeTwiss();
 //            this.setTwiss(matChi.computeTwiss());
+            
+        } else if (envNode.hasAttribute(CORR_TAG)) { // Included for backward compatibility when using old attr label
+            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_TAG));
+            this.setCovariance(matChi);
         }
+            
         
         /* sako 2008/07/07
         if (envNode.hasAttribute(EnvelopeProbeState.RESP_LABEL)) {

@@ -527,6 +527,19 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
     }
     
     /**
+     * Returns the initial state of this probe.  This is the state with which the probe
+     * begins the simulation.  Whenever the <code>{@link #reset()}</code> command is called
+     * the current state of the simulation is set to this state.
+     *  
+     * @return  the current starting state for this probe
+     *
+     * @since  Dec 29, 2015,   Christopher K. Allen
+     */
+    public S getInitialState() {
+        return this.stateInit;
+    }
+    
+    /**
      *  Get the state history of the probe.
      * 
      *  @return     Trajectory object of the proper sub-type for the probe type 

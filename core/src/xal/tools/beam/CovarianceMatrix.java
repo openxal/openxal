@@ -2,6 +2,7 @@ package xal.tools.beam;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.Twiss3D.IND_3D;
+import xal.tools.math.ElementaryFunction;
 import xal.tools.math.r3.R3x3;
 
 
@@ -315,20 +316,23 @@ public class CovarianceMatrix extends PhaseMatrix {
 //    }
 
     /**
+     * <p>
      *  (Re)sets the rms emittances for the beam.  This method scales the X,Y,Z diagonal blocks
-     *  of the correlation matrix so the beam has the rms emittances provided.  
-     *
-     *  NOTES:
+     *  of the correlation matrix so the beam has the rms emittances provided.
+     *  </p>  
+     *  <p>
+     *  <h4>NOTES:</h4>
      *  Since the emittance values are contained in the 
      *  correlation matrix attempting to set emittances with an empty (zero) correlation matrix 
      *  causes a foating point exception.  As such, this method can really only change existing
      *  emittances and is to be regarded as a convenience function.
      * 
-     *  IMPORTANT:
+     *  <h4>IMPORTANT:</h4>
      *  The current implementation is valid ONLY FOR ZERO-MEAN correlations.
      * 
-     *  TODO - Fix the implementation so that it is valid for off-centered distributions.
-     *
+     *  <h4>TODO</h4>
+     *  Fix the implementation so that it is valid for off-centered distributions.
+     *  </p>
      *
      *  @param  arrEmitNew  three element vector of rms emittances for X,Y,Z planes, respectively
      *                      <b>Units radian-meters</b>
@@ -714,38 +718,71 @@ public class CovarianceMatrix extends PhaseMatrix {
 
 
     /**
-     *  Check matrix for symmetry.  Correlation matrices must be
+     *  Check matrix for symmetry.  Covariance matrices must be
      *  symmetric.
      * 
      *  @param  matCorr <code>CovarianceMatrix</code> object to check
      * 
-     *  @return     true if symmtric, false if not
+     *  @return     true if symmetric, false if not
      * 
-     * @author ckallen
+     * @author Christopher K Allen
      *
      */
     private boolean checkSymmetry(CovarianceMatrix matCorr)    {
         int     i,j;        //loop control variables
-        
+
         for (i=0; i<7; i++)
             for (j=i+1; j<7; j++) {
-                if (matCorr.getElem(i,j) != matCorr.getElem(j,i) )
+                double  dblValUp = this.getElem(i, j);
+                double  dblValLw = this.getElem(j, i);
+                
+                if ( !ElementaryFunction.approxEq(dblValUp, dblValLw) )
                     return false;
             }
+
         return true;
     }
+    
+//    private double  enforceSymmetry() {
+//        
+//        for (int i=0; i<INT_SIZE; i++)
+//            for (int j=i+1; j<INT_SIZE; j++) {
+//                double  dblValUp = this.getElem(i, j);
+//                double  dblValDn = this.getElem(j, i);
+//                
+//                double  dblAvg = (dblValUp + dblValDn)/2.0;
+//                Double  dblErr = (dblValUp - dblValDn)/dblAvg;
+//                
+//                if (dblErr.isInfinite())
+//            }
+//        
+//    }
 
-	/**
+//	/**
+//     * Handles object creation required by the base class. 
+//	 *
+//	 * @see xal.tools.beam.PhaseMatrix#newInstance()
+//	 *
+//	 * @author Ivo List
+//	 * @author Christopher K. Allen
+//	 * @since  Jun 17, 2014
+//	 */
+//	@Override
+//	protected PhaseMatrix newInstance() {
+//		return new PhaseMatrix();
+//	}
+
+    /**
      * Handles object creation required by the base class. 
-	 *
-	 * @see xal.tools.beam.PhaseMatrix#newInstance()
-	 *
-	 * @author Ivo List
-	 * @author Christopher K. Allen
-	 * @since  Jun 17, 2014
-	 */
-	@Override
-	protected PhaseMatrix newInstance() {
-		return new PhaseMatrix();
-	}
+     *
+     * @see xal.tools.beam.PhaseMatrix#newInstance()
+     *
+     * @author Ivo List
+     * @author Christopher K. Allen
+     * @since  Jun 17, 2014
+     */
+    @Override
+    protected CovarianceMatrix newInstance() {
+        return new CovarianceMatrix();
+    }
 }
