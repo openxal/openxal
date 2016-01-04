@@ -347,7 +347,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
       * @throws ParsingException    malformed data stare
       */
      @SuppressWarnings("unchecked")
-     public static <S extends ProbeState<S>> Trajectory<S> createFrom(DataAdaptor daptSrc) throws ParsingException {
+     public static <S extends ProbeState<S>> Trajectory<S> loadFrom(DataAdaptor daptSrc) throws ParsingException {
 
          // Get the trajectory node, bail out if not there
          DataAdaptor daptTraj = daptSrc.childAdaptor(Trajectory.TRAJ_LABEL);

@@ -52,7 +52,9 @@ public final class ElementaryFunction {
     /**
      * Test if two <code>double</code> precision numbers are approximately equal.
      * This condition is checked using the the default number of Units in the
-     * Last Place (ULPs) bracketing the two numbers.
+     * Last Place (ULPs) bracketing the two numbers.  The default number of
+     * ULPs is given in the class constant <code>{@link #ULPS_DEFLT_BRACKET}</code>
+     * and current has the value <code>{@value #ULPS_DEFLT_BRACKET}</code>.
      * 
      * @param   x    double precision number
      * @param   y    double precision number

@@ -553,21 +553,21 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     
     
     /** 
-     *  Computes the relatavistic factor gamma from the current beta value
+     *  Computes the relativistic factor gamma from the current beta value
      *  
      *  @param  beta    speed of probe w.r.t. the speed of light
-     *  @return         relatavistic factor gamma
+     *  @return         relativistic factor gamma
      */
     protected double computeGammaFromBeta(double beta) { 
         return 1.0/Math.sqrt(1.0 - beta*beta); 
     }
     
     /**
-     *  Convenience function for computing the relatistic factor gamma from the 
+     *  Convenience function for computing the relativistic factor gamma from the 
      *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
      *
      *  @param  W       kinetic energy of the probe
-     *  @return         relatavistic factor gamma
+     *  @return         relativistic factor gamma
      */
     protected double computeGammaFromW(double W)   {
         double gamma = W/m_dblParEr + 1.0;

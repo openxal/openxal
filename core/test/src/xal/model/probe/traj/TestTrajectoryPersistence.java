@@ -177,7 +177,7 @@ public class TestTrajectoryPersistence {
     }
     
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#createFrom(xal.tools.data.DataAdaptor)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#loadFrom(xal.tools.data.DataAdaptor)}.
      */
     @Test
     public final void testParticleTrajectoryPersistence() {
@@ -196,7 +196,7 @@ public class TestTrajectoryPersistence {
     }
 
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#createFrom(xal.tools.data.DataAdaptor)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#loadFrom(xal.tools.data.DataAdaptor)}.
      */
     @Test
     public final void testTransferMapTrajectoryPersistence() {
@@ -215,7 +215,7 @@ public class TestTrajectoryPersistence {
     }
 
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#createFrom(xal.tools.data.DataAdaptor)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#loadFrom(xal.tools.data.DataAdaptor)}.
      */
     @Test
     public final void testEnvelopeProbeTrajectoryPersistence() {
@@ -234,7 +234,7 @@ public class TestTrajectoryPersistence {
     }
 
     /**
-     * Test method for {@link xal.model.probe.traj.Trajectory#createFrom(xal.tools.data.DataAdaptor)}.
+     * Test method for {@link xal.model.probe.traj.Trajectory#loadFrom(xal.tools.data.DataAdaptor)}.
      */
     @Test
     public final void testTwissProbeTrajectoryPersistence() {
@@ -331,7 +331,7 @@ public class TestTrajectoryPersistence {
             File            fileSrc = ResourceManager.getOutputFile(this.getClass(), strFileName);
             XmlDataAdaptor  daptSrc = XmlDataAdaptor.adaptorForFile(fileSrc, false);
             
-            Trajectory<S>   trajSrc = Trajectory.createFrom(daptSrc);
+            Trajectory<S>   trajSrc = Trajectory.loadFrom(daptSrc);
             
             return trajSrc;
             

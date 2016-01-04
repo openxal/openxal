@@ -7,10 +7,10 @@
 package xal.model.probe;
 
 
+import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
-import xal.tools.annotation.AProperty.NoEdit;
 import xal.model.probe.traj.ParticleProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.xml.ParsingException;

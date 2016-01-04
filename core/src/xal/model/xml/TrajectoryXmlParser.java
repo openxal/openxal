@@ -45,7 +45,7 @@ public class TrajectoryXmlParser {
 			XmlDataAdaptor.adaptorForUrl(fileUri, false);
 //		DataAdaptor trajNode = document.childAdaptor(Trajectory.TRAJ_LABEL);
 //		return Trajectory.readFrom(trajNode);
-            return Trajectory.createFrom(document);
+            return Trajectory.loadFrom(document);
 	}
 
 }

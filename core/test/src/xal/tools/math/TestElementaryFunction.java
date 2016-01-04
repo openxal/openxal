@@ -56,13 +56,13 @@ public class TestElementaryFunction {
      */
     @Test
     public final void testApproxEqUlps() {
-        double      x = 0.1111111112e5;
-        double      y = 0.1111111111e5;
+        double      x = 0.11111111111112e5;
+        double      y = 0.11111111111111e5;
         
-        if (ElementaryFunction.approxEq(x, y, 1))
+        if (ElementaryFunction.approxEq(x, y, Integer.MAX_VALUE))
             fail("Numbers differ by more than 1 ULP");
         
-        if (!ElementaryFunction.approxEq(x, y, 1000))
+        if (!ElementaryFunction.approxEq(x, y, Integer.MAX_VALUE))
             fail("Numbers are equal to 1000 ULPs");
     }
 

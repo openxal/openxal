@@ -38,7 +38,7 @@ import xal.model.xml.ParsingException;
 public class TransferMapState extends ProbeState<TransferMapState> {
     
     /*
-     * Global Constantes
+     * Global Constants
      */
     
 //    /** number of modes */

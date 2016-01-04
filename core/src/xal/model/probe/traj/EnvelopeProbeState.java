@@ -5,8 +5,8 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.probe.EnvelopeProbe;
-import xal.model.probe.Probe;
 import xal.model.xml.ParsingException;
 
 
@@ -27,34 +27,58 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      * Global Constants
      */
 
-    /** element tag for envelope data */
-    protected static final String ENVELOPE_LABEL = "envelope";
-
-//    /** attribute tag for response matrix */
-//    private static final String RESP_LABEL = "resp";
-//    
-//    /** attribute tag for perturbation matrix (current response) */
-//    private static final String PERTURB_LABEL = "perturb";
-//
-    /** element tag for centroid data */
-    protected static final String CENTROID_LABEL = "centroid";
-
-    /** attribute tag for centroid value vector */
-    private static final String VALUE_LABEL = "value";
     
+    //
+    // Data Persistence
+    //
+    
+    /** element tag for envelope data */
+    private static final String LABEL_ENVELOPE = "envelope";
+
+    /** data node label for covariance matrix */
+    private static final String LABEL_COV = "covariance";
+
+    /** element label for response matrix (global response from simulation start to here) */
+    private static final String LABEL_RESP = "resp";
+    
+    /** data node label for the response matrix containing no space charge effects */
+    private static final String LABEL_RESP_NOSCHEFF = "resp-nosheff";
+    
+    /** attribute tag for perturbation matrix (local response between states) */
+    private static final String LABEL_PERTURB = "perturb";
+
 
     //
-    // Covariance Matrix
+    // Persistence Version
+    //
+    
+    /** the data format version attribute */
+    private static final String   ATTR_VERSION = "ver";
+    
+    /** the data format version */
+    private static final int     INT_VERSION = 2;
+    
+    
+    //
+    // Backward Compatibility
     //
     
     /** Attribute tag for covariance matrix */
-    private static final String COV_TAG = "covariance";
+    private static final String ATTR_COV = "covariance";
 
     /** 
      * This is for backward compatibility when "covariance matrix" was 
      * mistakenly called "correlation matrix" 
      */
-    private static final String CORR_TAG = "correlation";
+    private static final String ATTR_CORR = "correlation";
+    
+    /** element tag for centroid data */
+    protected static final String LABEL_CENTROID = "centroid";
+
+    /** attribute tag for centroid value vector */
+    private static final String VALUE_LABEL = "value";
+    
+
 
     /**
      * These are value tags for Twiss parameters, which optionally can be used to initialize
@@ -69,6 +93,18 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
     private static final String ALPHA_Z_TAG = "alphaZ";
     private static final String BETA_Z_TAG = "betaZ";
     private static final String EMIT_Z_TAG = "emitZ";
+
+    
+    // 
+    // Supporting State Variables
+    //
+    
+//    /** attribute tag for response matrix (global response from simulation start to here) */
+//    private static final String RESP_TAG = "resp";
+//
+//    /** attribute tag for response matrix without space charge effects */
+//    private static final String RESP_NOSCHEFF_TAG = "resp-nocheff";
+//    
     
 
     /*
@@ -481,9 +517,9 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
         super.addPropertiesTo(stateNode);
         
         
-        DataAdaptor envNode = stateNode.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
-        //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_LABEL, this.getResponseMatrix().toString());
-        //sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
+        DataAdaptor envNode = stateNode.createChild(EnvelopeProbeState.LABEL_ENVELOPE);
+        //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_TAG, this.getResponseMatrix().toString());
+        //sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_TAG, this.getPerturbationMatrix().toString());
         
         Twiss[]   arrTwiss = this.twissParameters();
         
@@ -513,33 +549,20 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
     protected void addPropertiesTo(DataAdaptor container) {
         super.addPropertiesTo(container);
         
-        DataAdaptor envNode = container.createChild(EnvelopeProbeState.ENVELOPE_LABEL);
-        //sako this is bad for dispersion (2008/07/07) envNode.setValue(EnvelopeProbeState.RESP_LABEL, this.getResponseMatrix().toString());
-//      sako this is unnecessary  (2008/07/07) envNode.setValue(EnvelopeProbeState.PERTURB_LABEL, this.getPerturbationMatrix().toString());
+        DataAdaptor nodeEnv = container.createChild(LABEL_ENVELOPE);
+        nodeEnv.setValue(ATTR_VERSION, INT_VERSION);
 
-        envNode.setValue(EnvelopeProbeState.COV_TAG, this.getCovarianceMatrix().toString());
+        DataAdaptor nodeCov = nodeEnv.createChild(LABEL_COV);
+        this.getCovarianceMatrix().save(nodeCov);
         
-//        if (!bolSaveTwiss)
-//            envNode.setValue(EnvelopeProbeState.CORR_TAG, this.getCovarianceMatrix().toString());
-//        else {
-//            //sako
-////            this.setTwiss(this.twissParameters());
-//            
-//            Twiss[] twiss = this.twissParameters();
-//            envNode.setValue(EnvelopeProbeState.ALPHA_X_TAG, twiss[0].getAlpha());
-//            envNode.setValue(EnvelopeProbeState.BETA_X_TAG, twiss[0].getBeta());
-//            envNode.setValue(EnvelopeProbeState.EMIT_X_TAG, twiss[0].getEmittance());
-//            envNode.setValue(EnvelopeProbeState.ALPHA_Y_TAG, twiss[1].getAlpha());
-//            envNode.setValue(EnvelopeProbeState.BETA_Y_TAG, twiss[1].getBeta());
-//            envNode.setValue(EnvelopeProbeState.EMIT_Y_TAG, twiss[1].getEmittance());
-//            envNode.setValue(EnvelopeProbeState.ALPHA_Z_TAG, twiss[2].getAlpha());
-//            envNode.setValue(EnvelopeProbeState.BETA_Z_TAG, twiss[2].getBeta());
-//            envNode.setValue(EnvelopeProbeState.EMIT_Z_TAG, twiss[2].getEmittance());           
-//            
-//            //sako
-//            envNode.setValue(EnvelopeProbeState.CORR_TAG, this.getCovarianceMatrix().toString());
-//            
-//        }
+        DataAdaptor nodeResp = nodeEnv.createChild(LABEL_RESP);
+        this.getResponseMatrix().save(nodeResp);
+        
+        DataAdaptor nodeRespNoScheff = nodeEnv.createChild(LABEL_RESP_NOSCHEFF);
+        this.getResponseMatrixNoSpaceCharge().save(nodeRespNoScheff);
+        
+        DataAdaptor nodePert = nodeEnv.createChild(LABEL_PERTURB);
+        this.getPerturbationMatrix().save(nodePert);
     }
         
     /**
@@ -556,77 +579,95 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
     {
         super.readPropertiesFrom(container);
         
-        DataAdaptor envNode = container.childAdaptor(EnvelopeProbeState.ENVELOPE_LABEL);
-        if (envNode == null)
-            throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + ENVELOPE_LABEL);
+        DataAdaptor nodeEnv = container.childAdaptor(LABEL_ENVELOPE);
+        if (nodeEnv == null)
+            throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + LABEL_ENVELOPE);
         
-//        Twiss[] twissParams;
-        if (envNode.hasAttribute(EnvelopeProbeState.ALPHA_X_TAG)) {
+        // Read the version number.  We don't do anything with it since there was no version
+        //  attribute before version 2.  But it's here if necessary in the future.
+        @SuppressWarnings("unused")
+        int     intVersion = 0;
+        if (nodeEnv.hasAttribute(ATTR_VERSION))
+            intVersion = nodeEnv.intValue(ATTR_VERSION);
+        
+        // This is when the Twiss parameters were stored within the envelope node as an attribute
+        //  It is possible that the centroid of the envelope was stored with it
+        if (nodeEnv.hasAttribute(ALPHA_X_TAG)) {
             Twiss[] twiss = new Twiss[3];
-            twiss[0] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_X_TAG), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_X_TAG),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_X_TAG));
-            twiss[1] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Y_TAG), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_Y_TAG),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_Y_TAG));
-            twiss[2] = new Twiss(envNode.doubleValue(EnvelopeProbeState.ALPHA_Z_TAG), 
-                    envNode.doubleValue(EnvelopeProbeState.BETA_Z_TAG),
-                    envNode.doubleValue(EnvelopeProbeState.EMIT_Z_TAG));
-//            this.setTwiss(twiss);
-//            twissParams = twiss;
-            
-            DataAdaptor parNode = container.childAdaptor(EnvelopeProbeState.CENTROID_LABEL);
-            if (parNode == null) {
+            twiss[0] = new Twiss(nodeEnv.doubleValue(ALPHA_X_TAG), 
+                    nodeEnv.doubleValue(BETA_X_TAG),
+                    nodeEnv.doubleValue(EMIT_X_TAG));
+            twiss[1] = new Twiss(nodeEnv.doubleValue(ALPHA_Y_TAG), 
+                    nodeEnv.doubleValue(BETA_Y_TAG),
+                    nodeEnv.doubleValue(EMIT_Y_TAG));
+            twiss[2] = new Twiss(nodeEnv.doubleValue(ALPHA_Z_TAG), 
+                    nodeEnv.doubleValue(BETA_Z_TAG),
+                    nodeEnv.doubleValue(EMIT_Z_TAG));
+
+            DataAdaptor parNode = container.childAdaptor(LABEL_CENTROID);
+            if (parNode == null) {  // if there is no centroid info we are done
                 this.setCovariance(CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2]));
-//              throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + EnvelopeProbeState.PARTICLE_LABEL);
-            } else {
-//                if (parNode.hasAttribute(EnvelopeProbeState.X_LABEL)) {
-//                    PhaseVector phaseV = new PhaseVector();
-//                    phaseV.setx(parNode.doubleValue(EnvelopeProbeState.X_LABEL));
-//                    phaseV.setxp(parNode.doubleValue(EnvelopeProbeState.XP_LABEL));
-//                    phaseV.sety(parNode.doubleValue(EnvelopeProbeState.Y_LABEL));
-//                    phaseV.setyp(parNode.doubleValue(EnvelopeProbeState.YP_LABEL));
-//                    phaseV.setz(parNode.doubleValue(EnvelopeProbeState.Z_LABEL));
-//                    phaseV.setzp(parNode.doubleValue(EnvelopeProbeState.ZP_LABEL));
-//                
-//                    this.setCorrelation(CovarianceMatrix.buildCorrelation(twiss[0], twiss[1], twiss[2], phaseV));
-//                }
+                
+            } else {                // if there is centroid info get it then build the matrix 
                 if (parNode.hasAttribute(EnvelopeProbeState.VALUE_LABEL))   {
-                    String      strCent = parNode.stringValue(EnvelopeProbeState.VALUE_LABEL);
+                    String      strCent = parNode.stringValue(VALUE_LABEL);
                     PhaseVector vecCent = new PhaseVector(strCent);
                     
                     this.setCovariance(CovarianceMatrix.buildCovariance(twiss[0], twiss[1], twiss[2], vecCent));
                 }
-                
             }
             
-        } else if (envNode.hasAttribute(EnvelopeProbeState.COV_TAG))   {
-            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.COV_TAG));
+            // This is when the covariance matrix was stored as an attribute of the envelope node
+        } else if (nodeEnv.hasAttribute(ATTR_COV))   {
+            String  strMatVal = nodeEnv.stringValue(ATTR_COV);
+            CovarianceMatrix matChi = new CovarianceMatrix(strMatVal);
             this.setCovariance(matChi);
-            // initialize the state twiss parameters from the correlation matrix
-//            twissParams = matChi.computeTwiss();
-//            this.setTwiss(matChi.computeTwiss());
             
-        } else if (envNode.hasAttribute(CORR_TAG)) { // Included for backward compatibility when using old attr label
-            CovarianceMatrix matChi = new CovarianceMatrix(envNode.stringValue(EnvelopeProbeState.CORR_TAG));
+            // There were two different attribute tags for the same thing need to look for both 
+        } else if (nodeEnv.hasAttribute(ATTR_CORR)) { // Included for backward compatibility when using old attr label
+            String  strMatVal = nodeEnv.stringValue(EnvelopeProbeState.ATTR_CORR);
+            CovarianceMatrix matChi = new CovarianceMatrix(strMatVal);
             this.setCovariance(matChi);
-        }
             
-        
-        /* sako 2008/07/07
-        if (envNode.hasAttribute(EnvelopeProbeState.RESP_LABEL)) {
-            PhaseMatrix matResp = new PhaseMatrix(envNode.stringValue(EnvelopeProbeState.RESP_LABEL));
-            this.setResponseMatrix(matResp);
         }
-        */
-        
-        /* sako 2008/07/07
-        // TODO - treatment for matCurResp?  CKA - Added 2006/11
-        if (envNode.hasAttribute(EnvelopeProbeState.PERTURB_LABEL)) {
-            PhaseMatrix matPert = new PhaseMatrix(envNode.stringValue(EnvelopeProbeState.PERTURB_LABEL));
-            this.setPerturbationMatrix(matPert);
+         
+        // Read the state data in the current version
+        try {
+            
+            DataAdaptor nodeCov = nodeEnv.childAdaptor(LABEL_COV);
+            if (nodeCov != null) {
+                CovarianceMatrix matCov = CovarianceMatrix.loadFrom(nodeCov);
+                this.setCovariance(matCov);
+            }
+            
+            DataAdaptor nodeResp = nodeEnv.childAdaptor(LABEL_RESP);
+            if (nodeResp != null) {
+                PhaseMatrix matResp = PhaseMatrix.loadFrom(nodeResp);
+                this.setResponseMatrix(matResp);
+            }
+            
+            DataAdaptor nodeRespNoscheff = nodeEnv.childAdaptor(LABEL_RESP_NOSCHEFF);
+            if (nodeRespNoscheff != null) {
+                PhaseMatrix matResp = PhaseMatrix.loadFrom(nodeRespNoscheff);
+                this.setResponseMatrixNoSpaceCharge(matResp);
+            }
+            
+            DataAdaptor nodePert = nodeEnv.childAdaptor(LABEL_PERTURB);
+            if (nodePert != null) {
+                PhaseMatrix matPert = PhaseMatrix.loadFrom(nodePert);
+                this.setPerturbationMatrix(matPert);
+            }
+            
+
+        } catch (DataFormatException e) {
+            e.printStackTrace();
+            throw new ParsingException("The source data was corrupted - " + e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new ParsingException("The provided covariance matrix was asymmetric - " + e.getMessage());
+            
         }
-        */
     }
 
     
