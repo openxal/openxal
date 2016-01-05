@@ -44,11 +44,12 @@ public class TestElementaryFunction {
      */
     @Test
     public final void testApproxEq() {
-        double      x = 0.1111111112e-5;
-        double      y = 0.1111111111e-5;
+        double      x  = 0.1111111112e-5;
+        double      dx = Math.ulp(x);
+        double      y = x + (ElementaryFunction.ULPS_DEFLT_BRACKET - 1)*dx;
         
         if (!ElementaryFunction.approxEq(x, y))
-            fail("Default ULPs approximation failed");
+            fail("Default ULPs bracketing approximatly equal to failed");
     }
 
     /**
@@ -59,8 +60,8 @@ public class TestElementaryFunction {
         double      x = 0.11111111111112e5;
         double      y = 0.11111111111111e5;
         
-        if (ElementaryFunction.approxEq(x, y, Integer.MAX_VALUE))
-            fail("Numbers differ by more than 1 ULP");
+        if (!ElementaryFunction.approxEq(x, x, 1))
+            fail("Same number seen different by more than 1 ULP");
         
         if (!ElementaryFunction.approxEq(x, y, Integer.MAX_VALUE))
             fail("Numbers are equal to 1000 ULPs");
