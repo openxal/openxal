@@ -18,7 +18,6 @@ import xal.model.ModelException;
 import xal.model.alg.Tracker;
 import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -92,14 +91,14 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @param container <code>DataAdaptor</code> to read a Probe from
      * @return a Probe for the contents of the DataAdaptor
-     * @throws ParsingException error encountered reading the DataAdaptor
+     * @throws DataFormatException error encountered reading the DataAdaptor
      */
     public static Probe<?> readFrom(DataAdaptor container)
-            throws ParsingException {
+            throws DataFormatException {
                 
         DataAdaptor daptProbe = container.childAdaptor(Probe.PROBE_LABEL);
         if (daptProbe == null)
-            throw new ParsingException("Probe#readFrom() - no Probe data node.");
+            throw new DataFormatException("Probe#readFrom() - no Probe data node.");
             
         String type = daptProbe.stringValue(Probe.TYPE_LABEL);
         Probe<?> probe;
@@ -108,7 +107,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
             probe = (Probe<?>) probeClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ParsingException(e.getMessage());
+            throw new DataFormatException(e.getMessage());
         }
         probe.load(daptProbe);
         return probe;   
@@ -264,9 +263,9 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      * 
      * @param container <code>DataAdaptor</code> to read a Trajectory from
      * @return a ProbeState for the contents of the DataAdaptor
-     * @throws ParsingException error encountered reading the DataAdaptor
+     * @throws DataFormatException error encountered reading the DataAdaptor
      */
-    protected abstract S readStateFrom(DataAdaptor container) throws ParsingException;
+    protected abstract S readStateFrom(DataAdaptor container) throws DataFormatException;
    
     
     /*
@@ -524,6 +523,19 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
      */
     public S getCurrentState() {
         return this.stateCurrent;
+    }
+    
+    /**
+     * Returns the initial state of this probe.  This is the state with which the probe
+     * begins the simulation.  Whenever the <code>{@link #reset()}</code> command is called
+     * the current state of the simulation is set to this state.
+     *  
+     * @return  the current starting state for this probe
+     *
+     * @since  Dec 29, 2015,   Christopher K. Allen
+     */
+    public S getInitialState() {
+        return this.stateInit;
     }
     
     /**
@@ -1078,7 +1090,7 @@ public abstract class Probe<S extends ProbeState<S>> implements IProbe, IArchive
         S state;
         try {
             state = readStateFrom(daptState);
-        } catch (ParsingException e) {
+        } catch (DataFormatException e) {
             throw new DataFormatException("Probe#load() - exception parsing state element");
         }
         this.applyState(state);

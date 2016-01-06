@@ -428,6 +428,24 @@ public class PhaseMatrix extends SquareMatrix<PhaseMatrix> implements java.io.Se
         return new PhaseMatrix(strTokens);
     }
     
+    /**
+     * Create a new <code>PhaseMatrix</code> object and initialize with the data 
+     * source behind the given <code>DataAdaptor</code> interface.
+     * 
+     * @param   daSource    data source containing initialization data
+     * 
+     * @throws DataFormatException      malformed data
+     * 
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
+     *
+     * @since  Jan 4, 2016,   Christopher K. Allen
+     */
+    public static PhaseMatrix   loadFrom(DataAdaptor daSource) throws DataFormatException {
+        PhaseMatrix     matNew = new PhaseMatrix(daSource);
+        
+        return matNew;
+    }
+    
     
     
     /*

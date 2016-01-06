@@ -3,8 +3,8 @@ package xal.model.probe.traj;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.probe.ParticleProbe;
-import xal.model.xml.ParsingException;
 
 /**
  * Encapsulates the state of a <code>ParticleProbe</code> at a particular point
@@ -22,8 +22,35 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      * Global Constants
      */
 
-    /** element tag for particle data */
-    protected static final String PARTICLE_LABEL = "particle";
+    
+    //
+    //  Data Persistence
+    //
+    
+    /** label for particle data node */
+    private static final String LABEL_PARTICLE = "particle";
+    
+    /** label for the phase coordinate data node */
+    private static final String LABEL_COORDS = "coordinates";
+    
+    /** label for the response matrix data node */
+    private static final String LABEL_RESP = "resp";
+    
+    
+    //
+    // Persistence Version
+    //
+    
+    /** the data format version attribute */
+    private static final String   ATTR_VERSION = "ver";
+    
+    /** the data format version */
+    private static final int     INT_VERSION = 2;
+    
+
+    //
+    // Backward Compatibility
+    //
     
     /** attribute tag for coordinate vector */
     private static final String VALUE_LABEL = "coordinates";
@@ -225,9 +252,14 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
     protected void addPropertiesTo(DataAdaptor container) {
         super.addPropertiesTo(container);
         
-        DataAdaptor partNode = container.createChild(PARTICLE_LABEL);
-        partNode.setValue(VALUE_LABEL, getPhaseCoordinates().toString());
-        partNode.setValue(RESP_LABEL, this.getResponseMatrix().toString());
+        DataAdaptor nodePart = container.createChild(LABEL_PARTICLE);
+        nodePart.setValue(ATTR_VERSION, INT_VERSION);
+        
+        DataAdaptor nodeCoords = nodePart.createChild(LABEL_COORDS);
+        this.getPhaseCoordinates().save(nodeCoords);
+        
+        DataAdaptor nodeResp = nodePart.createChild(LABEL_RESP);
+        this.getResponseMatrix().save(nodeResp);;
     }
     
     /**
@@ -236,22 +268,57 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      *
      *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor container) 
-            throws ParsingException {
+            throws DataFormatException {
         super.readPropertiesFrom(container);
         
-        DataAdaptor partNode = container.childAdaptor(PARTICLE_LABEL);
-        if (partNode == null)
-            throw new ParsingException("ParticleProbeState#readPropertiesFrom(): no child element = " + PARTICLE_LABEL);
+        DataAdaptor nodePart = container.childAdaptor(LABEL_PARTICLE);
+        if (nodePart == null)
+            throw new DataFormatException("ParticleProbeState#readPropertiesFrom(): no child element = " + LABEL_PARTICLE);
         
-        String  strVecFmt = partNode.stringValue(VALUE_LABEL);
-        String  strMatFmt = partNode.stringValue(RESP_LABEL);
+        // Read the version number.  We don't do anything with it since there was no version
+        //  attribute before version 2.  But it's here if necessary in the future.
+        @SuppressWarnings("unused")
+        int     intVersion = 0;
+        if (nodePart.hasAttribute(ATTR_VERSION))
+            intVersion = nodePart.intValue(ATTR_VERSION);
+
+        // Read data if the old format is found
+        if (nodePart.hasAttribute(VALUE_LABEL)) {
+            String  strVecFmt = nodePart.stringValue(VALUE_LABEL);
+            this.setPhaseCoordinates(new PhaseVector(strVecFmt));
+        }
         
-        setPhaseCoordinates(new PhaseVector(strVecFmt));
-        setResponseMatrix( new PhaseMatrix(strMatFmt));
+        if (nodePart.hasAttribute(RESP_LABEL)) {
+            String  strMatFmt = nodePart.stringValue(RESP_LABEL);
+            this.setResponseMatrix( new PhaseMatrix(strMatFmt));
+        }
+        
+        
+        // This is the current data format version
+        try {
+            DataAdaptor nodeCoords = nodePart.childAdaptor(LABEL_COORDS);
+            if (nodeCoords != null) {
+                PhaseVector vecCoords = PhaseVector.loadFrom(nodeCoords);
+                this.setPhaseCoordinates(vecCoords);
+            }
+            
+            DataAdaptor nodeResp = nodePart.childAdaptor(LABEL_RESP);
+            if (nodeResp != null) {
+                PhaseMatrix matResp = PhaseMatrix.loadFrom(nodeResp);
+                this.setResponseMatrix(matResp);
+            }
+            
+        } catch (DataFormatException e) {
+            e.printStackTrace();
+            throw new DataFormatException("The source data was corrupted - " + e.getMessage());
+            
+        }
+        
+        
     }
     
 }

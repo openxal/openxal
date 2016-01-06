@@ -9,14 +9,13 @@ package xal.model.probe;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 
 /**
  * <p>
@@ -207,48 +206,48 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
     }
 
 
-    /**
-     * Set the Twiss parameters storage flag.
-     *
-     * <p>
-     * Changes the behavior of the save state methods.
-     * By setting this flag to <code>true</code> the Twiss
-     * parameter attributes will be saved <b>instead</b> of
-     * the correlation matrix.  The default behavior for this class
-     * is to save the correlation matrix.
-     * </p>
-     * <h3>CKA Notes:</h3>
-     * <p>
-     * - This is clearly a kluge; use this method with caution.
-     * It is provided to maintain backward compatibility.
-     * <br>
-     * - There is another version of code (this version) where the
-     * correlation matrix is saved as three sets of Twiss parameters.
-     * <br>
-     * o This can be dangerous as we have the 
-     * potential to loose a lot of information.  In particular,
-     * if the probe has pasted through a bend or a steering
-     * magnet, the Twiss parameters do not contain enough information
-     * to restart the probe.
-     * </p>
-     * <p>
-     *  Because of all of these dangers, the method is here, but 
-     *  deprecated.
-     * </p>
-     * 
-     * @param   bolSaveTwiss    Twiss parameter save flag
-     * 
-     * @see Probe#save(DataAdaptor)
-     * @see Probe#applyState(ProbeState)
-     * 
-     * @deprecated  If you want Twiss parameters, either take them from 
-     *              the covariance matrix or use the <code>TwissProbe</code>
-     */
-    @Deprecated
-    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
-    	this.stateCurrent.setSaveTwissFlag(bolSaveTwiss);
-    }
-    
+//    /**
+//     * Set the Twiss parameters storage flag.
+//     *
+//     * <p>
+//     * Changes the behavior of the save state methods.
+//     * By setting this flag to <code>true</code> the Twiss
+//     * parameter attributes will be saved <b>instead</b> of
+//     * the correlation matrix.  The default behavior for this class
+//     * is to save the correlation matrix.
+//     * </p>
+//     * <h3>CKA Notes:</h3>
+//     * <p>
+//     * - This is clearly a kluge; use this method with caution.
+//     * It is provided to maintain backward compatibility.
+//     * <br>
+//     * - There is another version of code (this version) where the
+//     * correlation matrix is saved as three sets of Twiss parameters.
+//     * <br>
+//     * o This can be dangerous as we have the 
+//     * potential to loose a lot of information.  In particular,
+//     * if the probe has pasted through a bend or a steering
+//     * magnet, the Twiss parameters do not contain enough information
+//     * to restart the probe.
+//     * </p>
+//     * <p>
+//     *  Because of all of these dangers, the method is here, but 
+//     *  deprecated.
+//     * </p>
+//     * 
+//     * @param   bolSaveTwiss    Twiss parameter save flag
+//     * 
+//     * @see Probe#save(DataAdaptor)
+//     * @see Probe#applyState(ProbeState)
+//     * 
+//     * @deprecated  If you want Twiss parameters, either take them from 
+//     *              the covariance matrix or use the <code>TwissProbe</code>
+//     */
+//    @Deprecated
+//    public void setSaveTwissFlag(boolean bolSaveTwiss)    {
+//    	this.stateCurrent.setSaveTwissFlag(bolSaveTwiss);
+//    }
+//    
     /**
 	 * Set the correlation matrix for this probe (7x7 matrix in homogeneous
 	 * coordinates).
@@ -393,28 +392,28 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
 //        return arrTwiss;
 //    }
 
-    /**
-     * Return the save Twiss parameters flag.  If this flag is set then
-     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
-     * object.
-     * NOTES: 
-     * This can be dangerous as we have the 
-     * potential to loss a lot of information.  In particular,
-     * if the probe has pasted through a bend or a steering
-     * magnet, the Twiss parameters do not contain enough information
-     * to restart the probe. 
-     * 
-     * @return Twiss parameter save flag
-     * 
-     * @see Probe#save(DataAdaptor)
-     * @see Probe#applyState(ProbeState)
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public boolean getSaveTwissFlag()   {
-        return this.stateCurrent.getSaveTwissFlag();
-    }
+//    /**
+//     * Return the save Twiss parameters flag.  If this flag is set then
+//     * only the Twiss parameters are saved to a <code>DataAdaptor</code>
+//     * object.
+//     * NOTES: 
+//     * This can be dangerous as we have the 
+//     * potential to loss a lot of information.  In particular,
+//     * if the probe has pasted through a bend or a steering
+//     * magnet, the Twiss parameters do not contain enough information
+//     * to restart the probe. 
+//     * 
+//     * @return Twiss parameter save flag
+//     * 
+//     * @see Probe#save(DataAdaptor)
+//     * @see Probe#applyState(ProbeState)
+//     * 
+//     * @deprecated
+//     */
+//    @Deprecated
+//    public boolean getSaveTwissFlag()   {
+//        return this.stateCurrent.getSaveTwissFlag();
+//    }
     
     
     /*
@@ -779,7 +778,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * @version  Oct 31, 2013
      */
     @Override
-    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws DataFormatException {
         EnvelopeProbeState state = new EnvelopeProbeState();
         state.load(container);
         return state;

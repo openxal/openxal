@@ -18,7 +18,6 @@ import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TwissProbeState;
-import xal.model.xml.ParsingException;
 
 /**
  * <p>
@@ -367,7 +366,7 @@ public class TwissProbe extends BunchProbe<TwissProbeState> {
      * @since  Nov 5, 2013
      */
     @Override
-    protected TwissProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected TwissProbeState readStateFrom(DataAdaptor container) throws DataFormatException {
         TwissProbeState state = new TwissProbeState();
         state.load(container);
         return state;

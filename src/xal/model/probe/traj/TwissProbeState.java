@@ -9,7 +9,6 @@
 package xal.model.probe.traj;
 
 import xal.model.probe.TwissProbe;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -36,26 +35,41 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      * Global Constants
      */
 
+
+    //
+    //  Data Persistence
+    //
     
     /** element label for twiss probe data */
-    protected static final String   LABEL_TWISSPROBE = "twissprobe";
+    private static final String   LABEL_TWISSPROBE = "twissprobe";
     
     /** element label for centroid vector */
-    protected static final String   LABEL_CENT = "centroid";
+    private static final String   LABEL_CENT = "centroid";
 
     /** element label for response matrix */
-    protected static final String   LABEL_RESP = "resp";
+    private static final String   LABEL_RESP = "resp";
     
     /** element label for betatron phase */
-    protected static final String   LABEL_PHASE = "phase";
+    private static final String   LABEL_PHASE = "phase";
     
-    /** element label for twiss parameters */
-    protected static final String   LABEL_TWISS = "twiss";
+//    /** element label for twiss parameters */
+//    private static final String   LABEL_TWISS = "twiss";
+//    
+//    /** general value attribute tag */
+//    private static final String   ATTR_VALUE = "value";
     
-    /** general value attribute tag */
-    protected static final String   ATTR_VALUE = "value";
     
+    //
+    // Persistence Version
+    //
     
+    /** the data format version attribute */
+    private static final String   ATTR_VERSION = "ver";
+    
+    /** the data format version */
+    private static final int     INT_VERSION = 2;
+    
+
 
     /*
      * Local Attributes
@@ -437,6 +451,7 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
         super.addPropertiesTo(daSink);
         
         DataAdaptor daProbe = daSink.createChild(LABEL_TWISSPROBE);
+        daProbe.setValue(ATTR_VERSION, INT_VERSION);
         
         DataAdaptor daCent = daProbe.createChild(LABEL_CENT);
         this.getCentroid().save(daCent);
@@ -458,17 +473,24 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      *
      *  @param  daSource   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor daSource) 
-        throws ParsingException 
+        throws DataFormatException 
     {
         super.readPropertiesFrom(daSource);
         
         DataAdaptor daProbe = daSource.childAdaptor(LABEL_TWISSPROBE);
         if (daProbe == null)
-            throw new ParsingException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
+            throw new DataFormatException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
+        
+        // Read the version number.  We don't do anything with it since there was no version
+        //  attribute before version 2.  But it's here if necessary in the future.
+        @SuppressWarnings("unused")
+        int     intVersion = 0;
+        if (daProbe.hasAttribute(ATTR_VERSION))
+            intVersion = daProbe.intValue(ATTR_VERSION);
         
         try {
             DataAdaptor daCent = daProbe.childAdaptor(LABEL_CENT);
@@ -500,7 +522,7 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
             
         } catch (DataFormatException e) {
             e.printStackTrace();
-            throw new ParsingException(e.getMessage());
+            throw new DataFormatException(e.getMessage());
             
         }
     }
