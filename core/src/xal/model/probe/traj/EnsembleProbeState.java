@@ -1,11 +1,11 @@
 package xal.model.probe.traj;
 
 import xal.model.probe.EnsembleProbe;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 
 /**
@@ -207,16 +207,16 @@ public class EnsembleProbeState extends BunchProbeState<EnsembleProbeState> {
      *
      *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor container) 
-            throws ParsingException {
+            throws DataFormatException {
         super.readPropertiesFrom(container);
 
         DataAdaptor ensNode = container.childAdaptor(ENSEMBLE_LABEL);
         if (ensNode == null)
-            throw new ParsingException("EnsembleProbeState#readPropertiesFrom(): no child element = " + ENSEMBLE_LABEL);
+            throw new DataFormatException("EnsembleProbeState#readPropertiesFrom(): no child element = " + ENSEMBLE_LABEL);
 
         setFieldCalculation(ensNode.intValue(CALC_LABEL));
         setEnsemble(new Ensemble());

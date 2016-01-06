@@ -27,13 +27,13 @@ import xal.model.probe.ParticleProbe;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
 import xal.model.probe.TwissProbe;
-import xal.model.xml.ParsingException;
 import xal.sim.scenario.AlgorithmFactory;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.test.ResourceManager;
+import xal.tools.data.DataAdaptor;
 import xal.tools.xml.XmlDataAdaptor;
 import xal.tools.xml.XmlDataAdaptor.ParseException;
 import xal.tools.xml.XmlDataAdaptor.ResourceNotFoundException;
@@ -317,7 +317,7 @@ public class TestTrajectoryPersistence {
             
             return true;
             
-        } catch (ParseException | ResourceNotFoundException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             fail("Unable to write trajectory data for " + strFileName);
             return false;
@@ -326,6 +326,18 @@ public class TestTrajectoryPersistence {
     }
     
     
+    /**
+     * Creates a new trajectory object by reading in the XML data in the given filename.
+     * The data is loaded using an XML data adaptor object.  A JUnit failure is asserted if
+     * an error occurs during the read or construction of the new trajectory object.
+     *   
+     * @param strFileName   name of the file containing the trajectory formatted data
+     * 
+     * @return              a new trajectory object of the correct type initialized with the data
+     *                      in the given file, or <code>null</code> if a failure occurred.
+     *
+     * @since  Jan 5, 2016,   Christopher K. Allen
+     */
     private final <S extends ProbeState<S>> Trajectory<S> loadTrajectory(String strFileName)  {
         try {
             File            fileSrc = ResourceManager.getOutputFile(this.getClass(), strFileName);
@@ -335,7 +347,7 @@ public class TestTrajectoryPersistence {
             
             return trajSrc;
             
-        } catch (ParseException | ResourceNotFoundException | ParsingException | MalformedURLException e) {
+        } catch (IllegalArgumentException | ParseException | ResourceNotFoundException | MalformedURLException e) {
             e.printStackTrace();
             fail("Unable to load trajectory data for " + strFileName);
             

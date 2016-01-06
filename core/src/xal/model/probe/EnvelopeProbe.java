@@ -9,14 +9,13 @@ package xal.model.probe;
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 
 /**
  * <p>
@@ -779,7 +778,7 @@ public class EnvelopeProbe extends BunchProbe<EnvelopeProbeState> {
      * @version  Oct 31, 2013
      */
     @Override
-    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnvelopeProbeState readStateFrom(DataAdaptor container) throws DataFormatException {
         EnvelopeProbeState state = new EnvelopeProbeState();
         state.load(container);
         return state;

@@ -5,7 +5,6 @@ import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.tools.data.IArchive;
 import xal.model.probe.Probe;
-import xal.model.xml.ParsingException;
 
 import java.lang.reflect.Constructor;
 import java.util.AbstractMap;
@@ -344,15 +343,15 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
       * 
       * @return         new <code>Trajectory<code> instance initialized from the data source
       * 
-      * @throws ParsingException    malformed data stare
+      * @throws DataFormatException    malformed data stare
       */
      @SuppressWarnings("unchecked")
-     public static <S extends ProbeState<S>> Trajectory<S> loadFrom(DataAdaptor daptSrc) throws ParsingException {
+     public static <S extends ProbeState<S>> Trajectory<S> loadFrom(DataAdaptor daptSrc) throws DataFormatException {
 
          // Get the trajectory node, bail out if not there
          DataAdaptor daptTraj = daptSrc.childAdaptor(Trajectory.TRAJ_LABEL);
          if (daptTraj == null) {
-             ParsingException e = new ParsingException("Trajectory#createFrom() - DataAdaptor contains no trajectory node");
+             DataFormatException e = new DataFormatException("Trajectory#createFrom() - DataAdaptor contains no trajectory node");
              e.printStackTrace();
              
              throw e;
@@ -361,13 +360,13 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
          // Need to check for the type attributes 
          //  If there are missing we have no way
          if (!daptTraj.hasAttribute(TYPE_TRAJ_TAG)) {
-             ParsingException e = new ParsingException("Trajectory node must conatain trajectory type attribute " + TYPE_TRAJ_TAG);
+             DataFormatException e = new DataFormatException("Trajectory node must conatain trajectory type attribute " + TYPE_TRAJ_TAG);
              e.printStackTrace();
 
              throw e;
          }
          if (!daptTraj.hasAttribute(TYPE_STATE_TAG)) {
-             ParsingException e = new ParsingException("Trajectory node must conatain probe state type attribute " + TYPE_STATE_TAG);
+             DataFormatException e = new DataFormatException("Trajectory node must conatain probe state type attribute " + TYPE_STATE_TAG);
              e.printStackTrace();
 
              throw e;
@@ -393,7 +392,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
              
          } catch (Exception e) {
              e.printStackTrace();
-             throw new ParsingException(e.getMessage());
+             throw new DataFormatException(e.getMessage());
          }
      }
 
@@ -493,7 +492,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      */
 	public void update(Probe<S> probe) {
         S state = probe.cloneCurrentProbeState();
-        saveState(state);
+        addState(state);
     }
 	
 	/**
@@ -795,7 +794,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	        if ( strStateId.equals(strSmfNodeId2) ) {
 	            bolStop2 = true;
 	            
-	            trjSub.saveState(state);
+	            trjSub.addState(state);
 	            continue;
 	        }
 	        
@@ -805,7 +804,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 	        //   if conditional set it.  If not, than we have not hit
 	        //   the last element yet.
 	        if ( bolStop2 == false ) {
-	            trjSub.saveState(state);
+	            trjSub.addState(state);
 	        }
 	        
 	        // We have 
@@ -1098,7 +1097,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 //            readPropertiesFrom(daptTraj);
             readStatesFrom(daptTraj);
             
-        } catch (ParsingException e) {
+        } catch (DataFormatException e) {
             e.printStackTrace();
             throw new DataFormatException( "Exception loading from adaptor: " + e.getMessage());
             
@@ -1158,7 +1157,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
 //     *              inheritance there can be no overrides.
 //     */
 //    @Deprecated
-//    protected void readPropertiesFrom(DataAdaptor container) throws ParsingException {}
+//    protected void readPropertiesFrom(DataAdaptor container) throws DataFormatException {}
 
 
 
@@ -1172,14 +1171,14 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
      * @param data source containing the child state nodes
      */
     @SuppressWarnings("unchecked")
-	private void readStatesFrom(DataAdaptor daptSrc) throws ParsingException {
+	private void readStatesFrom(DataAdaptor daptSrc) throws DataFormatException {
         
         Iterator<? extends DataAdaptor> childNodes = daptSrc.childAdaptors().iterator();
         while (childNodes.hasNext()) {
             DataAdaptor childNode = childNodes.next();
             
             if (!childNode.name().equals(ProbeState.STATE_LABEL)) {
-                throw new ParsingException(
+                throw new DataFormatException(
                     "Expected state element, got: " + childNode.name());
             }
             
@@ -1195,7 +1194,7 @@ public class Trajectory<S extends ProbeState<S>> implements IArchive, Iterable<S
                 
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new ParsingException(e.getMessage());
+                throw new DataFormatException(e.getMessage());
             }
             
         }

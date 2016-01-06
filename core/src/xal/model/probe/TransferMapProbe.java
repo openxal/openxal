@@ -9,10 +9,10 @@ package xal.model.probe;
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.PhaseMap;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.probe.traj.EnvelopeProbeState;
 import xal.model.probe.traj.Trajectory;
 import xal.model.probe.traj.TransferMapState;
-import xal.model.xml.ParsingException;
 
 
 /**
@@ -229,7 +229,7 @@ public class TransferMapProbe extends Probe<TransferMapState> {
     }
     
     @Override
-    protected TransferMapState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected TransferMapState readStateFrom(DataAdaptor container) throws DataFormatException {
         TransferMapState state = new TransferMapState();
         state.load(container);
         return state;

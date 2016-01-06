@@ -7,9 +7,9 @@
 package xal.model.probe.traj;
 
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.SynchronousProbe;
-import xal.model.xml.ParsingException;
 
 /**
  * @author Christopher K. Allen
@@ -178,19 +178,19 @@ public class SynchronousState extends ProbeState<SynchronousState> {
      * represented by the <code>DataAdaptor</code> interface.
      * 
      * @param   daptSrc             data source for probe state information
-     * @throws  ParsingException    error in data format
+     * @throws  DataFormatException    error in data format
      * 
      * @see xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor daptSrc)
-        throws ParsingException 
+        throws DataFormatException 
     {
         super.readPropertiesFrom(daptSrc);
 
         DataAdaptor daptSync = daptSrc.childAdaptor(SynchronousState.LABEL_SYNCH);
         if (daptSync == null)
-            throw new ParsingException("SynchronousState#readPropertiesFrom(): no child element = " + LABEL_SYNCH);
+            throw new DataFormatException("SynchronousState#readPropertiesFrom(): no child element = " + LABEL_SYNCH);
         
         if (daptSync.hasAttribute(SynchronousState.ATTR_PHASEBETA))   {
             String  strBeta = daptSync.stringValue(SynchronousState.ATTR_PHASEBETA);

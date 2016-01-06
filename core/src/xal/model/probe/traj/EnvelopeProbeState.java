@@ -7,7 +7,6 @@ import xal.tools.beam.Twiss;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.probe.EnvelopeProbe;
-import xal.model.xml.ParsingException;
 
 
 
@@ -571,17 +570,17 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
      *
      *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor container) 
-        throws ParsingException 
+        throws DataFormatException 
     {
         super.readPropertiesFrom(container);
         
         DataAdaptor nodeEnv = container.childAdaptor(LABEL_ENVELOPE);
         if (nodeEnv == null)
-            throw new ParsingException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + LABEL_ENVELOPE);
+            throw new DataFormatException("EnvelopeProbeState#readPropertiesFrom(): no child element = " + LABEL_ENVELOPE);
         
         // Read the version number.  We don't do anything with it since there was no version
         //  attribute before version 2.  But it's here if necessary in the future.
@@ -661,11 +660,11 @@ public class EnvelopeProbeState extends BunchProbeState<EnvelopeProbeState> {
 
         } catch (DataFormatException e) {
             e.printStackTrace();
-            throw new ParsingException("The source data was corrupted - " + e.getMessage());
+            throw new DataFormatException("The source data was corrupted - " + e.getMessage());
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            throw new ParsingException("The provided covariance matrix was asymmetric - " + e.getMessage());
+            throw new DataFormatException("The provided covariance matrix was asymmetric - " + e.getMessage());
             
         }
     }

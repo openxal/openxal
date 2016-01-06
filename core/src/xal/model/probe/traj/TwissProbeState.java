@@ -9,7 +9,6 @@
 package xal.model.probe.traj;
 
 import xal.model.probe.TwissProbe;
-import xal.model.xml.ParsingException;
 import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.Twiss;
@@ -474,17 +473,17 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
      *
      *  @param  daSource   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor daSource) 
-        throws ParsingException 
+        throws DataFormatException 
     {
         super.readPropertiesFrom(daSource);
         
         DataAdaptor daProbe = daSource.childAdaptor(LABEL_TWISSPROBE);
         if (daProbe == null)
-            throw new ParsingException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
+            throw new DataFormatException("TwissProbeState#readPropertiesFrom(): no child element = " + LABEL_TWISSPROBE);
         
         // Read the version number.  We don't do anything with it since there was no version
         //  attribute before version 2.  But it's here if necessary in the future.
@@ -523,7 +522,7 @@ public class TwissProbeState extends BunchProbeState<TwissProbeState> {
             
         } catch (DataFormatException e) {
             e.printStackTrace();
-            throw new ParsingException(e.getMessage());
+            throw new DataFormatException(e.getMessage());
             
         }
     }

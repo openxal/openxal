@@ -5,7 +5,6 @@ import xal.tools.beam.PhaseVector;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.probe.ParticleProbe;
-import xal.model.xml.ParsingException;
 
 /**
  * Encapsulates the state of a <code>ParticleProbe</code> at a particular point
@@ -269,16 +268,16 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
      *
      *  @param  container   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
     protected void readPropertiesFrom(DataAdaptor container) 
-            throws ParsingException {
+            throws DataFormatException {
         super.readPropertiesFrom(container);
         
         DataAdaptor nodePart = container.childAdaptor(LABEL_PARTICLE);
         if (nodePart == null)
-            throw new ParsingException("ParticleProbeState#readPropertiesFrom(): no child element = " + LABEL_PARTICLE);
+            throw new DataFormatException("ParticleProbeState#readPropertiesFrom(): no child element = " + LABEL_PARTICLE);
         
         // Read the version number.  We don't do anything with it since there was no version
         //  attribute before version 2.  But it's here if necessary in the future.
@@ -315,7 +314,7 @@ public class ParticleProbeState extends ProbeState<ParticleProbeState> /*impleme
             
         } catch (DataFormatException e) {
             e.printStackTrace();
-            throw new ParsingException("The source data was corrupted - " + e.getMessage());
+            throw new DataFormatException("The source data was corrupted - " + e.getMessage());
             
         }
         

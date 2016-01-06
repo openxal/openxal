@@ -83,7 +83,8 @@ public class ProbeStateTest extends TestCase {
 		
 		// save the state to a trajectory	
 		Trajectory<DiagnosticProbeState> trajectory = probe.getTrajectory();
-		trajectory.saveState(state);
+//		trajectory.saveState(state);
+		trajectory.addState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
 		assertTrue((trajectory.getStateClass()).equals(DiagnosticProbeState.class));
@@ -111,7 +112,8 @@ public class ProbeStateTest extends TestCase {
 		
 		// save the state to a trajectory	
 		Trajectory<ParticleProbeState> trajectory = probe.getTrajectory();
-		trajectory.saveState(state);
+//		trajectory.saveState(state);
+		trajectory.addState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
 		assertTrue((trajectory.getStateClass()).equals(ParticleProbeState.class));
@@ -149,7 +151,8 @@ public class ProbeStateTest extends TestCase {
 		
 		// save the state to a trajectory	
 		Trajectory<EnvelopeProbeState> trajectory = probe.getTrajectory();
-		trajectory.saveState(state);
+//		trajectory.saveState(state);
+		trajectory.addState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
 		assertTrue((trajectory.getStateClass()).equals(EnvelopeProbeState.class));
@@ -193,7 +196,8 @@ public class ProbeStateTest extends TestCase {
 		
 		// save the state to a trajectory	
 		Trajectory<EnsembleProbeState> trajectory = probe.getTrajectory();
-		trajectory.saveState(state);
+//		trajectory.saveState(state);
+		trajectory.addState(state);
 		
 		assertTrue(trajectory.stateAtPosition(INITIAL_POSITION) == state);
 		assertTrue((trajectory.getStateClass()).equals(EnsembleProbeState.class));
