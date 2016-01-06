@@ -246,6 +246,26 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
     }
     
     /**
+     * Create a new <code>PhaseVector</code> object and initialize with the data 
+     * source behind the given <code>DataAdaptor</code> interface.
+     * 
+     * @param   daSource    data source containing initialization data
+     * 
+     * @throws DataFormatException      malformed data
+     * 
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
+     *
+     * @since  Jan 4, 2016,   Christopher K. Allen
+     */
+    public static PhaseVector   loadFrom(DataAdaptor daSource) throws DataFormatException {
+        PhaseVector     vecNew = new PhaseVector(daSource);
+        
+        return vecNew;
+    }
+    
+    
+    
+    /**
      * Embeds the given vector <b>z</b> &in; <b>R</b><sup>6</sup> into 
      * homogeneous phase space.  The given vector is treated like a vector
      * of phase space coordinates corresponding to the first 6 elements

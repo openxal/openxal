@@ -1,10 +1,10 @@
 package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.alg.DiagnosticTracker;
 import xal.model.probe.traj.DiagnosticProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 
 /**
  * Simple diagnostic probe for testing the Lattice framework.
@@ -118,7 +118,7 @@ public class DiagnosticProbe extends Probe<DiagnosticProbeState> {
 //	}	
 //	
     @Override
-    protected DiagnosticProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected DiagnosticProbeState readStateFrom(DataAdaptor container) throws DataFormatException {
         DiagnosticProbeState state = new DiagnosticProbeState();
         state.load(container);
         return state;

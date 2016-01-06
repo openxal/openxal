@@ -8,9 +8,9 @@ package xal.model.probe.traj;
 
 import xal.tools.beam.PhaseMap;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.probe.Probe;
 import xal.model.probe.TransferMapProbe;
-import xal.model.xml.ParsingException;
 
 
 /**
@@ -38,7 +38,7 @@ import xal.model.xml.ParsingException;
 public class TransferMapState extends ProbeState<TransferMapState> {
     
     /*
-     * Global Constantes
+     * Global Constants
      */
     
 //    /** number of modes */
@@ -265,16 +265,16 @@ public class TransferMapState extends ProbeState<TransferMapState> {
      * Restore the state values for this probe state object from the data store
      * represented by the <code>DataAdaptor</code> interface.
      * @param   daptSrc             data source for probe state information
-     * @throws  ParsingException    error in data format
+     * @throws  DataFormatException    error in data format
      * @see xal.model.probe.traj.ProbeState#readPropertiesFrom(gov.DataAdaptor.tools.data.IDataAdaptor)
      */
     @Override
-    protected void readPropertiesFrom(DataAdaptor daptSrc) throws ParsingException {
+    protected void readPropertiesFrom(DataAdaptor daptSrc) throws DataFormatException {
         super.readPropertiesFrom(daptSrc);
 
         DataAdaptor daptMap = daptSrc.childAdaptor(TransferMapState.LABEL_STATE);
         if (daptMap == null)
-            throw new ParsingException("TransferMapState#readPropertiesFrom(): no child element = " + LABEL_STATE);
+            throw new DataFormatException("TransferMapState#readPropertiesFrom(): no child element = " + LABEL_STATE);
         this.getTransferMap().load(daptMap);
     }
 
