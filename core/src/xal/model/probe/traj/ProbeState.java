@@ -3,7 +3,6 @@ package xal.model.probe.traj;
 import xal.tools.data.DataAdaptor;
 import xal.tools.data.DataFormatException;
 import xal.model.probe.Probe;
-import xal.model.xml.ParsingException;
 
 /**
  * Stores a snapshot of a probes state at a particular instant in time.  Concrete
@@ -544,7 +543,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     public final void load(DataAdaptor container) throws DataFormatException {
         try {
             readPropertiesFrom(container);
-        } catch (ParsingException e) {
+        } catch (DataFormatException e) {
             e.printStackTrace();
             throw new DataFormatException("error loading from adaptor: " + 
                     e.getMessage());
@@ -553,21 +552,21 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
     
     
     /** 
-     *  Computes the relatavistic factor gamma from the current beta value
+     *  Computes the relativistic factor gamma from the current beta value
      *  
      *  @param  beta    speed of probe w.r.t. the speed of light
-     *  @return         relatavistic factor gamma
+     *  @return         relativistic factor gamma
      */
     protected double computeGammaFromBeta(double beta) { 
         return 1.0/Math.sqrt(1.0 - beta*beta); 
     }
     
     /**
-     *  Convenience function for computing the relatistic factor gamma from the 
+     *  Convenience function for computing the relativistic factor gamma from the 
      *  probe's kinetic energy (using the particle species rest energy m_dblParEr).
      *
      *  @param  W       kinetic energy of the probe
-     *  @return         relatavistic factor gamma
+     *  @return         relativistic factor gamma
      */
     protected double computeGammaFromW(double W)   {
         double gamma = W/m_dblParEr + 1.0;
@@ -623,15 +622,15 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
      * 
      * @param container             data source with <code>DataAdaptor</code> interface
      * 
-     * @throws ParsingException     data source is malformatted
+     * @throws DataFormatException     data source is malformatted
      */
     protected void readPropertiesFrom(DataAdaptor container) 
-    		throws ParsingException 
+    		throws DataFormatException 
     {
         // Read particle species data
         DataAdaptor specNode = container.childAdaptor(SPECIES_LABEL);
         if (specNode == null)
-            throw new ParsingException("ProbeState#readPropertiesFrom(): no child element = " + SPECIES_LABEL);
+            throw new DataFormatException("ProbeState#readPropertiesFrom(): no child element = " + SPECIES_LABEL);
         
         if (specNode.hasAttribute(PARTCHARGE_LABEL))
             setSpeciesCharge(specNode.doubleValue(PARTCHARGE_LABEL));
@@ -642,7 +641,7 @@ public abstract class ProbeState<S extends ProbeState<S>> implements IProbeState
         // Read state data
         DataAdaptor locNode = container.childAdaptor(LOCATION_LABEL);
         if (locNode == null)
-            throw new ParsingException("ProbeState#readPropertiesFrom(): no child element = " + LOCATION_LABEL);
+            throw new DataFormatException("ProbeState#readPropertiesFrom(): no child element = " + LOCATION_LABEL);
 
         if (locNode.hasAttribute(ELEMENT_LABEL))
             setElementId(locNode.stringValue(ELEMENT_LABEL));

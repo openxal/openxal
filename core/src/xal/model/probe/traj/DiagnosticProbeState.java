@@ -1,8 +1,8 @@
 package xal.model.probe.traj;
 
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.model.probe.DiagnosticProbe;
-import xal.model.xml.ParsingException;
 
 /**
  * Encapsulates the state of a <code>DiagnosticProbe</code> at a particular
@@ -161,12 +161,12 @@ public class DiagnosticProbeState extends ProbeState<DiagnosticProbeState> {
 	 */
 	@Override
     protected void readPropertiesFrom(DataAdaptor container) 
-			throws ParsingException {
+			throws DataFormatException {
         super.readPropertiesFrom(container);
         
         DataAdaptor diagNode = container.childAdaptor(DIAG_LABEL);
         if (diagNode == null)
-            throw new ParsingException("DiagnosticProbeState#readPropertiesFrom(): no child element = " + DIAG_LABEL);
+            throw new DataFormatException("DiagnosticProbeState#readPropertiesFrom(): no child element = " + DIAG_LABEL);
 
 		setElementsVisited(diagNode.intValue(COUNT_LABEL));
 	}

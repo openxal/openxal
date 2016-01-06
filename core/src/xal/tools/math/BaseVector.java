@@ -1386,7 +1386,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         // Error check the number of token strings
         StringTokenizer     tokArgs = new StringTokenizer(strTokens, " ,()[]{}");
         
-        if (tokArgs.countTokens() != this.getSize()*this.getSize())
+        if (tokArgs.countTokens() != this.getSize())
             throw new IllegalArgumentException("Vector, wrong number of token in string initializer: " + strTokens);
         
         

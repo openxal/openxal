@@ -10,10 +10,10 @@ import xal.tools.beam.CovarianceMatrix;
 import xal.tools.beam.PhaseVector;
 import xal.tools.beam.ens.Ensemble;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.EnsembleProbeState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 
 /**
  * Represents an ensemble of particles.  This <code>IProbe</code> type maintains an
@@ -221,7 +221,7 @@ public class EnsembleProbe extends BunchProbe<EnsembleProbeState> {
 //    }
     
     @Override
-    protected EnsembleProbeState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected EnsembleProbeState readStateFrom(DataAdaptor container) throws DataFormatException {
         EnsembleProbeState state = new EnsembleProbeState();
         state.load(container);
         return state;

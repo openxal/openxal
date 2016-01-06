@@ -14,7 +14,10 @@ import xal.tools.xml.XmlDataAdaptor;
  * @author Craig McChesney
  * @version $id:
  * 
+ * @deprecated  This functionality is now contained in the <code>Trajectory</code> class itself
+ * 
  */
+@Deprecated
 public class TrajectoryXmlParser {
 	
 	/**
@@ -42,7 +45,7 @@ public class TrajectoryXmlParser {
 			XmlDataAdaptor.adaptorForUrl(fileUri, false);
 //		DataAdaptor trajNode = document.childAdaptor(Trajectory.TRAJ_LABEL);
 //		return Trajectory.readFrom(trajNode);
-            return Trajectory.readFrom(document);
+            return Trajectory.loadFrom(document);
 	}
 
 }
