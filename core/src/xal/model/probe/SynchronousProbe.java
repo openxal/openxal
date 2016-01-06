@@ -5,10 +5,10 @@
 package xal.model.probe;
 
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
 import xal.tools.math.r3.R3;
 import xal.model.probe.traj.SynchronousState;
 import xal.model.probe.traj.Trajectory;
-import xal.model.xml.ParsingException;
 
 
 
@@ -170,7 +170,7 @@ public class SynchronousProbe extends Probe<SynchronousState> {
 //    }
     
     @Override
-    protected SynchronousState readStateFrom(DataAdaptor container) throws ParsingException {
+    protected SynchronousState readStateFrom(DataAdaptor container) throws DataFormatException {
         SynchronousState state = new SynchronousState();
         state.load(container);
         return state;

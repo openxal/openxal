@@ -15,7 +15,7 @@ package xal.model.probe.traj;
 import xal.tools.data.DataAdaptor;
 
 import xal.model.probe.BunchProbe;
-import xal.model.xml.ParsingException;
+import xal.tools.data.DataFormatException;
 
 
 /**
@@ -352,18 +352,17 @@ public abstract class BunchProbeState<S extends BunchProbeState<S>> extends Prob
      * Recover the state values particular to <code>BunchProbeState</code> objects 
      * from the data source.
      *
-     *  @param  daSource   data source represented by a <code>IIDataAdaptor</code> interface
+     *  @param  daSource   data source represented by a <code>DataAdaptor</code> interface
      * 
-     *  @exception ParsingException     state information in data source is malformatted
+     *  @exception DataFormatException     state information in data source is malformatted
      */
     @Override
-    protected void readPropertiesFrom(DataAdaptor daSource) 
-            throws ParsingException {
+    protected void readPropertiesFrom(DataAdaptor daSource) throws DataFormatException {
         super.readPropertiesFrom(daSource);
         
         DataAdaptor daBunch = daSource.childAdaptor(ELEM_BEAM);
         if (daBunch == null)
-            throw new ParsingException("BunchProbeState#readPropertiesFrom(): no child element = " + ELEM_BEAM);
+            throw new DataFormatException("BunchProbeState#readPropertiesFrom(): no child element = " + ELEM_BEAM);
 
         if (daBunch.hasAttribute(ATTR_BUNCHFREQ))
             setBunchFrequency(daBunch.doubleValue(ATTR_BUNCHFREQ));

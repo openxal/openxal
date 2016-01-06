@@ -451,6 +451,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * Sets the entire vector to the values given in the Java primitive type 
      * double array.
      * 
+     * <h4>NOTE!</h4>
+     * TODO This is not going to work for homogeneous coordinates!
+     * <br/>
+     * <br/>
+     * 
      * @param arrVector Java primitive array containing new vector values
      * 
      * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
@@ -500,6 +505,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  The token string argument is assumed to be one-dimensional and packed by
      *  column (aka FORTRAN).
      *
+     *  <h4>NOTE!</h4> 
+     *  TODO This is not going to work for homogeneous coordinates!
+     *  <br/>
+     *  <br/>
+     * 
      *  @param  strValues   token vector of SIZE<sup>2</sup> numeric values
      *
      *  @exception  IllegalArgumentException    wrong number of token strings
@@ -1376,7 +1386,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         // Error check the number of token strings
         StringTokenizer     tokArgs = new StringTokenizer(strTokens, " ,()[]{}");
         
-        if (tokArgs.countTokens() != this.getSize()*this.getSize())
+        if (tokArgs.countTokens() != this.getSize())
             throw new IllegalArgumentException("Vector, wrong number of token in string initializer: " + strTokens);
         
         

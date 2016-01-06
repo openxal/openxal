@@ -11,6 +11,7 @@ import xal.tools.beam.PhaseMatrix;
 import xal.tools.beam.optics.BendingMagnet;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.sync.IElectromagnet;
 
 /**
  * Represents the action of a rotated dipole face as a thin lens effect.  Note
@@ -24,7 +25,10 @@ import xal.model.ModelException;
  * @author Christopher K. Allen
  *
  *  @see    "D.C. Carey, The Optics of Charged Particle Beams (Harwood, 1987)"
+ *  
+ *  @deprecated This class has been replaced by <code>IdealMagDipoleFace2</code>
  */
+@Deprecated
 public class IdealMagDipoleFace extends ThinElectromagnet {
 
     /*

@@ -6,9 +6,9 @@
 
 package xal.sim.scenario;
 
-import java.lang.reflect.Method;
-
 import xal.model.IComponent;
+import xal.model.IComposite;
+import xal.model.Sector;
 import xal.model.elem.IdealDrift;
 import xal.model.elem.IdealEDipole;
 import xal.model.elem.IdealEQuad;
@@ -17,6 +17,7 @@ import xal.model.elem.IdealMagSextupole;
 import xal.model.elem.IdealMagSkewQuad3;
 import xal.model.elem.IdealMagSteeringDipole;
 import xal.model.elem.IdealMagWedgeDipole2;
+import xal.model.elem.IdealRfCavityDrift;
 import xal.model.elem.IdealRfGap;
 import xal.model.elem.Marker;
 
@@ -45,18 +46,60 @@ public class DefaultElementMapping extends ElementMapping {
 	}
 	
 	
+	/*
+	 * ElementMapping Requirements
+	 */
+	
+	/**
+	 * Currently returns the type <code>xal.model.elem.Marker</code> 
+	 *
+	 * @see xal.sim.scenario.ElementMapping#getDefaultElementType()
+	 * 
+	 * @since  Dec 5, 2014  @author Christopher K. Allen
+	 */
 	@Override
-	public Class<? extends IComponent> getDefaultConverter() {
+	public Class<? extends IComponent> getDefaultElementType() {
 		return Marker.class;
 	}
 
-
+	/**
+	 * Currently returns the type <code>xal.model.Sector</code>
+	 *
+	 * @see xal.sim.scenario.ElementMapping#getDefaultSequenceType()
+	 *
+	 * @author Christopher K. Allen
+	 * @since  Dec 5, 2014
+	 */
 	@Override
-	public IComponent createDrift(String name, double len) {
+	public Class<? extends IComposite> getDefaultSequenceType() {
+	    return Sector.class;
+	}
+
+	/**
+	 * Creates a new, general drift space.
+	 *
+	 * @see xal.sim.scenario.ElementMapping#createDefaultDrift(java.lang.String, double)
+	 *
+	 * @since  Dec 3, 2014
+	 */
+	@Override
+	public IComponent createDefaultDrift(String name, double len) {
 		return new IdealDrift(name, len);
 	}
 	
-	protected void initialize() {
+	/**
+	 * Creates a drift space within an RF cavity.
+     *
+     * @see xal.sim.scenario.ElementMapping#createRfCavityDrift(java.lang.String, double, double, double)
+     *
+     * @since  Dec 3, 2014, Christopher K. Allen
+     */
+    @Override
+    public IComponent createRfCavityDrift(String name, double len, double freq, double mode) {
+        return new IdealRfCavityDrift(name, len, freq, mode);
+    }
+
+    protected void initialize() {
 		putMap("dh",IdealMagWedgeDipole2.class);
 		putMap(xal.smf.impl.EDipole.s_strType, IdealEDipole.class);
 		putMap("QSC", IdealMagSkewQuad3.class);		

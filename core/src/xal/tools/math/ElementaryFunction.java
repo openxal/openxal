@@ -6,6 +6,9 @@
 
 package xal.tools.math;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  *  <p>
  *  Utility case for defining elementary mathematical functions that are not, but should be,
@@ -26,7 +29,11 @@ public final class ElementaryFunction {
     
     
     /** number of Units in the Last Place (ULPs) used for bracketing approximately equal values */
-    public static final int     ULPS_BRACKET = 100;
+    public static final int     ULPS_DEFLT_BRACKET = 100;
+    
+    /** conversion between significant digits in decimal to significant digits in binary log(10)/log(2) */
+    public static final double  DBL_DEC_TO_BINARY = 3.32192809488;
+    
     
     /** the value PI/2 */
     public static final double PI_BY_2 = Math.PI/2;
@@ -45,33 +52,62 @@ public final class ElementaryFunction {
     /**
      * Test if two <code>double</code> precision numbers are approximately equal.
      * This condition is checked using the the default number of Units in the
-     * Last Place (ULPs) bracketing the two numbers.
+     * Last Place (ULPs) bracketing the two numbers.  The default number of
+     * ULPs is given in the class constant <code>{@link #ULPS_DEFLT_BRACKET}</code>
+     * and current has the value <code>{@value #ULPS_DEFLT_BRACKET}</code>.
      * 
      * @param   x    double precision number
      * @param   y    double precision number
      * 
      * @return  true of <i>y</i> ~ <i>x</i>, false otherwise
+     * 
+     * @see #approxEq(double, double, int)
+     * @see #ULPS_DEFLT_BRACKET
      */
     public static boolean approxEq(double x, double y)  {
-        return ElementaryFunction.approxEq(x, y, ElementaryFunction.ULPS_BRACKET);
+        return ElementaryFunction.approxEq(x, y, ElementaryFunction.ULPS_DEFLT_BRACKET);
     }
     
     /**
+     * <p>
      * Test if two <code>double</code> precision numbers are approximately equal.
-     * This condition is checked using the the number of Units in the Last Place 
-     * (ULPs) bracketing the two numbers.
+     * This condition is defined with respect to the <b>U</b>nits in <b>L</b>ast
+     * <b>P</b>lace (ULPs) bracketing procedure.
+     * </p>
+     * <p>
+     * The ULP values <i>ulp<sub>x</sub></i> and <i>ulp<sub>y</sub></i> are computed
+     * for each argument <i>x</i> and <i>y</i>.  
+     * These values are the distances between the
+     * arguments and the nearest double precision number that can be represented by the
+     * IEEE 754 standard.  
+     * The bracketing distances &delta;<i>x</i> and &delta;<i>y</i> for <i>x</i> and <i>y</i> 
+     * are computed as
+     * <pre>
+     *      &delta;<i>x</i> &trie; <i>N</i> &times; <i>ulp<sub>x</sub></i> ,
+     *      &delta;<i>y</i> &trie; <i>N</i> &times; <i>ulp<sub>y</sub></i> ,
+     * </pre>
+     * where <i>N</i> is the number of ULPs specified in the arguments.
+     * Two intervals are defined
+     * <pre>
+     *      <i>I<sub>x</sub></i> &trie; [<i>x</i> &minus; &delta;<i>x</i>,<i>x</i> &plus; &delta;<i>x</i>],
+     *      <i>I<sub>y</sub></i> &trie; [<i>y</i> &minus; &delta;<i>y</i>,<i>y</i> &plus; &delta;<i>y</i>].
+     * </pre>
+     * If the intersection <i>I<sub>x</sub></i> &cap; <i>I<sub>y</sub></i> is finite then
+     * <i>x</i> and <i>y</i> are considered approximately equal.  
+     * </p>
      * 
      * @param   x           double precision number
      * @param   y           double precision number
-     * @param   cntUlps     number of ULPs used to bracket the numbers
+     * @param   cntUlps     number <i>N</i> of ULPs used to bracket the numbers
      * 
-     * @return  true of <i>y</i> ~ <i>x</i>, false otherwise
+     * @return  <code>true</code> of <i>y</i> ~ <i>x</i> within <i>N</i> ULPs, </code>false</code> otherwise
      */
     public static boolean approxEq(double x, double y, int cntUlps)  {
+
+        if ( x == y ) return true;
+        
         double  dx = cntUlps*Math.ulp(x);
         double  dy = cntUlps*Math.ulp(y);
-        
-        if ( x == y ) return true;
         
         if ( x < y )    {
             if ( x+dx >= y-dy ) 
@@ -88,11 +124,45 @@ public final class ElementaryFunction {
     }
     
     /**
+     * Checks if two double precision numbers are equal up to the given number
+     * of significant digits.
+     * 
+     * @param x         double precision number
+     * @param y         double precision number
+     * @param cntDgts   number <i>N</i> of significant digits to compare
+     * 
+     * @return          <code>true</code> if the first <i>N</i> digits of <i>x</i> and <i>y</i> agree,
+     *                  <code>false</code> otherwise
+     *
+     * @since  Dec 31, 2015,   Christopher K. Allen
+     */
+    public static boolean significantDigitsEqs(double x, double y, int cntDgts) {
+        
+        BigDecimal      bdRndX = new BigDecimal(x);
+        BigDecimal      bdRndY = new BigDecimal(y);
+        
+        bdRndX = bdRndX.setScale(cntDgts, RoundingMode.HALF_UP);
+        bdRndY = bdRndY.setScale(cntDgts, RoundingMode.HALF_UP);
+
+        boolean bolEq = bdRndX.equals(bdRndY);
+        
+        return bolEq;
+    }
+    
+    /**
+     * <p>
      * Test if two <code>double</code> precision numbers are in the same ball
      * of radius <i>r</i>.
+     * </p>
+     * <p>
+     * <h4>NOTES CKA</h4>
+     * &middot; This is really a distance function and not a topological one.
+     * </p>
      * 
-     * @param   x    double precision number
-     * @param   y    double precision number
+     * 
+     * @param   x   double precision number
+     * @param   y   double precision number
+     * @param   r   radius defining the size of the neighborhood
      * 
      * @return  true of |<i>y</i> - <i>x</i>| <= <i>r</i>, false otherwise
      */
@@ -145,7 +215,7 @@ public final class ElementaryFunction {
         
         int     intFac = 1;
         
-        for (int i=n; i>0; i++)  
+        for (int i=n; i>0; i--)  
             intFac *= i;
             
         return intFac;

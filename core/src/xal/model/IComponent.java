@@ -18,9 +18,34 @@ import xal.sim.scenario.LatticeElement;
 public interface IComponent {
 
 
-
     /*
-     *  Element Identification
+     * Initialization
+     */
+    
+    /**
+     * <p>
+     * Initializes the components parameters from the given hardware
+     * node proxy.  
+     * </p>
+     * <p>
+     * <h4>CKA NOTES</h4>
+     * &middot; Since we are expected to do this by accessing the
+     * SMF hardware node associated with the proxy, we are now coupled
+     * with the SMF component of Open XAL. The objective has been to 
+     * move away from this condition.
+     * <br/>
+     * <br/>
+     * &middot; This system must be refactored to decouple the online model and
+     * SMF.
+     * </p> 
+     * 
+     * @param latticeElement the SMF node to convert
+     */
+    public void initializeFrom(LatticeElement latticeElement);
+
+    
+    /*
+     *  Attributes
      */
     
     /**
@@ -28,14 +53,14 @@ public interface IComponent {
      *
      *  @return     type identifier for this element
      */
-    String   getType();
+    public String   getType();
     
     /**
      *  Get the string identifier of the composite element
      *
      *  @return     string identifier
      */
-    String  getId();
+    public String  getId();
     
     /**
      * Get the string identifier of the hardware node being modeled
@@ -45,16 +70,9 @@ public interface IComponent {
      */
     public String   getHardwareNodeId();
     
-
-	/**
-	 * Conversion method to be provided by the user
-	 * 
-	 * @param latticeElement the SMF node to convert
-	 */
-	public void initializeFrom(LatticeElement latticeElement);
-
+    
     /*
-     * Component Operations
+     * Structure
      */
     
     /**
@@ -62,7 +80,73 @@ public interface IComponent {
      *
      *  @return     length of the element (in <b>meters</b>)
      */
-    double   getLength();
+    public double   getLength();
+    
+    /**
+     * <p>
+     * Return the center position of this component within the immediate parent composite
+     * element.  If there is no parent then this method should return zero.
+     * </p>
+     * <p>
+     * This value is typically a "hardware property," especially if this element models
+     * a hardware node.  That is, the value is specified in the
+     * description of the hardware node and, thus, carries through to the modeling
+     * element.  The situation is different than the property 
+     * <code>{@link #getLatticePosition()}</code> where the position is completely 
+     * dependent upon where the modeling element lies within the overall lattice structure.
+     * </p>
+     * 
+     * @return  center position of this element within the immediate parent container (meters)
+     * 
+     * @since Dec 3, 2015   by Christopher K. Allen
+     */
+    public double getPosition(); 
+    
+    /**
+     * <p>
+     * Return the (center) position of this component within the global lattice structure to which it
+     * belongs.  Note the difference between this parameter and that returned by
+     * <code>IComponent{@link #getLength()}</code> which returns the position with
+     * respect to the direct parent.
+     * </p>
+     * <p>
+     * The returned value is not usually a design parameter, in particular if composites are
+     * pasted together or otherwise form a larger tree structure.  It should be computed
+     * according to the current structure of the global composite structure.
+     * Thus, moving this element in the lattice should change this value. 
+     * </p> 
+     * 
+     * @return  the center position of this component within the entire lattice containing this 
+     *          element (not just the parent)
+     *
+     * @since  Dec 3, 2015,   Christopher K. Allen
+     */
+    public double   getLatticePosition();
+    
+    
+    /**
+     * Returns the composite structure (if any) that owns this component.
+     * 
+     * @return  higher level composite structure built from this component
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    public IComposite  getParent();
+    
+    /**
+     * Sets the parent structure containing this component.  The parent is
+     * assumed to be a composite structure built from component elements.
+     * 
+     * @param cpsParent the composite structure built from this component
+     *
+     * @since  Jan 22, 2015   by Christopher K. Allen
+     */
+    public void setParent(IComposite cpsParent);
+    
+
+	/*
+     * Dynamics
+     */
     
     /** 
      * Propagates the Probe object through this component. 
@@ -120,4 +204,5 @@ public interface IComponent {
      * @exception  ModelException    error advancing the probe state
      */
     void backPropagate(IProbe probe, double d) throws ModelException;
+ 
 }

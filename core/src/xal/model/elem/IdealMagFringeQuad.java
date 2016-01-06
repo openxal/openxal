@@ -176,7 +176,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      * 
      * @param   dblFldInt   fringe field integral (<b>unitless</b>)
      *  
-     * @see IdealMagDipoleFace#setFringeIntegral1
+     * @see IdealMagDipoleFace2#setFringeIntegral1
      */
     public void setExitFringeIntegral1(double dblFldInt) {
         this.getFaceExit().setFringeIntegral1(dblFldInt);
@@ -188,7 +188,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      * 
      * @param   dblFldInt   fringe field integral (<b>unitless</b>)
      *  
-     * @see IdealMagDipoleFace#setFringeIntegral2
+     * @see IdealMagDipoleFace2#setFringeIntegral2
      */
     public void setExitFringeIntegral2(double dblFldInt) {
         this.getFaceExit().setFringeIntegral2(dblFldInt);
@@ -450,8 +450,8 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
 	public void initializeFrom(LatticeElement element) {
 		super.initializeFrom(element);
 		
-		Bend magnet = (Bend) element.getNode();
-		setPosition(element.getCenter(), element.getLength());
+		Bend magnet = (Bend) element.getHardwareNode();
+		setPosition(element.getCenterPosition(), element.getLength());
 
 		// xal.model.elem.ThickDipole xalDipole =
 		// new xal.model.elem.ThickDipole();

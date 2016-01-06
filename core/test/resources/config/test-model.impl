@@ -1,9 +1,12 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/ModelConfig.xsd?format=raw">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="model-impl.xsd">
+<!--  configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/model-impl.xsd?format=raw" -->
     <elements>
         <default type="xal.model.elem.Marker"/>
         <drift type="xal.model.elem.IdealDrift"/>
+        <rfcavdrift type="xal.model.elem.IdealRfCavityDrift"/>
+        <sequence type="xal.model.Sector"/>
     </elements>
     
     <associations>
@@ -18,7 +21,9 @@
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
-		<map smf="rfgap" model="xal.model.elem.IdealRfGap"/>
+		
+		<map smf="rfgap" model="xal.model.elem.SpectrumMapRfGap" />
+		<!-- map smf="rfgap" model="xal.model.elem.IdealRfGap"/ -->
 
 		<map smf="bcm" model="xal.model.elem.Marker"/>
 
@@ -30,7 +35,13 @@
 		<map smf="bsm" model="xal.model.elem.Marker"/>
 		<map smf="blm" model="xal.model.elem.Marker"/>
 		<map smf="ws" model="xal.model.elem.Marker"/>
-		<map smf="marker" model="xal.model.elem.Marker"/>        
+		<map smf="marker" model="xal.model.elem.Marker"/>  
+		
+        
+        <map smf="DTLTank" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="CCL" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="SCLCavity" model="xal.model.elem.IdealRfCavity"/>
+        <map smf="Bnch" model="xal.model.elem.IdealRfCavity"/>
     </associations>
 
 </configuration>

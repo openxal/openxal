@@ -68,7 +68,7 @@ public class ModelConfigTest extends AbstractXMLValidation {
 	
 	@Override
 	protected Schema getSchema() throws Exception {
-		return readSchema(DIR_SCHEMAS+"ModelConfig.xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		return readSchema(DIR_SCHEMAS+"model-impl.xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	}
 	
 	@Override
@@ -161,11 +161,50 @@ public class ModelConfigTest extends AbstractXMLValidation {
 			validator.validate(new DOMSource(document));
 			fail("Validation with incomplete configuration element should not be successful!");
 		} catch(Exception e) {
-			assertTrue(e.getMessage().contains("The content of element 'configuration' is not complete."));
-			assertFalse(e.getMessage().contains("drift"));
-			assertFalse(e.getMessage().contains("elements"));
+//			assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
+			assertFalse(e.getMessage().contains("{drift}"));
 		}
 		
+        //Add RF cavity drift element.
+        Element rfcavdriftElement = document.createElement("rfcavdrift");
+        elements.appendChild(rfcavdriftElement);
+        try {
+            validator.validate(new DOMSource(document));
+            fail("Validation with incomplete rfcavdrift element should not be successful!");
+        } catch(Exception e) {
+            assertTrue(e.getMessage().contains("Attribute 'type' must appear on element"));
+        }
+        
+        //Add 'type' attribute.
+        rfcavdriftElement.setAttribute("type", "fake.package.model.RfCavDrift");
+        try {
+            validator.validate(new DOMSource(document));
+            fail("Validation with incomplete configuration element should not be successful!");
+        } catch(Exception e) {
+//            assertTrue(e.getMessage().contains("The content of element 'elements' is not complete."));
+            assertFalse(e.getMessage().contains("rfcavdrift"));
+        }
+        
+        //Add sequence element.
+        Element seqElement = document.createElement("sequence");
+        elements.appendChild(seqElement);
+        try {
+            validator.validate(new DOMSource(document));
+            fail("Validation with incomplete sequence element should not be successful!");
+        } catch(Exception e) {
+            assertTrue(e.getMessage().contains("Attribute 'type' must appear on element"));
+        }
+        
+        //Add 'type' attribute.
+        seqElement.setAttribute("type", "fake.package.model.Sector");
+        try {
+            validator.validate(new DOMSource(document));
+            fail("Validation with incomplete configuration element should not be successful!");
+        } catch(Exception e) {
+            assertTrue(e.getMessage().contains("The content of element 'configuration' is not complete."));
+            assertFalse(e.getMessage().contains("sequence"));
+        }
+        
 		return elements;
 	}
 	

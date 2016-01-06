@@ -2,13 +2,16 @@ package xal.tools.beam;
 
 import xal.tools.annotation.AProperty.NoEdit;
 import xal.tools.beam.Twiss3D.IND_3D;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataFormatException;
+import xal.tools.math.ElementaryFunction;
 import xal.tools.math.r3.R3x3;
 
 
 /**
  * <p>
  * A <code>CovarianceMatrix</code> in homogeneous coordinates represents
- * all moments of a phase space distribution up to and include second order.  This is 
+ * all moments of a phase space distribution up to and including second order.  This is 
  * seen by taken the moment of the outer product of two phase vectors.  We find
   * <pre>
  * &lt;zz&circ;T&gt;  = | &lt;xx&gt;   &lt;xx'   &lt;xy&gt;   &lt;xy'&gt;  &lt;xz&gt;   &lt;xz'&gt;  &lt;x&gt;  |
@@ -16,8 +19,8 @@ import xal.tools.math.r3.R3x3;
  *           | &lt;yx&gt;   &lt;yx'&gt;  &lt;yy&gt;   &lt;yy'&gt;  &lt;yz&gt;   &lt;yz'&gt;  &lt;y&gt;  |
  *           | &lt;y'x&gt;  &lt;y'x'&gt; &lt;y'y&gt;  &lt;y'y'&gt; &lt;y'z&gt;  &lt;y'z'&gt; &lt;y'&gt; |
  *           | &lt;zx&gt;   &lt;zx'&gt;  &lt;zy&gt;   &lt;zy'&gt;  &lt;zz&gt;   &lt;zz'&gt;  &lt;z&gt;  |
- *           | &lt;z'x&gt;  &lt;z'x'&gt; &lt;z'y&gt;  &lt;z'y&gt; &lt;z'z&gt;  &lt;z'z'&gt; &lt;z'&gt; |
- *           | &lt;x&gt;     &lt;x&gt;    &lt;y&gt;     &lt;y&gt;    &lt;z&gt;     &lt;z&gt;    &lt;1&gt;  |
+ *           | &lt;z'x&gt;  &lt;z'x'&gt; &lt;z'y&gt;  &lt;z'y&gt;  &lt;z'z&gt;  &lt;z'z'&gt; &lt;z'&gt; |
+ *           | &lt;x&gt;     &lt;x&gt;    &lt;y&gt;     &lt;y&gt;   &lt;z&gt;    &lt;z&gt;   &lt;1&gt;  |
  * </pre>
  * where <i>x', y', z'</i> represent the momentum coordinate in the <i>x, y,</i> and <i>z</i>
  * directions, respectively.
@@ -55,6 +58,12 @@ public class CovarianceMatrix extends PhaseMatrix {
      * Serialization ID
      */
     private static final long serialVersionUID = 1L;
+
+    /** default number of significant digits to consider when testing for symmetry */
+    private static final int CNT_SYMMETRY_DIGITS = 10;
+    
+    /** default number of ULPs to use for comparing numbers for equality */
+    private static final int CNT_SYMMETRY_ULPS = 10000;
 
     
 
@@ -103,13 +112,6 @@ public class CovarianceMatrix extends PhaseMatrix {
 
         return new CovarianceMatrix(matCen);
     }        
-
-    
-    
-    /*
-     *  Utility Methods
-     */
-
 
     /**
      * Create and return a <code>CovarianceMatrix</code> built according to the
@@ -231,26 +233,33 @@ public class CovarianceMatrix extends PhaseMatrix {
         return new CovarianceMatrix(matTau);
     }        
 
-
-
-    /*
-     * Object Overrides
-     */
-    
     /**
-     * Creates and returns a deep copy of this matrix.
+     * Create a new <code>CovarianceMatrix</code> object and initialize with the data 
+     * source behind the given <code>DataAdaptor</code> interface.  Currently
+     * we are checking for symmetry within the loaded matrix so this method is using
+     * extended CPU time.
+     * 
+     * @param   daSource    data source containing initialization data
+     * 
+     * @throws DataFormatException          malformed data in data source
+     * @throws IllegalArgumentException     the described matrix is not symmetric
+     * 
+     * @see xal.tools.data.IArchive#load(xal.tools.data.DataAdaptor)
      *
-     * @see xal.tools.math.BaseMatrix#clone()
-     *
-     * @author Christopher K. Allen
-     * @since  Jul 3, 2014
+     * @since  Jan 4, 2016,   Christopher K. Allen
      */
-    @Override
-    public CovarianceMatrix clone() {
-        return new CovarianceMatrix(this);
+    public static CovarianceMatrix loadFrom(DataAdaptor daSource) throws IllegalArgumentException, DataFormatException {
+        PhaseMatrix         matBase = PhaseMatrix.loadFrom(daSource);
+        CovarianceMatrix    matCov = new CovarianceMatrix(matBase);
+        
+        if (!matCov.checkSymmetryToSigDigits(matCov, CNT_SYMMETRY_DIGITS))
+            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
+        
+        return matCov;
     }
 
-    
+
+
 
     /*
      *  Initialization
@@ -265,8 +274,14 @@ public class CovarianceMatrix extends PhaseMatrix {
     }
 
     /** 
+     * <p>
      * Constructor for CovarianceMatrix.  Creates an initialized correlation
      * matrix from a symmetric <code>PhaseMatrix</code> argument.
+     * </p>
+     * <p>
+     * We are not checking symmetry of the given phase matrix in order to 
+     * expedite the process.  So the caller must ensure symmetry.
+     * </p>
      * 
      * @param matInit  symmetric <code>PhaseMatrix</code> object to initial this
      * 
@@ -295,40 +310,31 @@ public class CovarianceMatrix extends PhaseMatrix {
     {
         super(strTokens);
 
-        if (!this.checkSymmetry(this))
-            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
-    }
-
-//    /**
-//     * Constructor for CovarianceMatrix.  Takes a symmetric <code>Jama Matrix</code> 
-//     * object to initialize the correlation matrix.
-//     * 
-//     * @param matInit symmetric <code>Jama Matrix</code> object for initial value
-//     * 
-//     * @exception IllegalArgumentException  initializing matrix is not symmetric
-//     */
-//    public CovarianceMatrix(Matrix matInit) throws IllegalArgumentException {
-//        super(matInit);
-//
 //        if (!this.checkSymmetry(this))
 //            throw new IllegalArgumentException("CovarianceMatrix(PhaseMatrix) - argument not symmetric.");
-//    }
 
+        if (!this.checkSymmetryToSigDigits(this, CNT_SYMMETRY_DIGITS))
+            throw new IllegalArgumentException("CovarianceMatrix(String) - argument not symmetric.");
+    }
+    
     /**
+     * <p>
      *  (Re)sets the rms emittances for the beam.  This method scales the X,Y,Z diagonal blocks
-     *  of the correlation matrix so the beam has the rms emittances provided.  
-     *
-     *  NOTES:
+     *  of the correlation matrix so the beam has the rms emittances provided.
+     *  </p>  
+     *  <p>
+     *  <h4>NOTES:</h4>
      *  Since the emittance values are contained in the 
      *  correlation matrix attempting to set emittances with an empty (zero) correlation matrix 
-     *  causes a foating point exception.  As such, this method can really only change existing
+     *  causes a floating point exception.  As such, this method can really only change existing
      *  emittances and is to be regarded as a convenience function.
      * 
-     *  IMPORTANT:
+     *  <h4>IMPORTANT:</h4>
      *  The current implementation is valid ONLY FOR ZERO-MEAN correlations.
      * 
-     *  TODO - Fix the implementation so that it is valid for off-centered distributions.
-     *
+     *  <h4>TODO</h4>
+     *  Fix the implementation so that it is valid for off-centered distributions.
+     *  </p>
      *
      *  @param  arrEmitNew  three element vector of rms emittances for X,Y,Z planes, respectively
      *                      <b>Units radian-meters</b>
@@ -553,7 +559,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;x^2&gt; - &lt;x&gt;^2 ) 
      */
     public double   getSigmaX() {
-        return Math.sqrt( computeCentralCovXX() );
+        double  dblCovX = this.computeCentralCovXX();
+        double  dblSigX = Math.sqrt(dblCovX);
+        
+        return dblSigX;
     }
 
     /**
@@ -562,7 +571,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;y^2&gt; - &lt;y&gt;^2 ) 
      */
     public double   getSigmaY() {
-        return Math.sqrt( computeCentralCovYY() );
+        double  dblCovY = this.computeCentralCovYY();
+        double  dblSigY = Math.sqrt(dblCovY);
+        
+        return dblSigY;
     }
 
     /**
@@ -571,7 +583,10 @@ public class CovarianceMatrix extends PhaseMatrix {
      * @return  sqrt( &lt;z^2&gt; - &lt;z&gt;^2 ) 
      */
     public double   getSigmaZ() {
-        return Math.sqrt( computeCentralCovZZ() );
+        double  dblCovZ = this.computeCentralCovZZ();
+        double  dblSigZ = Math.sqrt(dblCovZ);
+        
+        return dblSigZ;
     }
 
 
@@ -690,53 +705,136 @@ public class CovarianceMatrix extends PhaseMatrix {
     }
     
     
+    /*
+     * Object Overrides
+     */
+    
+    /**
+     * Creates and returns a deep copy of this matrix.
+     *
+     * @see xal.tools.math.BaseMatrix#clone()
+     *
+     * @author Christopher K. Allen
+     * @since  Jul 3, 2014
+     */
+    @Override
+    public CovarianceMatrix clone() {
+        return new CovarianceMatrix(this);
+    }
+
     
     /*
      * Matrix Operations
      */
-
-    
-    
 
 
     /*
      * Support Methods
      */
 
-
     /**
-     *  Check matrix for symmetry.  Correlation matrices must be
-     *  symmetric.
+     * Check matrix for symmetry. This method uses the number of Units
+     * in the Last Place (ULPs) to round numbers when comparing.  For specific
+     * use of the ULPs bracketing procedure see <code>{@link ElementaryFunction#approxEq(double,double)}</code>. 
      * 
-     *  @param  matCorr <code>CovarianceMatrix</code> object to check
+     * @param  matCov   <code>CovarianceMatrix</code> object to check
+     * @param  cntUlps  number of ULPs of tolerance when comparing two numbers for equivalence
      * 
-     *  @return     true if symmtric, false if not
+     * @return     true if symmetric, false if not
      * 
-     * @author ckallen
+     * @version Jan 4, 2016,  Christopher K Allen
+     * 
+     * @see ElementaryFunction#approxEq(double, double)
      *
      */
-    private boolean checkSymmetry(CovarianceMatrix matCorr)    {
+    @SuppressWarnings("unused")
+    private boolean checkSymmetryToUlps(CovarianceMatrix matCov, int cntUlps)    {
         int     i,j;        //loop control variables
-        
+
         for (i=0; i<7; i++)
             for (j=i+1; j<7; j++) {
-                if (matCorr.getElem(i,j) != matCorr.getElem(j,i) )
+                double  dblValUp = this.getElem(i, j);
+                double  dblValLw = this.getElem(j, i);
+                
+                if ( !ElementaryFunction.approxEq(dblValUp, dblValLw, cntUlps) )
                     return false;
             }
+
         return true;
     }
+    
+    /**
+     * Checks the symmetric of the given covariance matrix to <i>N</i> significant digits
+     * of accuracy.  Specifically, when comparing to opposing off-diagonal elements  
+     * the first <i>N</i> digits behind the decimal must be equal for equivalence; any
+     * differing digits beyond that are irrelevant.  (Clearly the exponents of the off-diagonals
+     * under comparison must be equal.)
+     * 
+     * @param matCov        covariance matrix under test
+     * @param cntDigits     number <i>N</i> of comparison digits 
+     * 
+     * @return              <code>true</code> if the off-diagonal elements of the matrix compare to <i>N</i> digits,
+     *                      <code>false</code> otherwise
+     *
+     * @since  Jan 4, 2016,   Christopher K. Allen
+     * 
+     * @see ElementaryFunction#significantDigitsEqs(double, double, int)
+     */
+    private boolean checkSymmetryToSigDigits(CovarianceMatrix matCov, int cntDigits) {
+        int     i,j;        //loop control variables
 
-	/**
+        for (i=0; i<7; i++)
+            for (j=i+1; j<7; j++) {
+                double  dblValUp = this.getElem(i, j);
+                double  dblValLw = this.getElem(j, i);
+                
+                if ( !ElementaryFunction.significantDigitsEqs(dblValUp, dblValLw, cntDigits) )
+                    return false;
+            }
+
+        return true;
+    }
+    
+//    private double  enforceSymmetry() {
+//        
+//        for (int i=0; i<INT_SIZE; i++)
+//            for (int j=i+1; j<INT_SIZE; j++) {
+//                double  dblValUp = this.getElem(i, j);
+//                double  dblValDn = this.getElem(j, i);
+//                
+//                double  dblAvg = (dblValUp + dblValDn)/2.0;
+//                Double  dblErr = (dblValUp - dblValDn)/dblAvg;
+//                
+//                if (dblErr.isInfinite())
+//            }
+//        
+//    }
+
+//	/**
+//     * Handles object creation required by the base class. 
+//	 *
+//	 * @see xal.tools.beam.PhaseMatrix#newInstance()
+//	 *
+//	 * @author Ivo List
+//	 * @author Christopher K. Allen
+//	 * @since  Jun 17, 2014
+//	 */
+//	@Override
+//	protected PhaseMatrix newInstance() {
+//		return new PhaseMatrix();
+//	}
+
+    /**
      * Handles object creation required by the base class. 
-	 *
-	 * @see xal.tools.beam.PhaseMatrix#newInstance()
-	 *
-	 * @author Ivo List
-	 * @author Christopher K. Allen
-	 * @since  Jun 17, 2014
-	 */
-	@Override
-	protected PhaseMatrix newInstance() {
-		return new PhaseMatrix();
-	}
+     *
+     * @see xal.tools.beam.PhaseMatrix#newInstance()
+     *
+     * @author Ivo List
+     * @author Christopher K. Allen
+     * @since  Jun 17, 2014
+     */
+    @Override
+    protected CovarianceMatrix newInstance() {
+        return new CovarianceMatrix();
+    }
 }
