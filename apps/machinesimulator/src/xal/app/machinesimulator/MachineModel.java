@@ -82,7 +82,7 @@ public class MachineModel implements DataListener {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
         setupWhatIfConfiguration( _sequence );
-		  setupDiagConfig( _sequence );
+		  _diagnosticConfiguration = setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
     
@@ -126,13 +126,15 @@ public class MachineModel implements DataListener {
     }
     
     /**setup DiagnosticConfiguration*/
-    private void setupDiagConfig( final AcceleratorSeq sequence ) {
+    private DiagnosticConfiguration setupDiagConfig( final AcceleratorSeq sequence ) {
+    	DiagnosticConfiguration diagConfiguration = null ;
     	if( sequence != null ) {
-    		_diagnosticConfiguration = new DiagnosticConfiguration( sequence );
-    		if (DIAG_RECORDS.get( sequence ) == null ) {    			
-    			DIAG_RECORDS.put( sequence, _diagnosticConfiguration.createDiagRecords() );
+    		diagConfiguration = new DiagnosticConfiguration( sequence );
+    		if (DIAG_RECORDS.get( sequence ) == null ) {
+    			DIAG_RECORDS.put( sequence, diagConfiguration.createDiagRecords() );
     		}
     	}
+    	return diagConfiguration;
     }
     
     /**configure the ModelInputs from a list of NodePropertyRecord*/
@@ -379,7 +381,7 @@ public class MachineModel implements DataListener {
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		recordName = " Run "+SIMULATOR.getRunNumber();
 		checkState = true;
-		COLUMN_NAME.get(SEQUENCE).put(TIME, recordName);
+		COLUMN_NAME.get(SEQUENCE).put( TIME, recordName );
 	}
 	
 	/**Constructor with dataAdaptor*/
@@ -411,7 +413,7 @@ public class MachineModel implements DataListener {
 		if ( check ) COLUMN_NAME.get( SEQUENCE ).put( TIME, recordName );
 		else COLUMN_NAME.get( SEQUENCE).remove( TIME );
 		AcceleratorSeq seq = getFirstSeq();			
-		EVENT_PROXY.historyRecordCheckStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ),DIAG_RECORDS.get(seq), seq );
+		EVENT_PROXY.historyRecordCheckStateChanged( NODE_VALUES_TO_SHOW.get( seq ), COLUMN_NAME.get( seq ), DIAG_RECORDS.get(seq), seq );
 
 	}
 	
