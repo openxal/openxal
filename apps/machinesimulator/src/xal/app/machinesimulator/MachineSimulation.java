@@ -45,13 +45,15 @@ public class MachineSimulation implements DataListener {
     
     /**Constructor with adaptor*/
     public MachineSimulation ( final DataAdaptor adaptor ) {    	
-
-		final List<DataAdaptor> simRecordAdaptors = adaptor.childAdaptors(MachineSimulationRecord.DATA_LABEL);
-
-        SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( simRecordAdaptors.size() );
-        for ( final DataAdaptor simRecordAdaptor : simRecordAdaptors ) {
-			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( simRecordAdaptor );
-         SIMULATION_RECORDS.add( simulationRecord );
+        trajectory = Trajectory.loadFrom( adaptor );
+		final SimpleSimResultsAdaptor resultsAdaptor = new SimpleSimResultsAdaptor( trajectory );
+		
+        SIMULATION_RECORDS = new ArrayList<MachineSimulationRecord>( trajectory.numStates() );
+        final Iterator<? extends ProbeState<?>> stateIter = trajectory.stateIterator();
+        while ( stateIter.hasNext() ) {
+            final ProbeState<?> state = stateIter.next();
+			final MachineSimulationRecord simulationRecord = new MachineSimulationRecord( resultsAdaptor, state );
+            SIMULATION_RECORDS.add( simulationRecord );
         }
     }
     
@@ -80,6 +82,6 @@ public class MachineSimulation implements DataListener {
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
 	public void write( DataAdaptor adaptor ) {
-		adaptor.writeNodes(SIMULATION_RECORDS);
+		trajectory.save( adaptor );;
 	}
 }

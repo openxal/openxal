@@ -355,12 +355,8 @@ public class MachineSimulator implements DataListener {
     		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
     	}
     	
-    	try {
-			_entranceProbe = Probe.readFrom( adaptor );
-		} catch (DataFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	_entranceProbe = Probe.readFrom( adaptor );
+
     }
     
     
