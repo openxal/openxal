@@ -1,0 +1,11 @@
+language: java
+jdk:
+    - oraclejdk8
+
+before_install:
+    - wget http://www.interior-dsgn.com/apache/ant/binaries/apache-ant-1.9.6-bin.tar.gz
+    - tar -xzvf apache-ant-1.9.6-bin.tar.gz
+    - export PATH=`pwd`/apache-ant-1.9.6/bin:$PATH
+
+sudo: false
+
