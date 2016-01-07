@@ -13,7 +13,6 @@ import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
-import xal.model.xml.ParsingException;
 import xal.sim.scenario.*;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
@@ -356,12 +355,8 @@ public class MachineSimulator implements DataListener {
     		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
     	}
     	
-    	try {
-			_entranceProbe = Probe.readFrom( adaptor );
-		} catch (ParsingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	_entranceProbe = Probe.readFrom( adaptor );
+
     }
     
     
