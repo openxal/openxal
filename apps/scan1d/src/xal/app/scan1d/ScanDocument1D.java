@@ -6,13 +6,10 @@
 package xal.app.scan1d;
 
 import java.net.*;
-import java.io.*;
 import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 import java.util.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -32,7 +29,6 @@ import xal.extension.application.util.PredefinedConfController;
 import xal.extension.application.smf.*;
 
 import xal.service.pvlogger.*;
-import xal.tools.database.*;
 
 /**
  *  ScanDocument1D is a custom XalDocument for 1D scan application. The document
@@ -182,9 +178,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	//set Accelerator Action related members
 	//-------------------------------------------------
 
-	//accelerator data file
-	private File acceleratorDataFile = null;
-
 	//------------------------------------------
 	//SAVE RESTORE PART
 	//------------------------------------------
@@ -209,7 +202,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	private String snapshotIdString = "Last Snapshot Id: ";
 	private JLabel snapshotIdLabel = new JLabel("No Snapshot", JLabel.LEFT);
 	private long snapshotId = -1;
-	private boolean pvLogged = false;
 
 
 	/**
@@ -492,10 +484,8 @@ public class ScanDocument1D extends AcceleratorDocument {
 			if (pv_logger_id != null && pv_logger_id.intValue("Id") > 0) {
 				snapshotId = pv_logger_id.intValue("Id");
 				snapshotIdLabel.setText(snapshotIdString + snapshotId + "  ");
-				pvLogged = true;
 			} else {
 				snapshotId = -1;
-				pvLogged = false;
 				snapshotIdLabel.setText(noSnapshotIdString);
 			}
 
@@ -805,7 +795,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	 *
 	 *@param  url  Description of the Parameter
 	 */
-	@SuppressWarnings( "unchecked" )		// cast needed for Enumeration since PVTreeNode does not support generic types
 	public void saveDocumentAs(URL url) {
 		//this is the place to write document to the persistent storage
 
@@ -1157,10 +1146,8 @@ public class ScanDocument1D extends AcceleratorDocument {
 					comments = comments + " = Scan1D =";
 					snapshotId = rL.takeAndPublishSnapshot( "default", comments);
 					if(snapshotId > 0){
-						pvLogged = true;
 						snapshotIdLabel.setText(snapshotIdString + snapshotId + "  ");
 					} else {
-						pvLogged = false;
 						snapshotIdLabel.setText("Unsuccessful PV Logging");
 					}
 				}
@@ -1170,7 +1157,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					snapshotId = -1;
-					pvLogged = false;
 					snapshotIdLabel.setText(noSnapshotIdString);
 				}
 			});
@@ -1562,7 +1548,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	 *
 	 *@param  deleteIndex  The new colors value
 	 */
-	@SuppressWarnings( "unchecked" )		// cast needed for Enumeration since PVTreeNode does not support generic types
 	private void setColors(int deleteIndex) {
 		for (int i = 0, n = measuredValuesV.size(); i < n; i++) {
 			MeasuredValue mv_tmp = measuredValuesV.get(i);
@@ -1700,7 +1685,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 	private class ParameterPV_Controller {
 
 		private ScanVariable scanVariableParameter = null;
-		private JTextField messageTextParamCntrl = new JTextField(10);
 
 		//-------------------------------------------------
 		//GUI elements
@@ -1824,7 +1808,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 		 *@param  messageTextParamCntrl  The new messageTextField value
 		 */
 		protected void setMessageTextField(JTextField messageTextParamCntrl) {
-			this.messageTextParamCntrl = messageTextParamCntrl;
 			scanVariableParameter.setMessageTextField(messageTextParamCntrl);
 		}
 
@@ -1854,16 +1837,6 @@ public class ScanDocument1D extends AcceleratorDocument {
 		 */
 		protected JPanel getJPanel() {
 			return paramPV_Panel;
-		}
-
-
-		/**
-		 *  Gets the format attribute of the ParameterPV_Controller object
-		 *
-		 *@return    The format value
-		 */
-		protected DecimalFormat getFormat() {
-			return valueFormat;
 		}
 
 
