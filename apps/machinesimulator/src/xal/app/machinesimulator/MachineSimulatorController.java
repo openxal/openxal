@@ -5,6 +5,9 @@ package xal.app.machinesimulator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 import xal.app.machinesimulator.MachineModel.SimulationHistoryRecord;
 import xal.extension.bricks.WindowReference;
@@ -38,7 +43,7 @@ public class MachineSimulatorController implements MachineModelListener {
      /**history record table model*/
      final private KeyValueFilteredTableModel<SimulationHistoryRecord> HISTORY_RECORD_TABLE_MODEL;
      /**parameter history table model*/
-     final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> HISTORY_DATA_TABLE_MODEL;
+     final private KeyValueFilteredTableModel<NodePropertyHistoryRecord> PARAM_HISTORY_TABLE_MODEL;
      /**bpm live table model*/
      final private KeyValueFilteredTableModel<DiagnosticAgent> DIAG_LIVE_TABLE_MODEL;
      /**bpm record table model*/
@@ -85,6 +90,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<String> keyPathsForDiagDiff;
      /**refresh action*/
      private ActionListener refresh;
+     /**the selected nodeProperty record used for scan in new run parameters table*/
+     private NodePropertyRecord nodePropRecordForScan;
 
 
 
@@ -94,7 +101,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		STATES_TABLE_MODEL = new KeyValueFilteredTableModel<MachineSimulationHistoryRecord>();
 		NEW_PARAMETERS_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyRecord>();
 		HISTORY_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<SimulationHistoryRecord>();
-		HISTORY_DATA_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
+		PARAM_HISTORY_TABLE_MODEL = new KeyValueFilteredTableModel<NodePropertyHistoryRecord>();
 		
 		DIAG_LIVE_TABLE_MODEL = new KeyValueFilteredTableModel<DiagnosticAgent>();
 		DIAG_RECORD_TABLE_MODEL = new KeyValueFilteredTableModel<DiagnosticRecord>();
@@ -135,16 +142,16 @@ public class MachineSimulatorController implements MachineModelListener {
 		runAction.actionPerformed( null );
 	}
 	
-	/**change simulation history records*/
-	public void changeSimHistoryRecords ( final List<SimulationHistoryRecord> simHistoryRecords ) {
-		HISTORY_RECORD_TABLE_MODEL.setRecords( simHistoryRecords );
-	}
-
-
+	
     /** configure the main window */
     private void configureMainWindow( final WindowReference windowReference ) {
-    	  //get the filter
-        final JTextField statesTableFilterField = (JTextField)windowReference.getView( "States Table Filter Field" );
+    	
+    	makeHistoryRecordsView( windowReference );
+    	makeNewRunParamView( windowReference );
+    	makeParamHistoryView( windowReference );
+    	makeDiagView( windowReference );
+    	makeStatesTableView( windowReference );
+
         // handle the parameter selections
         final JCheckBox kineticEnergyCheckbox = (JCheckBox)windowReference.getView( "Kinetic Energy Checkbox" );
 
@@ -163,91 +170,8 @@ public class MachineSimulatorController implements MachineModelListener {
         final JCheckBox betatronPhaseCheckbox = (JCheckBox)windowReference.getView( "Betatron Phase Checkbox" );
        
         //the show difference checkbox in plot view
-		  final JCheckBox showDifference = (JCheckBox)windowReference.getView( "Show Difference" );        
-/******************configure the new parameters table view*************************************/
-	        
-	     final JTable sequenceTable = (JTable)windowReference.getView( "New Run Parameters" );
-	     sequenceTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
-	        
-	     //set the column name of the sequence table
-	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
-	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
-	        
-	     //set the filter field for sequence table
-	     NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent(statesTableFilterField);
-	     NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
-	         
-	     //configure the sequence table model
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
-		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
-        
-/***************configure the history record view*****************************************/
-        //configure history record table
-        final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
-        historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
-        
-        HISTORY_RECORD_TABLE_MODEL.setColumnName( "checkState", "Compare" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName( "sequence.id", "Sequence" );
-        HISTORY_RECORD_TABLE_MODEL.setColumnName( "dateTime", "Time" );
-        
-        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Boolean.class, "checkState" );
-        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "checkState", "sequence.id", "dateTime", "recordName");
-        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
-        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
-        
-        //configure history data table
-        final JTable historyDataTable = (JTable)windowReference.getView( "History Data Table" );
-        historyDataTable.setModel( HISTORY_DATA_TABLE_MODEL );
-        
-        HISTORY_DATA_TABLE_MODEL.setColumnName( "nodeId" , "Node" );
-        HISTORY_DATA_TABLE_MODEL.setColumnName( "propertyName", "Property" );
-        
-        HISTORY_DATA_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        HISTORY_DATA_TABLE_MODEL.setMatchingKeyPaths( "nodeId" );
-        
-/**********************configure the diagnostics history view***********************************/
-        final JTable diagLiveTable = (JTable)windowReference.getView( "Diag Live Table" );
-        diagLiveTable.setModel( DIAG_LIVE_TABLE_MODEL );
-        
-        DIAG_LIVE_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        DIAG_LIVE_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
-        
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueX", "xAvg" );
-        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueY", "yAvg" );
-        
-		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "valueX", "valueY"};
-        
-        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "valueX", "valueY");
-        DIAG_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
-        DIAG_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
-        DIAG_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForDiagLive);
-        
-        //configure the diagnostic record table
-        final JTable diagRecordTable = (JTable)windowReference.getView( "Diag Record Table");
-        diagRecordTable.setModel( DIAG_RECORD_TABLE_MODEL );
-        
-        DIAG_RECORD_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        DIAG_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
-        DIAG_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
-        
-        DIAG_RECORD_TABLE_MODEL.setColumnClass( "position", Double.class );
+		  final JCheckBox showDifference = (JCheckBox)windowReference.getView( "Show Difference" );
 
-/**********************configure the states table view***********************************/
-	     //get components
-	     final JTable statesTable = (JTable)windowReference.getView( "States Table" );
-	     statesTable.setModel( STATES_TABLE_MODEL );
-	     
-        //set the column name of the states table
-        STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
-
-        //set the filter field for states table
-        STATES_TABLE_MODEL.setInputFilterComponent( statesTableFilterField );
-        STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
-        
-		  STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
        
 /**************************configure the plot view**************************************/
 		  final List<Parameter> parameters = new ArrayList<Parameter>();
@@ -491,11 +415,10 @@ public class MachineSimulatorController implements MachineModelListener {
         };
       ClearButton.addActionListener(CLEAR_BUTTON);
 
-
         // configure the run action
       runAction = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
-			public void actionPerformed( final ActionEvent event ) {                
+			public void actionPerformed( final ActionEvent event ) {               
                 if( MODEL.getSequence() != null ){
                    System.out.println( "running the model..." );
                    _sequence = MODEL.getSequence();
@@ -510,50 +433,12 @@ public class MachineSimulatorController implements MachineModelListener {
                 	//change records for history record table
                   changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
                      }
-                else JOptionPane.showMessageDialog(windowReference.getWindow(),
+                else JOptionPane.showMessageDialog( windowReference.getWindow(),
                 		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
 
             }
         };
-
-		
-		//configure the remove button of the history record view
-		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
-		removeButton.addActionListener( event -> {		
-			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-			int removed = 0;
-			int[] selRows = historyRecordTable.getSelectedRows();
-			for( int index = 0; index < selRows.length; index++ ){
-				records.get( selRows[index]-removed ).setCheckState( false );
-				records.remove( selRows[index]-removed );
-				removed++;
-			}
-			if ( records.size() == 0 ) HISTORY_DATA_TABLE_MODEL.setRecords( null );
-			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
-		});
-		
-		//configure the select all button
-		final JButton selectAllButton = (JButton)windowReference.getView( "Check All" );
-		selectAllButton.addActionListener( event -> {
-			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-			for ( int index = 0; index < records.size();index++){
-				records.get( index ).setCheckState( true );
-			}
-			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, records.size()-1 );;
-		});
-		
-		//configure the unselect all button
-		final JButton unselectAllButton = (JButton)windowReference.getView( "Uncheck All" );
-		unselectAllButton.addActionListener( event -> {
-			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-			for ( int index = 0; index < records.size();index++){
-				records.get( index ).setCheckState( false );
-			}
-			HISTORY_DATA_TABLE_MODEL.setRecords(null);
-			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
-		});
-
-		
+				
 		//configure the refresh action
 		refresh = event -> {		
 			if ( MODEL.getColumnNames().get(_sequence ) != null ){
@@ -572,6 +457,299 @@ public class MachineSimulatorController implements MachineModelListener {
 		};
 
     }
+	
+	/**make the table of history records*/
+	private void makeHistoryRecordsView( final WindowReference windowReference ) {
+		
+        final JTextField filterField = (JTextField)windowReference.getView( "History Table Filter Field" );
+        final JButton clearButton = (JButton)windowReference.getView( "History Filter Clear Button" );
+        clearButton.addActionListener( event -> {
+        	filterField.setText( "" );
+        });
+  
+        final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
+        historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
+        
+        HISTORY_RECORD_TABLE_MODEL.setInputFilterComponent( filterField );
+        HISTORY_RECORD_TABLE_MODEL.setMatchingKeyPaths( "sequence.id" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "checkState", "Compare" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "sequence.id", "Sequence" );
+        HISTORY_RECORD_TABLE_MODEL.setColumnName( "dateTime", "Time" );
+        
+        HISTORY_RECORD_TABLE_MODEL.setColumnClassForKeyPaths( Boolean.class, "checkState" );
+        HISTORY_RECORD_TABLE_MODEL.setKeyPaths( "checkState", "sequence.id", "dateTime", "recordName");
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
+        HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
+        
+		//configure the remove button of the history record view
+		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
+		removeButton.addActionListener( event -> {		
+			List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+			int removed = 0;
+			int[] selRows = historyRecordTable.getSelectedRows();
+			for( int index = 0; index < selRows.length; index++ ){
+				records.get( selRows[index]-removed ).setCheckState( false );
+				records.remove( selRows[index]-removed );
+				removed++;
+			}
+			if ( records.size() == 0 ) PARAM_HISTORY_TABLE_MODEL.setRecords( null );
+			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
+		});
+		
+		//configure the select all button
+		final JButton selectAllButton = (JButton)windowReference.getView( "Check All" );
+		selectAllButton.addActionListener( event -> {
+			final int rowCount = HISTORY_RECORD_TABLE_MODEL.getRowCount();
+			for ( int index = 0; index < rowCount; index++){
+				HISTORY_RECORD_TABLE_MODEL.getRecordAtRow( index ).setCheckState( true );
+			}
+			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, rowCount );
+		});
+		
+		//configure the unselect all button
+		final JButton unselectAllButton = (JButton)windowReference.getView( "Uncheck All" );
+		unselectAllButton.addActionListener( event -> {
+			final int rowCount = HISTORY_RECORD_TABLE_MODEL.getRowCount();
+			for ( int index = 0; index < rowCount; index++){
+				HISTORY_RECORD_TABLE_MODEL.getRecordAtRow( index ).setCheckState( false );
+			}
+			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, rowCount );
+		});
+	}
+	
+	/**make the table of new run parameters*/
+	private void makeNewRunParamView( final WindowReference windowReference ) {
+			
+        final JTextField filterField = (JTextField)windowReference.getView( "New Run Param Filter Field" );
+        final JButton clearButton = (JButton)windowReference.getView( "New Run Param Filter Clear" );
+        clearButton.addActionListener( event -> {
+        	filterField.setText( "" );
+        });
+		
+		@SuppressWarnings("unchecked")
+		final JComboBox<String> scanNodeSelect = (JComboBox<String>)windowReference.getView( "Scan ComboBox" );
+		scanNodeSelect.addFocusListener( new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				List<NodePropertyRecord> records = NEW_PARAMETERS_TABLE_MODEL.getRowRecords();
+				String[] items = new String[records.size()];
+				for ( int index = 0 ; index < records.size(); index++ ) {
+					items[index] = records.get( index ).getAcceleratorNode().getId();
+				}
+				scanNodeSelect.setModel( new DefaultComboBoxModel<String>( items ) );
+			}
+		});
+		
+		scanNodeSelect.addActionListener( evevt -> {			
+			nodePropRecordForScan = NEW_PARAMETERS_TABLE_MODEL.getRecordAtRow( scanNodeSelect.getSelectedIndex() );
+		});
+        
+		
+		final DefaultFormatterFactory format = new DefaultFormatterFactory( new NumberFormatter(NumberFormat.getNumberInstance() ) );
+		//configure the lower limit value
+		final JFormattedTextField lowerLimitField = (JFormattedTextField)windowReference.getView( "Lower Limit Field" );
+		lowerLimitField.setFormatterFactory( format );
+		lowerLimitField.setText("2");
+		lowerLimitField.addActionListener( event -> {
+			try {
+				lowerLimitField.commitEdit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+		});
+		
+		//configure the upper limit value
+		final JFormattedTextField upperLimitField = (JFormattedTextField)windowReference.getView( "Upper Limit Field" );
+		upperLimitField.setFormatterFactory( format );
+		upperLimitField.setText("5");
+		upperLimitField.addActionListener( event -> {
+			try {
+				upperLimitField.commitEdit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		//configure the step value
+		final JFormattedTextField stepField = (JFormattedTextField)windowReference.getView( "Step Field" );
+		stepField.setFormatterFactory( format );
+		stepField.setText("1");
+		stepField.addActionListener( event -> {
+			try {
+				stepField.commitEdit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		
+		//configure the scan button
+		final JButton scanButton = (JButton)windowReference.getView( "Scan" );
+		scanButton.addActionListener( event -> {
+			if ( nodePropRecordForScan != null ) {
+				String nodeId = nodePropRecordForScan.getAcceleratorNode().getId();
+				double currentTestValue = nodePropRecordForScan.getTestValue();
+				double lowerLimit = Double.parseDouble( lowerLimitField.getText() );
+				double upperLimit = Double.parseDouble( upperLimitField.getText() );
+				double step = Double.parseDouble( stepField.getText() );
+				int stepNumber = (int)Math.floor((upperLimit-lowerLimit)/step) + 1;
+				String confirmation = nodeId+"\n From : "+lowerLimit+" To : "+upperLimit+" Step : "+step+"\n get "+stepNumber+" results";
+				int confirm = JOptionPane.showConfirmDialog( windowReference.getWindow(),
+						confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
+				if ( confirm == JOptionPane.YES_OPTION ) {
+
+					if ( upperLimit > lowerLimit && stepNumber > 0 ) {
+						
+						for ( int index = 0; index < stepNumber; index++ ) {
+							nodePropRecordForScan.setTestValue( lowerLimit + index * step );
+							runAction.actionPerformed( null );
+						}
+						nodePropRecordForScan.setTestValue( currentTestValue );
+					}
+					else JOptionPane.showMessageDialog( windowReference.getWindow(),
+							"You set illeal step or bounds", "Warning", JOptionPane.ERROR_MESSAGE );
+				}
+			}
+
+		});
+		
+		//configure the clear test button
+		final JButton clearTestButton = (JButton)windowReference.getView( "Clear Test" );
+		clearTestButton.addActionListener( event -> {
+			List<NodePropertyRecord> records = nodePropertyRecords;
+			if ( records != null ) {
+				for ( final NodePropertyRecord record : records ) {
+					record.setTestValue( Double.NaN );
+				}				
+				NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
+			}
+
+		});
+		
+	     final JTable newRunParamTable = (JTable)windowReference.getView( "New Run Parameters Table" );
+	     newRunParamTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
+	        
+	     //set the column name of the sequence table
+	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
+	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+	        
+	     //set the filter field for sequence table
+	     NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent( filterField );
+	     NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
+	         
+	     //configure the sequence table model
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
+	}
+	
+	/**make the table of parameter history records*/
+	private void makeParamHistoryView( final WindowReference windowReference ) {
+		
+		  final JTextField filterField = (JTextField)windowReference.getView( "Param History Filter Field" );
+	        final JButton clearButton = (JButton)windowReference.getView( "Param History Filter Clear" );
+	        clearButton.addActionListener( event -> {
+	        	filterField.setText( "" );
+	        });
+		  
+        final JTable paramHistoryDataTable = (JTable)windowReference.getView( "Param History Data Table" );
+        paramHistoryDataTable.setModel( PARAM_HISTORY_TABLE_MODEL );
+        
+        PARAM_HISTORY_TABLE_MODEL.setColumnName( "nodeId" , "Node" );
+        PARAM_HISTORY_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+        
+        PARAM_HISTORY_TABLE_MODEL.setInputFilterComponent( filterField );
+        PARAM_HISTORY_TABLE_MODEL.setMatchingKeyPaths( "nodeId" );
+	}
+	
+	/**make the tables of diagnostic live values and history records */
+	private void makeDiagView( final WindowReference windowReference ) {
+		
+        final JTextField filterField = (JTextField)windowReference.getView( "Diagnostics History Filter Field" );
+        final JButton clearButton = (JButton)windowReference.getView( "Diagnostics History Filter Clear" );
+        clearButton.addActionListener( event -> {
+        	filterField.setText( "" );
+        });
+        
+        final JTable diagLiveTable = (JTable)windowReference.getView( "Diag Live Table" );
+        diagLiveTable.setModel( DIAG_LIVE_TABLE_MODEL );
+        
+        final JButton disableButton = (JButton)windowReference.getView( "Diagnostic Disable Button" );
+        disableButton.addActionListener( event -> {
+        	final int rowCount = DIAG_LIVE_TABLE_MODEL.getRowCount();
+        	for ( int row = 0; row < rowCount; row++ ) {
+        		DIAG_LIVE_TABLE_MODEL.getRecordAtRow( row ).setCheckState( false );
+        	}
+        	DIAG_LIVE_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount );
+        });
+        
+        final JButton enableButton = (JButton)windowReference.getView( "Diagnostic Enable Button" );
+        enableButton.addActionListener( event -> {
+        	final int rowCount = DIAG_LIVE_TABLE_MODEL.getRowCount();
+        	for ( int row = 0; row < rowCount; row++ ) {
+        		DIAG_LIVE_TABLE_MODEL.getRecordAtRow( row ).setCheckState( true );
+        	}
+        	DIAG_LIVE_TABLE_MODEL.fireTableRowsUpdated( 0, rowCount );
+        });
+        
+        DIAG_LIVE_TABLE_MODEL.setInputFilterComponent( filterField );
+        DIAG_LIVE_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
+        
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "checkState", "use" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "node.id",  "BPM" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueX", "xAvg" );
+        DIAG_LIVE_TABLE_MODEL.setColumnName( "valueY", "yAvg" );
+        
+		  final String[] keyPathsForDiagLive = {"checkState", "node.id", "position", "valueX", "valueY"};
+        
+        DIAG_LIVE_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position", "valueX", "valueY");
+        DIAG_LIVE_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
+        DIAG_LIVE_TABLE_MODEL.setColumnEditable( "checkState", true );
+        DIAG_LIVE_TABLE_MODEL.setKeyPaths(keyPathsForDiagLive);
+        
+        //configure the diagnostic record table
+        final JTable diagRecordTable = (JTable)windowReference.getView( "Diag Record Table");
+        diagRecordTable.setModel( DIAG_RECORD_TABLE_MODEL );
+        
+        DIAG_RECORD_TABLE_MODEL.setInputFilterComponent( filterField );
+        DIAG_RECORD_TABLE_MODEL.setMatchingKeyPaths( "node.id" );
+        DIAG_RECORD_TABLE_MODEL.setColumnName( "node.id", "BPM" );
+        
+        DIAG_RECORD_TABLE_MODEL.setColumnClass( "position", Double.class );
+		
+	}
+	
+	/**make the table of simulation results*/
+	private void makeStatesTableView( final WindowReference windowReference ) {
+		
+        final JTextField filterField = (JTextField)windowReference.getView( "States Table Filter Field" );
+        final JButton clearButton = (JButton)windowReference.getView( "States Table Filter Clear" );
+        clearButton.addActionListener( event -> {
+        	filterField.setText( "" );
+        });
+
+	     final JTable statesTable = (JTable)windowReference.getView( "States Table" );
+	     statesTable.setModel( STATES_TABLE_MODEL );
+	     
+       STATES_TABLE_MODEL.setColumnName( "elementID", "Element" );
+
+       STATES_TABLE_MODEL.setInputFilterComponent( filterField );
+       STATES_TABLE_MODEL.setMatchingKeyPaths( "elementID" );
+       
+		  STATES_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "position");
+	}
+	
+	
+	/**change simulation history records*/
+	public void changeSimHistoryRecords ( final List<SimulationHistoryRecord> simHistoryRecords ) {
+		HISTORY_RECORD_TABLE_MODEL.setRecords( simHistoryRecords );
+	}
 	
   /** get the selected parameters' data from the specified records
     * @param records the specified records which hold the data
@@ -688,21 +866,21 @@ public class MachineSimulatorController implements MachineModelListener {
 			for ( int index = 0;index<columnNumber; index++ ){
 				historyDataKeyPaths[index+2] = "values."+index;
 				keyPathsForDiagRecord[index+3] = "values."+index;
-				HISTORY_DATA_TABLE_MODEL.setColumnClass( "values."+index, Double.class );
-				HISTORY_DATA_TABLE_MODEL.setColumnName( "values."+index, names[index]);
+				PARAM_HISTORY_TABLE_MODEL.setColumnClass( "values."+index, Double.class );
+				PARAM_HISTORY_TABLE_MODEL.setColumnName( "values."+index, names[index]);
 				
 				DIAG_RECORD_TABLE_MODEL.setColumnClass( "values."+index, Double.class );
 				DIAG_RECORD_TABLE_MODEL.setColumnName( "values."+index, names[index] );
 			}
 			
-			HISTORY_DATA_TABLE_MODEL.setKeyPaths( historyDataKeyPaths );
-			HISTORY_DATA_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
+			PARAM_HISTORY_TABLE_MODEL.setKeyPaths( historyDataKeyPaths );
+			PARAM_HISTORY_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
 			
 			DIAG_RECORD_TABLE_MODEL.setKeyPaths( keyPathsForDiagRecord );
 			DIAG_RECORD_TABLE_MODEL.setRecords( dRecords );
 		}
 		else {
-			HISTORY_DATA_TABLE_MODEL.setRecords( null );
+			PARAM_HISTORY_TABLE_MODEL.setRecords( null );
 			DIAG_RECORD_TABLE_MODEL.setRecords( null );
 		}
 
