@@ -1014,7 +1014,7 @@ public class SimpleButton extends GradientLabel
 		 * Compute how long the button has been pressed.
 		 * @return the duration of the button press in milliseconds
 		 */
-		public long getPressDuration() {
+		private long getPressDuration() {
 			final long pressedTime = lastPressedTime;
 			if ( pressedTime != 0 ) {
 				return new Date().getTime() - lastPressedTime;
@@ -1022,6 +1022,13 @@ public class SimpleButton extends GradientLabel
 				return 0;	// not pressed
 			}
 		}
+
+
+		/** Determine if the current press is long (i.e. user is pressing and holding long enough to trigger a chain event) */
+		public boolean isLongPress() {
+			return getPressDuration() >= CHAIN_TRIGGER_DURATION;
+		}
+
 
 		/**
 		 * Starts firing EctionEvents when left mouse button is pressed.
@@ -1076,7 +1083,7 @@ public class SimpleButton extends GradientLabel
 	/** Chain periodic press events as long as the user keeps the button pressed */
 	private void chainPressEvents(final ChainMouseListener sender) {
 		if ( pressed && isEnabled() ) {	// make sure the user is still pressing the button and the button is still enabled
-			if ( sender.getPressDuration() >= ChainMouseListener.CHAIN_TRIGGER_DURATION ) {
+			if ( sender.isLongPress() ) {	// verify that the user has pressed continuously for a long time
 				// fire the event
 				fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_CHAIN) );
 
