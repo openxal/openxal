@@ -462,7 +462,7 @@ class SetPhaseShiftAndTimeStep_Panel(JPanel):
 		sub1_panel.add(phase_shift_lbl)
 		sub1_panel.add(self.phase_shift_text)
 		time_wait_lbl = JLabel("   Scan Wait Time[sec]=",JLabel.LEFT)
-		self.time_wait_text = DoubleInputTextField(0.5,ScientificNumberFormat(6),6)
+		self.time_wait_text = DoubleInputTextField(0.5,ScientificNumberFormat(4),6)
 		sub1_panel.add(time_wait_lbl)
 		sub1_panel.add(self.time_wait_text)
 		self.keepLiveCavPhases_RadioButton = JRadioButton("Keep Cav. Phases")

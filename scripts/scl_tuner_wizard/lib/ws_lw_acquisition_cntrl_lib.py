@@ -10,11 +10,13 @@ from java.lang import *
 from javax.swing import *
 from javax.swing import JTable
 from javax.swing.event import TableModelEvent, TableModelListener, ListSelectionListener
+from javax.swing.filechooser import FileNameExtensionFilter
 from java.awt import Color, BorderLayout, GridLayout, FlowLayout
 from java.text import SimpleDateFormat,NumberFormat
 from java.util import Date
 from javax.swing.table import AbstractTableModel, TableModel
 from java.awt.event import ActionEvent, ActionListener
+from java.io import File
 
 from xal.extension.widgets.plot import BasicGraphData, FunctionGraphsJPanel
 from xal.extension.widgets.swing import DoubleInputTextField 
@@ -25,6 +27,7 @@ from xal.smf.impl.qualify import AndTypeQualifier, OrTypeQualifier
 
 from xal.ca import *
 
+import constants_lib
 from constants_lib import GRAPH_LEGEND_KEY
 
 false= Boolean("false").booleanValue()
@@ -357,7 +360,7 @@ class Local_Gauss_Fitter:
 		self.rc.custom_gauss_sigma =  self.wireScanData.getSigmaX()
 		#self.rc.custom_rms_sigma = self.wireScanData.	getSigmaRmsX()
 		self.rc.custom_rms_sigma = self._calculateSigmaRMS()
-		print "debug gauss fit sigma RMS=",self.wireScanData.getSigmaRmsX()," new RMS=",self.rc.custom_rms_sigma
+		#print "debug gauss fit sigma RMS=",self.wireScanData.getSigmaRmsX()," new RMS=",self.rc.custom_rms_sigma
 		self.rc.plotFitData()
 		
 	def updateParamsToZero(self):
@@ -727,6 +730,71 @@ class SendToAnalysis_Listener(ActionListener):
 				#print "debug ws_lw_size_record.ws_node=",ws_lw_size_record.ws_node.getId()," index=",ws_lw_size_record.index," ind0=",ws_scan_and_fit_record.index
 		tr_twiss_analysis_controller.dict_panel.dict_table.getModel().fireTableDataChanged()
 		
+		
+class Write_Waveforms_to_ASCII_Listener(ActionListener):
+	def __init__(self,ws_lw_acquisition_controller):
+		self.ws_lw_acquisition_controller = ws_lw_acquisition_controller
+
+	def actionPerformed(self,actionEvent):
+		ws_data_analysis_controller = self.ws_lw_acquisition_controller.ws_data_analysis_controller
+		linac_wizard_document = self.ws_lw_acquisition_controller.linac_wizard_document
+		records_table = ws_data_analysis_controller.records_table
+		index = records_table.getSelectedRow()
+		#print "debug ws record for writing index=",index
+		if(index < 0): return
+		ws_records_table_model = ws_data_analysis_controller.ws_records_table_model
+		ws_scan_and_fit_record = ws_records_table_model.ws_rec_table_element_arr[index]
+		fl_name = ws_scan_and_fit_record.ws_node.getId()
+		if(ws_scan_and_fit_record.ws_direction == WS_DIRECTION_HOR): fl_name += "_hor.dat" 
+		if(ws_scan_and_fit_record.ws_direction == WS_DIRECTION_VER): fl_name += "_ver.dat"
+		fl_name = fl_name.replace(":","_")
+		#print "debug file=",fl_name
+		x_arr = []
+		y_arr = []
+		y_fit_arr = []
+		x_min = ws_scan_and_fit_record.X_MIN.getValue()
+		x_max = ws_scan_and_fit_record.X_MAX.getValue()
+		x_center = ws_scan_and_fit_record.X_CENTER.getValue()
+		for ind in range(ws_scan_and_fit_record.gd_wf.getNumbOfPoints()):
+			x = ws_scan_and_fit_record.gd_wf.getX(ind)
+			y = ws_scan_and_fit_record.gd_wf.getY(ind)
+			if(x >= x_min and x <= x_max):
+				x_arr.append(x-x_center)
+				y_arr.append(y)
+				y_fit = ws_scan_and_fit_record.gd_fit_wf.getValueY(x)
+				y_fit_arr.append(y_fit)
+		#----normalization
+		if(len(x_arr) > 0):
+			y_max = y_arr[0]
+			for ind in range(len(x_arr)):
+				if(y_max < y_arr[ind]): y_max = y_arr[ind]
+			if(y_max > 0.):
+				for ind in range(len(x_arr)):
+					y_arr[ind] /= y_max
+					y_fit_arr[ind] /= y_max
+		#----dump into the ASCII file---------------------
+		fl_out_path = constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"]
+		fl_name = fl_out_path+"/"+fl_name
+		fl_out = File(fl_name)
+		fc = JFileChooser(fl_name)
+		fc.setDialogTitle("Write WS/LW data into the ASCII file ...")
+		fc.setApproveButtonText("Write")
+		fl_filter = FileNameExtensionFilter("WS/LW Data",["dat",])
+		fc.setFileFilter(fl_filter)
+		fc.setSelectedFile(fl_out)
+		returnVal = fc.showOpenDialog(linac_wizard_document.linac_wizard_window.frame)
+		if(returnVal == JFileChooser.APPROVE_OPTION):
+			fl_out = fc.getSelectedFile()
+			fl_path = fl_out.getPath()
+			if(fl_path.rfind(".dat") != (len(fl_path) - 4)):
+				fl_path = open(fl_out.getPath()+".dat")
+			fl_out = open(fl_path,"w")
+			fl_out. write(" ind   x[mm]  y[mm]  y_fit[mm] \n")
+			for ind in range(len(x_arr)):
+				s = " %2d   %12.5g   %12.5g   %12.5g "%(ind,x_arr[ind],y_arr[ind],y_fit_arr[ind])
+				fl_out. write(s + "\n")
+			fl_out.close()
+
 #------------------------------------------------------------------------
 #           Controllers
 #------------------------------------------------------------------------
@@ -970,7 +1038,14 @@ class WS_Data_Analysis_Controller:
 		self.gpanel_WF.addVerticalLine(+1.0e+30,Color.red)
 		self.gpanel_WF.setVerLinesButtonVisible(true)
 		self.gpanel_WF.addDraggedVerLinesListener(Position_Limits_Listener(self.ws_lw_acquisition_controller))
-		self.record_analysis_panel.add(self.gpanel_WF, BorderLayout.CENTER)
+		write_waveforms_to_ascii_button = JButton("Write Waveforms to ASCII File")
+		write_waveforms_to_ascii_button.addActionListener(Write_Waveforms_to_ASCII_Listener(self.ws_lw_acquisition_controller))
+		below_graph_panel = JPanel(FlowLayout(FlowLayout.LEFT,5,5))
+		below_graph_panel.add(write_waveforms_to_ascii_button)
+		graph_panel_left = JPanel(BorderLayout())
+		graph_panel_left.add(self.gpanel_WF, BorderLayout.CENTER)	
+		graph_panel_left.add(below_graph_panel, BorderLayout.SOUTH)
+		self.record_analysis_panel.add(graph_panel_left, BorderLayout.CENTER)		
 		self.main_panel.add(self.record_analysis_panel, BorderLayout.CENTER)
 		#---set up Listeners 
 		self.records_table.getSelectionModel().addListSelectionListener(WS_Record_Table_Selection_Listener(self.ws_lw_acquisition_controller))
