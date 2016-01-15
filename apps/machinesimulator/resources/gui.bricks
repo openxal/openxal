@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Thu Jan 14 17:23:29 CST 2016" version="1.0.0">
+<BricksDocument date="Fri Jan 15 14:54:04 CST 2016" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="784" tag="MainWindow" width="1289">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -17,6 +17,7 @@
                         <BeanProperty height="28" name="preferredSize" width="225"/>
                         <BeanProperty height="30" name="maximumSize" width="250"/>
                         <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="filter the history records"/>
                         <BeanProperty height="28" name="minimumSize" width="200"/>
                     </ViewNode>
                     <ViewNode tag="History Filter Clear Button">
@@ -27,6 +28,7 @@
                         <BeanProperty name="name" value=""/>
                         <BeanProperty height="34" name="maximumSize" width="48"/>
                         <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Clear History Records Filter"/>
                     </ViewNode>
                     <ViewNode tag="Scalar Parameter Selection Box">
                         <ViewProxy type="javax.swing.Box_Horizontal"/>
@@ -138,6 +140,7 @@
                     <ViewNode tag="Clear All">
                         <ViewProxy type="javax.swing.JButton"/>
                         <BeanProperty name="name" value="Clear All"/>
+                        <BeanProperty name="toolTipText" value="Uncheck All CheckBoxes"/>
                         <BeanProperty name="text" value="Clear All"/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
@@ -222,6 +225,7 @@
                                                 <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
                                                 <BeanProperty height="34" name="maximumSize" width="48"/>
                                                 <BeanProperty name="text" value=""/>
+                                                <BeanProperty name="toolTipText" value="Clear Nodes Filter"/>
                                                 <BeanProperty height="34" name="minimumSize" width="48"/>
                                             </ViewNode>
                                             <ViewNode tag="Scan Node">
@@ -256,22 +260,27 @@
                                                 <BeanProperty name="requestFocusEnabled" value="true"/>
                                                 <BeanProperty height="22" name="minimumSize" width="60"/>
                                             </ViewNode>
-                                            <ViewNode tag="Step">
+                                            <ViewNode tag="Step Number">
                                                 <ViewProxy type="javax.swing.JLabel"/>
-                                                <BeanProperty name="text" value="Step : "/>
+                                                <BeanProperty name="toolTipText" value="Set the number of steps"/>
+                                                <BeanProperty name="text" value="Step Num: "/>
                                             </ViewNode>
-                                            <ViewNode tag="Step Field">
-                                                <ViewProxy type="javax.swing.JFormattedTextField"/>
-                                                <BeanProperty height="22" name="preferredSize" width="60"/>
+                                            <ViewNode tag="Scan Step Spinner">
+                                                <ViewProxy type="javax.swing.JSpinner"/>
                                                 <BeanProperty height="22" name="minimumSize" width="60"/>
+                                                <BeanProperty height="22" name="preferredSize" width="60"/>
+                                                <BeanProperty name="toolTipText" value="Set the number of steps"/>
                                             </ViewNode>
                                             <ViewNode tag="Scan">
                                                 <ViewProxy type="javax.swing.JButton"/>
+                                                <BeanProperty name="toolTipText" value="Scan selected node with given range"/>
                                                 <BeanProperty name="text" value="Scan"/>
+                                                <BeanProperty group="" iconName="" name="selectedIcon"/>
                                             </ViewNode>
                                         </ViewNode>
                                         <ViewNode tag="Clear Test">
                                             <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Clear All Test Values"/>
                                             <BeanProperty name="text" value="Clear Test"/>
                                         </ViewNode>
                                     </ViewNode>
@@ -306,6 +315,7 @@
                                             <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
                                             <BeanProperty height="34" name="maximumSize" width="48"/>
                                             <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Records Filter"/>
                                             <BeanProperty height="34" name="minimumSize" width="48"/>
                                         </ViewNode>
                                         <ViewNode tag="Panel">
@@ -343,14 +353,17 @@
                                             <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
                                             <BeanProperty height="34" name="maximumSize" width="48"/>
                                             <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Diags Filter"/>
                                             <BeanProperty height="34" name="minimumSize" width="48"/>
                                         </ViewNode>
                                         <ViewNode tag="Diagnostic Disable Button">
                                             <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Disable all the displayed diags"/>
                                             <BeanProperty name="text" value="Disable"/>
                                         </ViewNode>
                                         <ViewNode tag="Diagnostic Enable Button">
                                             <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Enalbe all the displayed diags"/>
                                             <BeanProperty name="text" value="Enable"/>
                                         </ViewNode>
                                         <ViewNode tag="Panel">
@@ -402,6 +415,7 @@
                                             <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
                                             <BeanProperty height="34" name="maximumSize" width="48"/>
                                             <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear The Elements Filter"/>
                                             <BeanProperty height="34" name="minimumSize" width="48"/>
                                         </ViewNode>
                                         <ViewNode tag="Panel">
