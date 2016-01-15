@@ -68,8 +68,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private Map<String, List<Double>> simDataForPlot;
      /**diagnostic plot data*/
      private Map<String, List<Double>> diagDataForPlot;
-     /**the positions of diagnostic device*/
-     private List<Double> diagPosition;
+     /**the positions of diagnostic devices*/
+     private Map<String, List<Double>> diagPositions;
      /**the sequence*/
      private AcceleratorSeq _sequence;
      /**sync period in milliseconds*/
@@ -189,32 +189,41 @@ public class MachineSimulatorController implements MachineModelListener {
 		synopticBox.validate();
 
 /***************************Check boxes action**************************************/
-		String typeForBPM = BPM.s_strType;
-		String[] paramsForBPM = new String[]{ BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
+		String[] types = { BPM.s_strType };
+		String[] paramsForBPM = { BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
+		diagPositions = new HashMap<String, List<Double>>( types.length );
 		//configure the bpm checkbox action
 		final ActionListener BPM_HANDLER = event -> {
 			if ( diagData != null && diagData.size() != 0 && keyPathsForDiagRecord.length>3 ) {				
 				int leg = keyPathsForDiagRecord.length;
 				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
+				
+				// take at most two records to plot
 				for ( int index = 0; index < leg-3; index++ ){
 					keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[leg-1-index] );
 					if ( index == 1 ) break;
-				}				
-				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );				
-				keyPathsForDiagDiff = keyPathsForDiagPlot.subList( 1, keyPathsForDiagPlot.size() );
+				}
+				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );
+				keyPathsForDiagDiff = keyPathsForDiagPlot.subList(1, keyPathsForDiagPlot.size() );
+				//get the data via given key paths from diagData
 				diagDataForPlot = configureParametersData( diagData, keyPathsForDiagPlot );
-				diagPosition = filDiagData( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(0), diagDataForPlot );				
-				int upLimit = keyPathsForDiagPlot.size()-1;
-				for ( int index = 0; index < upLimit; index++ ) {
-					if ( xSelectionCheckbox.isSelected() ) {
-						_machineSimulatorPlot.showPlot( diagPosition, 
-								filDiagData( typeForBPM, paramsForBPM[0], keyPathsForDiagPlot.get(index+1), diagDataForPlot ),
-								(upLimit-1-index)+typeForBPM+paramsForBPM[0], LEGEND_NAME[upLimit-1-index] );
+				//filter the data by type and parameter name
+				diagPositions.put( types[0], filDiagData( types[0], paramsForBPM[0], diagDataForPlot.get( keyPathsForDiagPlot.get(0) ) ) );				
+				int upLimit = keyPathsForDiagPlot.size();
+				//plot the data
+				for ( int index = 1; index < upLimit; index++ ) {
+					List<Double> values = diagDataForPlot.get( keyPathsForDiagPlot.get( index ) );
+					if ( xSelectionCheckbox.isSelected() ) {						
+						List<Double> data = filDiagData( types[0], paramsForBPM[0], values );
+						List<List<Double>> validData = filValidData( diagPositions.get( types[0] ), data );
+						_machineSimulatorPlot.showPlot( validData.get(0), validData.get(1),
+								(upLimit-1-index)+types[0]+paramsForBPM[0], LEGEND_NAME[upLimit-1-index] );
 					}
 					if ( ySelectionCheckbox.isSelected() ) {
-						_machineSimulatorPlot.showPlot( diagPosition,
-								filDiagData(typeForBPM, paramsForBPM[1], keyPathsForDiagPlot.get( index+1 ), diagDataForPlot ),
-								(upLimit-1-index)+typeForBPM+paramsForBPM[1], LEGEND_NAME[upLimit-1-index] );
+						List<Double> data = filDiagData( types[0], paramsForBPM[1], values );
+						List<List<Double>> validData = filValidData( diagPositions.get( types[0] ), data );					
+						_machineSimulatorPlot.showPlot( validData.get(0), validData.get(1),
+								(upLimit-1-index)+types[0]+paramsForBPM[1], LEGEND_NAME[upLimit-1-index] );
 					}
 				}
 			}
@@ -228,30 +237,34 @@ public class MachineSimulatorController implements MachineModelListener {
 				if ( simulations[1] != null ){
 					twissParametersPlot.removeAllGraphData();
 					//show difference between two diagnostic records
-					if ( bpmCheckbox.isSelected() ) {
-						Map<String, List<Double>> diagDiff = calculateDiff( keyPathsForDiagDiff, diagDataForPlot );
-						for( int index = 0; index<keyPathsForDiagDiff.size(); index++ ){
+					if ( bpmCheckbox.isSelected() ) {						
+//						for( int index = 0; index<keyPathsForDiagDiff.size(); index++ ){				
 							final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
-							String keyDiag = keyPathsForDiagDiff.get( index+1 );
+							List<Double> oldValues = diagDataForPlot.get( keyPathsForDiagDiff.get( 0 ) );
+							List<Double> newValues = diagDataForPlot.get( keyPathsForDiagDiff.get( 1 ) );
 							if ( xSelectionCheckbox.isSelected() ) {
-								_machineSimulatorPlot.showPlot( diagPosition, 
-										filDiagData(typeForBPM, paramsForBPM[0], keyDiag, diagDiff ),
-										typeForBPM+paramsForBPM[0], legName );
+								List<List<Double>> newFilData = filValidData( diagPositions.get( types[0] ), filDiagData( types[0], paramsForBPM[0], newValues ) ) ;
+								List<List<Double>> oldFilData= filValidData( diagPositions.get( types[0] ), filDiagData(types[0], paramsForBPM[0], oldValues ) );
+								List<List<Double>> diffData = calculateDiff( newFilData, oldFilData );
+								_machineSimulatorPlot.showPlot( diffData.get( 0 ), diffData.get( 1 ), types[0]+paramsForBPM[0], legName );
 							}
 							if ( ySelectionCheckbox.isSelected() ) {
-								_machineSimulatorPlot.showPlot( diagPosition,
-										filDiagData(typeForBPM, paramsForBPM[1], keyDiag, diagDiff ),
-										typeForBPM+paramsForBPM[1], legName );
+								List<List<Double>> newFilData = filValidData( diagPositions.get( types[0] ), filDiagData(types[0], paramsForBPM[1], newValues ) ) ;
+								List<List<Double>> oldFilData = filValidData( diagPositions.get( types[0] ), filDiagData(types[0], paramsForBPM[1], oldValues ) );
+								List<List<Double>> diffData = calculateDiff( newFilData, oldFilData );
+								_machineSimulatorPlot.showPlot( diffData.get( 0 ), diffData.get( 1 ), types[0]+paramsForBPM[1], legName );
 							}
-							index++;
-						}
+//						}
 					}
 					//show difference between two simulation results
-					Map<String, List<Double>> simDiff = calculateDiff(keyPathsForSimDiff, simDataForPlot);
 					for( int index = 0; index<keyPathsForSimDiff.size(); index++ ){
 						final String legName = LEGEND_NAME[0]+" - "+LEGEND_NAME[1];
+						String keySimOld = keyPathsForSimDiff.get( index );
 						String keySim = keyPathsForSimDiff.get( index+1 );
-						_machineSimulatorPlot.showPlot( _positions, simDiff.get( keySim ) , keySim, legName );
+						List<List<Double>> dataOld = filValidData( _positions, simDataForPlot.get( keySimOld ) );
+						List<List<Double>> dataNew = filValidData( _positions, simDataForPlot.get( keySim ) );
+						List<List<Double>> diffData = calculateDiff( dataNew, dataOld ); 
+						_machineSimulatorPlot.showPlot( diffData.get( 0 ), diffData.get( 1 ) , keySim, legName );
 						index++;
 					}
 
@@ -362,8 +375,9 @@ public class MachineSimulatorController implements MachineModelListener {
 					simDataForPlot = configureParametersData(  MODEL.getSimulationRecords( simulations[0], simulations[1] ), parameterKeyPathsForTableList );
 					_positions = simulations[0].getAllPositions();
 					for( final String parameterKey:parameterKeyPathsForTable ){
-						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0]; 
-						_machineSimulatorPlot.showPlot( _positions, simDataForPlot.get(parameterKey), parameterKey, legName );					
+						final String legName = parameterKey.contains("old") ? LEGEND_NAME[1] : LEGEND_NAME[0];
+						List<List<Double>> filData = filValidData( _positions, simDataForPlot.get( parameterKey ) );
+						_machineSimulatorPlot.showPlot( filData.get( 0 ), filData.get( 1 ), parameterKey, legName );					
 					}
 				}
 				if ( showDifference.isSelected() ) SHOW_DIFFERENCE_HANDELER.actionPerformed(null);
@@ -555,39 +569,23 @@ public class MachineSimulatorController implements MachineModelListener {
 		//configure the lower limit value
 		final JFormattedTextField lowerLimitField = (JFormattedTextField)windowReference.getView( "Lower Limit Field" );
 		lowerLimitField.setFormatterFactory( format );
-		lowerLimitField.setText("2");
+		lowerLimitField.setText("0.5");
 		lowerLimitField.addActionListener( event -> {
-			try {
-				lowerLimitField.commitEdit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}	
+			lowerLimitField.transferFocus();			
 		});
 		
 		//configure the upper limit value
 		final JFormattedTextField upperLimitField = (JFormattedTextField)windowReference.getView( "Upper Limit Field" );
 		upperLimitField.setFormatterFactory( format );
-		upperLimitField.setText("5");
-		upperLimitField.addActionListener( event -> {
-			try {
-				upperLimitField.commitEdit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		upperLimitField.setText("0.5");
+		upperLimitField.addActionListener( event -> {			
+			upperLimitField.transferFocus();			
 		});
 		
 		//configure the step value
-		final JFormattedTextField stepField = (JFormattedTextField)windowReference.getView( "Step Field" );
-		stepField.setFormatterFactory( format );
-		stepField.setText("1");
-		stepField.addActionListener( event -> {
-			try {
-				stepField.commitEdit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		
+		SpinnerModel spinnerNumberModel = new SpinnerNumberModel( 1, 1, 100, 1 );
+		final JSpinner stepNumSpin = (JSpinner)windowReference.getView( "Scan Step Spinner" );
+		stepNumSpin.setModel( spinnerNumberModel );		
 		
 		//configure the scan button
 		final JButton scanButton = (JButton)windowReference.getView( "Scan" );
@@ -597,25 +595,21 @@ public class MachineSimulatorController implements MachineModelListener {
 				double currentTestValue = nodePropRecordForScan.getTestValue();
 				double lowerLimit = Double.parseDouble( lowerLimitField.getText() );
 				double upperLimit = Double.parseDouble( upperLimitField.getText() );
-				double step = Double.parseDouble( stepField.getText() );
-				int stepNumber = (int)Math.floor((upperLimit-lowerLimit)/step) + 1;
-				String confirmation = nodeId+"\n From : "+lowerLimit+" To : "+upperLimit+" Step : "+step+"\n get "+stepNumber+" results";
+				int stepNumber = (lowerLimit == upperLimit) ? 0 : (int)stepNumSpin.getValue();
+				String confirmation = "Scan Node : "+nodeId+"\n From : "+lowerLimit+" To : "+upperLimit+"\n Get "+(stepNumber+1)+" result(s)";
 				int confirm = JOptionPane.showConfirmDialog( windowReference.getWindow(),
 						confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
 				if ( confirm == JOptionPane.YES_OPTION ) {
-
-					if ( upperLimit > lowerLimit && stepNumber > 0 ) {
-						
-						for ( int index = 0; index < stepNumber; index++ ) {
-							nodePropRecordForScan.setTestValue( lowerLimit + index * step );
-							runAction.actionPerformed( null );
-						}
-						nodePropRecordForScan.setTestValue( currentTestValue );
+					for ( int index = 0; index <= stepNumber; index++ ) {
+						double value = ( stepNumber == 0 ) ? lowerLimit : lowerLimit + (upperLimit - lowerLimit)*index/stepNumber;				
+						nodePropRecordForScan.setTestValue( value );
+						runAction.actionPerformed( null );
 					}
-					else JOptionPane.showMessageDialog( windowReference.getWindow(),
-							"You set illeal step or bounds", "Warning", JOptionPane.ERROR_MESSAGE );
+					nodePropRecordForScan.setTestValue( currentTestValue );
 				}
 			}
+			else JOptionPane.showMessageDialog( windowReference.getWindow(),
+					"You need to select a node first!", "Warning!", JOptionPane.PLAIN_MESSAGE);
 
 		});
 		
@@ -755,7 +749,7 @@ public class MachineSimulatorController implements MachineModelListener {
     * @param records the specified records which hold the data
     * @param keyPaths specifies the array of key paths to get the data to plot
     */ 
-    private <T> Map<String, List<Double>> configureParametersData( final List<T> records,final List<String> keyPaths ){
+    private <T> Map<String, List<Double>> configureParametersData( final List<T> records, final List<String> keyPaths ){
       final Map<String, List<Double>> data = new HashMap<String, List<Double>>();     
     	for( final String keyPath:keyPaths ){
     		data.put( keyPath, new ArrayList<Double>( records.size() ) );
@@ -768,41 +762,75 @@ public class MachineSimulatorController implements MachineModelListener {
     
     /**
      * calculate the difference of two records' data
-     * @param keyPaths the key paths 
-     * @param data the data array include two records' data
+     * @param data1 the first data, include positions and values
+     * @param data2 the second data, include positions and values
      * @return the difference data
      */
-    private Map<String,List<Double>> calculateDiff( final List<String> keyPaths, final Map<String, List<Double>> data ) {
-    	Map<String, List<Double>> diffData = new HashMap<String, List<Double>>();
-    	for ( int index = 0; index< keyPaths.size(); index++) {
-    		List<Double> newValues = data.get( keyPaths.get( index+1 ) );
-    		List<Double> oldValues = data.get( keyPaths.get( index ) );
-    		List<Double> diff = new ArrayList<Double>();
-			for( int valueIndex = 0; valueIndex<newValues.size(); valueIndex++ ){							
-				diff.add( newValues.get( valueIndex ) - oldValues.get( valueIndex ) );
-			}
-			diffData.put( keyPaths.get( index+1 ), diff );
-			index++;
+    private List<List<Double>> calculateDiff( final List<List<Double>> data1, final List<List<Double>> data2 ) {
+    	List<List<Double>> diffData = new ArrayList<List<Double>>();
+    	List<Double> critPos, othPos ;
+    	if ( data1.get(0).size() <= data2.get(0).size() ) {
+    		critPos = data1.get( 0 );
+    		othPos = data2.get( 0 );
     	}
+    	else {
+    		critPos = data2.get( 0 );
+    		othPos = data1.get( 0 );
+    	}
+    	List<Double> calculValues = new ArrayList<>( critPos.size() );
+    	int diffNumber = 0;
+    	for ( int index = 0; index< critPos.size(); ) {
+    		if ( critPos.get( index ) == othPos.get( index + diffNumber ) ) {
+    			calculValues.add(data1.get(1).get( index ) - data2.get(1).get( index ) );
+    			index++;
+    		}
+    		else diffNumber++;
+    	}
+    	diffData.add( critPos );
+    	diffData.add(calculValues);
     	return diffData;
     }
     
     /**
-     * filter the diagnostic data with the node type, parameter and record keyPath 
+     * remove the invalid data and it's corresponding position
+     * @param pos the positions
+     * @param dataForPlot dataForPlot for filtering
+     * @return the filtered data
+     */
+    private List<List<Double>> filValidData ( final List<Double> pos, final List<Double> dataForPlot ) {
+    	List<List<Double>> filteredData = new ArrayList<List<Double>>();
+    	List<Double> filPos = new ArrayList<Double>( pos );
+    	List<Double> filData = new ArrayList<Double>( dataForPlot );
+    	int removed = 0;
+    	if ( pos.size() == dataForPlot.size() ) {
+    		for ( int dataIndex = 0; dataIndex < dataForPlot.size(); dataIndex++ ){
+    			if ( Double.isNaN( dataForPlot.get( dataIndex ) ) ) {
+    				//TODO:maybe we can add other filter conditions in future
+    				filPos.remove( dataIndex - removed );
+    				filData.remove( dataIndex - removed );
+    				removed ++;
+    			}
+    		}
+    		filteredData.add( filPos );
+    		filteredData.add( filData );
+    	}
+
+    	return filteredData;
+    }
+    
+    /**
+     * filter the diagnostic data by the node type, parameter and record keyPath 
      * @param type the type of one node
      * @param param one parameter of one node
-     * @param keyPath the key path of records
      * @param dataForFil the data source
-     * @return the filtered values map with specified keyPath
+     * @return the filtered values
      */
-    private List<Double> filDiagData( final String type, final String param, final String keyPath,
-    		final Map<String, List<Double>> dataForFil ) {
+    private List<Double> filDiagData( final String type, final String param, final List<Double> dataForFil ) {
     	List<Double> filData =  new ArrayList<Double>();
-    	List<Double> values = dataForFil.get( keyPath );
     	for ( int index = 0; index< diagData.size(); index++ ) {
     		DiagnosticRecord record = diagData.get( index );
     		if ( record.getNode().getType().equals( type ) && record.getValueName().equals(param) ) {
-    			filData.add( values.get( index ) );
+    			filData.add( dataForFil.get( index ) );
     		}
     	}
     	return filData;
