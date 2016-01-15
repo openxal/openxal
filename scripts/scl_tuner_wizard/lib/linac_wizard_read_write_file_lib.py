@@ -208,6 +208,7 @@ class WS_Wizard_IO_Controller:
 			ws_scan_and_fit_rec.SIGMA.setValue(gauss_da.doubleValue("SIGMA"))
 			ws_scan_and_fit_rec.X_MIN.setValue(gauss_da.doubleValue("X_MIN"))
 			ws_scan_and_fit_rec.X_MAX.setValue(gauss_da.doubleValue("X_MAX"))
+			readGraphDataFromDA(ws_scan_and_fit_rec.gd_fit_wf,ws_rec_da,"fit_wave_form")
 			ws_rec_table_element_arr.append(ws_scan_and_fit_rec)
 			ws_scan_and_fit_rec.index = index_count
 			#------ read the quad dict ---------------
@@ -302,6 +303,7 @@ class WS_Wizard_IO_Controller:
 			custom_gauss_sigma = ws_rec.custom_gauss_sigma
 			custom_rms_sigma = ws_rec.custom_rms_sigma
 			gd_wf = ws_rec.gd_wf
+			gd_fit_wf = ws_rec.gd_fit_wf
 			ws_rec_da = ws_records_da.createChild("WS_Record")
 			ws_rec_da.setValue("Name", name)
 			ws_rec_da.setValue("direction", str(ws_direction))
@@ -316,8 +318,9 @@ class WS_Wizard_IO_Controller:
 			gauss_da.setValue("SIGMA", ws_rec.SIGMA.getValue())
 			gauss_da.setValue("X_MIN", ws_rec.X_MIN.getValue())	
 			gauss_da.setValue("X_MAX", ws_rec.X_MAX.getValue())
-			#----dump wave form ------
+			#----dump wave forms ------
 			dumpGraphDataToDA(gd_wf,ws_rec_da,"wave_form")
+			dumpGraphDataToDA(gd_fit_wf,ws_rec_da,"fit_wave_form")
 			#----params dict - quads and RF cavities
 			[quad_dict,cav_amp_phase_dict] = ws_rec.param_dict
 			dict_da = ws_rec_da.createChild("quad_fields")

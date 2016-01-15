@@ -1002,8 +1002,34 @@ public class SimpleButton extends GradientLabel
 	 *
 	 * Listens for mouse events and fires a series of ActionEvents while mouse is pressed.
 	 */
-	private class ChainMouseListener extends MouseAdapter
-	{
+	private class ChainMouseListener extends MouseAdapter {
+		/** time to wait in milliseconds before a press triggers a chain of events */
+		final static public long CHAIN_TRIGGER_DURATION = 500;
+
+		/** time of last press */
+		private long lastPressedTime = 0;
+
+
+		/** 
+		 * Compute how long the button has been pressed.
+		 * @return the duration of the button press in milliseconds
+		 */
+		private long getPressDuration() {
+			final long pressedTime = lastPressedTime;
+			if ( pressedTime != 0 ) {
+				return new Date().getTime() - lastPressedTime;
+			} else {
+				return 0;	// not pressed
+			}
+		}
+
+
+		/** Determine if the current press is long (i.e. user is pressing and holding long enough to trigger a chain event) */
+		public boolean isLongPress() {
+			return getPressDuration() >= CHAIN_TRIGGER_DURATION;
+		}
+
+
 		/**
 		 * Starts firing EctionEvents when left mouse button is pressed.
 		 *
@@ -1017,13 +1043,16 @@ public class SimpleButton extends GradientLabel
 				return;
 			}
 
+			// record the time the mouse button was pressed
+			this.lastPressedTime = new Date().getTime();
+
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_PRESSED ) );
 
-				// wait 500 milliseconds before beginning to chain events for a pressed and held button
-				DispatchQueue.getMainQueue().dispatchAfterDelay( 500, new Runnable() {
+				// wait for the chain trigger duration before beginning to chain events for a pressed and held button
+				DispatchQueue.getMainQueue().dispatchAfterDelay( CHAIN_TRIGGER_DURATION, new Runnable() {
 					public void run() {
-						chainPressEvents();
+						chainPressEvents(ChainMouseListener.this);
 					}
 				});
 			}
@@ -1031,6 +1060,9 @@ public class SimpleButton extends GradientLabel
 
 		/** Mark the pressed state as false when the user releases the mouse */
 		public void mouseReleased( final MouseEvent event ) {
+			// mouse is no longer pressed, so reset the pressed time to 0
+			this.lastPressedTime = 0;
+
 			if ( isPressed() ) {
 				setPressed( false );
 			}
@@ -1038,6 +1070,9 @@ public class SimpleButton extends GradientLabel
 
 		/** Mark the pressed state as false when the user exits this button with the mouse */
 		public void mouseExited( final MouseEvent event ) {
+			// mouse is no longer pressed, so reset the pressed time to 0
+			this.lastPressedTime = 0;
+
 			if ( isPressed() ) {
 				setPressed( false );
 			}
@@ -1046,17 +1081,19 @@ public class SimpleButton extends GradientLabel
 
 
 	/** Chain periodic press events as long as the user keeps the button pressed */
-	private void chainPressEvents() {
+	private void chainPressEvents(final ChainMouseListener sender) {
 		if ( pressed && isEnabled() ) {	// make sure the user is still pressing the button and the button is still enabled
-			// fire the event
-			fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_CHAIN) );
+			if ( sender.isLongPress() ) {	// verify that the user has pressed continuously for a long time
+				// fire the event
+				fireActionPerformed( new ActionEvent( SimpleButton.this, ActionEvent.ACTION_PERFORMED, MOUSE_CHAIN) );
 
-			// schedule the next event in the chain based on the fireRate (really a fire period in milliseconds)
-			DispatchQueue.getMainQueue().dispatchAfterDelay( fireRate, new Runnable() {
-				public void run() {
-					chainPressEvents();
-				}
-			});
+				// schedule the next event in the chain based on the fireRate (really a fire period in milliseconds)
+				DispatchQueue.getMainQueue().dispatchAfterDelay( fireRate, new Runnable() {
+					public void run() {
+						chainPressEvents(sender);
+					}
+				});
+			}
 		} else {
 			//System.out.println( "Pressed: " + pressed + ", enabled: " + isEnabled() );
 		}
