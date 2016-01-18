@@ -17,6 +17,14 @@ public class NodePropertyRecord {
 	final private ModelInput MODEL_INPUT;
 	/** channel monitor to monitor the value of the channel */
 	final private ChannelMonitor[] CHANNEL_MONITORS;
+	/**check-state of scanning*/
+	private boolean checkState;
+	/**the lowerLimit of scanning*/
+	private double lowerLimit = Double.NaN;
+	/**the upperLimit of scanning*/
+	private double upperLimit = Double.NaN;
+	/**the steps of scanning*/
+	private int scanSteps;
 	
 	/**Constructor*/
 	public NodePropertyRecord( final AcceleratorNode node, final String propertyName ) {
@@ -74,6 +82,46 @@ public class NodePropertyRecord {
 	/**set the test value*/
 	public void setTestValue( final double value ){
 		MODEL_INPUT.setDoubleValue(value);
-	}	
+	}
+	
+	/**get the lowerLimit*/
+	public boolean getCheckState () {
+		return checkState;
+	}
+	
+	/**set the check-state*/
+	public void setCheckState ( final boolean checkState ) {
+		this.checkState = checkState;
+	}
+	
+	/**get the lowerLimit*/
+	public double getLowerLimit () {
+		return lowerLimit;
+	}
+	
+	/**set the lowerLimit*/
+	public void setLowerLimit ( final double lowerLimit ) {
+		this.lowerLimit = lowerLimit;
+	}
+	
+	/**get the upperLimit*/
+	public double getUpperLimit () {
+		return upperLimit;
+	}
+	
+	/**set the upperLimit*/
+	public void setUpperLimit ( final double upperLimit ) {
+		this.upperLimit = upperLimit;
+	}
+	
+	/**get the steps*/
+	public int getSteps () {
+		return scanSteps;
+	}
+	
+	/**set the steps*/
+	public void setSteps ( final int steps ) {
+		this.scanSteps = steps;
+	}
 
 }

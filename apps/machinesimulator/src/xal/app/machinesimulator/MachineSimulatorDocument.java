@@ -69,7 +69,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
       // initialize the model here
       MODEL = new MachineModel();
-		MACHINE_SIMULATOR_CONTROLLER= new MachineSimulatorController(this,WINDOW_REFERENCE);
+		MACHINE_SIMULATOR_CONTROLLER = new MachineSimulatorController( this,WINDOW_REFERENCE );
 		
 		if ( url != null ) {
             System.out.println( "Opening document: " + url.toString() );

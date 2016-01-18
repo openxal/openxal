@@ -3,11 +3,9 @@
  */
 package xal.app.machinesimulator;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
 
 import xal.app.machinesimulator.MachineModel.SimulationHistoryRecord;
 import xal.extension.bricks.WindowReference;
@@ -90,9 +86,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<String> keyPathsForDiagDiff;
      /**refresh action*/
      private ActionListener refresh;
-     /**the selected nodeProperty record used for scan in new run parameters table*/
-     private NodePropertyRecord nodePropRecordForScan;
-
+     /**the selected nodeProperty records used for scan in new run parameters table*/
+     private List<NodePropertyRecord> nodePropRecordsForScan;
 
 
 	/**constructor */
@@ -192,8 +187,8 @@ public class MachineSimulatorController implements MachineModelListener {
 		String[] types = { BPM.s_strType };
 		String[] paramsForBPM = { BPM.X_AVG_HANDLE, BPM.Y_AVG_HANDLE };
 		diagPositions = new HashMap<String, List<Double>>( types.length );
-		//configure the bpm checkbox action
-		final ActionListener BPM_HANDLER = event -> {
+		//configure the diagnostic check-boxes action
+		final ActionListener DIAG_HANDLER = event -> {
 			if ( diagData != null && diagData.size() != 0 && keyPathsForDiagRecord.length>3 ) {				
 				int leg = keyPathsForDiagRecord.length;
 				LinkedList<String> keyPathsForDiagPlot = new LinkedList<String>();
@@ -205,7 +200,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				}
 				keyPathsForDiagPlot.addFirst( keyPathsForDiagRecord[2] );
 				keyPathsForDiagDiff = keyPathsForDiagPlot.subList(1, keyPathsForDiagPlot.size() );
-				//get the data via given key paths from diagData
+				//get the data by given key paths from diagData
 				diagDataForPlot = configureParametersData( diagData, keyPathsForDiagPlot );
 				//filter the data by type and parameter name
 				diagPositions.put( types[0], filDiagData( types[0], paramsForBPM[0], diagDataForPlot.get( keyPathsForDiagPlot.get(0) ) ) );				
@@ -368,7 +363,7 @@ public class MachineSimulatorController implements MachineModelListener {
 
 				//setup plot panel and show the selected parameters' graph
 				twissParametersPlot.removeAllGraphData();
-				if ( bpmCheckbox.isSelected() ) BPM_HANDLER.actionPerformed( null );
+				if ( bpmCheckbox.isSelected() ) DIAG_HANDLER.actionPerformed( null );
 				
 				if ( _sequence != null ) twissParametersPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
@@ -533,90 +528,18 @@ public class MachineSimulatorController implements MachineModelListener {
 	
 	/**make the table of new run parameters*/
 	private void makeNewRunParamView( final WindowReference windowReference ) {
-			
+		
+		nodePropRecordsForScan = new ArrayList<NodePropertyRecord>();
         final JTextField filterField = (JTextField)windowReference.getView( "New Run Param Filter Field" );
         final JButton clearButton = (JButton)windowReference.getView( "New Run Param Filter Clear" );
         clearButton.addActionListener( event -> {
         	filterField.setText( "" );
         });
-		
-		@SuppressWarnings("unchecked")
-		final JComboBox<String> scanNodeSelect = (JComboBox<String>)windowReference.getView( "Scan ComboBox" );
-		scanNodeSelect.addFocusListener( new FocusListener() {
-			
-			@Override
-			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub				
-			}
-			
-			@Override
-			public void focusGained(FocusEvent e) {
-				List<NodePropertyRecord> records = NEW_PARAMETERS_TABLE_MODEL.getRowRecords();
-				String[] items = new String[records.size()];
-				for ( int index = 0 ; index < records.size(); index++ ) {
-					items[index] = records.get( index ).getAcceleratorNode().getId();
-				}
-				scanNodeSelect.setModel( new DefaultComboBoxModel<String>( items ) );
-			}
-		});
-		
-		scanNodeSelect.addActionListener( evevt -> {			
-			nodePropRecordForScan = NEW_PARAMETERS_TABLE_MODEL.getRecordAtRow( scanNodeSelect.getSelectedIndex() );
-		});
         
-		
-		final DefaultFormatterFactory format = new DefaultFormatterFactory( new NumberFormatter(NumberFormat.getNumberInstance() ) );
-		//configure the lower limit value
-		final JFormattedTextField lowerLimitField = (JFormattedTextField)windowReference.getView( "Lower Limit Field" );
-		lowerLimitField.setFormatterFactory( format );
-		lowerLimitField.setText("0.5");
-		lowerLimitField.addActionListener( event -> {
-			lowerLimitField.transferFocus();			
-		});
-		
-		//configure the upper limit value
-		final JFormattedTextField upperLimitField = (JFormattedTextField)windowReference.getView( "Upper Limit Field" );
-		upperLimitField.setFormatterFactory( format );
-		upperLimitField.setText("0.5");
-		upperLimitField.addActionListener( event -> {			
-			upperLimitField.transferFocus();			
-		});
-		
-		//configure the step value
-		SpinnerModel spinnerNumberModel = new SpinnerNumberModel( 1, 1, 100, 1 );
-		final JSpinner stepNumSpin = (JSpinner)windowReference.getView( "Scan Step Spinner" );
-		stepNumSpin.setModel( spinnerNumberModel );		
-		
-		//configure the scan button
-		final JButton scanButton = (JButton)windowReference.getView( "Scan" );
-		scanButton.addActionListener( event -> {
-			if ( nodePropRecordForScan != null ) {
-				String nodeId = nodePropRecordForScan.getAcceleratorNode().getId();
-				double currentTestValue = nodePropRecordForScan.getTestValue();
-				double lowerLimit = Double.parseDouble( lowerLimitField.getText() );
-				double upperLimit = Double.parseDouble( upperLimitField.getText() );
-				int stepNumber = (lowerLimit == upperLimit) ? 0 : (int)stepNumSpin.getValue();
-				String confirmation = "Scan Node : "+nodeId+"\n From : "+lowerLimit+" To : "+upperLimit+"\n Get "+(stepNumber+1)+" result(s)";
-				int confirm = JOptionPane.showConfirmDialog( windowReference.getWindow(),
-						confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
-				if ( confirm == JOptionPane.YES_OPTION ) {
-					for ( int index = 0; index <= stepNumber; index++ ) {
-						double value = ( stepNumber == 0 ) ? lowerLimit : lowerLimit + (upperLimit - lowerLimit)*index/stepNumber;				
-						nodePropRecordForScan.setTestValue( value );
-						runAction.actionPerformed( null );
-					}
-					nodePropRecordForScan.setTestValue( currentTestValue );
-				}
-			}
-			else JOptionPane.showMessageDialog( windowReference.getWindow(),
-					"You need to select a node first!", "Warning!", JOptionPane.PLAIN_MESSAGE);
-
-		});
-		
 		//configure the clear test button
 		final JButton clearTestButton = (JButton)windowReference.getView( "Clear Test" );
 		clearTestButton.addActionListener( event -> {
-			List<NodePropertyRecord> records = nodePropertyRecords;
+			List<NodePropertyRecord> records = NEW_PARAMETERS_TABLE_MODEL.getRowRecords();
 			if ( records != null ) {
 				for ( final NodePropertyRecord record : records ) {
 					record.setTestValue( Double.NaN );
@@ -626,21 +549,84 @@ public class MachineSimulatorController implements MachineModelListener {
 
 		});
 		
+		
+		//configure the scan button
+		final JButton scanButton = (JButton)windowReference.getView( "Scan Button" );
+		 scanButton.addActionListener( event -> {
+			 nodePropRecordsForScan.clear();
+				for ( final NodePropertyRecord record : nodePropertyRecords ) {
+					if ( record.getCheckState() ) nodePropRecordsForScan.add( record );
+				}	
+				if ( nodePropertyRecords != null && nodePropRecordsForScan.size() != 0 ) {				
+					List<Double[]> scanSource = extractScanSource( nodePropRecordsForScan );
+					if ( scanSource.size() != 0 ) {
+						ScanAlgorithm<Double> algorithm = new ScanAlgorithm<Double>( scanSource, Double.class );
+						boolean scanState = algorithm.generateScanSpots();
+						if ( scanState ) {
+							startScan( windowReference.getWindow(), algorithm );
+						}
+						else JOptionPane.showMessageDialog( windowReference.getWindow(),
+								"Exceed the limit : " + ScanAlgorithm.MAXIMUM_CAPACITY, "Warning!", JOptionPane.PLAIN_MESSAGE );
+					}
+					else JOptionPane.showMessageDialog( windowReference.getWindow(),
+							"Scan failed !\n Please check the settings!", "Warning!", JOptionPane.ERROR_MESSAGE );
+					
+				}
+				else JOptionPane.showMessageDialog( windowReference.getWindow(), 
+						"You need to select a node first!", "Warning!", JOptionPane.PLAIN_MESSAGE);
+		 });
+	
+		//configure the uncheck button
+		final JButton uncheckButton = (JButton)windowReference.getView( "Uncheck Scan Button" );
+		uncheckButton.addActionListener( event -> {
+			List<NodePropertyRecord> records = NEW_PARAMETERS_TABLE_MODEL.getRowRecords();
+			if ( records != null ) {
+				for ( final NodePropertyRecord record : records ) {
+					record.setCheckState( false );
+				}				
+				NEW_PARAMETERS_TABLE_MODEL.fireTableRowsUpdated( 0, records.size()-1 );
+			}
+		});
+		
+		
+		
 	     final JTable newRunParamTable = (JTable)windowReference.getView( "New Run Parameters Table" );
-	     newRunParamTable.setModel( NEW_PARAMETERS_TABLE_MODEL ); 
+	     newRunParamTable.setModel( NEW_PARAMETERS_TABLE_MODEL );
+	     
+			//configure the clear setting button
+			final JButton clearSetting = (JButton)windowReference.getView( "Clear Setting" );
+			clearSetting.addActionListener( event -> {
+				int[] selRows = newRunParamTable.getSelectedRows();
+				for ( int index = 0; index < selRows.length; index++ ) {
+					NodePropertyRecord record = NEW_PARAMETERS_TABLE_MODEL.getRecordAtRow( selRows[index] );
+					record.setCheckState( false );
+					record.setLowerLimit( Double.NaN );
+					record.setUpperLimit( Double.NaN );
+					record.setSteps( 0 );
+				}
+			});
 	        
 	     //set the column name of the sequence table
 	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "acceleratorNode.id", "Node" );
 	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "propertyName", "Property" );
+	     NEW_PARAMETERS_TABLE_MODEL.setColumnName( "checkState", "Scan" );
 	        
 	     //set the filter field for sequence table
 	     NEW_PARAMETERS_TABLE_MODEL.setInputFilterComponent( filterField );
 	     NEW_PARAMETERS_TABLE_MODEL.setMatchingKeyPaths( "acceleratorNode.id" );
 	         
 	     //configure the sequence table model
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, "designValue", "liveValue", "testValue" );
-		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", "propertyName", "designValue", "liveValue", "testValue" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, 
+				  "designValue", "liveValue", "testValue", "lowerLimit", "upperLimit" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "steps", Integer.class );
+		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", 
+				  "propertyName", "designValue", "liveValue", "testValue", "checkState", "lowerLimit", "upperLimit", "steps" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "checkState", true );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "lowerLimit", "checkState" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "upperLimit", "checkState" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "steps", "checkState" );
 	}
 	
 	/**make the table of parameter history records*/
@@ -819,7 +805,7 @@ public class MachineSimulatorController implements MachineModelListener {
     }
     
     /**
-     * filter the diagnostic data by the node type, parameter and record keyPath 
+     * filter the diagnostic data by the node type, parameter
      * @param type the type of one node
      * @param param one parameter of one node
      * @param dataForFil the data source
@@ -834,6 +820,67 @@ public class MachineSimulatorController implements MachineModelListener {
     		}
     	}
     	return filData;
+    }
+    
+    /**
+     * start the scanning
+     * @param window the parent window of confirm dialog
+     * @param algorithm the algorithm to generate all the scan spots
+     */
+    private void startScan( final Window window, final ScanAlgorithm<Double> algorithm ) {
+		StringBuilder confirmation = new StringBuilder();
+		List<Double> testValues = new ArrayList<>( nodePropRecordsForScan.size() );
+		for( final NodePropertyRecord record : nodePropRecordsForScan ) {
+			testValues.add( record.getTestValue() );
+			String nodeinform = record.getAcceleratorNode().getId() + " . " + record.getPropertyName() + " : "
+					+ " Range :( " + record.getLowerLimit() + ")——(" + record.getUpperLimit() + ") Steps : " + record.getSteps() + "\n";
+			confirmation.append( nodeinform );
+		}
+		confirmation.append( "Get results : " + algorithm.getScanSteps() );
+		int confirm = JOptionPane.showConfirmDialog( window,
+				confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
+		if ( confirm == JOptionPane.YES_OPTION ) {
+			List<Double[]> scanSpots = algorithm.getScanSpots();							
+			for ( final Double[] scanSpot : scanSpots ) {
+				for ( int index = 0; index < scanSpot.length; index++ ) {
+					nodePropRecordsForScan.get( index ).setTestValue( scanSpot[ index ] );
+				}
+				runAction.actionPerformed( null );
+			}
+			//restore the test values
+			for ( int nodeIndex = 0; nodeIndex < nodePropRecordsForScan.size(); nodeIndex++ ) {
+				nodePropRecordsForScan.get( nodeIndex ).setTestValue( testValues.get( nodeIndex ) );
+			}
+		}
+		
+	}
+    
+    /**
+     * extract the scan source from the specified node records
+     * @param records the specified node property records
+     * @return the scan source
+     */
+    private List<Double[]> extractScanSource ( final List<NodePropertyRecord> records ) {
+    	List<Double[]> scanSource = new ArrayList<Double[]>();
+    	
+    	for ( int nodeIndex = 0; nodeIndex < records.size(); nodeIndex++ ) {
+    		Double lowerLimit = records.get( nodeIndex ).getLowerLimit();
+    		Double upperLimit = records.get( nodeIndex ).getUpperLimit();
+    		int steps = ( lowerLimit == upperLimit ) ? 1 : records.get( nodeIndex ).getSteps();
+    		if ( Double.isNaN( lowerLimit ) || Double.isNaN( upperLimit ) || steps <= 0 ) {
+    			scanSource.clear();
+    			return scanSource;
+    		}
+    		Double[] nodeData = new Double[steps];
+    		int dataSize = nodeData.length;
+    		for ( int index = 0; index < dataSize   ; index++ ) {
+    			nodeData[index] = ( steps == 1 ) ? lowerLimit : lowerLimit + index*( upperLimit - lowerLimit )/(steps-1);
+    		}
+    		scanSource.add( nodeData );
+    	}
+    	
+    	
+    	return scanSource;
     }
     
     /**get a runnalbe that syncs the values */
