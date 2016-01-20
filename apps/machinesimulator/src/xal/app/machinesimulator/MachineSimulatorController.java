@@ -474,7 +474,7 @@ public class MachineSimulatorController implements MachineModelListener {
         historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
         
         HISTORY_RECORD_TABLE_MODEL.setInputFilterComponent( filterField );
-        HISTORY_RECORD_TABLE_MODEL.setMatchingKeyPaths( "sequence.id" );
+        HISTORY_RECORD_TABLE_MODEL.setMatchingKeyPaths( "sequence.id", "recordName" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName( "checkState", "Compare" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName( "sequence.id", "Sequence" );
         HISTORY_RECORD_TABLE_MODEL.setColumnName( "dateTime", "Time" );
