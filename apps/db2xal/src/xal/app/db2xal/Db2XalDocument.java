@@ -704,7 +704,7 @@ public class Db2XalDocument extends AcceleratorDocument implements DataListener 
 								+ "EPICS.BEAM_LINE_DVC_LOC, "
 								+ "EPICS.BPM_DVC "
 								+ "where (EPICS.DVC.DVC_TYPE_ID IN "
-								+ "( 'BPM','BCM', 'BLM', 'BSM', 'ChMPS', 'EMS', 'LW', 'WS', 'ND', 'Harp', 'Foil', 'LStrp', 'VIW', 'Tgt' )) "
+								+ "( 'BPM','BCM', 'BLM', 'BSM', 'ChMPS', 'EMS', 'LW', 'WS', 'ND', 'Harp', 'Foil', 'LStrp', 'Scrp', 'VIW', 'Tgt' )) "
 								+ "and EPICS.DVC.ACT_DVC_IND = 'Y' "
 								+ "and EPICS.BEAM_LINE_DVC_LOC.SEQ_NM = '" + sequences[k] + "' "
 								+ "and EPICS.DVC.Dvc_id = EPICS.BEAM_LINE_DVC_LOC.Dvc_id(+) "
