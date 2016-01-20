@@ -74,8 +74,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     
     /**
      * <p>
-     * Class <code>Vector</code> is an encapsulating class for the <code>Jama.Matrix</code>
-     * class.  <code>Vector</code> always access to the internal <code>Matrix</code> object
+     * Class <code>JVector</code> is an encapsulating class for the <code>Jama.Matrix</code>
+     * class.  <code>JVector</code> allows access to the internal <code>Matrix</code> object
      * only as a vector object.  Internally this vector is represented as a column vector
      * matrix, that is, a contra-variant representation, although these details matter
      * little.  The intent is to further abstract the actual implementation from the 

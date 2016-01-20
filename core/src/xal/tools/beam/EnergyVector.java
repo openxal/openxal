@@ -222,7 +222,7 @@ public class EnergyVector extends BaseVector<EnergyVector> {
      * @since  Oct 12, 2015,   Christopher K. Allen
      */
     public EnergyVector(final double[] arrVals) throws ArrayIndexOutOfBoundsException {
-        super(SIZE_VECTOR, arrVals);
+        super(arrVals);
     }
 
     /**
@@ -299,8 +299,9 @@ public class EnergyVector extends BaseVector<EnergyVector> {
      */
     @Override
     public EnergyVector clone() {
-        // TODO Auto-generated method stub
-        return null;
+        EnergyVector    vec = new EnergyVector(this);
+        
+        return vec;
     }
 
     /**
@@ -311,8 +312,22 @@ public class EnergyVector extends BaseVector<EnergyVector> {
      */
     @Override
     protected EnergyVector newInstance() {
-        // TODO Auto-generated method stub
-        return null;
+        EnergyVector    vec = new EnergyVector();
+        
+        return vec;
+    }
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jan 20, 2016,  Christopher K. Allen
+     */
+    @Override
+    protected EnergyVector newInstance(double[] arrVecInit) {
+        EnergyVector    vec = new EnergyVector(arrVecInit);
+        
+        return vec;
     }
 
 }
