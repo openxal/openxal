@@ -1,145 +1,429 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Fri Jan 17 16:19:13 EST 2014" version="1.0.0">
+<BricksDocument date="Mon Jan 18 08:56:50 CST 2016" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="736" tag="MainWindow" width="1046">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="784" tag="MainWindow" width="1289">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
                 <ViewProxy type="javax.swing.Box_Vertical"/>
-                <ViewNode tag="Controls Bar">
+                <ViewNode tag="Table Filter Box">
                     <ViewProxy type="javax.swing.Box_Horizontal"/>
-                    <ViewNode tag="Run Button">
-                        <ViewProxy type="javax.swing.JButton"/>
-                        <BeanProperty name="text" value="Run"/>
+                    <ViewNode tag="Label">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Filter: "/>
                     </ViewNode>
-                    <ViewNode tag="Phase Slip Checkbox">
-                        <ViewProxy type="javax.swing.JCheckBox"/>
-                        <BeanProperty name="selected" value="true"/>
-                        <BeanProperty name="text" value="Calculate Phase Slip"/>
-                        <BeanProperty name="toolTipText" value="Perform the full RF gap phase slip calculation"/>
+                    <ViewNode tag="History Table Filter Field">
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty height="28" name="preferredSize" width="225"/>
+                        <BeanProperty height="30" name="maximumSize" width="250"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="filter the history records"/>
+                        <BeanProperty height="28" name="minimumSize" width="200"/>
+                    </ViewNode>
+                    <ViewNode tag="History Filter Clear Button">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty height="34" name="minimumSize" width="48"/>
+                        <BeanProperty height="34" name="preferredSize" width="48"/>
+                        <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                        <BeanProperty name="name" value=""/>
+                        <BeanProperty height="34" name="maximumSize" width="48"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Clear History Records Filter"/>
+                    </ViewNode>
+                    <ViewNode tag="Scalar Parameter Selection Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Model Scalars"/>
+                        </BorderNode>
+                        <ViewNode tag="Kinetic Energy Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Kinetic Energy"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display Kinetic Energy"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Plane Selection Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Plane"/>
+                        </BorderNode>
+                        <ViewNode tag="X Selection Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="X"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="toolTipText" value="Display Horizontal Component"/>
+                        </ViewNode>
+                        <ViewNode tag="Y Selection Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Y"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="toolTipText" value="Display Vertical Component"/>
+                        </ViewNode>
+                        <ViewNode tag="Z Selection Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="Z"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display Longitudinal Component"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="BPM Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BeanProperty name="name" value="Horizontal Box"/>
+                        <BeanProperty height="51" name="maximumSize" width="2147"/>
+                        <BeanProperty height="51" name="minimumSize" width="50"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Machine Vectors"/>
+                        </BorderNode>
+                        <ViewNode tag="BPM">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty height="26" name="preferredSize" width="110"/>
+                            <BeanProperty height="26" name="maximumSize" width="110"/>
+                            <BeanProperty name="label" value="BPM"/>
+                            <BeanProperty height="26" name="minimumSize" width="110"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Vector Parameter Selection Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Model Vectors"/>
+                        </BorderNode>
+                        <ViewNode tag="Orbit Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty height="26" name="minimumSize" width="33"/>
+                            <BeanProperty name="name" value="Check Box"/>
+                            <BeanProperty height="26" name="preferredSize" width="33"/>
+                            <BeanProperty height="26" name="maximumSize" width="2147483647"/>
+                            <BeanProperty name="label" value="Orbit"/>
+                            <BeanProperty name="toolTipText" value="Display the beam displacement (ignore z plane)"/>
+                        </ViewNode>
+                        <ViewNode tag="Beta Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;beta;&lt;/html>"/>
+                            <BeanProperty name="selected" value="true"/>
+                            <BeanProperty name="toolTipText" value="Display the Beta Function"/>
+                        </ViewNode>
+                        <ViewNode tag="Alpha Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;alpha;&lt;/html>"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display the Twiss Alpha"/>
+                        </ViewNode>
+                        <ViewNode tag="Gamma Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;gamma;&lt;/html>"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display the Twiss Gamma"/>
+                        </ViewNode>
+                        <ViewNode tag="Emittance Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;epsilon;&lt;/html>"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display the Emittance"/>
+                        </ViewNode>
+                        <ViewNode tag="Beam Size Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;sigma;&lt;/html>"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display the Envelope Radius"/>
+                        </ViewNode>
+                        <ViewNode tag="Betatron Phase Checkbox">
+                            <ViewProxy type="javax.swing.JCheckBox"/>
+                            <BeanProperty name="text" value="&lt;html>&amp;phi;&lt;/html>"/>
+                            <BeanProperty name="selected" value="false"/>
+                            <BeanProperty name="toolTipText" value="Display the Betatron Phase"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Clear All">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="name" value="Clear All"/>
+                        <BeanProperty name="text" value="Clear All"/>
+                        <BeanProperty name="toolTipText" value="Uncheck All CheckBoxes"/>
                     </ViewNode>
                     <ViewNode tag="Horizontal Glue">
                         <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                     </ViewNode>
                 </ViewNode>
-                <ViewNode tag="Tabbed Pane">
-                    <ViewProxy type="javax.swing.JTabbedPane"/>
-                    <ViewNode tag="States Table View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="States Table"/>
-                        <ViewNode tag="Table Filter Box">
-                            <ViewProxy type="javax.swing.Box_Horizontal"/>
-                            <ViewNode tag="Label">
-                                <ViewProxy type="javax.swing.JLabel"/>
-                                <BeanProperty name="text" value="Filter: "/>
-                            </ViewNode>
-                            <ViewNode tag="States Table Filter Field">
-                                <ViewProxy type="javax.swing.JTextField"/>
-                                <BeanProperty name="text" value=""/>
-                                <BeanProperty height="28" name="minimumSize" width="200"/>
-                                <BeanProperty height="28" name="preferredSize" width="225"/>
-                                <BeanProperty height="50" name="maximumSize" width="250"/>
-                            </ViewNode>
-                            <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
-                            </ViewNode>
-                            <ViewNode tag="Scalar Parameter Selection Box">
+                <ViewNode tag="Table Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="Split Pane">
+                        <ViewProxy type="javax.swing.JSplitPane"/>
+                        <BeanProperty name="oneTouchExpandable" value="true"/>
+                        <ViewNode tag="History Table Box">
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <BeanProperty height="453" name="preferredSize" width="1000"/>
+                            <BeanProperty name="name" value="Vertical Box"/>
+                            <BeanProperty height="64" name="minimumSize" width="277"/>
+                            <ViewNode tag="Control Box">
                                 <ViewProxy type="javax.swing.Box_Horizontal"/>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
-                                    <BeanProperty name="title" value="Scalars"/>
-                                </BorderNode>
-                                <ViewNode tag="Kinetic Energy Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="text" value="Kinetic Energy"/>
-                                    <BeanProperty name="toolTipText" value="Display Kinetic Energy"/>
+                                <BeanProperty height="28" name="maximumSize" width="32973"/>
+                                <BeanProperty height="38" name="minimumSize" width="20"/>
+                                <ViewNode tag="Remove Button">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="toolTipText" value="Remove selected rows"/>
+                                    <BeanProperty name="text" value="Remove"/>
+                                </ViewNode>
+                                <ViewNode tag="Check All">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="name" value="Select All"/>
+                                    <BeanProperty name="text" value="Check All"/>
+                                    <BeanProperty name="toolTipText" value="Check All the filtered rows"/>
+                                </ViewNode>
+                                <ViewNode tag="Uncheck All">
+                                    <ViewProxy type="javax.swing.JButton"/>
+                                    <BeanProperty name="toolTipText" value="Uncheck All filtered rows"/>
+                                    <BeanProperty name="text" value="Uncheck All"/>
+                                </ViewNode>
+                                <ViewNode tag="Panel">
+                                    <ViewProxy type="javax.swing.JPanel"/>
+                                    <BeanProperty name="focusTraversalPolicyProvider" value="false"/>
+                                    <BeanProperty name="focusable" value="true"/>
+                                    <BeanProperty name="inheritsPopupMenu" value="false"/>
+                                    <BeanProperty name="focusCycleRoot" value="false"/>
+                                    <BeanProperty height="38" name="minimumSize" width="1000"/>
                                 </ViewNode>
                             </ViewNode>
-                            <ViewNode tag="Plane Selection Box">
-                                <ViewProxy type="javax.swing.Box_Horizontal"/>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
-                                    <BeanProperty name="title" value="Plane"/>
-                                </BorderNode>
-                                <ViewNode tag="X Selection Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="text" value="X"/>
-                                    <BeanProperty name="toolTipText" value="Display Horizontal Component"/>
+                            <ViewNode tag="History Record Pane">
+                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <ViewNode tag="History Record Table">
+                                    <ViewProxy type="javax.swing.JTable"/>
                                 </ViewNode>
-                                <ViewNode tag="Y Selection Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="text" value="Y"/>
-                                    <BeanProperty name="toolTipText" value="Display Vertical Component"/>
-                                </ViewNode>
-                                <ViewNode tag="Z Selection Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="text" value="Z"/>
-                                    <BeanProperty name="toolTipText" value="Display Longitudinal Component"/>
-                                </ViewNode>
-                            </ViewNode>
-                            <ViewNode tag="Vector Parameter Selection Box">
-                                <ViewProxy type="javax.swing.Box_Horizontal"/>
-                                <BorderNode tag="Titled Border">
-                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
-                                    <BeanProperty name="title" value="Vector Parameters"/>
-                                </BorderNode>
-                                <ViewNode tag="Beta Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;beta;&lt;/html>"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="toolTipText" value="Display the Beta Function"/>
-                                </ViewNode>
-                                <ViewNode tag="Alpha Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;alpha;&lt;/html>"/>
-                                    <BeanProperty name="toolTipText" value="Display the Twiss Alpha"/>
-                                </ViewNode>
-                                <ViewNode tag="Gamma Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;gamma;&lt;/html>"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="toolTipText" value="Display the Twiss Gamma"/>
-                                </ViewNode>
-                                <ViewNode tag="Emittance Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;epsilon;&lt;/html>"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="toolTipText" value="Display the Emittance"/>
-                                </ViewNode>
-                                <ViewNode tag="Beam Size Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;sigma;&lt;/html>"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="toolTipText" value="Display the Envelope Radius"/>
-                                </ViewNode>
-                                <ViewNode tag="Betatron Phase Checkbox">
-                                    <ViewProxy type="javax.swing.JCheckBox"/>
-                                    <BeanProperty name="text" value="&lt;html>&amp;phi;&lt;/html>"/>
-                                    <BeanProperty name="selected" value="true"/>
-                                    <BeanProperty name="toolTipText" value="Display the Betatron Phase"/>
-                                </ViewNode>
-                            </ViewNode>
-                            <ViewNode tag="Horizontal Glue">
-                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
                             </ViewNode>
                         </ViewNode>
-                        <ViewNode tag="States Table Scroller">
-                            <ViewProxy type="javax.swing.JScrollPane"/>
-                            <ViewNode tag="States Table">
-                                <ViewProxy type="javax.swing.JTable"/>
+                        <ViewNode tag="run state Box">
+                            <ViewProxy type="javax.swing.Box_Vertical"/>
+                            <ViewNode tag="Tabbed Pane">
+                                <ViewProxy type="javax.swing.JTabbedPane"/>
+                                <BeanProperty height="455" name="preferredSize" width="25005"/>
+                                <BeanProperty height="112" name="minimumSize" width="120"/>
+                                <ViewNode tag="New Run Parameters View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="New Run Parameters"/>
+                                    <ViewNode tag="Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="preferredSize" width="287"/>
+                                        <BeanProperty height="28" name="maximumSize" width="32973"/>
+                                        <BeanProperty height="28" name="minimumSize" width="20"/>
+                                        <ViewNode tag="Label">
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
+                                        </ViewNode>
+                                        <ViewNode tag="New Run Param Filter Field">
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty height="22" name="preferredSize" width="250"/>
+                                            <BeanProperty height="30" name="maximumSize" width="250"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty height="22" name="minimumSize" width="60"/>
+                                        </ViewNode>
+                                        <ViewNode tag="New Run Param Filter Clear">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty height="34" name="minimumSize" width="48"/>
+                                            <BeanProperty height="34" name="preferredSize" width="48"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty height="34" name="maximumSize" width="48"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Nodes Filter"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Clear Test">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Clear all filtered test values"/>
+                                            <BeanProperty name="text" value="Clear Test"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Scan Button">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty group="" iconName="" name="selectedIcon"/>
+                                            <BeanProperty name="text" value="Scan"/>
+                                            <BeanProperty name="toolTipText" value="Scan checked nodes with given range and steps"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Uncheck Scan Button">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Uncheck all the filtered rows"/>
+                                            <BeanProperty name="text" value="Uncheck"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Clear Setting">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="text" value="Clear Setting"/>
+                                            <BeanProperty name="toolTipText" value="Clear the scan setting of the selected rows"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="New Run Parameters Scroller">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="New Run Parameters Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Param History Table View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="Parameter History"/>
+                                    <ViewNode tag="Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="preferredSize" width="896"/>
+                                        <BeanProperty height="51" name="maximumSize" width="2147483647"/>
+                                        <BeanProperty height="28" name="minimumSize" width="896"/>
+                                        <ViewNode tag="Label">
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Param History Filter Field">
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty height="22" name="preferredSize" width="250"/>
+                                            <BeanProperty height="30" name="maximumSize" width="250"/>
+                                            <BeanProperty name="text" value=""/>
+                                        </ViewNode>
+                                        <ViewNode tag="Param History Filter Clear">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty height="34" name="minimumSize" width="48"/>
+                                            <BeanProperty height="34" name="preferredSize" width="48"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty height="34" name="maximumSize" width="48"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Records Filter"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="Param History Data Pane">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="Param History Data Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Diagnostics History View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="Diagnostics History"/>
+                                    <ViewNode tag="Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="preferredSize" width="896"/>
+                                        <BeanProperty height="51" name="maximumSize" width="2147483647"/>
+                                        <BeanProperty height="28" name="minimumSize" width="896"/>
+                                        <ViewNode tag="Label">
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Diagnostics History Filter Field">
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty height="22" name="preferredSize" width="250"/>
+                                            <BeanProperty height="30" name="maximumSize" width="250"/>
+                                            <BeanProperty name="text" value=""/>
+                                        </ViewNode>
+                                        <ViewNode tag="Diagnostics History Filter Clear">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty height="34" name="minimumSize" width="48"/>
+                                            <BeanProperty height="34" name="preferredSize" width="48"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty height="34" name="maximumSize" width="48"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear Diags Filter"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Diagnostic Disable Button">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Disable all the displayed diags"/>
+                                            <BeanProperty name="text" value="Disable"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Diagnostic Enable Button">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty name="toolTipText" value="Enalbe all the displayed diags"/>
+                                            <BeanProperty name="text" value="Enable"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="Horizontal Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <ViewNode tag="Split Pane">
+                                            <ViewProxy type="javax.swing.JSplitPane"/>
+                                            <BeanProperty name="oneTouchExpandable" value="true"/>
+                                            <ViewNode tag="Diag Live Table Pane">
+                                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                                <ViewNode tag="Diag Live Table">
+                                                    <ViewProxy type="javax.swing.JTable"/>
+                                                </ViewNode>
+                                            </ViewNode>
+                                            <ViewNode tag="Diag Record Table Pane">
+                                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                                <ViewNode tag="Diag Record Table">
+                                                    <ViewProxy type="javax.swing.JTable"/>
+                                                </ViewNode>
+                                            </ViewNode>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="States Table View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="States Table"/>
+                                    <ViewNode tag="Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="preferredSize" width="896"/>
+                                        <BeanProperty height="51" name="maximumSize" width="2147483647"/>
+                                        <BeanProperty height="28" name="minimumSize" width="896"/>
+                                        <ViewNode tag="Label">
+                                            <ViewProxy type="javax.swing.JLabel"/>
+                                            <BeanProperty name="text" value="Filter:"/>
+                                        </ViewNode>
+                                        <ViewNode tag="States Table Filter Field">
+                                            <ViewProxy type="javax.swing.JTextField"/>
+                                            <BeanProperty height="22" name="preferredSize" width="250"/>
+                                            <BeanProperty height="30" name="maximumSize" width="250"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty height="22" name="minimumSize" width="4"/>
+                                        </ViewNode>
+                                        <ViewNode tag="States Table Filter Clear">
+                                            <ViewProxy type="javax.swing.JButton"/>
+                                            <BeanProperty height="34" name="minimumSize" width="48"/>
+                                            <BeanProperty height="34" name="preferredSize" width="48"/>
+                                            <BeanProperty group="custom" iconName="Clear24.gif" name="icon"/>
+                                            <BeanProperty height="34" name="maximumSize" width="48"/>
+                                            <BeanProperty name="text" value=""/>
+                                            <BeanProperty name="toolTipText" value="Clear The Elements Filter"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="States Table Scroller">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <ViewNode tag="States Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="States Plot View">
+                                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                                    <BeanProperty name="name" value="States Plot"/>
+                                    <ViewNode tag="Plot Control Box">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="28" name="maximumSize" width="32973"/>
+                                        <ViewNode tag="Show Difference">
+                                            <ViewProxy type="javax.swing.JCheckBox"/>
+                                            <BeanProperty name="label" value="item"/>
+                                            <BeanProperty name="text" value="Show Difference"/>
+                                            <BeanProperty name="toolTipText" value="Plot difference between two checked runs (ignored if only one run checked)"/>
+                                        </ViewNode>
+                                        <ViewNode tag="Panel">
+                                            <ViewProxy type="javax.swing.JPanel"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="States Plot">
+                                        <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                                    </ViewNode>
+                                    <ViewNode tag="SynopticContainer">
+                                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                        <BeanProperty height="40" name="preferredSize" width="25000"/>
+                                        <BeanProperty height="41" name="maximumSize" width="30000"/>
+                                        <BeanProperty height="39" name="minimumSize" width="100"/>
+                                    </ViewNode>
+                                </ViewNode>
                             </ViewNode>
-                        </ViewNode>
-                    </ViewNode>
-                    <ViewNode tag="States Plot View">
-                        <ViewProxy type="javax.swing.Box_Vertical"/>
-                        <BeanProperty name="name" value="States Plot"/>
-                        <ViewNode tag="States Plot">
-                            <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
                         </ViewNode>
                     </ViewNode>
                 </ViewNode>

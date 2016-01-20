@@ -14,6 +14,7 @@ import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.*;
+import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
 import xal.smf.impl.Electromagnet;
 
@@ -43,6 +44,13 @@ public class MachineSimulator implements DataListener {
 	
 	/** indicator of whether the simulation is running */
 	private volatile boolean _isRunning;
+	
+	/**the list of ModelInput*/
+	private List<ModelInput> modelInputs;
+	/**the actual property values used for simulation*/
+	private Map<AcceleratorNode, Map<String, Double>> propertyValuesRecordForNodes;
+	/**the number of running times*/
+	private int runNumber=0;
 
     
 	/** Constructor */
@@ -50,6 +58,8 @@ public class MachineSimulator implements DataListener {
 		_isRunning = false;
         _useFieldReadback = false;  // by default use the field setting
 		_useRFGapPhaseSlipCalculation = true;	// by default perform the full RF Gap phase slip calculation
+		
+		modelInputs = new ArrayList<ModelInput>();
         
 		try {
             setSequenceProbe( sequence, entranceProbe );
@@ -90,16 +100,24 @@ public class MachineSimulator implements DataListener {
     
     
     /** Create a new scenario */
-    private void configScenario() throws ModelException {
+    private void configScenario() throws ModelException {    	
         if ( _sequence != null ) {
             _scenario = Scenario.newScenarioFor( _sequence );
-            _scenario.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
         }
         else {
             _scenario = null;
         }
     }
     
+    /**Get the scenario*/
+    public Scenario getScenario() {
+    	return _scenario;
+    }
+    
+	/** Set the synchronization mode */    
+    public void setSynchronizationMode(final String newMode){   	
+    	if(_scenario != null) _scenario.setSynchronizationMode(newMode);
+    }
     
     /** Set the accelerator sequence */
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
@@ -149,7 +167,7 @@ public class MachineSimulator implements DataListener {
 	}
 	
     
-    /** Set whether to use field readback when modeling live machine */
+    /** Set whether to use field read_back when modeling live machine */
     public void setUseFieldReadback( final boolean useFieldReadback ) {
         if ( _useFieldReadback != useFieldReadback ) {
             _useFieldReadback = useFieldReadback;
@@ -158,7 +176,7 @@ public class MachineSimulator implements DataListener {
     }
     
     
-    /** Determine whether the field readback is used when modeling the live machine */
+    /** Determine whether the field read_back is used when modeling the live machine */
     public boolean getUseFieldReadback() {
         return _useFieldReadback;
     }
@@ -169,9 +187,9 @@ public class MachineSimulator implements DataListener {
         final boolean useFieldReadback = _useFieldReadback;     // local copy of the field readback flag
         final AcceleratorSeq sequence = _sequence;   // local copy of the sequence
         if ( sequence != null ) {
-            final List<AcceleratorNode> magnets = sequence.getAllNodesOfType( Electromagnet.s_strType );
-            for ( final AcceleratorNode magnet : magnets ) {
-                ((Electromagnet)magnet).setUseFieldReadback( useFieldReadback );
+            final List<Electromagnet> magnets = sequence.getAllNodesOfType( Electromagnet.s_strType );
+            for ( final Electromagnet magnet : magnets ) {
+                magnet.setUseFieldReadback( useFieldReadback );
             }
         }
     }
@@ -239,7 +257,61 @@ public class MachineSimulator implements DataListener {
 		return getDefaultProbe( sequence ).getKineticEnergy();
 	}
 	
+	/**
+	 * configure the modelInputs with the list of NodePropertyRecord which holds the ModelInput instance
+	 * @param nodePropertyRecords The list of NodePropertyRecord
+	 * @throws SynchronizationException 
+	 */
+    public void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
+    	List<ModelInput> newModelInputs = new ArrayList<ModelInput>();
+    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
+    	for( NodePropertyRecord record:nodePropertyRecords ){
+    		if( !Double.isNaN( record.getTestValue() ) ){
+    			newModelInputs.add( record.getModelInput() );
+    		}
+    	}
 	
+    	changeModelInputs( modelInputs, newModelInputs );	
+
+    	for( NodePropertyRecord record : nodePropertyRecords){
+    		try {
+				propertyValueForNode.put( record.getAcceleratorNode(), _scenario.propertiesForNode( record.getAcceleratorNode() ) );
+			} catch (SynchronizationException e) {
+				e.printStackTrace();
+			}
+    	}
+    	// record the values used for simulation
+    	propertyValuesRecordForNodes = propertyValueForNode;
+
+    }
+    
+    /**
+     * change the modelInput
+     * @param oldInputs The old modelInputs which we set last time
+     * @param newInputs The new modelInputs which we are going to set
+     */
+    private void changeModelInputs( final List<ModelInput> oldInputs, final List<ModelInput> newInputs ){
+    	for( final ModelInput oldInput : oldInputs ){
+    		_scenario.removeModelInput( oldInput.getAcceleratorNode(), oldInput.getProperty() );
+    	}
+    	
+    	for( final ModelInput newInput : newInputs ){
+    		_scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
+    	}
+    	
+    	modelInputs = newInputs;
+    }
+    
+    /**Return the values record used for simulation*/
+    public Map<AcceleratorNode, Map<String, Double>> getPropertyValuesRecord(){
+    	return propertyValuesRecordForNodes;
+    }
+    
+    /**Return the number of running time*/
+    public int getRunNumber(){
+    	return runNumber;
+    }
+    
 	/**
 	 * Run the simulation.
 	 * @return the generated simulation or null if the run failed.
@@ -247,11 +319,12 @@ public class MachineSimulator implements DataListener {
 	public MachineSimulation run() {
 		try {
 			_isRunning = true;
-			final Probe<?> probe = copyProbe( _entranceProbe );		// perform a deep copy of the entrance probe leaving the entrance probe unmodified
-
+			final Probe<?> probe = copyProbe( _entranceProbe );	// perform a deep copy of the entrance probe leaving the entrance probe unmodified
             _scenario.setProbe( probe );
 			_scenario.resync();
 			_scenario.run();
+			
+			runNumber++;
 			
 			return new MachineSimulation( probe );
 		}
@@ -275,10 +348,23 @@ public class MachineSimulator implements DataListener {
     
     /** Instructs the receiver to update its data based on the given adaptor. */
     public void update( final DataAdaptor adaptor ) {
+    	boolean useFieldRb = adaptor.hasAttribute( "useFieldReadBack" ) ? adaptor.booleanValue( "useFieldReadBack" ) : false;
+    	setUseFieldReadback( useFieldRb );
+    	if ( adaptor.hasAttribute( "runNum" ) ) runNumber = adaptor.intValue( "runNum" );
+    	if ( _scenario != null && adaptor.hasAttribute( "synchMode" ) ){
+    		_scenario.setSynchronizationMode( adaptor.stringValue( "synchMode" ) );
+    	}
+    	
+    	_entranceProbe = Probe.readFrom( adaptor );
+
     }
     
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
-    public void write( final DataAdaptor adaptor ) {
+    public void write( final DataAdaptor adaptor ) {    	
+    	adaptor.setValue( "useFieldReadBack", _useFieldReadback );
+    	adaptor.setValue( "runNum", runNumber );
+    	adaptor.setValue( "synchMode", _scenario.getSynchronizationMode() );
+    	_entranceProbe.save( adaptor );
     }
 }
