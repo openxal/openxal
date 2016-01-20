@@ -78,6 +78,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private String[] keyPathsForDiagRecord;
      /** the position list of elements*/
      private List<Double> _positions;
+     /**the scan index*/
+     private int scanNumber = 0;
      /**the key paths for show difference between two simulation results*/
      private List<String> keyPathsForSimDiff;
      /**the key paths for show difference between two diagnostic records*/
@@ -832,6 +834,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		int confirm = JOptionPane.showConfirmDialog( window,
 				confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
 		if ( confirm == JOptionPane.YES_OPTION ) {
+			scanNumber++;
 			List<Double[]> scanSpots = algorithm.getScanSpots();
 			List<int[]> scanCmbntnIndexes = algorithm.getScanSpotsIndex();
 			for ( int spotIndex = 0; spotIndex < scanSpots.size(); spotIndex++ ) {
@@ -843,7 +846,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				
 				//build the record name
 				StringBuilder nameBuilder = new StringBuilder();
-				nameBuilder.append(  "Scan " + (spotIndex+1) + " : [" );
+				nameBuilder.append(  "Scan " + scanNumber + " : [" );
 				for ( int i : cmbntnIndex ) {
 					nameBuilder.append( i + "." );
 				}
