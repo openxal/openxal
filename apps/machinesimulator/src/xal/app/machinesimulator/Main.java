@@ -7,9 +7,6 @@
 package xal.app.machinesimulator;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.net.*;
 import java.util.logging.*;
 
 import xal.extension.application.*;

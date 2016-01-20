@@ -8,12 +8,113 @@ P.warning {font-size: large; font-weight: bold;}
 <TITLE>Machine Simulator Help</TITLE>
 </HEAD>
 <BODY>
-
 <center><u>Machine Simulator Help</u></center>
-
 <p>
 Machine Simulator runs the online model to simulate the machine and generate plots and reports.
 </p>
+<br>
+<a href="#Start_The_Application">Start The Application</a><br>
+<a href="#Model_Selection">Model Selection</a><br>
+<a href="#Scan_Feature">Scan Feature</a><br>
+<a href="#Table_Introduction">Table Instruction</a><br>
+<a href="#Plot_Instruction">Plot Instruction</a><br>
+<a href="#Persistance">Persistance</a><br>
+<br>
+
+<p align="center">
+<a name="Start_The_Application"></a><b>Start The Application</b><br>
+</p>
+<br>
+<ul>
+   <li>Usual start through the application launcher, you can launch with creating a new document or opening an existing document with suffix "msim"</li><br>
+   <li>When seeing the main window,you must select a sequence firstly : Accelerator->Sequences,if there is nothing, you should load an accelerator file : Accelerator->Load Default Accelerator/Load Accelerator,then select sequence.
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Model_Selection"></a><b>Model Selection</b><br>
+</p>
+<br>
+<ul>
+   <li>There are three options and two sub-options under the Model menu :
+      <ol type="1" start="1">
+         <li><b>Design</b> : Use the design values from the lattice files</li>
+         <li><b>Live with RF Design</b> : Use the values from the live machine except RF</li>
+         <li><b>All Live</b> : Use the values from the live machine </li>
+      </ol>
+      <ul>
+        <li><b>Magnet-Setpoint</b> : Use the set values of the live magnet field </li>
+        <li><b>Magnet-Readback</b> : Use the read-back values of the live magnet field </li>
+      </ul>
+   </li>
+<br>
+   <li>Note : When using Model 2 and Model 3, you must make sure that the channels are connected </li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Scan_Feature"></a><b>Scan Feature</b><br>
+</p>
+<br>
+<ul>
+    <li>This feature allow you to vary parameters between two values with         specified steps and generate several results automatically over the range of parameter values.</li>
+    <li>The generated records are assigned with names like : Scan M:[N1.N2], which means Scan number M, step N1 for parameter 1 and step N2 for parameter 2.</li>
+    <li>The upper limit of scannig steps is 100 to avoid the exceptions caused by superabundant running. </li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Table_Introduction"></a><b>Table Display</b><br>
+</p>
+<br>
+<ul>
+   <li>There are five tables in the main view : </li>
+   <ol>
+   <li><b>History Records Table</b> : the far left one, show all the history records and set record name</li>
+   <li><b>New Run Parameters </b> : show all the elements of the selected sequence with design values,live values if detect live channels,test values which set manually and scan settings.
+        <ul>
+           <li>note : scan values are always in the first priority and test value is in the second priority , no matter which model is selected.</li> 
+        </ul>
+   </li>
+   <li><b>Parameter History</b> : record the data used in simulation.</li>
+   <li><b>Diagnostics History</b> : there are two sub-tables, the left one show the live values of the selected diagnostic device, the right one show the history record of the diagnostic data.</li>
+   <li><b>States Table</b> : show the simulation results,filter by the control boxes.Since there are too many parameters to display,so we have a restriction to display at most two records in the table.</li>
+   </ol>
+   <li>Rules :
+   <ol>
+       <li>Can't show two history records which belong to different sequence in the table.</li>
+       <li>The history records of the currently selected sequence are in the first priority to display.</li>
+       <li>The latest history record is in the second priority to display.</li>
+   <ol> 
+   </li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Plot_Instruction"></a><b>Plot Instruction</b><br>
+</p>
+<br>
+<ul>
+   <li><b>Check boxes</b> : show the graphs of the checked parameters automaticly   </li>
+   <li><b>Show Difference</b> : show the difference of two records when this button is checked.</li>
+   <li><b>Display Rules</b> : same as table,see above,and at most display two records</li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Persistance"></a><b>Persistance</b><br>
+</p>
+<br>
+<ul>
+    <li>You can save the data in a document with suffix "msim", the data include model configuration, probe,results(records).</li>
+</ul>
+<!--img-->
+<br>
 
 </BODY>
 </HTML>
