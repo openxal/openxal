@@ -57,10 +57,17 @@ public class RfGap extends AcceleratorNode {
     
     protected RfGapBucket           m_bucRfGap;           // RfGap parameters
 
-    /**  The RF Field in the gap (kV/m) */
+    /**  The RF Field in the gap (kV/m) 
+     * Deprecated - never used
+     */
+    @Deprecated 
     private double ampAvg;
 
-    /**  The RF phase in the gap (kV/m) */
+    /**  
+     * The RF phase in the gap (kV/m) 
+     * @deprecated never used
+     */
+    @Deprecated
     private double phaseAvg;
     
     /** a flag indicating whether this gap is the first gap in a cavity string */
@@ -293,13 +300,17 @@ public class RfGap extends AcceleratorNode {
     public double getGapTTF() {
         return m_bucRfGap.getTTF();
     }
-
+    
+    //JAMES CODE: sets the gap TTF value for the given gap
+    public void setGapTTF(double gapTTFval) {
+    	m_bucRfGap.setTTF(gapTTFval);
+    }
 	
     /** 
      *  Set the RF amplitude in the  (kV/m) 
      *  should be done by the parent cavity (e.g. DTL tank)
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *  <em>Currently this method does nothing!</em>  
      *  
      *     
@@ -317,10 +328,12 @@ public class RfGap extends AcceleratorNode {
        	phaseAvg = cavPhase + m_bucRfGap.getPhaseFactor();;
     }
  
- // the RfGapDataSource interface methods:
+    
+    // the RfGapDataSource interface methods:
 
    /** 
-    * return a polynomial fit of the transit time factor as a function of beta
+    * Return a polynomial fit of the transit time factor <i>T</i>(&beta;)
+    *  as a function of normalized velocity &beta;.
     *  
     * <p>
     * <h4>CKA NOTES:</h4>
@@ -337,20 +350,40 @@ public class RfGap extends AcceleratorNode {
     * of 0.01 as a factor in front of <code>{@link #getTTFPrimeFit()}</code>.
     * </p>
     * 
+    * @return &nbsp; &nbsp; <i>T</i>(&beta;) &approx; <i>a</i><sub>0</sub> 
+    *                               + <i>a</i><sub>1</sub>&beta; 
+    *                               + <i>a</i><sub>2</sub>&beta;<sup>2</sup> + ...
+    *                               
+    * @version June 1, 2015
     */  
-    public RealUnivariatePolynomial getTTFFit() { 
-        RfCavity rfCav = (RfCavity) this.getParent();
-	if(isEndCell()) {
-		return rfCav.getTTFFitEnd();
-		//return rfCav.getTTFFit();
-	}
-	else
-		return rfCav.getTTFFit();
+    public RealUnivariatePolynomial getTTFFit() {
+
+        double[] arrCoeffs = this.m_bucRfGap.getTCoefficients();
+
+        // Defaults to the RF cavity transit time factor if none is 
+        //  defined for this gap.
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if(isEndCell()) 
+                return rfCav.getTTFFitEnd();
+            else
+                return rfCav.getTTFFit();
+        }
+
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        RealUnivariatePolynomial polyFit = new RealUnivariatePolynomial(arrCoeffs);
+
+        return polyFit;
     }
 
-    /** 
-     * return a polynomial fit of the TTF-prime factor as a function of beta
-     * 
+    /**
+     * <p> 
+     * Return a polynomial fit of the transit time factor derivative <i>T'</i>(&beta;)
+     * as a function of normalized velocity &beta;.  Note that the derivative
+     * is with respect to the wave number <i>k</i>; that is, 
+     * <i>T</i>'(&beta) = <i>dT</i>(&beta;)/<i>dk</i>.
+     * </p>
      * <p>
      * <h4>CKA NOTES:</h4>
      * &middot; It appears to me that the returned value of <i>T</i>'(&beta;) is 
@@ -371,47 +404,72 @@ public class RfGap extends AcceleratorNode {
      * value here is &part;<i>T</i>(&beta;)/&part;<i>k</i>.
      * </p>
      * 
+     * @return &nbsp; &nbsp; <i>T</i>(&beta;) &approx; <i>a</i><sub>0</sub> 
+     *                               + <i>a</i><sub>1</sub>&beta; 
+     *                               + <i>a</i><sub>2</sub>&beta;<sup>2</sup> + ...
+     *                               
+     * @version June 1, 2015
      */  
     public RealUnivariatePolynomial getTTFPrimeFit() { 
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if (isEndCell())
-            return rfCav.getTTFPrimeFitEnd();
-        //return rfCav.getTTFPrimeFit();
-        else
-            return rfCav.getTTFPrimeFit();
-    } 
 
-    /** 
-     * return a polynomial fit of the S factor as a function of beta 
-     * 
-     * <p>
-     * <h4>CKA NOTES:</h4>
-     * &middot; It appears to me that the returned value of <i>S</i>'(&beta;) is 
-     * in the units of <b>centimeters</b>.
-     * <br/>
-     * &middot; The units for the transit time factor <i>S</i>(&beta;) are in
-     * <b>meters</b>.
-     * <br/>
-     * &middot; This is a confusing inconsistency and hopefully we can resolve this
-     * in the future.
-     * <br/>
-     * &middot; The modeling element <code>IdealRfGap</code> uses the magic number
-     * of 0.01 as a factor in front of <code>{@link #getSTFPrimeFit()}</code>.
-     * </p>
-     * 
-     */  
-    public RealUnivariatePolynomial getSFit() { 
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if (isEndCell())
-            return rfCav.getSTFFitEnd();
-        //return rfCav.getSTFFit();
-        else
-            return rfCav.getSTFFit();
+        double[] arrCoeffs = this.m_bucRfGap.getTpCoefficients();
+
+        // Defaults to the RF cavity transit time factor if none is 
+        //  defined for this gap.
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell())
+                return rfCav.getTTFPrimeFitEnd();
+            else
+                return rfCav.getTTFPrimeFit();
+        }
+        
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        RealUnivariatePolynomial polyFit = new RealUnivariatePolynomial(arrCoeffs);
+        
+        return polyFit;
+
     }
     
     /** 
-     * return a polynomial fit of the S-prime factor as a function of beta 
-     * 
+     * Return a polynomial fit of the sine transit time factor <i>S</i>(&beta;)
+     *  as a function of normalized velocity &beta;.
+     *  
+     * @return &nbsp; &nbsp; <i>S</i>(&beta;) &approx; <i>b</i><sub>0</sub> 
+     *                               + <i>b</i><sub>1</sub>&beta; 
+     *                               + <i>b</i><sub>2</sub>&beta;<sup>2</sup> + ...
+     *                               
+     * @version June 1, 2015
+     */  
+    public RealUnivariatePolynomial getSFit() {
+
+        double[] arrCoeffs = this.m_bucRfGap.getSCoefficients();
+
+        // Defaults to the RF cavity transit time factor if none is 
+        //  defined for this gap.
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell())
+                return rfCav.getSTFFitEnd();
+            else
+                return rfCav.getSTFFit();
+        }
+
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        RealUnivariatePolynomial polyFit = new RealUnivariatePolynomial(arrCoeffs);
+
+        return polyFit;
+    }
+    
+    /**
+     * <p> 
+     * Return a polynomial fit of the sine transit time factor derivative <i>S'</i>(&beta;)
+     *  as a function of normalized velocity &beta;.  Note that the derivative
+     *  is with respect to the wave number <i>k</i>; that is, 
+     *  <i>S</i>'(&beta) = <i>dS</i>(&beta;)/<i>dk</i>.
+     *  </p>
      * <p>
      * <h4>CKA NOTES:</h4>
      * &middot; It appears to me that the returned value of <i>S</i>'(&beta;) is 
@@ -427,26 +485,45 @@ public class RfGap extends AcceleratorNode {
      * of 0.01 as a factor in front of <code>{@link #getSTFPrimeFit()}</code>.
      * </p>
      * 
+     * @return &nbsp; &nbsp; <i>S</i>(&beta;) &approx; <i>b</i><sub>0</sub> 
+     *                               + <i>b</i><sub>1</sub>&beta; 
+     *                               + <i>b</i><sub>2</sub>&beta;<sup>2</sup> + ...
+     *                               
+     * @version June 1, 2015
      */  
     public RealUnivariatePolynomial getSPrimeFit() { 
-        RfCavity rfCav = (RfCavity) this.getParent();
-        if (isEndCell()) 
-            return rfCav.getSTFPrimeFitEnd();
-        //return rfCav.getSTFPrimeFit();
+        double[] arrCoeffs = this.m_bucRfGap.getSpCoefficients();
 
-        else
-            return rfCav.getSTFPrimeFit();
+        // Defaults to the RF cavity transit time factor derivative if none is 
+        //  defined for this gap.
+        if (arrCoeffs == null || arrCoeffs.length == 0) {
+            RfCavity rfCav = (RfCavity) this.getParent();
+            if (isEndCell()) 
+                return rfCav.getSTFPrimeFitEnd();
+            //return rfCav.getSTFPrimeFit();
+
+            else
+                return rfCav.getSTFPrimeFit();
+        }
+        
+        // A set of coefficients is defined for this fit.
+        //  Create the fitting function and return it.
+        RealUnivariatePolynomial polyFit = new RealUnivariatePolynomial(arrCoeffs);
+
+        return polyFit;
     }    
-
-    /** returns 0 if the gap is part of a 0 mode cavity structure (e.g. DTL)
-     * returns 1 if the gap is part of a pi mode cavity (e.g. CCL, Superconducting)
+    
+ 
+    /** 
+     * @return <b>0</b> if the gap is part of a 0 mode cavity structure (e.g. DTL) <br/>
+     *         <b>1</b> if the gap is part of a &pi; mode cavity (e.g. CCL, Superconducting)
      */
 
     public double getStructureMode() {
         RfCavity rfCav = (RfCavity) this.getParent();
         return rfCav.getStructureMode();
     }    
-
+    
     /** 
      *  these may be different, for example, for a DTL cavity 
      * @return the offset of the gap center from the cell center (m) 
@@ -470,9 +547,13 @@ public class RfGap extends AcceleratorNode {
     }  
     /**
      *  Computes and returns the design value of the energy gain for this gap.  
-     *  The energy gain is given by the Panofsky equation dW=q E0 T L cos(phi).
+     *  The energy gain is given by the Panofsky equation 
+     *  <br/>
+     *  <br/>
+     *  &nbsp; &nbsp; &Delta;<i>W</i> = 
+     *      <i>q</i> <i>E</i><sub>0</sub><i>L</i> <i>T</i>(&beta;) cos(&phi;<sub>0</sub>).
      *
-     *  @return     design energy gain (eV)
+     *  @return     design energy gain &Delta;<i>W</i> (eV)
      *  
      *  Added 10/17/02  CKA
      */

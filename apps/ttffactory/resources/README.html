@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1348.17">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica; color: #000000; -webkit-text-stroke: #000000}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; color: #000000; -webkit-text-stroke: #000000}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; -webkit-text-stroke: #000000; min-height: 14.0px}
+    li.li1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000; -webkit-text-stroke: #000000}
+    li.li4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #000000}
+    span.s1 {font-kerning: none}
+    span.s2 {-webkit-text-stroke: 0px #000000}
+    span.Apple-tab-span {white-space:pre}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">Author:<span class="Apple-converted-space">      </span>James M. Ghawaly Jr., University of Tennessee Knoxville, jghawaly@vols.utk.edu</span></p>
+<p class="p1"><span class="s1"><span class="Apple-tab-span">	</span>and Christopher K. Allen, Oak Ridge National Laboratory, allenck@ornl.gov</span></p>
+<p class="p1"><span class="s1">Acknowledgements:<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">      </span>Douglas Brown, New Mexico State University</span></p>
+<p class="p1"><span class="s1">App Completed:</span></p>
+<p class="p1"><span class="s1"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">      </span>August 5, 2015</span></p>
+<p class="p1"><span class="s1">README Written:</span></p>
+<p class="p1"><span class="s1"><span class="Apple-tab-span">	</span><span class="Apple-converted-space">      </span>August 6, 2015</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p2"><span class="s1"><b>What this application does:</b></span></p>
+<ul class="ul1">
+  <li class="li1"><span class="s2"></span><span class="s1">Allows a user to calculate the transit time factor polynomials (integral method) of the electric field data files describing the electric field maps for all RF gaps in the SNS accelerator (Contact Christopher K. Allen to get this data) for : an individual RF gap, a selected sequence or combo sequence<span class="Apple-converted-space">  </span>(DTL, SCl, etc.), or the entire accelerator.</span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">AFTER the user calculated the transit time factor polynomial(s) for the selected accelerator, sequence, or gap, the user is given the option to save the data into an xdxf file that can be used as an optics extra for the accelerator.</span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">Allows the user to run the online model and retrieve Sigma X, Sigma Y, and Sigma Z of the beam envelope. This function can be used to test the new TTF polynomials. To add the optics extra file into the model, one must include it in the main.xal file.</span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">Allows the user to parse Dr. Andrei Shishlo’s data file containing the TTF polynomials he generated.<span class="Apple-converted-space"> </span></span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">AFTER parsing Dr. Shishlo’s data, the user has the option to generate an optics extra file, however this file cannot be used in the actual model because the TTF polynomials are defined in terms of k rather than beta, which OpenXAL uses as the argument for the TTF polynomials.</span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">AFTER parsing Dr. Shishlo’s data, the user can select gaps and retrieve the rtf, stf, ttfp, and stop polynomials for that gap.</span></li>
+</ul>
+<p class="p2"><span class="s1"><br>
+</span></p>
+<p class="p2"><span class="s1"><b>Using the application:</b></span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p3"><span class="s1"><b>T(B) pane:</b></span></p>
+<ul class="ul1">
+  <li class="li1"><span class="s2"></span><span class="s1">Three main buttons are available upon opening the application while in the T(B) pane. The buttons are title “Gap”, “Sequence”, and “Accelerator.”<span class="Apple-converted-space"> </span></span></li>
+  <li class="li1"><span class="s2"></span><span class="s1">To calculate the TTF polynomial for a specific RF gap, the user should select the “Gap” button. upon selecting the button, a file chooser will pop-up and the user should navigate to the electric field map file for that gap and select it and press ok. Once this occurs, the program will calculate the TTFs for that gap between beta-min and beta-mix (from betas.xml under the resources directory of the application) and generate a polynomial representing the TTF of that gap. For the “Gap” button only, after calculating the TTF, a pop-up box containing TTF, STF, TTFP, and STFP will be displayed to the user.</span></li>
+  <li class="li4">The “Sequence” and “Accelerator” button work on the same principle as the “Gap” button, except that rather than selecting an individual gap when the file chooser is displayed, the user should select the directory (folder) containing all of the gaps for said sequence or accelerator. Both the “sequence” and “Accelerator” button operate on the same method, and are only separated for clarification of the GUI.</li>
+  <li class="li4">AFTER calculating the TTF, the “Generate XDXF File” button will be enabled, allowing the user to generate an input file (optics extra (xdxc extension)) for the online model. The user will need to select the folder to store the file, and type the name (including extension) in the box.</li>
+  <li class="li4">The user can also select the “Get Envelope” button to get get sigma x, y, and z for the beam envelope. To add the optics extra file into the model, main.xal under the desired optics should be modified.</li>
+</ul>
+<p class="p3"><span class="s1"><b>T(k) pane:</b></span></p>
+<ul class="ul1">
+  <li class="li4">To parse Dr. Shishlo’s data, the user should select the “Browse” button, navigate to the folder containing his TTF polynomials, and select it. Then select “Run”. After selecting “Run,” the option to save the data will be given, wherein if chosen, the user will use a file chooser to select the location to save the file, and the file will be saved under the name type into the text box directly to the right of the “Browse” button. (NOTE: the xdxf file generated here is in the correct format to be an optics extra input file for the online model, however the polynomials are in terms of k rather than beta, and OpenXAl requires beta to be the argument for TTF polynomials.</li>
+  <li class="li4">AFTER parsing and running Dr. Shishlo’s TTF polynomials, the “Analyze” button will be activated and the chooser to the right of said button will be populated with a list of all of the gaps in Dr. Shishlo’s file. The user can select a gap, and select whether or not to get ttf, stf, ttfp, or stfp from the other chooser, and the polynomial will be displayed.</li>
+</ul>
+<p class="p5"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">For any questions, please contact James M. Ghawaly Jr. or Christopher K. Allen at the email addresses listed at the top of this page.<span class="Apple-converted-space"> </span></span></p>
+</body>
+</html>

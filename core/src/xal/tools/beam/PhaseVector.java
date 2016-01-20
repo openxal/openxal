@@ -358,12 +358,14 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
     /**
      *  Create a new instance of PhaseVector with specified initial value.
      *
-     *  @param  arrVal      length 6 array of initial values
+     *  @param  arrVals      length 6 array of initial values
      *
-     *  @exception  ArrayIndexOutOfBoundsException  argument must be a length-six array
+     *  @exception  IllegalArgumentException  argument must be a length-six array
      */
-    public PhaseVector(double arrVal[])    {
-        super(INT_SIZE, arrVal);
+    public PhaseVector(double arrVals[])    {
+//        super(INT_SIZE);
+//      this.setVector(arrVals);
+        super(arrVals);
         this.setElem(IND.HOM, 1.0);
     }
     
@@ -539,7 +541,7 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
      * @author Christopher K. Allen
      * @since  Sep 6, 2014
      */
-    public void setVector(double[] arrVector) throws ArrayIndexOutOfBoundsException {
+    public void setVector(double[] arrVector) throws IllegalArgumentException {
         
         // Check the dimensions of the argument double array
         if (arrVector.length < 6)
@@ -927,6 +929,17 @@ public class PhaseVector extends BaseVector<PhaseVector> implements java.io.Seri
     @Override
     protected PhaseVector newInstance() {
         return new PhaseVector();
+    }
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected PhaseVector newInstance(double[] arrVecInt) {
+        return new PhaseVector(arrVecInt);
     }
 
     /**

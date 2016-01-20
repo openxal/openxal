@@ -1298,22 +1298,46 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="length" type="xs:double" use="required">
+					   <xs:attribute name="ttfCoeffs" type="doubleArrayType" use="optional">
+                            <xs:annotation>
+                                <xs:documentation>Array of polynomial cooficients approximating TTF.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+						<xs:attribute name="ttfpCoeffs" type="doubleArrayType" use="optional">
+                            <xs:annotation>
+                                <xs:documentation>Array of polynomial cooficients approximating derivative of TTF.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                       <xs:attribute name="stfCoeffs" type="doubleArrayType" use="optional">
+                            <xs:annotation>
+                                <xs:documentation>Array of polynomial cooficients approximating STF.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="stfpCoeffs" type="doubleArrayType" use="optional">
+                            <xs:annotation>
+                                <xs:documentation>Array of polynomial cooficients approximating derivative of STF.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+						<!-- xs:attribute name="length" type="xs:double" use="required" -->
+                        <xs:attribute name="length" type="xs:double" use="optional">
 							<xs:annotation>
 								<xs:documentation>The length is the length of the gap (m)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="phaseFactor" type="xs:double" use="required">
+						<!-- xs:attribute name="phaseFactor" type="xs:double" use="required" -->
+                        <xs:attribute name="phaseFactor" type="xs:double" use="optional">
 							<xs:annotation>
 								<xs:documentation>the ratio of the RF phase in the gap over the	phase in the first gap </xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="ampFactor" type="xs:double" use="required">
+						<!-- xs:attribute name="ampFactor" type="xs:double" use="required" -->
+                        <xs:attribute name="ampFactor" type="xs:double" use="optional">
 							<xs:annotation>
 								<xs:documentation>the ratio of the RF amplitude in the gap over the amplitude in the first gap</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="TTF" type="xs:double" use="required">
+						<!-- xs:attribute name="TTF" type="xs:double" use="required" -->
+                        <xs:attribute name="TTF" type="xs:double" use="optional">
 							<xs:annotation>
 								<xs:documentation>The transit time factor of this gap</xs:documentation>
 							</xs:annotation>
@@ -1333,7 +1357,8 @@
 								<xs:documentation>the frequency (MHz)</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
-						<xs:attribute name="endCell" use="required">
+						<!-- xs:attribute name="endCell" use="required" -->
+                        <xs:attribute name="endCell" use="optional">
 							<xs:annotation>
 								<xs:documentation>flag for whether this is and end cell (i.e. uses the end cell TTFs)" </xs:documentation>								
 							</xs:annotation>
@@ -1344,7 +1369,8 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:attribute>
-						<xs:attribute name="gapOffset" type="xs:double" use="required">
+						<!-- xs:attribute name="gapOffset" type="xs:double" use="required" -->
+                        <xs:attribute name="gapOffset" type="xs:double" use="optional">
 							<xs:annotation>
 								<xs:documentation>the distance between the Electric and geometric center (E_ctr - G_ctr) (m)</xs:documentation>
 							</xs:annotation>

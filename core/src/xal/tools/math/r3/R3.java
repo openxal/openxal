@@ -176,11 +176,9 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
      *  @param  x1   first coordinate value
      *  @param  x2   first coordinate value
      *  @param  x3   first coordinate value
-     *  
-     *  @throws ArrayIndexOutOfBoundsException the argument must have the same length as this vector
      */
     public R3(double x1, double x2, double x3) {
-        super(INT_SIZE, new double[] { x1, x2, x3} );
+        super(new double[] { x1, x2, x3} );
     }
     
     /** 
@@ -192,10 +190,13 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
      *
      *  @param  arrVals     double array of initializing values
      *  
-     *  @throws ArrayIndexOutOfBoundsException the argument must have the same length as this vector
+     *  @throws IllegalArgumentException the argument must have the same length as this vector
      */
-    public R3(double[] arrVals) throws ArrayIndexOutOfBoundsException {
-        super(INT_SIZE, arrVals);
+    public R3(double[] arrVals) throws IllegalArgumentException {
+        super(arrVals);
+
+        if (arrVals.length != INT_SIZE)
+            throw new IllegalArgumentException("Argument has wrong dimensions " + arrVals);
     }
     
     /** 
@@ -647,6 +648,17 @@ public class R3 extends BaseVector<R3> implements java.io.Serializable {
 	protected R3 newInstance() {
 		return new R3();
 	}
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected R3 newInstance(double[] arrVecInt) {
+        return new R3(arrVecInt);
+    }
     
     
     

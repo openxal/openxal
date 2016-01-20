@@ -1,0 +1,57 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+  <sequence id="MEBT">
+
+    <sequence id="MEBT_RF:Bnch01">
+      <node id="MEBT_RF:Bnch01:Rg01" >
+        <attributes>
+          <rfgap 
+            ttfCoeffs="1.016142, 0.000480757793, -0.000104037257, 6.30922443e-07, -1.18632307e-09"
+            ttfpCoeffs="0.00589607359, -0.000392965363, 4.2573499e-06, -1.81684203e-08, 2.85459794e-11"
+            stfCoeffs="0.0"
+            stfpCoeffs="0.0"
+          />
+        </attributes>
+      </node>
+    </sequence>
+
+    <sequence id="MEBT_RF:Bnch02">
+       <node id="MEBT_RF:Bnch02:Rg01">
+         <attributes>
+           <rfgap 
+             ttfCoeffs="1.15957919, -0.00424700999, -8.43804937e-05, 6.97678274e-07, -1.56215645e-09"
+             ttfpCoeffs="0.0111897388, -0.000695854236, 8.83442868e-06, -4.4527147e-08, 8.14135183e-11"
+             stfCoeffs="0.0"
+             stfpCoeffs="0.0"
+            />
+         </attributes>
+       </node>
+    </sequence>
+
+    <sequence type="Bnch" id="MEBT_RF:Bnch03" >
+       <node id="MEBT_RF:Bnch03:Rg01" >
+         <attributes>
+          <rfgap 
+                 ttfCoeffs="1.15957919, -0.00424700999, -8.43804937e-05, 6.97678274e-07, -1.56215645e-09"
+                 ttfpCoeffs="0.0111897388, -0.000695854236, 8.83442868e-06, -4.4527147e-08, 8.14135183e-11"
+                 stfCoeffs="0.0"
+                 stfpCoeffs="0.0"
+             />
+         </attributes>
+       </node>
+    </sequence>
+
+    <sequence id="MEBT_RF:Bnch04" >
+       <node id="MEBT_RF:Bnch04:Rg01" >
+         <attributes>
+          <rfgap 
+                 ttfCoeffs="1.016142, 0.000480757793, -0.000104037257, 6.30922443e-07, -1.18632307e-09"
+                 ttfpCoeffs="0.00589607359, -0.000392965363, 4.2573499e-06, -1.81684203e-08, 2.85459794e-11"
+                 stfCoeffs="0.0"
+                 stfpCoeffs="0.0"
+          />
+         </attributes>
+       </node>
+    </sequence>
+  </sequence>
+</xdxf>

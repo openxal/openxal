@@ -321,7 +321,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      *  NOTES:
      *  Since the emittance values are contained in the 
      *  correlation matrix attempting to set emittances with an empty (zero) correlation matrix 
-     *  causes a foating point exception.  As such, this method can really only change existing
+     *  causes a floating point exception.  As such, this method can really only change existing
      *  emittances and is to be regarded as a convenience function.
      * 
      *  IMPORTANT:
@@ -337,7 +337,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public void forceRmsEmittances(double[] arrEmitNew)    {
         double[]    arrEmitCurr;    // current emittances
-        double      fac;            // mulitplication factor to change emittance value
+        double      fac;            // multiplication factor to change emittance value
         double      val;            // auxiliary variable used when updating covariance matrix
         
         arrEmitCurr = this.computeRmsEmittances();
