@@ -103,7 +103,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				MACHINE_SIMULATOR_CONTROLLER.runModel();
+				MACHINE_SIMULATOR_CONTROLLER.runModel( mainWindow, null );
 				setHasChanges( true );
 			}
 		};

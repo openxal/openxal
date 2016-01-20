@@ -58,8 +58,6 @@ public class MachineSimulatorController implements MachineModelListener {
      final private DispatchTimer VALUE_SYNC_TIME;
      /**the legend name*/
      final private String[] LEGEND_NAME;
-     /**the run action*/
-     private AbstractAction runAction;
      /**a map array from parameter's key to plot data list*/
      private Map<String, List<Double>> simDataForPlot;
      /**diagnostic plot data*/
@@ -133,8 +131,22 @@ public class MachineSimulatorController implements MachineModelListener {
 	}
 	
 	/**run the model*/
-	public void runModel() {
-		runAction.actionPerformed( null );
+	public void runModel( final Window window, final String name ) {
+        if( MODEL.getSequence() != null ){
+            System.out.println( "running the model..." );
+            _sequence = MODEL.getSequence();
+         	
+            MODEL.runSimulation( name );
+         	
+           //set records and configure history data table
+           historyRecordCheckStateChanged( MODEL.getNodePropertyHistoryRecords().get( _sequence ),
+         		  MODEL.getColumnNames().get( _sequence), MODEL.getDiagRecords(), _sequence );
+           
+           //change records for history record table
+           changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
+              }
+         else JOptionPane.showMessageDialog( window,
+         		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);  
 	}
 	
 	
@@ -363,7 +375,11 @@ public class MachineSimulatorController implements MachineModelListener {
 
 				//setup plot panel and show the selected parameters' graph
 				twissParametersPlot.removeAllGraphData();
-				if ( bpmCheckbox.isSelected() ) DIAG_HANDLER.actionPerformed( null );
+				if ( bpmCheckbox.isSelected() ) {
+					DIAG_RECORD_TABLE_MODEL.setRecords( diagData );
+					DIAG_HANDLER.actionPerformed( null );
+				}
+				else DIAG_RECORD_TABLE_MODEL.setRecords( null );
 				
 				if ( _sequence != null ) twissParametersPlot.setName( _sequence.getId() );
 				if( parameterKeyPathsForTable.length > 0 && simulations[0] != null ){
@@ -423,30 +439,6 @@ public class MachineSimulatorController implements MachineModelListener {
             }
         };
       ClearButton.addActionListener(CLEAR_BUTTON);
-
-        // configure the run action
-      runAction = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-			public void actionPerformed( final ActionEvent event ) {               
-                if( MODEL.getSequence() != null ){
-                   System.out.println( "running the model..." );
-                   _sequence = MODEL.getSequence();
-                	final MachineSimulation simulation = MODEL.runSimulation();
-                	
-                  //set records and configure history data table
-                  historyRecordCheckStateChanged( MODEL.getNodePropertyHistoryRecords().get( _sequence ),
-                		  MODEL.getColumnNames().get( _sequence), MODEL.getDiagRecords(), _sequence );
-                  
-                	//set records of states table
-                	STATES_TABLE_MODEL.setRecords( MODEL.getSimulationRecords( simulation, MODEL.getHistorySimulation( _sequence )[1] ) );
-                	//change records for history record table
-                  changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
-                     }
-                else JOptionPane.showMessageDialog( windowReference.getWindow(),
-                		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);       
-
-            }
-        };
 				
 		//configure the refresh action
 		refresh = event -> {		
@@ -600,8 +592,8 @@ public class MachineSimulatorController implements MachineModelListener {
 				for ( int index = 0; index < selRows.length; index++ ) {
 					NodePropertyRecord record = NEW_PARAMETERS_TABLE_MODEL.getRecordAtRow( selRows[index] );
 					record.setCheckState( false );
-					record.setLowerLimit( Double.NaN );
-					record.setUpperLimit( Double.NaN );
+					record.setScanStartValue( Double.NaN );
+					record.setScanEndValue( Double.NaN );
 					record.setSteps( 0 );
 				}
 			});
@@ -617,15 +609,15 @@ public class MachineSimulatorController implements MachineModelListener {
 	         
 	     //configure the sequence table model
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, 
-				  "designValue", "liveValue", "testValue", "lowerLimit", "upperLimit" );
+				  "designValue", "liveValue", "testValue", "scanStartValue", "scanEndValue" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "steps", Integer.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", 
-				  "propertyName", "designValue", "liveValue", "testValue", "checkState", "lowerLimit", "upperLimit", "steps" );
+				  "propertyName", "designValue", "liveValue", "testValue", "checkState", "scanStartValue", "scanEndValue", "steps" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "checkState", true );
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "lowerLimit", "checkState" );
-		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "upperLimit", "checkState" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "scanStartValue", "checkState" );
+		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "scanEndValue", "checkState" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "steps", "checkState" );
 	}
 	
@@ -833,19 +825,30 @@ public class MachineSimulatorController implements MachineModelListener {
 		for( final NodePropertyRecord record : nodePropRecordsForScan ) {
 			testValues.add( record.getTestValue() );
 			String nodeinform = record.getAcceleratorNode().getId() + " . " + record.getPropertyName() + " : "
-					+ " Range :( " + record.getLowerLimit() + ")——(" + record.getUpperLimit() + ") Steps : " + record.getSteps() + "\n";
+					+ " Range :( " + record.getScanStartValue() + ")——(" + record.getScanEndValue() + ") Steps : " + record.getSteps() + "\n";
 			confirmation.append( nodeinform );
 		}
 		confirmation.append( "Get results : " + algorithm.getScanSteps() );
 		int confirm = JOptionPane.showConfirmDialog( window,
 				confirmation, "Scan Confirmation", JOptionPane.YES_NO_OPTION );
 		if ( confirm == JOptionPane.YES_OPTION ) {
-			List<Double[]> scanSpots = algorithm.getScanSpots();							
-			for ( final Double[] scanSpot : scanSpots ) {
+			List<Double[]> scanSpots = algorithm.getScanSpots();
+			List<int[]> scanCmbntnIndexes = algorithm.getScanSpotsIndex();
+			for ( int spotIndex = 0; spotIndex < scanSpots.size(); spotIndex++ ) {
+				Double[] scanSpot = scanSpots.get( spotIndex );
+				int[] cmbntnIndex = scanCmbntnIndexes.get( spotIndex );
 				for ( int index = 0; index < scanSpot.length; index++ ) {
 					nodePropRecordsForScan.get( index ).setTestValue( scanSpot[ index ] );
 				}
-				runAction.actionPerformed( null );
+				
+				//build the record name
+				StringBuilder nameBuilder = new StringBuilder();
+				nameBuilder.append(  "Scan " + (spotIndex+1) + " : [" );
+				for ( int i : cmbntnIndex ) {
+					nameBuilder.append( i + "." );
+				}
+				nameBuilder.replace( nameBuilder.length()-1, nameBuilder.length(), "]" );
+				runModel( window, nameBuilder.toString() );;
 			}
 			//restore the test values
 			for ( int nodeIndex = 0; nodeIndex < nodePropRecordsForScan.size(); nodeIndex++ ) {
@@ -864,17 +867,17 @@ public class MachineSimulatorController implements MachineModelListener {
     	List<Double[]> scanSource = new ArrayList<Double[]>();
     	
     	for ( int nodeIndex = 0; nodeIndex < records.size(); nodeIndex++ ) {
-    		Double lowerLimit = records.get( nodeIndex ).getLowerLimit();
-    		Double upperLimit = records.get( nodeIndex ).getUpperLimit();
-    		int steps = ( lowerLimit == upperLimit ) ? 1 : records.get( nodeIndex ).getSteps();
-    		if ( Double.isNaN( lowerLimit ) || Double.isNaN( upperLimit ) || steps <= 0 ) {
+    		Double startValue = records.get( nodeIndex ).getScanStartValue();
+    		Double endValue = records.get( nodeIndex ).getScanEndValue();
+    		int steps = ( startValue == endValue ) ? 1 : records.get( nodeIndex ).getSteps();
+    		if ( Double.isNaN( startValue ) || Double.isNaN( endValue ) || steps <= 0 ) {
     			scanSource.clear();
     			return scanSource;
     		}
     		Double[] nodeData = new Double[steps];
     		int dataSize = nodeData.length;
     		for ( int index = 0; index < dataSize   ; index++ ) {
-    			nodeData[index] = ( steps == 1 ) ? lowerLimit : lowerLimit + index*( upperLimit - lowerLimit )/(steps-1);
+    			nodeData[index] = ( steps == 1 ) ? startValue : startValue + index*( endValue - startValue )/(steps-1);
     		}
     		scanSource.add( nodeData );
     	}
@@ -923,7 +926,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 	}
 
-	/**event indicates that the history record select state changed*/
+	/**event indicates that the history records check state changed*/
 	public void historyRecordCheckStateChanged( final List<NodePropertyHistoryRecord> nodePropertyHistoryRecords,
 			final Map<Date, String> columnName, final List<DiagnosticRecord> dRecords, final AcceleratorSeq seq ) {
 		
@@ -952,11 +955,9 @@ public class MachineSimulatorController implements MachineModelListener {
 			PARAM_HISTORY_TABLE_MODEL.setRecords( nodePropertyHistoryRecords );
 			
 			DIAG_RECORD_TABLE_MODEL.setKeyPaths( keyPathsForDiagRecord );
-			DIAG_RECORD_TABLE_MODEL.setRecords( dRecords );
 		}
 		else {
 			PARAM_HISTORY_TABLE_MODEL.setRecords( null );
-			DIAG_RECORD_TABLE_MODEL.setRecords( null );
 		}
 
 		_sequence = seq;

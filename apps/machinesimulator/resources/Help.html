@@ -15,8 +15,10 @@ Machine Simulator runs the online model to simulate the machine and generate plo
 <br>
 <a href="#Start_The_Application">Start The Application</a><br>
 <a href="#Model_Selection">Model Selection</a><br>
+<a href="#Scan_Feature">Scan Feature</a><br>
 <a href="#Table_Introduction">Table Instruction</a><br>
 <a href="#Plot_Instruction">Plot Instruction</a><br>
+<a href="#Persistance">Persistance</a><br>
 <br>
 
 <p align="center">
@@ -53,6 +55,18 @@ Machine Simulator runs the online model to simulate the machine and generate plo
 <br>
 
 <p align="center">
+<a name="Scan_Feature"></a><b>Scan Feature</b><br>
+</p>
+<br>
+<ul>
+    <li>This feature allow you to vary parameters between two values with         specified steps and generate several results automatically over the range of parameter values.</li>
+    <li>The generated records are assigned with names like : Scan M:[N1.N2], which means Scan number M, step N1 for parameter 1 and step N2 for parameter 2.</li>
+    <li>The upper limit of scannig steps is 100 to avoid the exceptions caused by superabundant running. </li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
 <a name="Table_Introduction"></a><b>Table Display</b><br>
 </p>
 <br>
@@ -60,9 +74,9 @@ Machine Simulator runs the online model to simulate the machine and generate plo
    <li>There are five tables in the main view : </li>
    <ol>
    <li><b>History Records Table</b> : the far left one, show all the history records and set record name</li>
-   <li><b>New Run Parameters </b> : show all the elements of the selected sequence with design values,live values if detect live channels,test values which set manually.
+   <li><b>New Run Parameters </b> : show all the elements of the selected sequence with design values,live values if detect live channels,test values which set manually and scan settings.
         <ul>
-           <li>note : test value is always in the first priority, no matter which model is selected.</li> 
+           <li>note : scan values are always in the first priority and test value is in the second priority , no matter which model is selected.</li> 
         </ul>
    </li>
    <li><b>Parameter History</b> : record the data used in simulation.</li>
@@ -88,6 +102,16 @@ Machine Simulator runs the online model to simulate the machine and generate plo
    <li><b>Check boxes</b> : show the graphs of the checked parameters automaticly   </li>
    <li><b>Show Difference</b> : show the difference of two records when this button is checked.</li>
    <li><b>Display Rules</b> : same as table,see above,and at most display two records</li>
+</ul>
+<!--img-->
+<br>
+
+<p align="center">
+<a name="Persistance"></a><b>Persistance</b><br>
+</p>
+<br>
+<ul>
+    <li>You can save the data in a document with suffix "msim", the data include model configuration, probe,results(records).</li>
 </ul>
 <!--img-->
 <br>

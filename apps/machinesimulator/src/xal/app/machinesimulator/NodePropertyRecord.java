@@ -19,10 +19,10 @@ public class NodePropertyRecord {
 	final private ChannelMonitor[] CHANNEL_MONITORS;
 	/**check-state of scanning*/
 	private boolean checkState;
-	/**the lowerLimit of scanning*/
-	private double lowerLimit = Double.NaN;
-	/**the upperLimit of scanning*/
-	private double upperLimit = Double.NaN;
+	/**the start value of scanning*/
+	private double scanStartValue = Double.NaN;
+	/**the end value of scanning*/
+	private double scanEndValue = Double.NaN;
 	/**the steps of scanning*/
 	private int scanSteps;
 	
@@ -94,24 +94,24 @@ public class NodePropertyRecord {
 		this.checkState = checkState;
 	}
 	
-	/**get the lowerLimit*/
-	public double getLowerLimit () {
-		return lowerLimit;
+	/**get the scan start value*/
+	public double getScanStartValue () {
+		return scanStartValue;
 	}
 	
-	/**set the lowerLimit*/
-	public void setLowerLimit ( final double lowerLimit ) {
-		this.lowerLimit = lowerLimit;
+	/**set the scan start value*/
+	public void setScanStartValue ( final double startValue ) {
+		this.scanStartValue = startValue;
 	}
 	
-	/**get the upperLimit*/
-	public double getUpperLimit () {
-		return upperLimit;
+	/**get the scan end value*/
+	public double getScanEndValue () {
+		return scanEndValue;
 	}
 	
-	/**set the upperLimit*/
-	public void setUpperLimit ( final double upperLimit ) {
-		this.upperLimit = upperLimit;
+	/**set the scan end value*/
+	public void setScanEndValue ( final double endValue ) {
+		this.scanEndValue = endValue;
 	}
 	
 	/**get the steps*/

@@ -20,6 +20,8 @@ public class ScanAlgorithm<T> {
 	private Class<T> classType;
 	/**total scan steps*/
 	private int scanSteps;
+	/**the index list consist of step of each node*/
+	private List<int[]> scanSpotsIndex;
 	
 	
 	/**Constructor*/
@@ -43,6 +45,11 @@ public class ScanAlgorithm<T> {
 		return scanSpots;
 	}
 	
+	/**get scan spots index*/
+	public List<int[]> getScanSpotsIndex() {
+		return scanSpotsIndex;
+	}
+	
 	/**get scan steps*/
 	public int getScanSteps() {
 		return scanSteps;
@@ -58,10 +65,13 @@ public class ScanAlgorithm<T> {
 		if ( scanSteps >= MAXIMUM_CAPACITY ) state = false;
 		else {
 			scanSpots = new ArrayList<T[]>( scanSteps );
+			scanSpotsIndex = new ArrayList<int[]>( scanSteps );
 			for ( int index = 0; index < scanSteps; index++ ) {
 				@SuppressWarnings("unchecked")
 				T[] nodeArray = (T[]) Array.newInstance( classType, scanSource.size() );
+				int[] spotIndex = new int[scanSource.size()];
 			scanSpots.add( nodeArray );
+			scanSpotsIndex.add( spotIndex );
 			}			
 			iterate( 0, 0, scanSteps, scanSource );
 		}
@@ -95,6 +105,7 @@ public class ScanAlgorithm<T> {
 			int pos = upIndex + i*( count/node.length );
 			for ( int j = 0; j< count/node.length; j++ ) {
 				scanSpots.get( j + pos )[layer] = node[i];
+				scanSpotsIndex.get( j + pos )[layer] = i + 1;
 			}
 			iterate( layer + 1, pos, count/node.length, source );
 		}
