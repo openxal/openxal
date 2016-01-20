@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Fri Sep 04 14:01:56 EDT 2015">
+<xdxf system="sns" ver="2.0.0" date="Wed Jan 20 11:13:52 EST 2016">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -1146,6 +1146,11 @@
           <channel handle="SigDiaDblGaussStd" signal="MEBT_Diag:WS07:Diag_Sigma_dgs" settable="false"/>
        </channelsuite>
     </node>
+    <node type="Scrp" id="MEBT_Diag:Scrp07H" pos="1.743" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
     <node type="BPM" id="MEBT_Diag:BPM10" pos="2.138" len=".072" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
@@ -1170,6 +1175,11 @@
        </attributes>
     </node>
     <node type="EMS" id="MEBT_Diag:EMS_Y" pos="2.442" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="MEBT_Diag:Scrp10V" pos="2.499" len="0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
        </attributes>
@@ -19716,6 +19726,16 @@
           <channel handle="SigDiaDblGaussStd" signal="HEBT_Diag:WS03:Diag_Sigma_dgs" settable="false"/>
        </channelsuite>
     </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp01L" pos="12.6965" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp01R" pos="12.6965" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
     <node type="BLM" id="HEBT_Diag:BLM04" pos="12.75" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
@@ -19910,6 +19930,16 @@
           <channel handle="SigDiaDblGaussStd" signal="HEBT_Diag:WS04:Diag_Sigma_dgs" settable="false"/>
        </channelsuite>
     </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp01D" pos="16.698" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp01U" pos="16.698" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
     <node type="BLM" id="HEBT_Diag:BLM05a" pos="16.75" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
@@ -19958,6 +19988,16 @@
           <channel handle="lossInt" signal="HEBT_Diag:BLM05c:Slow60PulsesTotalLoss" settable="false"/>
        </channelsuite>
     </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp02L" pos="20.661" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp02R" pos="20.661" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
     <node type="BLM" id="HEBT_Diag:BLM06" pos="20.75" len="0.0" status="true">
        <attributes>
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
@@ -19985,6 +20025,16 @@
           <channel handle="ampTBT" signal="HEBT_Diag:BPM06:beamIA" settable="false"/>
           <channel handle="phaseTBT" signal="HEBT_Diag:BPM06:beamPA" settable="false"/>
        </channelsuite>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp02D" pos="24.698" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp02U" pos="24.698" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
     </node>
     <node type="BLM" id="HEBT_Diag:BLM07a" pos="24.75" len="0.0" status="true">
        <attributes>
@@ -21332,6 +21382,16 @@
           <channel handle="lossTBT" signal="HEBT_Diag:BLM13:Fast1PulseBeamOnLoss" settable="false"/>
           <channel handle="lossInt" signal="HEBT_Diag:BLM13:Slow60PulsesTotalLoss" settable="false"/>
        </channelsuite>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp03L" pos="20.655247" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="33.75" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="HEBT_Coll:Scrp03R" pos="20.655247" len="0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="33.75" yaw="0" roll="0"/>
+       </attributes>
     </node>
     <node type="BLM" id="HEBT_Diag:BLM14" pos="21.776546" len="0.0" status="true">
        <attributes>
@@ -25758,6 +25818,26 @@
           <channel handle="lossTBT" signal="Ring_Diag:BLM_B09b:Fast1PulseBeamOnLoss" settable="false"/>
           <channel handle="lossInt" signal="Ring_Diag:BLM_B09b:Slow60PulsesTotalLoss" settable="false"/>
        </channelsuite>
+    </node>
+    <node type="Scrp" id="Ring_Coll:Scrp_B10a" pos="37.428" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="Ring_Coll:Scrp_B10b" pos="37.428" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="Ring_Coll:Scrp_B10c" pos="37.428" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
+    </node>
+    <node type="Scrp" id="Ring_Coll:Scrp_B10d" pos="37.428" len="0.0" status="true">
+       <attributes>
+          <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
+       </attributes>
     </node>
     <node type="BLM" id="Ring_Diag:BLM_B09c" pos="39.3845" len="0.0" status="true">
        <attributes>
@@ -36745,6 +36825,72 @@
           <channel handle="B_Book" signal="Ring_Mag:PS_DH_Main:B_Book"/>
        </channelsuite>
     </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QH02a08">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QH02a08:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QH02a08:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QH02a08:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QH02a08:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QH02a08:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QH02a08:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QH02a08:B_Book"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QH04a06">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QH04a06:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QH04a06:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QH04a06:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QH04a06:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QH04a06:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QH04a06:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QH04a06:B_Book"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QH10a13">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QH10a13:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QH10a13:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QH10a13:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QH10a13:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QH10a13:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QH10a13:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QH10a13:B_Book"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QV01a09">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QV01a09:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QV01a09:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QV01a09:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QV01a09:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QV01a09:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QV01a09:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QV01a09:B_Book"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QV03a05a07">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QV03a05a07:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QV03a05a07:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QV03a05a07:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QV03a05a07:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QV03a05a07:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QV03a05a07:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QV03a05a07:B_Book"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_DH_QV11a12">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_DH_QV11a12:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_DH_QV11a12:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_DH_QV11a12:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_DH_QV11a12:B"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_DH_QV11a12:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_DH_QV11a12:cycleEnable"/>
+          <channel handle="B_Book" signal="Ring_Mag:PS_DH_QV11a12:B_Book"/>
+       </channelsuite>
+    </ps>
     <ps type="main" id="Ring_Mag:PS_DH_Ref">
        <channelsuite name="pssuite">
           <channel handle="I" signal="Ring_Mag:PS_DH_Ref:I"/>
@@ -36922,6 +37068,30 @@
           <channel handle="voltageRB" signal="Ring_Mag:PS_EKick14:V"/>
           <channel handle="cycleState" signal="Ring_Mag:PS_EKick14:cycleState"/>
           <channel handle="cycleEnable" signal="Ring_Mag:PS_EKick14:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_EKick15">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_EKick15:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_EKick15:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_EKick15:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_EKick15:B"/>
+          <channel handle="voltageSet" signal="Ring_Mag:PS_EKick15:V_Set"/>
+          <channel handle="voltageRB" signal="Ring_Mag:PS_EKick15:V"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_EKick15:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_EKick15:cycleEnable"/>
+       </channelsuite>
+    </ps>
+    <ps type="main" id="Ring_Mag:PS_EKick16">
+       <channelsuite name="pssuite">
+          <channel handle="I" signal="Ring_Mag:PS_EKick16:I"/>
+          <channel handle="I_Set" signal="Ring_Mag:PS_EKick16:I_Set"/>
+          <channel handle="fieldSet" signal="Ring_Mag:PS_EKick16:B_Set"/>
+          <channel handle="psFieldRB" signal="Ring_Mag:PS_EKick16:B"/>
+          <channel handle="voltageSet" signal="Ring_Mag:PS_EKick16:V_Set"/>
+          <channel handle="voltageRB" signal="Ring_Mag:PS_EKick16:V"/>
+          <channel handle="cycleState" signal="Ring_Mag:PS_EKick16:cycleState"/>
+          <channel handle="cycleEnable" signal="Ring_Mag:PS_EKick16:cycleEnable"/>
        </channelsuite>
     </ps>
     <ps type="main" id="Ring_Mag:PS_EKick_WF01">
