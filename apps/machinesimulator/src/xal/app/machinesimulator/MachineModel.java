@@ -242,7 +242,7 @@ public class MachineModel implements DataListener {
     	return COLUMN_NAME;
     }
 	/** Run the simulation and record the result and the values used for simulation */
-	public MachineSimulation runSimulation() {
+	public void runSimulation( final String name ) {
 		//configure
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
@@ -256,16 +256,15 @@ public class MachineModel implements DataListener {
 			//record column name for the table
 			if ( COLUMN_NAME.get( _sequence ) == null ) COLUMN_NAME.put( _sequence, new TreeMap<Date, String>() );
 			//record the simulation history
-			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time ) );		
+			SIMULATION_HISTORY_RECORDS.addFirst( new SimulationHistoryRecord( time, name ) );		
 			
 			if ( NODE_VALUES_TO_SHOW.get( _sequence ) == null ){
 				NODE_VALUES_TO_SHOW.put( _sequence, new ArrayList<NodePropertyHistoryRecord>());		
 			}
-			changeHistoryRecordToShow( _sequence, time, true, nodePropertySnapshots );
+			changeHistoryRecordsToShow( _sequence, time, true, nodePropertySnapshots );
 			changeDiagRecords( _sequence, time, true, SIMULATION_HISTORY_RECORDS.getFirst().getDiagSnapshots() );
 			
 		}	
-		return _simulation;
 	}
 	
 	/**record the values assignment to simulation*/
@@ -282,7 +281,7 @@ public class MachineModel implements DataListener {
 	}
 	
 	/**add or delete values of NodePropertyHistoryRecord according to the checked state of simulation history records*/
-	private List<NodePropertyHistoryRecord> changeHistoryRecordToShow( final AcceleratorSeq seq, final Date time,
+	private List<NodePropertyHistoryRecord> changeHistoryRecordsToShow( final AcceleratorSeq seq, final Date time,
 			final Boolean checkedState, final List<NodePropertySnapshot> snapshots ){
 		List<NodePropertyHistoryRecord> records = NODE_VALUES_TO_SHOW.get( seq );
 		
@@ -372,16 +371,16 @@ public class MachineModel implements DataListener {
 	private Boolean checkState;
 
 	/**Constructor*/
-	public SimulationHistoryRecord( final Date time ){
+	public SimulationHistoryRecord( final Date time, final String recordName ){
 		TIME = time;
 		SEQUENCE = _sequence;
 		SIMULATION = _simulation;
 		VALUES_SNAPSHOT = nodePropertySnapshots;
 		DIAG_SNAPSHOTS = _diagnosticConfiguration.snapshotValues();
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
-		recordName = " Run "+SIMULATOR.getRunNumber();
+		this.recordName = ( recordName != null ) ? recordName : " Run "+SIMULATOR.getRunNumber();
 		checkState = true;
-		COLUMN_NAME.get(SEQUENCE).put( TIME, recordName );
+		COLUMN_NAME.get(SEQUENCE).put( TIME, this.recordName );
 	}
 	
 	/**Constructor with dataAdaptor*/
@@ -408,7 +407,7 @@ public class MachineModel implements DataListener {
 	/**set the check state*/
 	public void setCheckState( final Boolean check ){
 		checkState = check;
-		changeHistoryRecordToShow( SEQUENCE, TIME, check, VALUES_SNAPSHOT );
+		changeHistoryRecordsToShow( SEQUENCE, TIME, check, VALUES_SNAPSHOT );
 		changeDiagRecords( SEQUENCE, TIME, check, DIAG_SNAPSHOTS );
 		if ( check ) COLUMN_NAME.get( SEQUENCE ).put( TIME, recordName );
 		else COLUMN_NAME.get( SEQUENCE).remove( TIME );
