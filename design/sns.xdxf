@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf system="sns" ver="2.0.0" date="Wed Jan 20 11:13:52 EST 2016">
+<xdxf system="sns" ver="2.0.0" date="Thu Jan 21 11:40:05 EST 2016">
   <comboseq id="MEBT-DTL">
 	  <sequence id="MEBT"/>
 	  <sequence id="DTL1"/>
@@ -205,7 +205,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QH05a10"/>
+       <ps main="MEBT_Mag:PS_QH05"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QH05:B" settable="false"/>
        </channelsuite>
@@ -238,7 +238,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QV06a09"/>
+       <ps main="MEBT_Mag:PS_QV06"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QV06:B" settable="false"/>
        </channelsuite>
@@ -249,7 +249,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QH07a08"/>
+       <ps main="MEBT_Mag:PS_QH07"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QH07:B" settable="false"/>
        </channelsuite>
@@ -260,7 +260,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QH07a08"/>
+       <ps main="MEBT_Mag:PS_QH08"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QH08:B" settable="false"/>
        </channelsuite>
@@ -271,7 +271,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QV06a09"/>
+       <ps main="MEBT_Mag:PS_QV09"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QV09:B" settable="false"/>
        </channelsuite>
@@ -282,7 +282,7 @@
           <align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0"/>
           <aperture shape="0" x=".021"/>
        </attributes>
-       <ps main="MEBT_Mag:PS_QH05a10"/>
+       <ps main="MEBT_Mag:PS_QH10"/>
        <channelsuite name="magnetsuite">
           <channel handle="fieldRB" signal="MEBT_Mag:QH10:B" settable="false"/>
        </channelsuite>
