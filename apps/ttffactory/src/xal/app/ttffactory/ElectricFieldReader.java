@@ -1,4 +1,4 @@
-/*ElectricFileReader.java - Reads the electric field data on the axis of the RF gap from the electric field files.
+/*ElectricFieldReader.java - Reads the electric field data on the axis of the RF gap from the electric field files.
  * @author James Ghawaly Jr.
  * Created on Mon June 15 13:23:35 EDT 2015
  *
@@ -15,9 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * The Class ElectricFileReader.
+ * ElectricFieldReader.java - Reads the electric field data on the axis of the 
+ * RF gap from the electric field files.
+ * 
+ * @author James Ghawaly Jr.
+ * @since   Mon June 15 13:23:35 EDT 2015
  */
-public class ElectricFileReader {
+public class ElectricFieldReader {
 	
 	/** The Electric field data. */
 	ArrayList<Double> EData = new ArrayList<Double>();
@@ -31,7 +35,7 @@ public class ElectricFileReader {
 	 * @param electricFilePath the path to the file containing the electric field data
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public ElectricFileReader(String electricFilePath) throws IOException {
+	public ElectricFieldReader(String electricFilePath) throws IOException {
 		Boolean startOfAxis = false;
 		Boolean endOfAxis = false;
 		

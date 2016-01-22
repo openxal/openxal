@@ -29,7 +29,12 @@ import xal.tools.ResourceManager;
 import xal.tools.data.*;
 
 /**
- * The Class Parser.
+ * Parse transit time factor polynomial data from an xml file and creates a new xml file for 
+ * loading into the optics configuration.
+ * 
+ * @author James Ghawaly Jr.
+ * @since  Mon June 15 13:23:35 EDT 2015
+ *
  */
 public class Parser {
 	

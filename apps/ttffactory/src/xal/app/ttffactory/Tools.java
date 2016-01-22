@@ -29,7 +29,7 @@ import xal.tools.math.rn.Rn;
 
 
 /**
- * The Class ElectricFileReader.
+ * The Class ElectricFieldReader.
  */
 public class Tools {
 

@@ -718,7 +718,7 @@ public class Main extends JFrame {
     	DataTree datTree = new DataTree();
     	
 		
-		ElectricFileReader eFR = new ElectricFileReader(filePath);
+		ElectricFieldReader eFR = new ElectricFieldReader(filePath);
 		List<Double> ZData = eFR.getDblZpoints();                                                // get the list of doubles containing the Z position Data
 		List<Double> EFdata = eFR.getDblEField();                                                // get the list of doubles containing the Electric Field Data
 
@@ -782,11 +782,11 @@ public class Main extends JFrame {
     private DataTree endGapTTF(String filePathInner,String fileNameInner, String filePathOuter, String fileNameOuter, DataTree betaTree) throws ParseException, ResourceNotFoundException, IOException {
     	DataTree datTree = new DataTree();														 // DataTree that will hold the final data
 		
-		ElectricFileReader eFRInner = new ElectricFileReader(filePathInner);                     // The electric file reader for the inner gap
+		ElectricFieldReader eFRInner = new ElectricFieldReader(filePathInner);                     // The electric file reader for the inner gap
 		List<Double> ZDataInner = eFRInner.getDblZpoints();                                      // The z-point data for the inner gap
 		List<Double> EFdataInner = eFRInner.getDblEField();                                      // The electric field data for the inner gap
 		
-		ElectricFileReader eFROuter = new ElectricFileReader(filePathOuter);                     // The electric file reader for the outer gap
+		ElectricFieldReader eFROuter = new ElectricFieldReader(filePathOuter);                     // The electric file reader for the outer gap
 		List<Double> ZDataOuter = eFROuter.getDblZpoints();                                      // The z-point data for the outer gap
 		List<Double> EFdataOuter = eFROuter.getDblEField();                                      // The electric field data for the outer gap
 		
