@@ -187,7 +187,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Dec 12, 2014   @author Christopher K. Allen
      */
     private LatticeSequence(LatticeSequence latSeqParent, AcceleratorSeq smfSeqChild, double dblPos, int indOrgPos) {
-        super(smfSeqChild, dblPos, latSeqParent.getSequenceModelType(smfSeqChild), indOrgPos);
+        super(smfSeqChild, dblPos + smfSeqChild.getLength()/2.0, latSeqParent.getSequenceModelType(smfSeqChild), indOrgPos);
 
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
@@ -921,7 +921,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Check if there is a collision between the current element and 
                 //  the lattice sequence.  This should not normally occur so we throw
                 //  up an exception if we find this is so.
-                if (lemCurr.getStartPosition() - lsqLast.getEndPosition() <= EPS)
+                if (lemCurr.getStartPosition() - lsqLast.getEndPosition() < -EPS)
                     throw new ModelException("Collision between a nested sequence " + 
                             lsqLast.getHardwareNode().getId() +
                             " and its parent child node " +
