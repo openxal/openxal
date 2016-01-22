@@ -697,6 +697,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Now generate the lattice structure for the child sequence and all
                 //  its children
                 latSeqChild.populateLatticeSeq();
+                latSeqChild.bolCtrOrigin = true; // false for ESS, true for SNS
                 
                 // Added the populated child lattice to this lattice
                 this.addLatticeElement(latSeqChild);
@@ -785,6 +786,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
             }
                 
+            axialTranslation(-dblOffset);
+            
             this.bolCtrOrigin = false;
         }
         
