@@ -1,6 +1,7 @@
 package xal.model.probe;
 
 
+import java.io.File;
 import java.io.PrintStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,6 +17,7 @@ import xal.sim.scenario.Scenario;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorSeq;
 import xal.smf.data.XMLDataManager;
+import xal.test.ResourceManager;
 import xal.tools.beam.CovarianceMatrix;
 
 /**
@@ -50,9 +52,11 @@ public class TestModelTTFs {
 	
 	@BeforeClass
     public static void setUpBeforeClass() throws Exception {
-		OSTR_TYPEOUT = System.out;
+	    File   fileOutput = ResourceManager.getOutputFile(TestModelTTFs.class, TestModelTTFs.class.getName() + ".txt");
+	    
+		OSTR_TYPEOUT = new PrintStream(fileOutput);
 		OSTR_TYPEOUT.println("Launching Model RF Gap TTF tester...");
-		ACCL_TEST = XMLDataManager.loadDefaultAccelerator();
+		ACCL_TEST = ResourceManager.getTestAccelerator();
 		SEQ_TEST = ACCL_TEST.findSequence(seqID);
         ALGORITHM = AlgorithmFactory.createEnvTrackerAdapt(SEQ_TEST);
 	}

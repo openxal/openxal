@@ -19,7 +19,6 @@ import java.util.List;
 import xal.model.IElement;
 import xal.model.ModelException;
 import xal.model.probe.traj.EnvelopeProbeState;
-import xal.model.probe.traj.ProbeState;
 import xal.sim.scenario.ProbeFactory;
 import xal.sim.scenario.Scenario;
 import xal.tools.math.fnc.poly.RealUnivariatePolynomial;
@@ -89,7 +88,8 @@ public class TTFComparison {
 		for (RfGap gap : lstGaps) {
 			List<IElement> lstElems = model.elementsMappedTo(gap);
 			IElement       elemLast = lstElems.get( lstElems.size() - 1 );
-			List<EnvelopeProbeState> lstStates = (List<EnvelopeProbeState>) model.trajectoryStatesForElement( elemLast.getId() );
+			@SuppressWarnings("unchecked")
+            List<EnvelopeProbeState> lstStates = (List<EnvelopeProbeState>) model.trajectoryStatesForElement( elemLast.getId() );
 			
 			//gets the last state
             EnvelopeProbeState state = lstStates.get(0);
