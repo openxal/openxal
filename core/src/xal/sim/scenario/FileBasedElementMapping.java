@@ -127,12 +127,13 @@ public class FileBasedElementMapping extends ElementMapping {
         // Get the default sequence modeling element used whenever a hardware sequence has no model counterpart
         try {
             DataAdaptor daSeq = daElements.childAdaptor("sequence");
+            if (daSeq == null) throw new ClassNotFoundException("No sequence attribute in model configuration file.");
             String      strClsNm = daSeq.stringValue("type");
 
             mapHwToModElem.setDefaultSequence(strClsNm);
             
         } catch (ClassNotFoundException e) {
-            System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default sequence: " + e.getMessage());
+            System.err.println("Problem when loading " + urlModelConfig + ", using default sequence element: " + e.getMessage());
 
             mapHwToModElem.clsDefaultSeq = Sector.class;
         }
@@ -144,18 +145,20 @@ public class FileBasedElementMapping extends ElementMapping {
         
         } catch (ClassNotFoundException e) {
         
-            System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default drift: " + e.getMessage());
+            System.err.println("Problem when loading " + urlModelConfig + ", using default drift: " + e.getMessage());
             mapHwToModElem.clsDriftElem = IdealDrift.class;
         }
         
         // The the element type used to represent an RF cavity drift space
         try {
             DataAdaptor   daCavDrift = daElements.childAdaptor("rfcavdrift");
+            if (daCavDrift == null) throw new ClassNotFoundException("No rfcavdrift element in model configuration file.");
             String        strClsName = daCavDrift.stringValue("type");
 
             mapHwToModElem.setRfCavityDrift(strClsName);
 
         } catch (ClassNotFoundException e) {
+            System.err.println("Problem when loading " + urlModelConfig + ", using default RF cavity drift: " + e.getMessage());
             mapHwToModElem.clsRfCavDriftElem = IdealRfCavityDrift.class;
         }
         
