@@ -827,7 +827,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		for( final NodePropertyRecord record : nodePropRecordsForScan ) {
 			testValues.add( record.getTestValue() );
 			String nodeinform = record.getAcceleratorNode().getId() + " . " + record.getPropertyName() + " : "
-					+ " Range :( " + record.getScanStartValue() + ")——(" + record.getScanEndValue() + ") Steps : " + record.getSteps() + "\n";
+					+ " Range :( " + record.getScanStartValue() + ")-(" + record.getScanEndValue() + ") Steps : " + record.getSteps() + "\n";
 			confirmation.append( nodeinform );
 		}
 		confirmation.append( "Get results : " + algorithm.getScanSteps() );
@@ -846,7 +846,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				
 				//build the record name
 				StringBuilder nameBuilder = new StringBuilder();
-				nameBuilder.append(  "Scan " + scanNumber + " : [" );
+				nameBuilder.append(  "Scan " + scanNumber + ":[" );
 				for ( int i : cmbntnIndex ) {
 					nameBuilder.append( i + "." );
 				}

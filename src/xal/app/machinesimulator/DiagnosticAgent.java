@@ -109,7 +109,7 @@ public class DiagnosticAgent {
 	public String getNameZ() {
 		return HANDLE[2];
 	}
- 	/**get values of all the channels,divide 1000 to convert mm to meters，the same below*/
+ 	/**get values of all the channels,divide 1000 to convert mm to meters, the same below*/
 	public double[] getValues() {
 		double[] values = new double[ HANDLE.length ];
 		for ( int index = 0; index < HANDLE.length; index++ ){
