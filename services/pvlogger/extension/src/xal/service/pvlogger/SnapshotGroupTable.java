@@ -108,7 +108,7 @@ class SnapshotGroupTable {
 		final double retention = resultSet.getDouble( RETENTION_COLUMN );
 		final String serviceID = resultSet.getString( SERVICE_COLUMN );
 		
-		final String[] pvArray = SNAPSHOT_GROUP_CHANNEL_TABLE.fetchPVsByType( connection, groupID );
+		final String[] pvArray = SNAPSHOT_GROUP_CHANNEL_TABLE.fetchActivePVsByType( connection, groupID );
 		
 		return new ChannelGroup( groupID, serviceID, description, pvArray, loggingPeriod, retention );			
 	}

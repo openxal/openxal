@@ -12,6 +12,7 @@
 		<dbtable entity="SnapshotGroupChannel" name="pvlog.mach_snapshot_type_sgnl">
 			<column attribute="group" column="snapshot_type_nm" />
 			<column attribute="channel" column="sgnl_id" />
+			<column attribute="active" column="active_ind" />
 		</dbtable>
 		<dbtable entity="MachineSnapshot" name="pvlog.mach_snapshot">
 			<column attribute="primaryKey" column="snapshot_id" />

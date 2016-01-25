@@ -20,13 +20,16 @@ import java.util.ArrayList;
 /** represent the snapshot group (type) - PV relationship database table */
 class SnapshotGroupChannelTable {
 	/** database table name */
-	protected final String TABLE_NAME;
+	private final String TABLE_NAME;
 	
 	/** Group primary key */
-	protected final String GROUP_COLUMN;
+	private final String GROUP_COLUMN;
+
+	/** Active indicator column */
+	private final String ACTIVE_INDICATOR_COLUMN;
 	
 	/** PV primary key */
-	protected final String CHANNEL_COLUMN;
+	private final String CHANNEL_COLUMN;
 	
 	
 	/** Constructor */
@@ -35,6 +38,7 @@ class SnapshotGroupChannelTable {
 		
 		GROUP_COLUMN = configuration.getColumn( "group" );
 		CHANNEL_COLUMN = configuration.getColumn( "channel" );
+		ACTIVE_INDICATOR_COLUMN = configuration.getColumn( "active" );
 	}
 	
 	
@@ -56,7 +60,27 @@ class SnapshotGroupChannelTable {
 		resultSet.close();
 		return pvs.toArray( new String[pvs.size()] );
 	}
-	
+
+
+	/**
+	 * Fetch an array of active PVs corresponding to the specified channel group
+	 * @param connection database connection
+	 * @param type channel group type
+	 * @return array of active PVs
+	 */
+	public String[] fetchActivePVsByType( final Connection connection, final String type ) throws SQLException {
+		final PreparedStatement queryStatement = getActiveGroupChannelQueryByGroupStatement( connection );
+		queryStatement.setString( 1, type );
+
+		final List<String> pvs = new ArrayList<String>();
+		final ResultSet resultSet = queryStatement.executeQuery();
+		while ( resultSet.next() ) {
+			pvs.add( resultSet.getString( CHANNEL_COLUMN ) );
+		}
+		resultSet.close();
+		return pvs.toArray( new String[pvs.size()] );
+	}
+
 	
 	/**
 	 * Insert the channels for the specified group.
@@ -101,7 +125,17 @@ class SnapshotGroupChannelTable {
 	protected PreparedStatement getGroupChannelQueryByGroupStatement( final Connection connection ) throws SQLException {
 		return connection.prepareStatement( "SELECT * FROM " + TABLE_NAME + " WHERE " + GROUP_COLUMN + " = ?" );
 	}
-	
+
+
+	/**
+	 * Get a prepared statement to get the active relationships by group.
+	 * @return the prepared statement to query for machine snapshot type-PV record by type
+	 * @throws java.sql.SQLException  if an exception occurs during a SQL evaluation
+	 */
+	protected PreparedStatement getActiveGroupChannelQueryByGroupStatement( final Connection connection ) throws SQLException {
+		return connection.prepareStatement( "SELECT * FROM " + TABLE_NAME + " WHERE " + GROUP_COLUMN + " = ? AND " + ACTIVE_INDICATOR_COLUMN + " = \'Y\'" );
+	}
+
 	
 	/**
 	 * Create a prepared statement for inserting new records into the channel snapshot database table.
