@@ -4,7 +4,7 @@
  * Author  : Christopher K. Allen
  * Since   : Jul 28, 2015
  */
-package xal.app.ttffactory;
+package xal.tools.math.fnc.poly;
 
 import static org.junit.Assert.*;
 
