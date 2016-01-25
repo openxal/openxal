@@ -474,7 +474,7 @@ public class R3x3 extends SquareMatrix<R3x3> implements java.io.Serializable {
      * @since  Oct 4, 2013
      */
     public R3x3(double[][] arrValues) throws ArrayIndexOutOfBoundsException {
-        super(INT_SIZE, arrValues);
+        super(arrValues);
     }
     
     /**
