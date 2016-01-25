@@ -79,9 +79,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     /** The set of hardware node to element mapping associations used to create model elements */
     private final ElementMapping        mapNodeToMdl;
     
-    /** create center markers for thick magnets when true */
-    private boolean                     bolDivMags;
-
     /** indicates whether or not axis coordinate have origin at sequence center */
     private boolean                     bolCtrOrigin;
     
@@ -96,14 +93,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     /** The coupling constant between cavities in an RF coupled cavity structure */
     private final double    dblCavMode;
 
-    
+
     //
     // Debugging 
     ///
-    
-    /** use type outs for debugging */
-    private boolean         bolDebug;
-    
+      
     /** destination for debugging information */
     private PrintStream     ostrDebug;
     
@@ -138,11 +132,9 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
 
-        this.mapNodeToMdl = mapNodeToElem;
-        this.bolDivMags   = true;
+        this.mapNodeToMdl = mapNodeToElem;        
         this.bolCtrOrigin = false;
-        
-        this.bolDebug  = false;
+                
         this.ostrDebug = System.out;
         
         if (smfSeqRoot instanceof RfCavity) {
@@ -192,11 +184,9 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
 
-        this.mapNodeToMdl = latSeqParent.mapNodeToMdl;
-        this.bolDivMags   = latSeqParent.bolDivMags;
+        this.mapNodeToMdl = latSeqParent.mapNodeToMdl;        
         this.bolCtrOrigin = false;
-
-        this.bolDebug     = latSeqParent.bolDebug;
+        
         this.ostrDebug    = latSeqParent.ostrDebug;
 
         if (smfSeqChild instanceof RfCavity) {
@@ -210,55 +200,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             this.dblCavMode = 0.0;
         }
     }
-
-    /**
-     * Set flag to force lattice generator to place a permanent marker in the middle of every
-     * thick element.
-     * 
-     * @param halfmag <code>true</code> yes put the middle marker (default), else <code>false</code>
-     *                for no middle markers.
-     */
-    public void setDivideMagnetFlag(boolean halfMag)    {
-        this.bolDivMags = halfMag;
-    }
-    
-    /**
-     * Set flag to determine whether debugging information is sent to standard output.
-     * 
-     * @param bolDebug  <code>true</code> for debugging output, 
-     *                  else <code>false</code> to stop debugging output.
-     */
-    public void setDebug(boolean bolDebug) {
-        this.bolDebug = bolDebug;
-    }
-    
     
     /*
      * Attribute Queries
      */
     
-    /**
-     * If the value here is <code>true</code> then marker modeling elements are placed
-     * at the center of thick magnets when the model lattice is created.
-     * 
-     * @return the flag to force lattice generator to place a permanent marker in the middle of every
-     *         thick element.
-     */
-    public boolean isMagnetDivided()    {
-        return bolDivMags;
-    }
-    
-    /**
-     * Get the debugging flag.  If <code>true</code> then debugging
-     * information is being sent to the standard output.
-     * 
-     * @return  <code>true</code> if debugging information is being sent to standard output,
-     *          <code>false</code> when in normal operation.
-     */
-    public boolean isDebugging() {
-        return this.bolDebug;
-    }   
-
     /**
      * Indicates whether or not the associated hardware accelerator sequence 
      * is an RF cavity structure.  Such structures are derived from the base
@@ -697,7 +643,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Now generate the lattice structure for the child sequence and all
                 //  its children
                 latSeqChild.populateLatticeSeq();
-                latSeqChild.bolCtrOrigin = true; // false for ESS, true for SNS
+                latSeqChild.bolCtrOrigin = mapNodeToMdl.isSubsectionAxisOriginCentered();
                 
                 // Added the populated child lattice to this lattice
                 this.addLatticeElement(latSeqChild);
@@ -716,7 +662,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             this.addLatticeElement(latElem);
             indSeqPosition++;
             
-            if (bolDebug) {
+            if (mapNodeToMdl.isDebugging()) {
                 this.ostrDebug.println("LatticeSequence#populateLatticeSeq(): " + 
                                         latElem.toString() + 
                                        ", thin=" + 
@@ -734,7 +680,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             //  divide magnets flag is true.  Thus, check if the current hardware node
             //  is a magnet, the flag is true, and the hardware node modeling element is
             //  not a thin element.  If so, add the center marker.
-            if (bolDivMags && (smfNodeCurr instanceof Magnet) && !latElem.isThin()) {
+            if (mapNodeToMdl.isMagnetDivided() && (smfNodeCurr instanceof Magnet) && !latElem.isThin()) {
 
                 String                      strNodeId   = smfNodeCurr.getId();
                 double                      dblPosCtr   = latElem.getCenterPosition();
@@ -965,7 +911,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // 3) The current element is inside the last thick element and it is a thin element.
             } else if (lemCurr.isThin()) { 
 
-                if (this.isDebugging()) {
+                if (mapNodeToMdl.isDebugging()) {
                     ostrDebug.println("splitElements: replacing " + lemLastThick.toString() + " with");
                 }
 
@@ -973,7 +919,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 //  We split the last thick element at the current element's center position
                 LatticeElement elemSplitPartEnd = lemLastThick.splitElementAt(lemCurr);
 
-                if ( this.isDebugging() ) {
+                if (mapNodeToMdl.isDebugging()) {
                     ostrDebug.println("\t" + lemLastThick.toString());
                     if (elemSplitPartEnd != null) ostrDebug.println("\t" + elemSplitPartEnd.toString());
                 }                   
@@ -1145,7 +1091,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             }
 
             // Debug type out
-            if (bolDebug)
+            if (mapNodeToMdl.isDebugging())
                 ostrDebug.println(latElemCurr.getHardwareNode().getId() + ": ==mapped to==>\t" + smfNodeCurr.getType()
                         + ": s= " + latElemCurr.getCenterPosition());           
         }

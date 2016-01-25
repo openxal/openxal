@@ -10,6 +10,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import xal.model.IComponent;
 import xal.model.IComposite;
 import xal.model.Sector;
@@ -91,7 +93,12 @@ public class FileBasedElementMapping extends ElementMapping {
         FileBasedElementMapping mapHwToModElem = new FileBasedElementMapping();
 
         // Drill down to the data adaptor node containing the (hardware, model) associations 
-        DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );	    
+        DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );
+        
+        if (daCfg.hasAttribute("debug")) mapHwToModElem.bolDebug = daCfg.booleanValue("debug");
+        if (daCfg.hasAttribute("divMags")) mapHwToModElem.bolDivMags = daCfg.booleanValue("divMags");
+        if (daCfg.hasAttribute("subsectionCtrOrigin")) mapHwToModElem.bolSubsectionCtrOrigin = daCfg.booleanValue("subsectionCtrOrigin");
+        
         DataAdaptor daAssoc = daCfg.childAdaptor("associations");
         
         // For each map of hardware node to modeling element enter that association into the  table
