@@ -247,7 +247,7 @@ public class R6x6 extends SquareMatrix<R6x6> {
      * @since  Oct 15, 2013
      */
     public R6x6(double[][] arrVals) throws ArrayIndexOutOfBoundsException {
-        super(INT_SIZE, arrVals);
+        super(arrVals);
     }
 
     /**
