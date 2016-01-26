@@ -36,6 +36,8 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** length of node */
     protected double            m_dblLen;
     
+
+    
     /**   parent sequence object  */
     protected AcceleratorSeq    m_seqParent;
     
@@ -321,6 +323,7 @@ public abstract class AcceleratorNode implements /* IElement, */ ElementType, Da
     /** return the position of this node,  along the reference orbit
      * within its sequence (m) */
     public double           getPosition()       { return m_dblPos; };
+    
     
     /**
      * return global "s" display coordinate

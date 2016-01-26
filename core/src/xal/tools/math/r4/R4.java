@@ -6,13 +6,11 @@
  */
 package xal.tools.math.r4;
 
-import xal.tools.dyn.TrnsPhaseMatrix;
-import xal.tools.dyn.TrnsPhaseVector.IND;
-import xal.tools.math.IIndex;
 import xal.tools.math.BaseVector;
+import xal.tools.math.IIndex;
 
 /**
- * Set of real 4-vectors in <b>R</b><sup>4</sup> 
+ * Implements the set of real 4-vectors in <b>R</b><sup>4</sup> 
  *
  * @author Christopher K. Allen
  * @since  Oct 15, 2013
@@ -153,16 +151,18 @@ public class R4 extends BaseVector<R4> {
      * inconsistent, an exception is thrown.
      * </p>
      * 
-     * @param intSize     the vector size of this object
      * @param arrMatrix   Java primitive array containing new vector values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
      * 
      * @author Christopher K. Allen
      * @since  Oct 16, 2013
      */
-    public R4(double[] arrVals) {
-        super(INT_SIZE, arrVals);
+    public R4(double[] arrVals) throws IllegalArgumentException {
+        super(arrVals);
+
+        if (arrVals.length != INT_SIZE)
+            throw new IllegalArgumentException("Argument has wrong dimensions " + arrVals);
     }
 
     /**
@@ -209,4 +209,16 @@ public class R4 extends BaseVector<R4> {
 	protected R4 newInstance() {
 		return new R4();
 	}
+
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected R4 newInstance(double[] arrVecInt) {
+        return new R4(arrVecInt);
+    }
 }

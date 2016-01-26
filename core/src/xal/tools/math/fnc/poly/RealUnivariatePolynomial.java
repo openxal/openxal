@@ -85,7 +85,7 @@ public class RealUnivariatePolynomial implements ISmoothRealFunction {
      * Get the specified coefficient value.  The value of parameter
      * <code>iOrder</code> specifies order of the indeterminate.  For example,
      * calling <code>getCoef(2)</code> would return the coefficient for the
-     * intdeterminate of second order.
+     * indeterminate of second order.
      *
      * If the value of <code>iOrder</code> is larger than the size of the
      * coefficient array then the coefficient is assumed to have value zero.
@@ -124,8 +124,9 @@ public class RealUnivariatePolynomial implements ISmoothRealFunction {
      * 
      * @param   dblVal      indeterminate value to evaluate the polynomial
      *
-     * @author Chris Allen
+     * @author Christopher Allen
      */
+    @Override
     public double evaluateAt(double dblVal) {
         if (this.m_arrCoef == null)
             return 0.0;
@@ -150,6 +151,7 @@ public class RealUnivariatePolynomial implements ISmoothRealFunction {
      * @author Christopher Allen
      * @version Nov 26, 2014
      */
+    @Override
     public double derivativeAt(double dblVal) {
         if (this.m_arrCoef == null)
             return 0.0;
