@@ -74,8 +74,8 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     
     /**
      * <p>
-     * Class <code>Vector</code> is an encapsulating class for the <code>Jama.Matrix</code>
-     * class.  <code>Vector</code> always access to the internal <code>Matrix</code> object
+     * Class <code>JVector</code> is an encapsulating class for the <code>Jama.Matrix</code>
+     * class.  <code>JVector</code> allows access to the internal <code>Matrix</code> object
      * only as a vector object.  Internally this vector is represented as a column vector
      * matrix, that is, a contra-variant representation, although these details matter
      * little.  The intent is to further abstract the actual implementation from the 
@@ -122,16 +122,46 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         }
         
         /**
-         * Copy constructor for <code>JVector</code>.  Creates a clone of the given
-         * vector object.
+         * <p>
+         * Copy constructor for <code>JVector</code>.  A deep copy is made
+         * of the given argument.
+         * </p>
+         * <p>
+         * <h4>NOTES</h4>
+         * &middot; This is where the <code>JVector</code> object is assigned
+         * via the Jama matrix.  That is, all assignments are done here, including
+         * that for <code>{@link #clone()}</code>.
+         * </p>
          *
-         * @param vecHost   vector to be cloned   
+         * @param vecTemplate   vector to be cloned
          *
-         * @since  Jul 17, 2015   by Christopher K. Allen
+         * @since  Jul 22, 2015   by Christopher K. Allen
          */
-        public JVector(JVector vecHost) {
-            this.intSize = vecHost.intSize;
-            this.matVectImpl = new Matrix(vecHost.matVectImpl.getArrayCopy());
+        public JVector(JVector vecTemplate) {
+            int       intSize = vecTemplate.getSize();
+            double[]  arrInt  = vecTemplate.getArrayCopy();
+            
+            this.intSize     = intSize;
+            this.matVectImpl = new Jama.Matrix(arrInt, intSize);
+        }
+        
+        /**
+         * Initializing constructor for <code>JVector</code>.  Creates a new
+         * <code>JVector</code> object with the size given but the length of 
+         * the given array and the internal vector set to the given array.
+         * Thus, it is not immutable.
+         *
+         * @param arrValues
+         *
+         * @since  Jul 22, 2015   by Christopher K. Allen
+         */
+        public JVector(double[] arrValues) {
+            int         intSize   = arrValues.length;
+//            double[]    arrVector = arrValues.clone();
+//          this.matVectImpl = new Jama.Matrix(arrVector, intSize);
+            
+            this.intSize     = intSize;
+            this.matVectImpl = new Jama.Matrix(arrValues, intSize);
         }
         
         /**
@@ -150,6 +180,23 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
             this.matVectImpl.set(i, 0, dblVal);
         }
         
+        
+        
+        /*
+         * Object Operations
+         */
+        
+        /**
+         * Returns a deep copy of this object.
+         * 
+         * @see java.lang.Object#clone()
+         *
+         * @since  Jul 22, 2015   by Christopher K. Allen
+         */
+        @Override
+        public JVector  clone() {
+            return new JVector(this);
+        }
         
         /*
          * Vector Attributes
@@ -273,11 +320,11 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
          * Computes and returns the difference of this vector and the given
          * vector.  The argument (subtrahend) is subtracted from this vector
          * (minuend) so that the returned value is
-         * <br>
-         * <br>
+         * <br/>
+         * <br/>
          * &nbsp; &nbsp; <b>v</b> = <b>v</b><sub>1</sub> - <b>v</b><sub>2</sub>
-         * <br>
-         * <br>
+         * <br/>
+         * <br/>
          * where <b>v</b> is the returned value, <b>v</b><sub>1</sub> is this
          * vector, and <b>v</b><sub>2</sub> is the argument vector. 
          * 
@@ -381,7 +428,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      */
 
     /** internal matrix implementation */
-    private final JVector           vecImpl;
+    private JVector           vecImpl;
 
 
 
@@ -458,27 +505,32 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * 
      * @param arrVector Java primitive array containing new vector values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
      *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    public void setVector(double[] arrVector) throws ArrayIndexOutOfBoundsException {
+    public void setVector(double[] arrVector) throws IllegalArgumentException {
         
         // Check the dimensions of the argument double array
         if (this.getSize() != arrVector.length  )
-            throw new ArrayIndexOutOfBoundsException(
+            throw new IllegalArgumentException(
                     "Dimensions of argument do not correspond to size of this vector = " 
                    + this.getSize()
                    );
         
         // Set the elements of this array to that given by the corresponding 
         //  argument entries
+        //  -- I think memory access is cheaper than...
         for (int i=0; i<this.getSize(); i++) {
             double dblVal = arrVector[i];
 
             this.setElem(i, dblVal);
         }
+        
+        //  -- memory creation
+//        JVector vecNew = new JVector(arrVector);
+//        this.vecImpl   = vecNew;
     }
     
     /**
@@ -535,8 +587,6 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         }
     }
 
-    
-    
     /** 
      * Set individual element of a vector to given value
      * 
@@ -602,7 +652,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  @exception  ArrayIndexOutOfBoundsException  iIndex is larger than vector size
      */
     public double getElem(int iIndex) throws ArrayIndexOutOfBoundsException {
-        return this.getVector().getElem(iIndex);
+        return this.vecImpl.getElem(iIndex);
     };
     
 //    /**
@@ -642,12 +692,12 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * interface belongs to the <code>BaseMatrix<M></code> namespace.  
      * In this way matrix indices can be used to get vector component values.
      * </p>
-     * <h3>NOTES</h3>
      * <p>
+     * <h3>NOTES</h3>
      * &middot; It is expected that the
      * object exposing the <code>IIndex</code> interface is an enumeration
      * class restricting the number of possible index values.
-     * <br>
+     * <br/>
      * &middot; Consequently we do not declare a thrown exception assuming
      * that that enumeration class eliminates the possibility of an out of
      * bounds error.
@@ -716,10 +766,10 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     /**
      *  Convert the contents of the matrix to a string representation.
      *  The format is similar to that of Mathematica. Specifically,
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *      { a b c d }
-     *  <br>
+     *  <br/>
      *
      *  @return     string representation of the matrix
      */
@@ -1358,17 +1408,17 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      *  by any of the characters <tt>" ,()[]{}"</tt>  Repeated, contiguous delimiters 
      *  are parsed together.  This conditions allows a variety of parseable string
      *  representations. For example,
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *  &nbsp; &nbsp; { 1, 2, 3, 4 }
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *  and
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *  &nbsp; &nbsp; [1 2 3 4]
-     *  <br>
-     *  <br>
+     *  <br/>
+     *  <br/>
      *  would parse to the same homogeneous vector (1, 2, 3, 4 | 1).
      *  </p>
      *
@@ -1401,27 +1451,23 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     
     /**
      * <p>
-     * Initializing constructor for bases class <code>Vector</code>.  
+     * Initializing constructor for bases class <code>BaseVector</code>.  
      * Sets the entire matrix to the values given in the Java primitive type 
      * double array. The argument itself remains unchanged. 
      * </p>
      * <p>
-     * The dimensions of the given Java double array must be 
-     * consistent with the size of the matrix.  Thus, if the arguments are
-     * inconsistent, an exception is thrown.
+     * The dimensions of the new vector will be the length of the given Java double array. 
      * </p>
      * 
-     * @param intSize     the vector size of this object
      * @param arrMatrix   Java primitive array containing new vector values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
-     *
      * @author Christopher K. Allen
      * @since  Oct 4, 2013
      */
-    protected BaseVector(int intSize, double[] arrVals) throws ArrayIndexOutOfBoundsException {
-        this(intSize);
-        
+    protected BaseVector(double[] arrVals) {
+//        this(intSize);
+//        this.setVector(arrVals);;
+        this(arrVals.length);
         this.setVector(arrVals);;
     }
     
@@ -1441,6 +1487,7 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
         this.load(daSource);
     }
 
+    
     /*
      * Internal Support
      */
@@ -1456,7 +1503,9 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
     
     /**
      * Sets the internal matrix implementation to that given in the argument. This
-     * is a deep copy operation.  No references are passed.
+     * is a deep copy operation.  No references are passed.  The assignment is 
+     * made by cloning the given vector and assigning to the internal vector
+     * representation encapsulated by this class.
      * 
      * @param vecValue  internal implementation of matrix values
      *
@@ -1464,11 +1513,13 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * @since  Oct 1, 2013
      */
     private void assignVector(JVector vecValue) {
-        for (int i=0; i<this.getSize(); i++) {
-            double dblVal = vecValue.getElem(i);
-
-            this.vecImpl.setElem(i, dblVal);
-        }
+//        for (int i=0; i<this.getSize(); i++) {
+//            double dblVal = vecValue.getElem(i);
+//
+//            this.vecImpl.setElem(i, dblVal);
+//        }
+        
+        this.vecImpl = vecValue.clone();
     }
 
 
@@ -1480,6 +1531,18 @@ public abstract class BaseVector<V extends BaseVector<V>> implements IArchive, j
      * @since  Oct 1, 2013
      */
     protected abstract V newInstance();
+    
+    /**
+     * Creates a new instance of this vector type with the given Java
+     * array as the internal representation.
+     * 
+     * @param arrVecInt     new vector's guts
+     * 
+     * @return              new instance of this vector type with the internal representation
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    protected abstract V newInstance(double[] arrVecInt);
     
     /**
      * Creates a new instance of this vector type initialized to the given

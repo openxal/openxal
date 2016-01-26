@@ -1,5 +1,5 @@
 /**
- * UnivariatePolynomialFit.java
+ * PolynomialFitter.java
  *
  * Author  : Christopher K. Allen
  * Since   : Sep 24, 2015
@@ -9,7 +9,7 @@ package xal.tools.math.fnc.poly;
 import java.util.List;
 
 import xal.tools.math.Interval;
-import xal.tools.math.fnc.FunctionSample;
+import xal.tools.math.fnc.RealFunctionSamples;
 
 /**
  * Class representing an uni-variate real polynomial used for the expressed purpose
@@ -23,7 +23,7 @@ import xal.tools.math.fnc.FunctionSample;
  * @author Christopher K. Allen
  * @since  Sep 24, 2015
  */
-public class UnivariatePolynomialFit extends RealUnivariatePolynomial {
+public class PolynomialFitter  {
 
     
     /*
@@ -57,7 +57,7 @@ public class UnivariatePolynomialFit extends RealUnivariatePolynomial {
      */
     
     /**
-     * Initializing constructor for UnivariatePolynomialFit.  The given data
+     * Initializing constructor for PolynomialFitter.  The given data
      * is used to create a least-squares fit up to the given polynomial order. 
      *
      * @param nDegree   degree of the polynomial used to fit the data
@@ -65,17 +65,17 @@ public class UnivariatePolynomialFit extends RealUnivariatePolynomial {
      *
      * @since  Sep 25, 2015   by Christopher K. Allen
      */
-    public UnivariatePolynomialFit(int nDegree, List<FunctionSample> lstSmps) {
+    public PolynomialFitter(int nDegree, RealFunctionSamples fncSmps) {
         
     }
     
 //    /**
-//     * Zero argument constructor for UnivariatePolynomialFit.
+//     * Zero argument constructor for PolynomialFitter.
 //     *
 //     *
 //     * @since  Sep 24, 2015   by Christopher K. Allen
 //     */
-//    public UnivariatePolynomialFit() {
+//    public PolynomialFitter() {
 //        this.ivlDomain = null;
 //    }
 //    
@@ -88,19 +88,19 @@ public class UnivariatePolynomialFit extends RealUnivariatePolynomial {
 //     *
 //     * @since  Sep 24, 2015   by Christopher K. Allen
 //     */
-//    public UnivariatePolynomialFit(double[] arrCoef) {
+//    public PolynomialFitter(double[] arrCoef) {
 //        super(arrCoef);
 //    }
 //
 //    /**
-//     * Defining constructor for UnivariatePolynomialFit.
+//     * Defining constructor for PolynomialFitter.
 //     * 
 //     * @param ivlDom    domain of accuracy for the fit
 //     * @param arrCoef   array of coefficients for the polynomial
 //     *
 //     * @since  Sep 24, 2015   by Christopher K. Allen
 //     */
-//    public UnivariatePolynomialFit(Interval ivlDom, double[] arrCoef) {
+//    public PolynomialFitter(Interval ivlDom, double[] arrCoef) {
 //        super(arrCoef);
 //        
 //        this.ivlDomain = ivlDom;
@@ -111,49 +111,49 @@ public class UnivariatePolynomialFit extends RealUnivariatePolynomial {
      * ISmoothRealFunction Interface
      */
     
-    /**
-     * Returns the interval representing the domain of validity for the
-     * polynomial fit.
-     * 
-     * @return      real interval where polynomial fit is valid 
-     *
-     * @since  Sep 24, 2015   by Christopher K. Allen
-     */
-    @Override
-    public Interval getDomain() {
-        return this.ivlDomain;
-    }
-
-    /**
-     * @throws IllegalArgumentException     the given value is not in the domain of validity
-     *
-     * @see xal.tools.math.fnc.poly.RealUnivariatePolynomial#evaluateAt(double)
-     *
-     * @since  Sep 24, 2015   by Christopher K. Allen
-     * 
-     */
-    @Override
-    public double evaluateAt(double dblVal) {
-        if (this.ivlDomain != null  && this.ivlDomain.membership(dblVal))
-            return super.evaluateAt(dblVal);
-        
-        throw new IllegalArgumentException("Argument is outside domain of validity");
-    }
-
-    /**
-     * @throws IllegalArgumentException     the given value is not in the domain of validity
-     * 
-     * @see xal.tools.math.fnc.poly.RealUnivariatePolynomial#derivativeAt(double)
-     *
-     * @since  Sep 24, 2015   by Christopher K. Allen
-     */
-    @Override
-    public double derivativeAt(double dblVal) {
-        if (this.ivlDomain != null  && this.ivlDomain.membership(dblVal))
-            return super.derivativeAt(dblVal);
-        
-        throw new IllegalArgumentException("Argument is outside domain of validity");
-    }
+//    /**
+//     * Returns the interval representing the domain of validity for the
+//     * polynomial fit.
+//     * 
+//     * @return      real interval where polynomial fit is valid 
+//     *
+//     * @since  Sep 24, 2015   by Christopher K. Allen
+//     */
+//    @Override
+//    public Interval getDomain() {
+//        return this.ivlDomain;
+//    }
+//
+//    /**
+//     * @throws IllegalArgumentException     the given value is not in the domain of validity
+//     *
+//     * @see xal.tools.math.fnc.poly.RealUnivariatePolynomial#evaluateAt(double)
+//     *
+//     * @since  Sep 24, 2015   by Christopher K. Allen
+//     * 
+//     */
+//    @Override
+//    public double evaluateAt(double dblVal) {
+//        if (this.ivlDomain != null  && this.ivlDomain.membership(dblVal))
+//            return super.evaluateAt(dblVal);
+//        
+//        throw new IllegalArgumentException("Argument is outside domain of validity");
+//    }
+//
+//    /**
+//     * @throws IllegalArgumentException     the given value is not in the domain of validity
+//     * 
+//     * @see xal.tools.math.fnc.poly.RealUnivariatePolynomial#derivativeAt(double)
+//     *
+//     * @since  Sep 24, 2015   by Christopher K. Allen
+//     */
+//    @Override
+//    public double derivativeAt(double dblVal) {
+//        if (this.ivlDomain != null  && this.ivlDomain.membership(dblVal))
+//            return super.derivativeAt(dblVal);
+//        
+//        throw new IllegalArgumentException("Argument is outside domain of validity");
+//    }
     
     
     /*

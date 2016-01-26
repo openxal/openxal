@@ -343,7 +343,7 @@ public class CovarianceMatrix extends PhaseMatrix {
      */
     public void forceRmsEmittances(double[] arrEmitNew)    {
         double[]    arrEmitCurr;    // current emittances
-        double      fac;            // mulitplication factor to change emittance value
+        double      fac;            // multiplication factor to change emittance value
         double      val;            // auxiliary variable used when updating covariance matrix
         
         arrEmitCurr = this.computeRmsEmittances();
