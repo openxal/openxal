@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Mon Jan 18 08:56:50 CST 2016" version="1.0.0">
+<BricksDocument date="Tue Jan 26 13:29:04 EST 2016" version="1.0.0">
     <RootBrick>
-        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="784" tag="MainWindow" width="1289">
+        <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="900" tag="MainWindow" width="1600">
             <ViewProxy type="javax.swing.JFrame"/>
             <BeanProperty name="title" value="Machine Simulator"/>
             <ViewNode tag="MainView">
@@ -152,6 +152,7 @@
                     <ViewNode tag="Split Pane">
                         <ViewProxy type="javax.swing.JSplitPane"/>
                         <BeanProperty name="oneTouchExpandable" value="true"/>
+                        <BeanProperty name="dividerLocation" value="400"/>
                         <ViewNode tag="History Table Box">
                             <ViewProxy type="javax.swing.Box_Vertical"/>
                             <BeanProperty height="453" name="preferredSize" width="1000"/>
@@ -248,8 +249,8 @@
                                         </ViewNode>
                                         <ViewNode tag="Clear Setting">
                                             <ViewProxy type="javax.swing.JButton"/>
-                                            <BeanProperty name="text" value="Clear Setting"/>
                                             <BeanProperty name="toolTipText" value="Clear the scan setting of the selected rows"/>
+                                            <BeanProperty name="text" value="Clear Setting"/>
                                         </ViewNode>
                                     </ViewNode>
                                     <ViewNode tag="New Run Parameters Scroller">
