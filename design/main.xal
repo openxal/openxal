@@ -10,4 +10,7 @@
 	<optics_extra name="alignment" url="alignment.xdxf" />
 	<optics_extra name="Corrector Calibration" url="corrector-polarities.xdxf"/>
 	<optics_extra name="General Device Modifications" url="device-mods.xdxf" />
+	<!-- optics_extra name="RFGap TTFs" url="ttfExtras.xdxf"/ -->
+	<!-- optics_extra name="RFGap TTFs" url="snsTTFpolys.xdxf"/ -->
+	<!-- optics_extra name="RFGap TTFs" url="snsPolysStuff.xdxf"/ -->
 </sources>
