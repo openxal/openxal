@@ -6,12 +6,11 @@
  */
 package xal.tools.math.r6;
 
-import xal.tools.math.IIndex;
 import xal.tools.math.BaseVector;
-import xal.tools.math.r4.R4;
+import xal.tools.math.IIndex;
 
 /**
- * Class <code></code>.
+ * Implements a 6-dimensional vector of real numbers.
  *
  *
  * @author Christopher K. Allen
@@ -152,7 +151,7 @@ public class R6 extends BaseVector<R6> {
 
     /**
      * <p>
-     * Initializing constructor for bases class <code>Vector</code>.  
+     * Initializing constructor for bases class <code>R6</code>.  
      * Sets the entire matrix to the values given in the Java primitive type 
      * double array. The argument itself remains unchanged. 
      * </p>
@@ -162,16 +161,18 @@ public class R6 extends BaseVector<R6> {
      * inconsistent, an exception is thrown.
      * </p>
      * 
-     * @param intSize     the vector size of this object
      * @param arrMatrix   Java primitive array containing new vector values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
      * 
      * @author Christopher K. Allen
      * @since  Oct 16, 2013
      */
-    public R6(double[] arrVals) {
-        super(INT_SIZE, arrVals);
+    public R6(double[] arrVals) throws IllegalArgumentException {
+        super(arrVals);
+        
+        if (arrVals.length != INT_SIZE)
+            throw new IllegalArgumentException("Argument has wrong dimensions " + arrVals);
     }
     
     /**
@@ -219,5 +220,17 @@ public class R6 extends BaseVector<R6> {
 	protected R6 newInstance() {
 		return new R6();
 	}
+
+
+    /**
+     *
+     * @see xal.tools.math.BaseVector#newInstance(double[])
+     *
+     * @since  Jul 24, 2015   by Christopher K. Allen
+     */
+    @Override
+    protected R6 newInstance(double[] arrVecInt) {
+        return new R6(arrVecInt);
+    }
 
 }

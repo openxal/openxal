@@ -258,13 +258,16 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
      * 
      * @param arrMatrix   Java primitive array containing new vector values
      * 
-     * @exception  ArrayIndexOutOfBoundsException  the argument must have the same dimensions as this matrix
+     * @exception  IllegalArgumentException  the argument must have the same dimensions as this matrix
      *
      * @author Christopher K. Allen
      * @since  Oct 17, 2013
      */
-    public TrnsPhaseVector(double[] arrVals) throws ArrayIndexOutOfBoundsException {
-        super(INT_SIZE, arrVals);
+    public TrnsPhaseVector(double[] arrVals) throws IllegalArgumentException {
+        super(arrVals);
+
+        if (arrVals.length != INT_SIZE)
+            throw new IllegalArgumentException("Argument has wrong dimensions " + arrVals);
     }
     
     /*
@@ -297,6 +300,13 @@ public class TrnsPhaseVector extends BaseVector<TrnsPhaseVector> {
 	@Override
 	protected TrnsPhaseVector newInstance() {
 		return new TrnsPhaseVector();
+	}
+
+
+	@Override
+	protected TrnsPhaseVector newInstance(double[] arrVecInt) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
