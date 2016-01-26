@@ -10,8 +10,6 @@
 package xal.app.ttffactory;
 
 import java.io.PrintStream;
-import java.util.Arrays;
-
 import xal.model.ModelException;
 import xal.model.alg.EnvTrackerAdapt;
 import xal.model.probe.EnvelopeProbe;
@@ -63,7 +61,7 @@ public class Tools {
 		String priorToken3 = splitName[2];
 		
 		// this is the cavity number of the gap
-		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
+//		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
 		String gapNum = String.format("%02d", Integer.parseInt(priorToken3.replaceAll("\\D+","")));
 		
 		String baseName = "";
@@ -226,9 +224,9 @@ public class Tools {
 		
 		// this is the cavity number of the gap
 		String cavNum = String.format("%02d", Integer.parseInt(priorToken2.replaceAll("\\D+","")));
-		String gapNum = String.format("%02d", Integer.parseInt(priorToken3.replaceAll("\\D+","")));
+//		String gapNum = String.format("%02d", Integer.parseInt(priorToken3.replaceAll("\\D+","")));
 		
-		String baseName = "";
+//		String baseName = "";
 		String[] nameList = new String[4];
 		
 		if (getHighOrMed(cavNum) == "High") {

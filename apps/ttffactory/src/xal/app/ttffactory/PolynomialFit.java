@@ -11,13 +11,9 @@
 package xal.app.ttffactory;
 
 
-import xal.extension.solver.*;
-import xal.extension.solver.algorithm.*;
-import xal.tools.math.rn.Rmxn;
-import xal.tools.math.rn.Rn;
+import java.util.Arrays;
 
-import java.lang.*;
-import java.util.*;
+import xal.tools.math.rn.Rmxn;
 
 public class PolynomialFit{
     final double[] x;
@@ -30,7 +26,7 @@ public class PolynomialFit{
     }
     
     public double[] getPolyConstants() {
-    	Tools tools = new Tools();
+//    	Tools tools = new Tools();
     	
     	double[][] x2D = new double[x.length][5];
     	

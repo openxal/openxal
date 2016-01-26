@@ -157,7 +157,7 @@ public class Main extends JFrame {
         final JFileChooser generateSelector = new JFileChooser();
         generateSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         
-        final JFileChooser compareSelector = new JFileChooser();
+//        final JFileChooser compareSelector = new JFileChooser();
         
         gapChooser.setToolTipText("Choose a Gap From the Drop-down Menu to Analyze");
         valueLabel.setToolTipText("Type the Tag of the Value You Want to Get From the Selected Gap; options: ttf, stf, ttfp, stfp");
@@ -547,7 +547,7 @@ public class Main extends JFrame {
 	    	PRINTER.println(filePath);
 	    	DataTree thisDatTree = endGapTTF(filePath,fileName,strPathOuter,fileNameOuter,betaTree);
     	    
-			String gapName = thisDatTree.getGaps().get(0);
+//			String gapName = thisDatTree.getGaps().get(0);
 			
 			Set<Entry<String,List<String>>> curEntSet = thisDatTree.getEntrySet();
 			
@@ -613,7 +613,7 @@ public class Main extends JFrame {
 		    	    if (!inner && !end && !ccl && !scl) {
 		    	    	DataTree gapDatTree = normalGapTTF(stringLocalFilePath,fileName, betaTree);
 		    	    
-						String gapName = gapDatTree.getGaps().get(0);   //get the entry
+//						String gapName = gapDatTree.getGaps().get(0);   //get the entry
 						
 						Set<Entry<String,List<String>>> curEntSet = gapDatTree.getEntrySet(); // get the set from the entry
 						
@@ -627,7 +627,7 @@ public class Main extends JFrame {
 		    	    	
 		    	    	DataTree gapDatTree = endGapTTF(stringLocalFilePath,fileName,strPathOuter,fileNameOuter,betaTree);
 			    	    
-						String gapName = gapDatTree.getGaps().get(0);
+//						String gapName = gapDatTree.getGaps().get(0);
 						
 						Set<Entry<String,List<String>>> curEntSet = gapDatTree.getEntrySet();
 						
@@ -644,8 +644,8 @@ public class Main extends JFrame {
 		    	    	
 		    	    	String[] nameList = generalTools.getCCLNameList(parsedName); //nameList = {END, IN, IN, IN, IN, IN, IN, END};
 		    	    	
-		    	    	Set<Entry<String,List<String>>> curInnerEntSet = innerGapDatTree.getEntrySet();
-		    	    	Set<Entry<String,List<String>>> curOuterEntSet = outerGapDatTree.getEntrySet();
+//		    	    	Set<Entry<String,List<String>>> curInnerEntSet = innerGapDatTree.getEntrySet();
+//		    	    	Set<Entry<String,List<String>>> curOuterEntSet = outerGapDatTree.getEntrySet();
 						
 		    	    	Entry<String,List<String>> innerEnt = innerGapDatTree.getFirstEntry();
 		    	    	Entry<String,List<String>> outerEnt = outerGapDatTree.getFirstEntry();
@@ -874,6 +874,7 @@ public class Main extends JFrame {
      * @param evalMat  the double array containing the values to evaluate the polynomials at
      * @return the double L2 Norm error between the two polynomials
      */
+    @SuppressWarnings("unused")
     private double comparePolys(double[] dblPoly1, double[] dblPoly2, double[] evalMat, double frequency) {
            
     	TTFTools ttfTools = new TTFTools();
@@ -929,6 +930,7 @@ public class Main extends JFrame {
      *
      * @return the last beta tree
      */
+    @SuppressWarnings("unused")
     private DataTree getLastBetaTree() {
     	return this.lastBetaTree;
     }
@@ -938,8 +940,9 @@ public class Main extends JFrame {
      *
      * @param andreiTree the datatree to set as andreiFixed
      */
+    @SuppressWarnings("unused")
     private void setAndreiTree(DataTree andreiTree) {
-    	this.andreiFixed = andreiTree;
+    	Main.andreiFixed = andreiTree;
     }
     
     /**
@@ -947,8 +950,9 @@ public class Main extends JFrame {
      *
      * @return the last beta tree
      */
+    @SuppressWarnings("unused")
     private DataTree getAndreiTree() {
-    	return this.andreiFixed;
+    	return Main.andreiFixed;
     }
 
     /**

@@ -61,7 +61,7 @@ public class Parser {
 		XmlDataAdaptor daptDoc = XmlDataAdaptor.adaptorForFile(file,false);
 		DataAdaptor daptLinac = daptDoc.childAdaptor("SNS_Linac");
 		
-		int iii = 0;
+//		int iii = 0;
 		//lstDaptSeq is a list of all the primary sequences in the linac. In this case: MEBT, DTL, CCL, and SCL
 		List<DataAdaptor> lstDaptSeq = daptLinac.childAdaptors("accSeq");
 		
@@ -106,7 +106,7 @@ public class Parser {
 					List<String> currentValueList = new ArrayList<>(Arrays.asList(primSeqID, secSeqID, ttfValue, ttfpValue, stfValue, stfpValue, frequency, betaMin, betaMax, null, null, null, null));
 
 					dataTree.addListToTree(gapName, currentValueList);
-					iii++;
+//					iii++;
 					
 				
 				}
@@ -150,7 +150,7 @@ public class Parser {
 		
 		Tools tools = new Tools();
 		
-		int ii = 0;
+//		int ii = 0;
 		
 		// go through all the keys and values in the datatree
 		Set<Entry<String, List<String>>> entrySet = thisDatTree.getEntrySet();
@@ -211,7 +211,7 @@ public class Parser {
 
 							addKeyToMap(localGapName, fileGap);
 							done = true;
-							ii++;
+//							ii++;
 							
 						}
 					}

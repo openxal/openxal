@@ -8,7 +8,6 @@
  */
 package xal.app.ttffactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
