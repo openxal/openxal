@@ -1,3 +1,5 @@
+#!/usr/bin/env jython
+
 #------------------------------------------------
 # This script will read the input files with profiles for
 # HEBT1 WS 01,02,03,04,09 and calculate the phase density 

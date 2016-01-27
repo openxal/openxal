@@ -1,3 +1,5 @@
+#!/usr/bin/env jython
+
 from javax.swing import *
 from java.io import *
 from xal.extension.widgets.plot import *
