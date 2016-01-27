@@ -283,25 +283,25 @@ private Plot pl;
     }
 
 
-public double f(double x, double xp){
+    public double f(double x, double xp){
 
-    double p = 1;
-    for(int n = 0; n < pr_size; n++)
-    {
-    Profile prn = profiles.get(n);
-    p *= h(n, x*prn.a + xp*prn.b);
+        double p = 1;
+        for(int n = 0; n < pr_size; n++)
+        {
+            Profile prn = profiles.get(n);
+            p *= h(n, x*prn.a + xp*prn.b);
+
+        }
+
+        return p;
 
     }
 
-return p;
-
-}
 
 
 
+    private double functional(){
 
-private double functional(){
-    
         func = 0;
 
         for(int m = 0; m < pr_size; m++)    {
@@ -312,45 +312,55 @@ private double functional(){
 
             for(int i = 0; i < nx + 1; i++)    {
 
-             double dif = profile(prm, xh[m*(nx + 1) + i]) - integral_h(xh[m*(nx + 1) + i], prm.a, prm.b, prm.c, prm.d, Jm);
-             func += dif*dif*(1.0 + 10*Math.abs(2.0*i/nx - 1.0));
-        }
+                double dif = profile(prm, xh[m*(nx + 1) + i]) - integral_h(xh[m*(nx + 1) + i], prm.a, prm.b, prm.c, prm.d, Jm);
+                func += dif*dif*(1.0 + 10*Math.abs(2.0*i/nx - 1.0));
+            }
 
         }
 
         return func;
-    
-}
 
-    class opt0 extends Objective{public opt0(){}
+    }
 
-    public double f(double [] args){
+//  class opt0 extends Objective {      // CKA - Jan 27, 2017
+    class opt0 implements Simplex.Objective{
+
+        public opt0(){}
+
+        public double f(double [] args){
 
 
-    for (int m = 0; m < pr_size; m++)   {
-        Profile  prm = profiles.get(m);
-    for (int i = 0; i < nx + 1; i++)
-        hx[m*(nx + 1) + i] = profile(prm, xh[m*(nx + 1) + i])*args[0];
+            for (int m = 0; m < pr_size; m++)   {
+                Profile  prm = profiles.get(m);
+                for (int i = 0; i < nx + 1; i++)
+                    hx[m*(nx + 1) + i] = profile(prm, xh[m*(nx + 1) + i])*args[0];
+            }
+
+            double fun = functional();
+            System.out.println(fun);
+
+            return fun;
+
+        }
+    }
+
+
+//    class opt1 extends Objective {        // CKA - Jan 27, 2017
+    class opt1 implements Simplex.Objective{
+        public opt1(){
+
         }
 
-        double fun = functional();
-        System.out.println(fun);
+        public double f(double [] args){
 
-        return fun;
+            hx[opt_h] = args[0];
 
-    }}
+            return functional();
 
-    
-    class opt1 extends Objective{public opt1(){}
+        }
+    }
 
-    public double f(double [] args){
-
-        hx[opt_h] = args[0];
-
-        return functional();
-
-    }}
-/*
+    /*
     class opt2 extends Objective{public opt2(){}
 
         public double f(double [] args){
@@ -377,92 +387,92 @@ private double functional(){
 
 
     public void calculate2(){
-        
+
 
         //hx = new double [pr_size*(nx + 1)];
         double [] dhx = new double [pr_size*(nx + 1)];
-        
+
         for (int i = 0; i < pr_size*(nx + 1); i++) 
             dhx[i] = hx[i]*0.01;
 
-            
+
         Simplex s = new Simplex(new opt2(), hx, dhx);
         s.minimize(1e-8, 100000000, 0);
 
     }
-*/
+     */
 
 
     public void preliminary(){
 
-    Simplex s = new Simplex(new opt0(), new double [] {10.0}, new double [] {1.0});
-    s.minimize(1.0, 300, 0);
+        Simplex s = new Simplex(new opt0(), new double [] {10.0}, new double [] {1.0});
+        s.minimize(1.0, 300, 0);
 
     }
 
     public void rough(int iter){
-        
+
 
         for(int k = 0; k < iter; k++) {
 
 
-        for (int m = 0; m < pr_size; m++){
-        Profile  prm = profiles.get(m);
-        double Jm = prm.a*prm.d - prm.b*prm.c;
+            for (int m = 0; m < pr_size; m++){
+                Profile  prm = profiles.get(m);
+                double Jm = prm.a*prm.d - prm.b*prm.c;
 
-            for (int i = 1; i < nx; i++){
+                for (int i = 1; i < nx; i++){
 
-                double inte = integral_m_h(m, xh[m*(nx + 1) + i], prm.a, prm.b, prm.c, prm.d, Jm);                
+                    double inte = integral_m_h(m, xh[m*(nx + 1) + i], prm.a, prm.b, prm.c, prm.d, Jm);                
 
-                if(Math.abs(inte) < 1.0e-10) {hx[m*(nx + 1) + i] = 0;}
-                else{hx[m*(nx + 1) + i] = profile(prm, xh[m*(nx + 1) + i])/inte;}
+                    if(Math.abs(inte) < 1.0e-10) {hx[m*(nx + 1) + i] = 0;}
+                    else{hx[m*(nx + 1) + i] = profile(prm, xh[m*(nx + 1) + i])/inte;}
 
+                }
             }
-            }
-        
-        System.out.print(k + 1); System.out.print("\t"); System.out.println(functional());
-        
 
-        
+            System.out.print(k + 1); System.out.print("\t"); System.out.println(functional());
+
+
+
 
         }
     }
 
     public void fine(int i2){
 
-    for(int k = 0; k < i2; k ++) {
-        for (int m = 0; m < pr_size; m++)
-        for (int i = 1; i < nx; i++){
+        for(int k = 0; k < i2; k ++) {
+            for (int m = 0; m < pr_size; m++)
+                for (int i = 1; i < nx; i++){
 
-            opt_h = m*(nx + 1) + i;
+                    opt_h = m*(nx + 1) + i;
 
-            if (hx[opt_h] != 0 ) {
-                
-            double temp_func = func;
-            double temp_h = hx[opt_h];
+                    if (hx[opt_h] != 0 ) {
 
-            Simplex s = new Simplex(new opt1(), new double [] {hx[opt_h]}, new double [] {hx[opt_h]*0.01});
-            s.minimize(1e-6, 1000, 0);
+                        double temp_func = func;
+                        double temp_h = hx[opt_h];
 
-            if (func > temp_func || hx[opt_h] <= 0) { hx[opt_h] = temp_h;}
+                        Simplex s = new Simplex(new opt1(), new double [] {hx[opt_h]}, new double [] {hx[opt_h]*0.01});
+                        s.minimize(1e-6, 1000, 0);
 
-            }
+                        if (func > temp_func || hx[opt_h] <= 0) { hx[opt_h] = temp_h;}
+
+                    }
 
 
-            pl.jFrame1.setTitle(Integer.toString(opt_h) +"\t" + Double.toString(functional()));
+                    pl.jFrame1.setTitle(Integer.toString(opt_h) +"\t" + Double.toString(functional()));
+
+                }
+
+            monitor();
+            System.out.print(k + 1); System.out.print("\t"); System.out.println(functional());
 
         }
-        
-        monitor();
-        System.out.print(k + 1); System.out.print("\t"); System.out.println(functional());
 
-        }
 
-            
 
-  }
+    }
 
-   
+
     private void monitor(){
 
         pl.plotHfunction();
@@ -473,15 +483,15 @@ private double functional(){
 
 
 
-        public void calculate(int i1){
+    public void calculate(int i1){
 
 
         initArrays();
-        
+
         preliminary();
 
         rough(i1);
-        
+
         monitor();
 
         fine(1000000);

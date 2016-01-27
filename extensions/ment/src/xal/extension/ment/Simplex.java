@@ -52,6 +52,23 @@ package xal.extension.ment;
 
 public class Simplex{
 
+    /** the name of the objective */
+//    abstract class Objective {        // CKA - Jan 27, 2017
+    public interface Objective {
+
+//        public Objective( ) {         // CKA - Jan 27, 2017
+//
+//        }
+
+        /**
+         * Determines how satisfied the user is with the specified value for this objective.
+         *
+         * @param value  The value associated with this objective for a particular trial
+         * @return       the user satisfaction for the specified value
+         */
+        public abstract double f(double [] value);
+    }
+
         private int kR = -1;
         private int kE = 2;
         private double kC = 0.5;
@@ -363,27 +380,6 @@ public class Simplex{
         }
 
         }
-
-
-
-
 }
 
-
-abstract class Objective {
-	/** the name of the objective */
-
-	public Objective( ) {
-
-	}
-
-        public abstract double f(double [] value);
-	/**
-	 * Determines how satisfied the user is with the specified value for this objective.
-	 *
-	 * @param value  The value associated with this objective for a particular trial
-	 * @return       the user satisfaction for the specified value
-	 */
-
-}
 
