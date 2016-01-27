@@ -1,7 +1,7 @@
 from javax.swing import *
 from java.io import *
-from gov.sns.tools.plot import *
-from gov.sns.tools.ment import *
+from xal.extension.widgets.plot import *
+from xal.extension.ment import *
 import sys, os
 
 ##////////////////////////////////////////process data and initiate ment//////////////////////////////
