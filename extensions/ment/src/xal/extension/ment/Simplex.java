@@ -50,7 +50,7 @@ depending on the initial guess used as a starting point.
 package xal.extension.ment;
 
 
-public class Simplex{
+class Simplex{
 
     /** the name of the objective */
 //    abstract class Objective {        // CKA - Jan 27, 2017
