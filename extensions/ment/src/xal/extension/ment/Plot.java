@@ -23,7 +23,7 @@ import xal.extension.widgets.plot.FunctionGraphsJPanel;
  *
  * @author tg4
  */
-public class Plot {
+class Plot {
 
     private Ment m;
     private FunctionGraphsJPanel grpan;
