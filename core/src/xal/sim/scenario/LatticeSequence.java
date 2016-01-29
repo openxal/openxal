@@ -948,8 +948,24 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         }
 
         // If we have a thick element left over we add it to the list of lattice elements.
-        if (lemLastThick != null)
-            addSplitElementTo(lstSplitElems, lemLastThick);          
+        if (lemLastThick != null) {
+        	if (lemLastThick instanceof LatticeSequence) {
+                // Down cast it to its true type
+                LatticeSequence lsqLast = (LatticeSequence)lemLastThick;
+
+                // Recursively split up the elements of the child sequence then add it 
+                //  to the list of split elements. Null out the last thick element.
+                lsqLast.splitSequenceElements();
+                lstSplitElems.add(lsqLast);
+                lemLastThick = null;
+            // 2) The current element lives outside the last thick element.
+            } else  {
+                // If so then add the last thick element to the list of split element and 
+                //  zero out the last thick element reference.
+                this.addSplitElementTo(lstSplitElems, lemLastThick);
+                lemLastThick = null;
+            }
+        }
 
         // Replace our list of unsplit lattice elements with the new list of split ones.
         this.lstLatElems = lstSplitElems;
