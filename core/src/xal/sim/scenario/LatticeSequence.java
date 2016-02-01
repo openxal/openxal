@@ -550,7 +550,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
         Accelerator     smfAccel   = smfSeqRoot.getAccelerator();
         
-        String  strComment = "Accelerator ID:" + smfAccel.getId() + ", "; 
+        String  strComment = "";
+        if (smfAccel != null) strComment += "Accelerator ID:" + smfAccel.getId() + ", "; 
         strComment += "Sequence ID: " + smfSeqRoot.getId() + ", ";
         strComment += "Date: " + Calendar.getInstance().getTime() + ", ";
         strComment += "Version soft type: " + smfSeqRoot.getSoftType() + ", ";
