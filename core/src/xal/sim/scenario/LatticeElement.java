@@ -129,18 +129,16 @@ public class LatticeElement implements Comparable<LatticeElement> {
     /** axial position of the modeling element exit */
 	private double dblElemExitPos;
 	
+
 	
 	//
 	// State Variables
 	//
-	
-    /** I don't know */
-	/** part number of the lattice element used in the representation of a hardware node */
-    private int     partnr = 0;
-    
-    /** The number of lattice elements used to represent the associated hardware node */
-    private int     parts = 1;  
-    
+
+	private IComponent component;
+	private LatticeElement firstSlice;
+	private LatticeElement nextSlice;
+
 	
 	/*
 	 * Initialization
@@ -193,6 +191,8 @@ public class LatticeElement implements Comparable<LatticeElement> {
 			dblElemEntrPos = dblPosCtr - 0.5*this.dblElemLen;
 			dblElemExitPos = dblElemEntrPos + this.dblElemLen;
 		}
+		
+		firstSlice = this;
 	}
 
 	/**
@@ -378,40 +378,6 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	}
 
     /**
-     * <p>
-     * I think it returns the current number of modeling elements used to represent the 
-     * associated hardware node. If so the method name <code>getNumberOfParts()</code>
-     * might be appropriate.
-     * </p>  
-     * <p>
-     * Note that this number doubles every time that <code>{@link #splitElementAt(LatticeElement)}</code>
-     * is called. You would think it increases by one given the explanation I provided??
-     * </p>
-     * 
-     * @return     I think it is the number modeling elements that map back to the associate hardware node,
-     *             but I am not sure.  
-     *
-     * @since  Dec 4, 2014
-     */
-    public int getParts() {
-        return parts;
-    }
-    
-    /**
-     * I don't know.  I think it is the part number (e.g., serial number) of a
-     * multi-lattice element representation of single hardware node.  In such a
-     * case the method name <code>getPartNumber()</code> might be appropriate.
-     * 
-     * @return      the part number of this lattice element for a multi-element 
-     *              hardware representation ??
-     *
-     * @since  Dec 4, 2014
-     */
-    public int getPartNr() {
-        return partnr;
-    }
-
-    /**
      * Determines whether or not the hardware accelerator node will be represented with a
      * thin modeling element.  Looks at both the <em>effective length</em>
      * of the hardware node  and the class type of the modeling element used to 
@@ -463,7 +429,6 @@ public class LatticeElement implements Comparable<LatticeElement> {
         else
             return false;
     }
-
     
     /*
      * Operations
@@ -512,12 +477,13 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 */
 	public LatticeElement splitElementAt(final LatticeElement elemSplitPos) {
 		if (elemSplitPos.dblElemCntrPos == dblElemEntrPos || elemSplitPos.dblElemCntrPos == dblElemExitPos) return null;
-		parts *= 2;
-		partnr *= 2;
 		LatticeElement secondPart = new LatticeElement(smfNode, elemSplitPos.dblElemCntrPos, dblElemExitPos, clsModElemType, indNodeOrigPos);
 		dblElemExitPos = elemSplitPos.dblElemCntrPos;
-		secondPart.parts = parts;
-		secondPart.partnr = partnr + 1;		
+		
+		secondPart.firstSlice = firstSlice;
+		secondPart.nextSlice = nextSlice;
+		nextSlice = secondPart;
+		
 		return secondPart;
 	}
 
@@ -553,15 +519,17 @@ public class LatticeElement implements Comparable<LatticeElement> {
 //	        mdlMarker.initializeFrom(this);
 //	        return mdlMarker;
 //	    }
-	    
-		try {
-			IComponent component = clsModElemType.newInstance();		
-			component.initializeFrom(this);
-			
-			return component;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new ModelException("Exception while instantiating class "+clsModElemType.getName()+" for node "+smfNode.getId(), e);
+	    if (component == null) {
+			try {
+				component = clsModElemType.newInstance();		
+				component.initializeFrom(this);
+				
+				return component;
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new ModelException("Exception while instantiating class "+clsModElemType.getName()+" for node "+smfNode.getId(), e);
+			}		
 		}
+		return component;
 	}
 
 	
@@ -616,5 +584,23 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		            ", l= " + getLength();
 		
 		return strDescr;
+	}
+	
+	
+	public LatticeElement getFirstSlice() {
+		return firstSlice;
+	}
+	
+	public LatticeElement getNextSlice() {
+		return nextSlice;
+	}
+	
+	
+	public boolean isFirstSlice() {
+		return firstSlice == this;
+	}
+	
+	public boolean isLastSlice() {
+		return nextSlice == null; 
 	}
 }

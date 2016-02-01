@@ -1275,7 +1275,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     private void addSplitElementTo(List<LatticeElement> lstSplitElems, LatticeElement latElemAddend) {
         
-        if (latElemAddend.getLength() > EPS || latElemAddend.getParts() <= 1) 
+        if (latElemAddend.getLength() > EPS || (latElemAddend.isFirstSlice() && latElemAddend.isLastSlice()))
             lstSplitElems.add(latElemAddend);
     }
     
