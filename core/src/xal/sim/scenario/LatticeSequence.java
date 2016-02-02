@@ -140,7 +140,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         if (smfSeqRoot instanceof RfCavity) {
             RfCavity    seqRfCav = (RfCavity)smfSeqRoot;
             
-            this.dblCavFreq = seqRfCav.getCavFreq();
+            this.dblCavFreq = seqRfCav.getCavFreq() * 1e6;
             this.dblCavMode = seqRfCav.getStructureMode();
         } else {
             
@@ -192,7 +192,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         if (smfSeqChild instanceof RfCavity) {
             RfCavity    seqRfCav = (RfCavity)smfSeqChild;
 
-            this.dblCavFreq = seqRfCav.getCavFreq();
+            this.dblCavFreq = seqRfCav.getCavFreq() * 1e6;
             this.dblCavMode = seqRfCav.getStructureMode();
         } else {
 
