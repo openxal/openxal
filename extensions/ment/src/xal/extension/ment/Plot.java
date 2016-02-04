@@ -28,8 +28,8 @@ class Plot {
     private Ment m;
     private FunctionGraphsJPanel grpan;
     private FunctionGraphsJPanel prof;
-    public JFrame jFrame1;
-    private JFrame jFrame2;
+    public JFrame jFrame1;      // CKA: accessed externally
+    private JFrame jFrame2;     // CKA: (not accessed externally)
 
     public Plot(Ment _m){
         
