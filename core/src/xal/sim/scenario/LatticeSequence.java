@@ -20,7 +20,6 @@ import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.elem.IdealRfGap;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
@@ -513,10 +512,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  If two thick elements intersect then we bail out with a ModelException
         this.splitSequenceElements();
         
-        // Search the sequence for all the artificial element that do not have hardware
-        //  counterparts and remove them before the modeling elements are created.
-        this.removeArtificialElements();
-        
         // Create the modeling element representing this lattice sequence.
         //  Recall that this lattice sequence must be a top-level sequence
         //  since users do not have access to the sub-lattice constructor
@@ -701,13 +696,9 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
             // Translate all the non-artificial element along the sequence axis
             for (LatticeElement lem : this) { 
-                
-                // If no artificial has central coordinates, so skip them
-                if (!lem.isArtificial())
-                    lem.axialTranslation(dblOffset);
-
+                lem.axialTranslation(dblOffset);
             }
-                
+            
             axialTranslation(-dblOffset);
             
             this.bolCtrOrigin = false;
@@ -728,10 +719,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // Now lets try to fix this. If we fail, some thick element will cover another.
             // Translate all the non-artificial element along the sequence axis
             for (LatticeElement lem : this) { 
-                
-                // If no artificial has central coordinates, so skip them
-                if (!lem.isArtificial())
-                    lem.axialTranslation(-dblBeginSeqChild);                
+                lem.axialTranslation(-dblBeginSeqChild);                
             }
             axialTranslation(dblBeginSeqChild);
             dblElemExitPos = dblElemEntrPos + (dblEndSeqChild - dblBeginSeqChild); 
@@ -968,31 +956,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     }
     
     /**
-     *  Removes all the artificial lattice elements in this sequence.  These are the
-     *  lattice elements without a hardware association and were used only in the
-     *  lattice generation process.
-     *
-     * @since  Jan 30, 2015   by Christopher K. Allen
-     */
-    private void removeArtificialElements() {
-        
-        // Identify and collect all my direct childtren that are 
-        //  artificial elements.
-        List<LatticeElement>    lstElemsToRemove = new LinkedList<>();
-        
-        for (LatticeElement lem : this) 
-            if (lem.isArtificial())
-                lstElemsToRemove.add(lem);
-        
-        // Remove all the artificial element children 
-        this.removeAllLatticeElements(lstElemsToRemove);
-        
-        // Recursively remove all the artificial elements in my subsequences
-        for (LatticeSequence lsq : this.lstSubSeqs)
-            lsq.removeArtificialElements();
-    }
-
-    /**
      * <p>Visits each element and invokes conversion on it, using element mapper on it.</p>
      * <p>Hooks synchronization manager to each element.</p>
      * <p>Adds drifts between the elements.</p>
@@ -1197,18 +1160,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             lem.getEndPosition() < 0
             )
             this.bolCtrOrigin = true;
-    }
-    
-    /**
-     * Removes the given <code>LatticeElement</code> from the list of such elements
-     * in this sequence.
-     * 
-     * @param lem
-     *
-     * @since  Jan 28, 2015   by Christopher K. Allen
-     */
-    private void removeLatticeElement(LatticeElement lem) {
-        this.lstLatElems.remove(lem);
     }
     
     /**

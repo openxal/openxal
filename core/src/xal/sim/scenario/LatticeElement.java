@@ -57,35 +57,6 @@ import xal.smf.impl.Magnet;
  * @version  Sep 5, 2014
  */
 public class LatticeElement implements Comparable<LatticeElement> {
-	
-    
-    /*
-     * Global Methods
-     */
-    
-    /**
-     * Creates marker elements that should be used solely by
-     * the lattice generator (i.e., <code>LatticeSequence</code>).  There is no
-     * corresponding SMF hardware node associated to the returned element. 
-     * Since there is no associated hardware the returned element is considered 
-     * <i>artificial</i> returning <code>true</code> when 
-     * <code>{@link #isArtificial()}</code> is called.
-     *
-     * @param strName      the name identifier of the marker
-     * @param dblPos       the position of the marker in its sequence
-     * @param indSeqPos    the index of the marker element within the sequence 
-     *
-     * @return  a <i>artificial</i> lattice element representing a lattice creation marker
-     *
-     * @since  Jan 30, 2015   by Christopher K. Allen
-     */
-    public static LatticeElement    createMarker(String strName, double dblPos, int indSeqPos) {
-    
-        LatticeElement  lemMarker = new LatticeElement(strName, dblPos, indSeqPos);
-        
-        return lemMarker;
-    }
-
     /*
      * Local Attributes
      */
@@ -223,35 +194,6 @@ public class LatticeElement implements Comparable<LatticeElement> {
 		this.indNodeOrigPos = originalPosition;
 	}
 	
-	/**
-	 * Private constructor for making marker elements to be used solely by
-	 * the lattice generator (i.e., <code>LatticeSequence</code>).  This method
-	 * is called by the static method <code>createMarker()</code>.  Since there
-	 * is no associated hardware represented by this element it is considered 
-	 * <i>artificial</i> returning <code>true</code> when 
-	 * <code>{@link #isArtificial()}</code> is called.
-	 *
-	 * @param strName      the name identifier of the marker
-	 * @param dblPos       the position of the marker in its sequence
-	 * @param indSeqPos    the index of the marker element within the sequence 
-	 *
-	 * @since  Jan 30, 2015   by Christopher K. Allen
-	 */
-	private LatticeElement(String strName, double dblPos, int indSeqPos) {
-        this.strElemId = strName;
-        this.smfNode = null; 
-        this.clsModElemType = null;
-        
-        this.bolArtificalElem = true;
-                
-        this.dblElemCntrPos = dblPos;
-        this.dblElemEntrPos = dblPos;
-        this.dblElemExitPos = dblPos;
-        this.dblElemLen = 0.0;
-        
-        this.indNodeOrigPos = indSeqPos;
-	}
-
 	
 	/**
 	 * Sets the (optional) string identifier for the modeling element that
@@ -509,16 +451,6 @@ public class LatticeElement implements Comparable<LatticeElement> {
 	 * @since  Dec 4, 2014
 	 */
 	public IComponent createModelingElement() throws ModelException {
-	    
-	    // If I am an artificial I have no modeling element 
-	    if (this.isArtificial()) 
-            throw new ModelException("Tried to create a modeling element for an artificial lattice element " + this.strElemId);
-//	    {
-//	        IComponent mdlMarker = new xal.model.elem.Marker();
-//	        
-//	        mdlMarker.initializeFrom(this);
-//	        return mdlMarker;
-//	    }
 	    if (component == null) {
 			try {
 				component = clsModElemType.newInstance();		
