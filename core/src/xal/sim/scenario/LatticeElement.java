@@ -121,13 +121,13 @@ public class LatticeElement implements Comparable<LatticeElement> {
     private double dblElemLen;
     
     /** center position of the modeling element within its parent sequence */
-	private double dblElemCntrPos;
+	protected double dblElemCntrPos;
 	
 	/** axial position of the modeling element entrance */
-	private double dblElemEntrPos; 
+	protected double dblElemEntrPos; 
 	
     /** axial position of the modeling element exit */
-	private double dblElemExitPos;
+	protected double dblElemExitPos;
 	
 
 	

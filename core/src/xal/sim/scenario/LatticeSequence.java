@@ -608,22 +608,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 //        LatticeSequence latSeqParent = new LatticeSequence(smfSeqParent, dblSeqPos, clsSeqTyp, 0);
         
         
-        // This is pretty klugey: (See below for the complement action) 
-        //  We are creating a nonexistent marker hardware object,
-        //  then creating a lattice element association, so that we may 
-        //  ensure the drift space from the beginning of the sequence to the first 
-        //  hardware node is modeled correctly.  There must be a better way??
-        //  I have added an "artificial node" property to LatticeElement - can remove them
-        //  after lattice creation
-        String                      strSeqId   = smfSeqRoot.getId();
-//        AcceleratorNode             smfMrkrBeg = new Marker( "BEGIN_" + strSeqId );
-//        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToMdl.getDefaultElementType();
-//        LatticeElement              latElemBeg = new LatticeElement(smfMrkrBeg, 0, clsMrkrTyp, indPosition++);
-
-        LatticeElement  latElemBeg = LatticeElement.createMarker("BEGIN_" + strSeqId, 0.0, indSeqPosition);
-        indSeqPosition++;
-        
-        this.addLatticeElement(latElemBeg);
 
         
         // Now we generate lattice association objects for every hardware node 
@@ -694,19 +678,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             }
         }
         
-        // This is pretty klugey, but c'est la vie. We are creating a nonexistent marker
-        //  hardware object, then creating a lattice element association, so that we may 
-        //  ensure the drift space from the last element to the end of the sequence is modeled
-        //  correctly.  There must be a better way??
-//        AcceleratorNode             smfEndMrkr = new Marker( "END_" + strSeqId );
-//        LatticeElement              latEndElem = new LatticeElement(smfEndMrkr, dblLenSeq, clsMrkrTyp, indSeqPosition++);
-        
-        LatticeElement latElemEnd = LatticeElement.createMarker("END_" + strSeqId, dblLenSeq, indSeqPosition);
 
-        this.addLatticeElement(latElemEnd);
-        
-//      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
-//              mapNodeToModCls.getDefaultConverter(), originalPosition++));
     }
     
     /**
@@ -717,7 +689,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Jan 29, 2015   by Christopher K. Allen
      */
     private void enforceAxisOrigin() {
-        
+        // First recursively translate all elements of all subsequences
+        for (LatticeSequence lsq : this.lstSubSeqs) 
+            lsq.enforceAxisOrigin();
+
         // Check if the origin is at the sequence center and if so move it to the entrance
         if (this.isAxisOriginCentered()) {
 
@@ -738,10 +713,30 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             this.bolCtrOrigin = false;
         }
         
-        // We must recursively translate all elements of all subsequences as well
-        for (LatticeSequence lsq : this.lstSubSeqs) 
-            lsq.enforceAxisOrigin();
-
+        // Following code checks that the subsequence lattice elements are within the limits.
+        // If they weren't the length of the lattice magically grows!
+        double dblBeginSeqChild = Double.POSITIVE_INFINITY, dblEndSeqChild = Double.NEGATIVE_INFINITY;
+        for (LatticeElement el : this) {
+            if (el.getStartPosition() < dblBeginSeqChild) dblBeginSeqChild = el.getStartPosition();
+            if (el.getEndPosition() > dblEndSeqChild) dblEndSeqChild = el.getEndPosition();
+        }        
+        if (dblBeginSeqChild < -EPS || dblEndSeqChild > getLength() + EPS) {
+            System.err.printf("Error: Elements do not fit sequence %s (element positions: [%f,%f], sequence position [0,%f])!\n", 
+                    getHardwareNode().getId(), dblBeginSeqChild, dblEndSeqChild, getLength());
+            
+            
+            // Now lets try to fix this. If we fail, some thick element will cover another.
+            // Translate all the non-artificial element along the sequence axis
+            for (LatticeElement lem : this) { 
+                
+                // If no artificial has central coordinates, so skip them
+                if (!lem.isArtificial())
+                    lem.axialTranslation(-dblBeginSeqChild);                
+            }
+            axialTranslation(dblBeginSeqChild);
+            dblElemExitPos = dblElemEntrPos + (dblEndSeqChild - dblBeginSeqChild); 
+            dblElemCntrPos = dblElemExitPos - dblElemEntrPos;
+        }
     }
 
 
