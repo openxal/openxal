@@ -14,7 +14,10 @@ Open XAL is designed to be a flexible application framework for developing accel
 - EPICS Channel Access support
 - Ant based build system independent of IDE
 
+## Build Results
+
 Open XAL Master: ![Open XAL Master Build Test](https://travis-ci.org/openxal/openxal.svg)
+
 ESS Master: ![ESS Build Test](https://gitlab01.esss.lu.se/ci/projects/2/status.png?ref=master)
 
 
