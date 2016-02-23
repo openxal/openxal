@@ -1,177 +1,177 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE xdxf SYSTEM "xdxf.dtd">
-<xdxf date="02.04.2014" system="sns" ver="2.0.0">
+<xdxf date="02.23.2016" system="sns" ver="2.0.0">
     <sequence id="RTBT1">
         <node id="Ring_Mag:QTH_C10">
             <attributes>
-                <magnet dfltMagFld="3.614218755045485"/>
+                <magnet dfltMagFld="3.648726110803155"/>
             </attributes>
         </node>
         <node id="Ring_Mag:QTV_C11">
             <attributes>
-                <magnet dfltMagFld="-3.9503736187097043"/>
+                <magnet dfltMagFld="-3.988090469037657"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV01">
             <attributes>
-                <magnet dfltMagFld="-3.247530007735837"/>
+                <magnet dfltMagFld="-3.2785363415816255"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH02">
             <attributes>
-                <magnet dfltMagFld="3.215860832128484"/>
+                <magnet dfltMagFld="3.2465647992435067"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV03">
             <attributes>
-                <magnet dfltMagFld="-3.0834260977704626"/>
+                <magnet dfltMagFld="-3.1128656221931923"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH04">
             <attributes>
-                <magnet dfltMagFld="3.4039565417963993"/>
+                <magnet dfltMagFld="3.436456384039606"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV05">
             <attributes>
-                <magnet dfltMagFld="-4.495831023634907"/>
+                <magnet dfltMagFld="-4.5387557194194015"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH06">
             <attributes>
-                <magnet dfltMagFld="4.706050051644529"/>
+                <magnet dfltMagFld="4.750981848625217"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV07">
             <attributes>
-                <magnet dfltMagFld="-4.495831023634907"/>
+                <magnet dfltMagFld="-4.5387557194194015"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH08">
             <attributes>
-                <magnet dfltMagFld="4.706050051644529"/>
+                <magnet dfltMagFld="4.750981848625217"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV09">
             <attributes>
-                <magnet dfltMagFld="-4.495831023634907"/>
+                <magnet dfltMagFld="-4.5387557194194015"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH10">
             <attributes>
-                <magnet dfltMagFld="4.706050051644529"/>
+                <magnet dfltMagFld="4.750981848625217"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV11">
             <attributes>
-                <magnet dfltMagFld="-4.495831023634907"/>
+                <magnet dfltMagFld="-4.5387557194194015"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH12">
             <attributes>
-                <magnet dfltMagFld="3.4189754084101893"/>
+                <magnet dfltMagFld="3.4516186457848046"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV13">
             <attributes>
-                <magnet dfltMagFld="-2.985539554984099"/>
+                <magnet dfltMagFld="-3.0140444913299165"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:ExSptm">
             <attributes>
-                <magnet dfltMagFld="-0.641880447929712"/>
+                <magnet dfltMagFld="-0.6480089084551526"/>
             </attributes>
         </node>
     </sequence>
     <sequence id="RTBT2">
         <node id="RTBT_Mag:QH14">
             <attributes>
-                <magnet dfltMagFld="2.301293427467653"/>
+                <magnet dfltMagFld="2.3232654099032914"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV15">
             <attributes>
-                <magnet dfltMagFld="-2.2120439325742036"/>
+                <magnet dfltMagFld="-2.2331637905867754"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH16">
             <attributes>
-                <magnet dfltMagFld="1.9260616801199248"/>
+                <magnet dfltMagFld="1.9444510749274004"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV17">
             <attributes>
-                <magnet dfltMagFld="-2.3587221185796294"/>
+                <magnet dfltMagFld="-2.3812424110123125"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH18">
             <attributes>
-                <magnet dfltMagFld="2.1627129536978287"/>
+                <magnet dfltMagFld="2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV19">
             <attributes>
-                <magnet dfltMagFld="-2.1627129536978287"/>
+                <magnet dfltMagFld="-2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH20">
             <attributes>
-                <magnet dfltMagFld="2.1627129536978287"/>
+                <magnet dfltMagFld="2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV21">
             <attributes>
-                <magnet dfltMagFld="-2.1627129536978287"/>
+                <magnet dfltMagFld="-2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH22">
             <attributes>
-                <magnet dfltMagFld="2.1627129536978287"/>
+                <magnet dfltMagFld="2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV23">
             <attributes>
-                <magnet dfltMagFld="-2.1627129536978287"/>
+                <magnet dfltMagFld="-2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH24">
             <attributes>
-                <magnet dfltMagFld="2.1627129536978287"/>
+                <magnet dfltMagFld="2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV25">
             <attributes>
-                <magnet dfltMagFld="-2.1627129536978287"/>
+                <magnet dfltMagFld="-2.1833618159701493"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH26">
             <attributes>
-                <magnet dfltMagFld="2.879974676620934"/>
+                <magnet dfltMagFld="2.9074717147015714"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV27">
             <attributes>
-                <magnet dfltMagFld="-1.5774771448658138"/>
+                <magnet dfltMagFld="-1.5925383707424952"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH28">
             <attributes>
-                <magnet dfltMagFld="1.7809563965029975"/>
+                <magnet dfltMagFld="1.7979603744379893"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QV29">
             <attributes>
-                <magnet dfltMagFld="-1.403003019397013"/>
+                <magnet dfltMagFld="-1.4163984244902528"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:QH30">
             <attributes>
-                <magnet dfltMagFld="1.0204739262517604"/>
+                <magnet dfltMagFld="1.030217071091966"/>
             </attributes>
         </node>
         <node id="RTBT_Mag:DH13">
             <attributes>
-                <magnet dfltMagFld="-0.6419956085682843"/>
+                <magnet dfltMagFld="-0.6481251686091094"/>
             </attributes>
         </node>
     </sequence>
