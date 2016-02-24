@@ -130,7 +130,7 @@ public class ScanData {
     return Integer.parseInt(parsedNo);
 
     }
-    }
+}
 
 
 

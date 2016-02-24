@@ -11,6 +11,20 @@ import java.util.Vector;
 //TODO: This code is in serious need of cleanup and documentation.
 
 /**
+ * <p>
+ * <h4>CKA NOTES</h4>
+ * <ul>
+ *   <li>Class <code>Ment</code> always creates a plot of type <code>Plot</code> and outputs to
+ *   the display.
+ *   <p style="margin-left:10px">
+ *     &middot; The instance of <code>Plot</code> writes back into the tomography object.
+ *     <br/>
+ *     &middot; Should not be hard to remove <code>Plot</code> object.  It's linked primarily to the 
+ *   {@link #monitor()} method.
+ *   </p>
+ *   <li> I tried to hide as many methods as possible, these are marked
+ * </ul>
+ * </p>
  *
  * @author T. Gorlov
  *
@@ -18,17 +32,17 @@ import java.util.Vector;
  */
 public class Ment{
 	public Vector<Profile> profiles;
-	public double xpmax;
-	public double xmax0;
-	public double xpmax0;
+	public double xpmax;       // CKA: Domain - accessed externally
+	public double xmax0;       // CKA: Domain - accessed externally
+	public double xpmax0;      // CKA: Domain - accessed externally
 	public int nx;
 	private int nxp;
-	public double [] xh;
+	public double [] xh;       // CKA: Solution - accessed externally 
 
 	private double dpx;
 	private double [] xp;
-	public double [] hx;
-	public int pr_size;
+	public double [] hx;       // CKA: Solution - accessed externally
+	public int pr_size;        // CKA: accessed externally
 	private int opt_h;
 	private double func;
 	private Plot pl;
@@ -197,7 +211,8 @@ public class Ment{
 	}
 
 
-	public double h(int n, double x)    {
+    private double h(int n, double x)    {
+//    public double h(int n, double x)    { // CKA: Jan 27, 2016
 		double coef = x - xh[n*(nx + 1) + 0];
 		if (coef < 0) return 0;
 
@@ -223,13 +238,14 @@ public class Ment{
 	}
 
 
-	public double check_h(int m, double x){
+	public double check_h(int m, double x){ // CKA: accessed by Plot only
 		Profile prm = profiles.get(m);
 		return integral_h(x, prm.a, prm.b, prm.c, prm.d, prm.a*prm.d - prm.b*prm.c);
 	}
 
 
-	public double integral_h(double x, double am, double bm, double cm, double dm, double Jm){
+    private double integral_h(double x, double am, double bm, double cm, double dm, double Jm){
+//    public double integral_h(double x, double am, double bm, double cm, double dm, double Jm){  // CKA: Jan 27, 2016
 		double integral = 0;
 
 		for (int j = 0; j < nxp + 0; j++){
@@ -249,7 +265,8 @@ public class Ment{
 	}
 
 
-	public double integral_m_h(int m, double x, double am, double bm, double cm, double dm, double Jm){
+    private double integral_m_h(int m, double x, double am, double bm, double cm, double dm, double Jm){
+//    public double integral_m_h(int m, double x, double am, double bm, double cm, double dm, double Jm){ // CKA: Jan 27, 2016
 
 		double integral = 0;
 
@@ -270,7 +287,7 @@ public class Ment{
 	}
 
 
-	public double f(double x, double xp) {
+	public double f(double x, double xp) { // CKA: accessed by Plot only
 		double p = 1;
 		for(int n = 0; n < pr_size; n++)
 		{
@@ -304,7 +321,8 @@ public class Ment{
 	}
 
 
-	class PreliminaryObjective implements Simplex.Objective {
+    private class PreliminaryObjective implements Simplex.Objective {    
+//	class PreliminaryObjective implements Simplex.Objective {    // CKA: Jan 27, 2016
 		public PreliminaryObjective() {}
 
 		public double f(double [] args){
@@ -322,7 +340,8 @@ public class Ment{
 	}
 
 
-	class FineObjective implements Simplex.Objective{
+    private class FineObjective implements Simplex.Objective{
+//	class FineObjective implements Simplex.Objective{    // CKA: Jan 27, 2016
 		public FineObjective() {}
 
 		public double f(double [] args){
@@ -332,12 +351,14 @@ public class Ment{
 	}
 
 
-	public void preliminary(){
+	private void preliminary(){    
+//    public void preliminary(){    // CKA: Jan 27, 2016
 		Simplex s = new Simplex(new PreliminaryObjective(), new double [] {10.0}, new double [] {1.0});
 		s.minimize(1.0, 300, 0);
 	}
 
-	public void rough(int iter){
+    private void rough(int iter){    
+//	public void rough(int iter){    // CKA: Jan 27, 2016
 		for(int k = 0; k < iter; k++) {
 			for (int m = 0; m < pr_size; m++){
 				Profile  prm = profiles.get(m);
@@ -359,7 +380,8 @@ public class Ment{
 		}
 	}
 
-	public void fine(int i2){
+	private void fine(int i2){
+//    public void fine(int i2){ // CKA: Jan 27, 2016
 
 		for(int k = 0; k < i2; k ++) {
 			for (int m = 0; m < pr_size; m++)
