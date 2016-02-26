@@ -215,7 +215,7 @@ public abstract class ThickElement extends Element {
 	 * @return is this the first subslice
 	 */
     protected boolean isFirstSubslice(double position) {
-    	return firstSlice && Math.abs(position - (getPosition() - getLength()/2.)) < 1e-6;
+    	return firstSlice && Math.abs(position - (getLatticePosition() - getLength()/2.)) < 1e-6;
     }
     
     
@@ -225,7 +225,7 @@ public abstract class ThickElement extends Element {
 	 * @return is this the last sub-slice
 	 */
     protected boolean isLastSubslice(double position) {
-    	return lastSlice && Math.abs(position - (getPosition() + getLength()/2.)) < 1e-6;
+    	return lastSlice && Math.abs(position - (getLatticePosition() + getLength()/2.)) < 1e-6;
     }
  
     /**
