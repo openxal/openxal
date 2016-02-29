@@ -21,6 +21,7 @@ import xal.model.IProbe;
 import xal.model.ModelException;
 import xal.model.elem.SectionEndpoint.SectionEnd;
 import xal.model.elem.SectionEndpoint.SectionStart;
+import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.LatticeElement;
 
 
@@ -465,15 +466,19 @@ public abstract class ElementSeq implements IComposite {
         setHardwareNodeId(strSmfId);
 //      setId(latticeElement.getNode().getId());
         
-        sectionStart = new SectionEndpoint.SectionStart();
-        sectionStart.setParent(this);
-        sectionStart.setId(getId()+"_SECTION_START");
-        sectionStart.initializeFrom(latticeElement);
+        if (latticeElement.isFirstSlice()) {
+	        sectionStart = new SectionEndpoint.SectionStart();
+	        sectionStart.setParent(this);
+	        sectionStart.setId(getId()+"_SECTION_START");
+	        sectionStart.initializeFrom(latticeElement);
+        }
     	
-    	sectionEnd = new SectionEndpoint.SectionEnd();
-    	sectionEnd.setParent(this);
-        sectionEnd.setId(getId()+"_SECTION_END");
-    	sectionEnd.initializeFrom(latticeElement);
+        if (latticeElement.isLastSlice()) {
+	    	sectionEnd = new SectionEndpoint.SectionEnd();
+	    	sectionEnd.setParent(this);
+	        sectionEnd.setId(getId()+"_SECTION_END");
+	    	sectionEnd.initializeFrom(latticeElement);
+        }
     }
     
     /**  
