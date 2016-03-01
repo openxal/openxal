@@ -18,6 +18,7 @@ from java.text import SimpleDateFormat
 from java.awt.event import WindowAdapter
 from java.beans import PropertyChangeListener
 from java.awt.event import ActionListener
+from javax.swing import JTable
 from javax.swing.event import TableModelEvent, TableModelListener, ListSelectionListener
 from javax.swing.table import AbstractTableModel, TableModel
 from javax.swing.filechooser import FileNameExtensionFilter
