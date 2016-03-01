@@ -764,14 +764,15 @@ class Write_Waveforms_to_ASCII_Listener(ActionListener):
 				y_fit = ws_scan_and_fit_record.gd_fit_wf.getValueY(x)
 				y_fit_arr.append(y_fit)
 		#----normalization
-		if(len(x_arr) > 0):
-			y_max = y_arr[0]
+		if(len(x_arr) > 1):
+			x_step = (x_arr[len(x_arr)-1] - x_arr[0])/(len(x_arr)-1)
+			sum_val = 0.
 			for ind in range(len(x_arr)):
-				if(y_max < y_arr[ind]): y_max = y_arr[ind]
-			if(y_max > 0.):
+				sum_val += math.fabs(y_arr[ind])*x_step
+			if(sum_val > 0.):
 				for ind in range(len(x_arr)):
-					y_arr[ind] /= y_max
-					y_fit_arr[ind] /= y_max
+					y_arr[ind] /= sum_val
+					y_fit_arr[ind] /= sum_val
 		#----dump into the ASCII file---------------------
 		fl_out_path = constants_lib.const_path_dict["LINAC_WIZARD_FILES_DIR_PATH"]
 		fl_name = fl_out_path+"/"+fl_name
