@@ -19,7 +19,7 @@ import java.util.Comparator;
  * @author Thomas Pelaia
  * @since  2/22/06
  */
-public class FormattedNumber extends Number {
+public class FormattedNumber extends Number implements Comparable<FormattedNumber> {
 
     /** Serialization version */
     private static final long serialVersionUID = 1L;
@@ -157,6 +157,12 @@ public class FormattedNumber extends Number {
 	@Override
     public String toString() {
 		return _format.format( _number );
+	}
+
+
+	/** compare this number with the specified other number */
+	public int compareTo(final FormattedNumber other) {
+		return DOUBLE_VALUE_COMPARATOR.compare( this, other );
 	}
 
 
