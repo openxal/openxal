@@ -52,14 +52,11 @@ public class FileWatcher implements DataListener {
 		MODEL = model;
 		
 		_folders =  new ArrayList<File>();
-
-		// preconfigure with the default executable directories relative to the current Launcher jar
-		preConfigure();
 	}
 	
 	
 	/** preconfigure when initializing without a document file */
-	private void preConfigure() {
+	public void preConfigure() {
 		try {
 			// set the watch folder to be the directory containing the jar file that launched this application
 			final URL jarURL = getClass().getProtectionDomain().getCodeSource().getLocation();
