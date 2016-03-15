@@ -73,9 +73,6 @@ public class TestParticleProbeTrajectory {
     /** Flag used for comparing the design and production trajectories (otherwise just compute design) */
     private static final boolean        BOL_COMPARE = false;
     
-    /** Toggle lattice generator debugging output */
-    private static final boolean        BOL_LATGEN_DEBUG = false;
-    
 
     /** Location of the design accelerator configuration */
     static final private String         STR_CFGFILE_DSGN = "/site/optics/design/main.xal";
@@ -255,8 +252,6 @@ public class TestParticleProbeTrajectory {
 
         SEQ_DSGN = ACCEL_DSGN.findSequence(STR_ID_TESTSEQ);
         SEQ_PROD = ACCEL_PROD.findSequence(STR_ID_TESTSEQ);
-        
-        Scenario.setDebugging(BOL_LATGEN_DEBUG);
         
         MOD_DSGN = Scenario.newScenarioFor(SEQ_DSGN);
         MOD_DSGN.setSynchronizationMode(Scenario.SYNC_MODE_DESIGN);
