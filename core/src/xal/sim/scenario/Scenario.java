@@ -53,31 +53,11 @@ public class Scenario {
 
     /** Synchronization manager constant for synchronization only to live magnet values */
     public static final String SYNC_MODE_RF_DESIGN = "RF_DESIGN";
-	
-    
-    /*
-     * Global Variables
-     */
-    
-    /** Debugging flag - debugging type outs sent to standard output */
-    private static boolean  BOL_DEBUG = false;
     
 
     /*
      * Global Operations
      */
-    
-    /**
-     * Toggle the debugging type out feature.
-     * 
-     * @param bolDebug  if <code>true</code> debugging information is sent to standard output,
-     *                  if <code>false</code> operation is quiet
-     *
-     * @since  Jan 15, 2015   by Christopher K. Allen
-     */
-    public static void setDebugging(boolean bolDebug) {
-        BOL_DEBUG = bolDebug;
-    }
     
     /**
      * Creates a new Scenario for the supplied accelerator sequence.
@@ -93,8 +73,6 @@ public class Scenario {
         Accelerator         smfAccel      = smfSeq.getAccelerator();
         ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
         ScenarioGenerator   mdlGenScnr    = new ScenarioGenerator(mapNodeToElem);
-        
-        mdlGenScnr.setDebug(BOL_DEBUG);
 
         return mdlGenScnr.generateScenario(smfSeq);
     }
@@ -111,8 +89,6 @@ public class Scenario {
 
         // We have a linear accelerator/transport line - process as such
         ScenarioGenerator mdlGenScnr = new ScenarioGenerator(mapNodeToElem);
-
-        mdlGenScnr.setDebug(BOL_DEBUG);
 
         return mdlGenScnr.generateScenario(smfSeq);
     }
@@ -134,8 +110,6 @@ public class Scenario {
         Accelerator         smfAccel      = smfRing.getAccelerator();
         ElementMapping      mapNodeToElem = smfAccel.getElementMapping();
         ScenarioGenerator   mdlGenScnr    = new ScenarioGenerator( mapNodeToElem );
-
-        mdlGenScnr.setDebug(BOL_DEBUG);
 
         return mdlGenScnr.generateScenario( smfRing ); 
     }

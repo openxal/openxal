@@ -1006,7 +1006,9 @@ public abstract class Tracker implements IAlgorithm, IArchive {
         // Check if there is a starting element defined and 
         if (!this.m_bolIsStarted) {                     // we haven't started propagating yet         
                
-            if (this.getStartElementId().equals(elem.getId())) {  // reached the starting element
+            if (this.getStartElementId().equals(elem.getId()) 
+            		|| this.getStartElementId().equals("BEGIN_"+elem.getParent().getId())) {  // IL: backward compatibility with BEGIN_section markers  
+            	// reached the starting element
                 this.m_bolIsStarted = true;                
                 
             } else {                // we haven't started and we haven't reached the start element

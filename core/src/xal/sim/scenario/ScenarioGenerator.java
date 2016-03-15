@@ -63,20 +63,6 @@ class ScenarioGenerator {
 //	private AcceleratorSeq smfSequence;
 //  private SynchronizationManager syncManager;
 	
-    
-    //
-    //  Internal State
-
-    /** Flag for dividing magnets at center location and adding marker */
-	private boolean bolDivMags = true;
-	
-	/** Flag for typing out debugging information */
-	private boolean bolDebug = false;
-	
-	/** Flag for typing out debugging information verbosely */
-	private boolean bolVerbose = false;
-//	private PrintStream cout = System.out;
-	
 	
 //	/**
 //	 * Default constructor, creates an empty Lattice. Uses DefaultElementMapping.
@@ -99,64 +85,6 @@ class ScenarioGenerator {
 		this.mapNodeToModCls = elementMapping;
 //		smfSequence = aSequence;		
 	}
-
-	/**
-	 * Set flag to force lattice generator to place a permanent marker in the middle of every
-	 * thick element.
-	 * 
-	 * @param halfmag <code>true</code> yes put the middle marker (default), else <code>false</code>
-	 * for no middle markers.
-	 */
-	public void setDivideMagnetFlag(boolean halfMag)	{
-		this.bolDivMags = halfMag;
-	}
-	
-    
-    /**
-     * Set debugging output to stdout.
-     * 
-     * @param bolDebug <code>true</code> for output else <code>false</code>.
-     */
-    public void setDebug(boolean bolDebug) {
-        this.bolDebug = bolDebug;
-    }
-    
-    /**
-     * Set debugging output to bolVerbose.
-     * 
-     * @param bolVerbose <code>true</code> for bolVerbose output else <code>false</code>.
-     */
-    public void setVerbose(boolean bolVerbose) {
-        this.bolVerbose = bolVerbose;
-    }
-    
-    
-    /*
-     * Attribute Queries
-     */
-    
-	/**
-	 * @return the flag to force lattice generator to place a permanent marker in the middle of every
-	 *         thick element.
-	 */
-	public boolean isMagnetDivided()	{
-		return bolDivMags;
-	}
-	
-	/**
-	 * @return the flag for debugging output to stdout.
-	 * */
-	public boolean isDebugging() {
-		return bolDebug;
-	}	
-
-	/**
-	 * @return the flag for debugging output to bolVerbose.
-	 */
-	public boolean getVerboseFlag() {
-		return bolVerbose;
-	}
-
 	
 	/*
 	 * Operations
@@ -203,9 +131,6 @@ class ScenarioGenerator {
             
             latSeq = new LatticeSequence(smfSeq, this.mapNodeToModCls);
         }
-        
-        latSeq.setDebug( this.isDebugging() );
-        latSeq.setDivideMagnetFlag( this.isMagnetDivided() );
         
         Lattice         mdlLat = latSeq.createModelLattice(mgrSync);
         
