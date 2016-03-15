@@ -26,6 +26,8 @@ import xal.smf.AcceleratorSeq;
  */
 public abstract class ElementMapping {
     
+	
+	
     /*
      * Local Attributes
      */
@@ -34,7 +36,19 @@ public abstract class ElementMapping {
     //  We could an equivalence class defined by AcceleratorNode#isKindOf()  (Comparable interface)
     /** The list of hardware type identifier string to modeling element class types. */
 	protected List<Entry<String, Class<? extends IComponent>>> elementMapping = new ArrayList<>();
+	
+	/** indicates whether or not subsection axis coordinate have origin at sequence center */
+	protected boolean bolSubsectionCtrOrigin = true;  // default set for SNS
+	
 
+    /** use type outs for debugging */
+	protected boolean bolDebug = false;
+	
+	/** create center markers for thick magnets when true */
+	protected boolean bolDivMags = true;
+    
+        
+    
 	
 	/*
 	 * Base Class Requirements
@@ -175,4 +189,66 @@ public abstract class ElementMapping {
 	protected void putMap(String key, Class<? extends IComponent> value) {
 		elementMapping.add(new AbstractMap.SimpleImmutableEntry<String, Class<? extends IComponent>>(key, value));
 	}
+	
+	
+    /**
+     * Set flag to force lattice generator to place a permanent marker in the middle of every
+     * thick element.
+     * 
+     * @param halfmag <code>true</code> yes put the middle marker (default), else <code>false</code>
+     *                for no middle markers.
+     */
+    public void setDivideMagnetFlag(boolean halfMag)    {
+        this.bolDivMags = halfMag;
+    }
+    
+    /**
+     * Set flag to determine whether debugging information is sent to standard output.
+     * 
+     * @param bolDebug  <code>true</code> for debugging output, 
+     *                  else <code>false</code> to stop debugging output.
+     */
+    public void setDebug(boolean bolDebug) {
+        this.bolDebug = bolDebug;
+    }
+    
+    /*
+     * Attribute Queries
+     */
+    
+    /**
+     * If the value here is <code>true</code> then marker modeling elements are placed
+     * at the center of thick magnets when the model lattice is created.
+     * 
+     * @return the flag to force lattice generator to place a permanent marker in the middle of every
+     *         thick element.
+     */
+    public boolean isMagnetDivided()    {
+        return bolDivMags;
+    }
+    
+    /**
+     * Get the debugging flag.  If <code>true</code> then debugging
+     * information is being sent to the standard output.
+     * 
+     * @return  <code>true</code> if debugging information is being sent to standard output,
+     *          <code>false</code> when in normal operation.
+     */
+    public boolean isDebugging() {
+        return bolDebug;
+    }   
+
+    
+    /**
+     * Returns whether or the origin of the axis of subsection is at the center of the 
+     * sequence, normally it is located at the entrance of the sequence.
+     * 
+     * @return  <code>true</code> if the axis origin is at the center of the sequence,
+     *          <code>false</code> otherwise (likely at the sequence entrance)
+     *
+     * @since  Jan 29, 2015   by Christopher K. Allen
+     */
+    public boolean isSubsectionAxisOriginCentered() {
+        return bolSubsectionCtrOrigin;
+    }
 }
