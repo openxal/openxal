@@ -10,6 +10,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import xal.model.IComponent;
 import xal.model.IComposite;
 import xal.model.Sector;
@@ -91,7 +93,12 @@ public class FileBasedElementMapping extends ElementMapping {
         FileBasedElementMapping mapHwToModElem = new FileBasedElementMapping();
 
         // Drill down to the data adaptor node containing the (hardware, model) associations 
-        DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );	    
+        DataAdaptor daCfg = daDoc.childAdaptor( "configuration" );
+        
+        if (daCfg.hasAttribute("debug")) mapHwToModElem.bolDebug = daCfg.booleanValue("debug");
+        if (daCfg.hasAttribute("divMags")) mapHwToModElem.bolDivMags = daCfg.booleanValue("divMags");
+        if (daCfg.hasAttribute("subsectionCtrOrigin")) mapHwToModElem.bolSubsectionCtrOrigin = daCfg.booleanValue("subsectionCtrOrigin");
+        
         DataAdaptor daAssoc = daCfg.childAdaptor("associations");
         
         // For each map of hardware node to modeling element enter that association into the  table
@@ -127,12 +134,13 @@ public class FileBasedElementMapping extends ElementMapping {
         // Get the default sequence modeling element used whenever a hardware sequence has no model counterpart
         try {
             DataAdaptor daSeq = daElements.childAdaptor("sequence");
+            if (daSeq == null) throw new ClassNotFoundException("No sequence attribute in model configuration file.");
             String      strClsNm = daSeq.stringValue("type");
 
             mapHwToModElem.setDefaultSequence(strClsNm);
             
         } catch (ClassNotFoundException e) {
-            System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default sequence: " + e.getMessage());
+            System.err.println("Problem when loading " + urlModelConfig + ", using default sequence element: " + e.getMessage());
 
             mapHwToModElem.clsDefaultSeq = Sector.class;
         }
@@ -144,18 +152,20 @@ public class FileBasedElementMapping extends ElementMapping {
         
         } catch (ClassNotFoundException e) {
         
-            System.err.println("ClassNotFound when loading " + urlModelConfig + ", using default drift: " + e.getMessage());
+            System.err.println("Problem when loading " + urlModelConfig + ", using default drift: " + e.getMessage());
             mapHwToModElem.clsDriftElem = IdealDrift.class;
         }
         
         // The the element type used to represent an RF cavity drift space
         try {
             DataAdaptor   daCavDrift = daElements.childAdaptor("rfcavdrift");
+            if (daCavDrift == null) throw new ClassNotFoundException("No rfcavdrift element in model configuration file.");
             String        strClsName = daCavDrift.stringValue("type");
 
             mapHwToModElem.setRfCavityDrift(strClsName);
 
         } catch (ClassNotFoundException e) {
+            System.err.println("Problem when loading " + urlModelConfig + ", using default RF cavity drift: " + e.getMessage());
             mapHwToModElem.clsRfCavDriftElem = IdealRfCavityDrift.class;
         }
         

@@ -342,9 +342,9 @@ public class IdealMagWedgeDipole extends ElectromagnetSeq {
 		setFieldIndex(fld_ind0);
 		/*setDesignBendAngle(ang_bend);*/
 						
-		if (element.getPartNr() == 0) // first piece
+		if (element.isFirstSlice()) // first piece
 			setEntrPoleAngle(magnet.getEntrRotAngle() * Math.PI / 180.);
-		if (element.getParts()-1 == element.getPartNr()) // last piece					
+		if (element.isLastSlice()) // last piece					
 			setExitPoleAngle(magnet.getExitRotAngle() * Math.PI / 180.);
 	}
 

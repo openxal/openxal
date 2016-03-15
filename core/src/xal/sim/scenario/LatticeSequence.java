@@ -20,7 +20,6 @@ import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.Lattice;
 import xal.model.ModelException;
-import xal.model.elem.IdealRfGap;
 import xal.sim.sync.SynchronizationManager;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
@@ -79,9 +78,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     /** The set of hardware node to element mapping associations used to create model elements */
     private final ElementMapping        mapNodeToMdl;
     
-    /** create center markers for thick magnets when true */
-    private boolean                     bolDivMags;
-
     /** indicates whether or not axis coordinate have origin at sequence center */
     private boolean                     bolCtrOrigin;
     
@@ -96,14 +92,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     /** The coupling constant between cavities in an RF coupled cavity structure */
     private final double    dblCavMode;
 
-    
+
     //
     // Debugging 
     ///
-    
-    /** use type outs for debugging */
-    private boolean         bolDebug;
-    
+      
     /** destination for debugging information */
     private PrintStream     ostrDebug;
     
@@ -138,17 +131,15 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
 
-        this.mapNodeToMdl = mapNodeToElem;
-        this.bolDivMags   = true;
+        this.mapNodeToMdl = mapNodeToElem;        
         this.bolCtrOrigin = false;
-        
-        this.bolDebug  = false;
+                
         this.ostrDebug = System.out;
         
         if (smfSeqRoot instanceof RfCavity) {
             RfCavity    seqRfCav = (RfCavity)smfSeqRoot;
             
-            this.dblCavFreq = seqRfCav.getCavFreq();
+            this.dblCavFreq = seqRfCav.getCavFreq() * 1e6;
             this.dblCavMode = seqRfCav.getStructureMode();
         } else {
             
@@ -187,22 +178,20 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Dec 12, 2014   @author Christopher K. Allen
      */
     private LatticeSequence(LatticeSequence latSeqParent, AcceleratorSeq smfSeqChild, double dblPos, int indOrgPos) {
-        super(smfSeqChild, dblPos, latSeqParent.getSequenceModelType(smfSeqChild), indOrgPos);
+        super(smfSeqChild, dblPos + smfSeqChild.getLength()/2.0, latSeqParent.getSequenceModelType(smfSeqChild), indOrgPos);
 
         this.lstLatElems = new LinkedList<>();
         this.lstSubSeqs  = new LinkedList<>();
 
-        this.mapNodeToMdl = latSeqParent.mapNodeToMdl;
-        this.bolDivMags   = latSeqParent.bolDivMags;
+        this.mapNodeToMdl = latSeqParent.mapNodeToMdl;        
         this.bolCtrOrigin = false;
-
-        this.bolDebug     = latSeqParent.bolDebug;
+        
         this.ostrDebug    = latSeqParent.ostrDebug;
 
         if (smfSeqChild instanceof RfCavity) {
             RfCavity    seqRfCav = (RfCavity)smfSeqChild;
 
-            this.dblCavFreq = seqRfCav.getCavFreq();
+            this.dblCavFreq = seqRfCav.getCavFreq() * 1e6;
             this.dblCavMode = seqRfCav.getStructureMode();
         } else {
 
@@ -210,55 +199,11 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             this.dblCavMode = 0.0;
         }
     }
-
-    /**
-     * Set flag to force lattice generator to place a permanent marker in the middle of every
-     * thick element.
-     * 
-     * @param halfmag <code>true</code> yes put the middle marker (default), else <code>false</code>
-     *                for no middle markers.
-     */
-    public void setDivideMagnetFlag(boolean halfMag)    {
-        this.bolDivMags = halfMag;
-    }
-    
-    /**
-     * Set flag to determine whether debugging information is sent to standard output.
-     * 
-     * @param bolDebug  <code>true</code> for debugging output, 
-     *                  else <code>false</code> to stop debugging output.
-     */
-    public void setDebug(boolean bolDebug) {
-        this.bolDebug = bolDebug;
-    }
-    
     
     /*
      * Attribute Queries
      */
     
-    /**
-     * If the value here is <code>true</code> then marker modeling elements are placed
-     * at the center of thick magnets when the model lattice is created.
-     * 
-     * @return the flag to force lattice generator to place a permanent marker in the middle of every
-     *         thick element.
-     */
-    public boolean isMagnetDivided()    {
-        return bolDivMags;
-    }
-    
-    /**
-     * Get the debugging flag.  If <code>true</code> then debugging
-     * information is being sent to the standard output.
-     * 
-     * @return  <code>true</code> if debugging information is being sent to standard output,
-     *          <code>false</code> when in normal operation.
-     */
-    public boolean isDebugging() {
-        return this.bolDebug;
-    }   
-
     /**
      * Indicates whether or not the associated hardware accelerator sequence 
      * is an RF cavity structure.  Such structures are derived from the base
@@ -567,10 +512,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         //  If two thick elements intersect then we bail out with a ModelException
         this.splitSequenceElements();
         
-        // Search the sequence for all the artificial element that do not have hardware
-        //  counterparts and remove them before the modeling elements are created.
-        this.removeArtificialElements();
-        
         // Create the modeling element representing this lattice sequence.
         //  Recall that this lattice sequence must be a top-level sequence
         //  since users do not have access to the sub-lattice constructor
@@ -604,7 +545,8 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         AcceleratorSeq  smfSeqRoot = this.getHardwareNode();
         Accelerator     smfAccel   = smfSeqRoot.getAccelerator();
         
-        String  strComment = "Accelerator ID:" + smfAccel.getId() + ", "; 
+        String  strComment = "";
+        if (smfAccel != null) strComment += "Accelerator ID:" + smfAccel.getId() + ", "; 
         strComment += "Sequence ID: " + smfSeqRoot.getId() + ", ";
         strComment += "Date: " + Calendar.getInstance().getTime() + ", ";
         strComment += "Version soft type: " + smfSeqRoot.getSoftType() + ", ";
@@ -661,22 +603,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 //        LatticeSequence latSeqParent = new LatticeSequence(smfSeqParent, dblSeqPos, clsSeqTyp, 0);
         
         
-        // This is pretty klugey: (See below for the complement action) 
-        //  We are creating a nonexistent marker hardware object,
-        //  then creating a lattice element association, so that we may 
-        //  ensure the drift space from the beginning of the sequence to the first 
-        //  hardware node is modeled correctly.  There must be a better way??
-        //  I have added an "artificial node" property to LatticeElement - can remove them
-        //  after lattice creation
-        String                      strSeqId   = smfSeqRoot.getId();
-//        AcceleratorNode             smfMrkrBeg = new Marker( "BEGIN_" + strSeqId );
-//        Class<? extends IComponent> clsMrkrTyp = this.mapNodeToMdl.getDefaultElementType();
-//        LatticeElement              latElemBeg = new LatticeElement(smfMrkrBeg, 0, clsMrkrTyp, indPosition++);
-
-        LatticeElement  latElemBeg = LatticeElement.createMarker("BEGIN_" + strSeqId, 0.0, indSeqPosition);
-        indSeqPosition++;
-        
-        this.addLatticeElement(latElemBeg);
 
         
         // Now we generate lattice association objects for every hardware node 
@@ -697,6 +623,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Now generate the lattice structure for the child sequence and all
                 //  its children
                 latSeqChild.populateLatticeSeq();
+                latSeqChild.bolCtrOrigin = mapNodeToMdl.isSubsectionAxisOriginCentered();
                 
                 // Added the populated child lattice to this lattice
                 this.addLatticeElement(latSeqChild);
@@ -715,7 +642,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             this.addLatticeElement(latElem);
             indSeqPosition++;
             
-            if (bolDebug) {
+            if (mapNodeToMdl.isDebugging()) {
                 this.ostrDebug.println("LatticeSequence#populateLatticeSeq(): " + 
                                         latElem.toString() + 
                                        ", thin=" + 
@@ -733,7 +660,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             //  divide magnets flag is true.  Thus, check if the current hardware node
             //  is a magnet, the flag is true, and the hardware node modeling element is
             //  not a thin element.  If so, add the center marker.
-            if (bolDivMags && (smfNodeCurr instanceof Magnet) && !latElem.isThin()) {
+            if (mapNodeToMdl.isMagnetDivided() && (smfNodeCurr instanceof Magnet) && !latElem.isThin()) {
 
                 String                      strNodeId   = smfNodeCurr.getId();
                 double                      dblPosCtr   = latElem.getCenterPosition();
@@ -746,19 +673,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             }
         }
         
-        // This is pretty klugey, but c'est la vie. We are creating a nonexistent marker
-        //  hardware object, then creating a lattice element association, so that we may 
-        //  ensure the drift space from the last element to the end of the sequence is modeled
-        //  correctly.  There must be a better way??
-//        AcceleratorNode             smfEndMrkr = new Marker( "END_" + strSeqId );
-//        LatticeElement              latEndElem = new LatticeElement(smfEndMrkr, dblLenSeq, clsMrkrTyp, indSeqPosition++);
-        
-        LatticeElement latElemEnd = LatticeElement.createMarker("END_" + strSeqId, dblLenSeq, indSeqPosition);
 
-        this.addLatticeElement(latElemEnd);
-        
-//      elements.add(new LatticeElement(new Marker("END_" + smfSequence.getId()), sequenceLength,
-//              mapNodeToModCls.getDefaultConverter(), originalPosition++));
     }
     
     /**
@@ -769,7 +684,10 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      * @since  Jan 29, 2015   by Christopher K. Allen
      */
     private void enforceAxisOrigin() {
-        
+        // First recursively translate all elements of all subsequences
+        for (LatticeSequence lsq : this.lstSubSeqs) 
+            lsq.enforceAxisOrigin();
+
         // Check if the origin is at the sequence center and if so move it to the entrance
         if (this.isAxisOriginCentered()) {
 
@@ -778,20 +696,35 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
 
             // Translate all the non-artificial element along the sequence axis
             for (LatticeElement lem : this) { 
-                
-                // If no artificial has central coordinates, so skip them
-                if (!lem.isArtificial())
-                    lem.axialTranslation(dblOffset);
-
+                lem.axialTranslation(dblOffset);
             }
-                
+            
+            axialTranslation(-dblOffset);
+            
             this.bolCtrOrigin = false;
         }
         
-        // We must recursively translate all elements of all subsequences as well
-        for (LatticeSequence lsq : this.lstSubSeqs) 
-            lsq.enforceAxisOrigin();
-
+        // Following code checks that the subsequence lattice elements are within the limits.
+        // If they weren't the length of the lattice magically grows!
+        double dblBeginSeqChild = Double.POSITIVE_INFINITY, dblEndSeqChild = Double.NEGATIVE_INFINITY;
+        for (LatticeElement el : this) {
+            if (el.getStartPosition() < dblBeginSeqChild) dblBeginSeqChild = el.getStartPosition();
+            if (el.getEndPosition() > dblEndSeqChild) dblEndSeqChild = el.getEndPosition();
+        }        
+        if (dblBeginSeqChild < -EPS || dblEndSeqChild > getLength() + EPS) {
+            System.err.printf("Error: Elements do not fit sequence %s (element positions: [%f,%f], sequence position [0,%f])!\n", 
+                    getHardwareNode().getId(), dblBeginSeqChild, dblEndSeqChild, getLength());
+            
+            
+            // Now lets try to fix this. If we fail, some thick element will cover another.
+            // Translate all the non-artificial element along the sequence axis
+            for (LatticeElement lem : this) { 
+                lem.axialTranslation(-dblBeginSeqChild);                
+            }
+            axialTranslation(dblBeginSeqChild);
+            dblElemExitPos = dblElemEntrPos + (dblEndSeqChild - dblBeginSeqChild); 
+            dblElemCntrPos = dblElemExitPos - dblElemEntrPos;
+        }
     }
 
 
@@ -921,7 +854,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 // Check if there is a collision between the current element and 
                 //  the lattice sequence.  This should not normally occur so we throw
                 //  up an exception if we find this is so.
-                if (lemCurr.getStartPosition() - lsqLast.getEndPosition() <= EPS)
+                if (lemCurr.getStartPosition() - lsqLast.getEndPosition() < -EPS)
                     throw new ModelException("Collision between a nested sequence " + 
                             lsqLast.getHardwareNode().getId() +
                             " and its parent child node " +
@@ -962,7 +895,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             // 3) The current element is inside the last thick element and it is a thin element.
             } else if (lemCurr.isThin()) { 
 
-                if (this.isDebugging()) {
+                if (mapNodeToMdl.isDebugging()) {
                     ostrDebug.println("splitElements: replacing " + lemLastThick.toString() + " with");
                 }
 
@@ -970,7 +903,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 //  We split the last thick element at the current element's center position
                 LatticeElement elemSplitPartEnd = lemLastThick.splitElementAt(lemCurr);
 
-                if ( this.isDebugging() ) {
+                if (mapNodeToMdl.isDebugging()) {
                     ostrDebug.println("\t" + lemLastThick.toString());
                     if (elemSplitPartEnd != null) ostrDebug.println("\t" + elemSplitPartEnd.toString());
                 }                   
@@ -999,38 +932,29 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
         }
 
         // If we have a thick element left over we add it to the list of lattice elements.
-        if (lemLastThick != null)
-            addSplitElementTo(lstSplitElems, lemLastThick);          
+        if (lemLastThick != null) {
+        	if (lemLastThick instanceof LatticeSequence) {
+                // Down cast it to its true type
+                LatticeSequence lsqLast = (LatticeSequence)lemLastThick;
+
+                // Recursively split up the elements of the child sequence then add it 
+                //  to the list of split elements. Null out the last thick element.
+                lsqLast.splitSequenceElements();
+                lstSplitElems.add(lsqLast);
+                lemLastThick = null;
+            // 2) The current element lives outside the last thick element.
+            } else  {
+                // If so then add the last thick element to the list of split element and 
+                //  zero out the last thick element reference.
+                this.addSplitElementTo(lstSplitElems, lemLastThick);
+                lemLastThick = null;
+            }
+        }
 
         // Replace our list of unsplit lattice elements with the new list of split ones.
         this.lstLatElems = lstSplitElems;
     }
     
-    /**
-     *  Removes all the artificial lattice elements in this sequence.  These are the
-     *  lattice elements without a hardware association and were used only in the
-     *  lattice generation process.
-     *
-     * @since  Jan 30, 2015   by Christopher K. Allen
-     */
-    private void removeArtificialElements() {
-        
-        // Identify and collect all my direct childtren that are 
-        //  artificial elements.
-        List<LatticeElement>    lstElemsToRemove = new LinkedList<>();
-        
-        for (LatticeElement lem : this) 
-            if (lem.isArtificial())
-                lstElemsToRemove.add(lem);
-        
-        // Remove all the artificial element children 
-        this.removeAllLatticeElements(lstElemsToRemove);
-        
-        // Recursively remove all the artificial elements in my subsequences
-        for (LatticeSequence lsq : this.lstSubSeqs)
-            lsq.removeArtificialElements();
-    }
-
     /**
      * <p>Visits each element and invokes conversion on it, using element mapper on it.</p>
      * <p>Hooks synchronization manager to each element.</p>
@@ -1142,7 +1066,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
             }
 
             // Debug type out
-            if (bolDebug)
+            if (mapNodeToMdl.isDebugging())
                 ostrDebug.println(latElemCurr.getHardwareNode().getId() + ": ==mapped to==>\t" + smfNodeCurr.getType()
                         + ": s= " + latElemCurr.getCenterPosition());           
         }
@@ -1239,18 +1163,6 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
     }
     
     /**
-     * Removes the given <code>LatticeElement</code> from the list of such elements
-     * in this sequence.
-     * 
-     * @param lem
-     *
-     * @since  Jan 28, 2015   by Christopher K. Allen
-     */
-    private void removeLatticeElement(LatticeElement lem) {
-        this.lstLatElems.remove(lem);
-    }
-    
-    /**
      * Removes all the elements in the given set of elements from the contained set
      * of lattice element in this sequence;
      * 
@@ -1275,7 +1187,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
      */
     private void addSplitElementTo(List<LatticeElement> lstSplitElems, LatticeElement latElemAddend) {
         
-        if (latElemAddend.getLength() > EPS || latElemAddend.getParts() <= 1) 
+        if (latElemAddend.getLength() > EPS || (latElemAddend.isFirstSlice() && latElemAddend.isLastSlice()))
             lstSplitElems.add(latElemAddend);
     }
     
