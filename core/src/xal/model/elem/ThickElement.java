@@ -99,9 +99,9 @@ public abstract class ThickElement extends Element {
     public void initializeFrom(LatticeElement latticeElement) {
         super.initializeFrom(latticeElement);
         setLength(latticeElement.getLength());
-        m_dblNodeLen = latticeElement.getNode().getLength();
-        firstSlice = latticeElement.getPartNr() == 0;
-        lastSlice = latticeElement.getPartNr() == latticeElement.getParts() - 1;
+        m_dblNodeLen = latticeElement.getHardwareNode().getLength();
+        firstSlice = latticeElement.isFirstSlice();
+        lastSlice = latticeElement.isLastSlice();
     }
 
     /**

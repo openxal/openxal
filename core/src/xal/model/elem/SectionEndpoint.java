@@ -127,7 +127,7 @@ public abstract class SectionEndpoint extends ThinElement {
 	public void initializeFrom(LatticeElement latticeElement) {
 		// TODO Auto-generated method stub
 		super.initializeFrom(latticeElement);
-		len = latticeElement.getNode().getLength();
+		len = latticeElement.getHardwareNode().getLength();
 	}
 }
 

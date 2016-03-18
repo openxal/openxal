@@ -476,7 +476,7 @@ public abstract class Element implements IElement {
         setHardwareNodeId(strSmfId);
         setPosition(latticeElement.getCenterPosition());
 
-        AlignmentBucket alignmentBucket = latticeElement.getNode().getAlign(); 
+        AlignmentBucket alignmentBucket = latticeElement.getHardwareNode().getAlign(); 
         setAlignX(alignmentBucket.getX());
         setAlignY(alignmentBucket.getY());
         setAlignZ(alignmentBucket.getZ());
