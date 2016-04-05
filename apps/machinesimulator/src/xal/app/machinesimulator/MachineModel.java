@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import xal.model.ModelException;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
@@ -55,6 +56,10 @@ public class MachineModel implements DataListener {
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history data snapshot*/
    private List<NodePropertySnapshot> nodePropertySnapshots;
+   /**the pvLogger data*/
+   private PVLoggerDataSource pvLoggerDataSource;
+   /**the pvLogger ID*/
+   private long pvLoggerID;
    
 
     
@@ -81,7 +86,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
-        setupWhatIfConfiguration( _sequence );
+        setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
 		  _diagnosticConfiguration = setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
@@ -96,9 +101,21 @@ public class MachineModel implements DataListener {
     	SIMULATOR.setUseFieldReadback( useFieldReadback );
     }
     
+    /**Pass the pvlogger data to scenario if selected to use pvlogger*/
+    public void configPVLoggerData( final PVLoggerDataSource pvLoggerData, final long pvLoggerID, final boolean checked  ) {
+    	pvLoggerDataSource = pvLoggerData;
+    	this.pvLoggerID = pvLoggerID;
+    	SIMULATOR.configPVloggerData( pvLoggerData, checked);
+    }
+    
+    /**get the pvLogger id*/
+    public long getPVLoggerID() {
+    	return pvLoggerID;
+    }
+    
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
-    	setupWhatIfConfiguration( _sequence );
+    	setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
     	EVENT_PROXY.modelScenarioChanged(this);
     }
 
@@ -111,8 +128,8 @@ public class MachineModel implements DataListener {
     	return _whatIfConfiguration;
     }
     /** setup WhatIfConfiguration*/
-    private void setupWhatIfConfiguration( final AcceleratorSeq sequence ){
-    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence );
+    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData ){
+    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData );
     }
     
     /**get the diagnostic records*/

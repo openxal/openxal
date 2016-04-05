@@ -13,6 +13,7 @@ import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.sim.scenario.*;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
@@ -108,6 +109,8 @@ public class MachineSimulator implements DataListener {
             _scenario = null;
         }
     }
+    
+
     
     /**Get the scenario*/
     public Scenario getScenario() {
@@ -300,6 +303,18 @@ public class MachineSimulator implements DataListener {
     	}
     	
     	modelInputs = newInputs;
+    }
+    
+    /**Pass the pvlogger data to the scenario if selected to use pvlogger*/
+    public void configPVloggerData( final PVLoggerDataSource pvLoggerData,final boolean checked ) {
+    	if ( checked ) {
+    		_scenario = pvLoggerData.setModelSource( _sequence, _scenario );
+    		System.out.println("PVLogger Data finished loading");
+    	}
+    	else {
+    		pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
+    	}
+    	
     }
     
     /**Return the values record used for simulation*/

@@ -6,6 +6,7 @@ package xal.app.machinesimulator;
 import java.util.ArrayList;
 import java.util.List;
 
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Electromagnet;
@@ -25,24 +26,25 @@ public class WhatIfConfiguration {
 	final private List<NodePropertyRecord> RECORDS;
 	
 	/**Constructor*/
-	public WhatIfConfiguration( final AcceleratorSeq sequence ){
+	public WhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData ){
 		RECORDS = new ArrayList<NodePropertyRecord>();
-		configRecords( sequence );
+		configRecords( sequence, loggedData );
 	}
 	
 	/**select the specified nodes from the sequence*/
-	private void configRecords( final AcceleratorSeq sequence ){
+	private void configRecords( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData ){
 		for( AcceleratorNode node:sequence.getAllNodes() ){
 			if ( node.getStatus() ){
 				if( node instanceof PermanentMagnet ){
-					RECORDS.add( new NodePropertyRecord(node, PermanentMagnetPropertyAccessor.PROPERTY_FIELD ) );
+					RECORDS.add( new NodePropertyRecord(node, PermanentMagnetPropertyAccessor.PROPERTY_FIELD , Double.NaN ) );
 				}
 				else if( node instanceof Electromagnet ){
-					RECORDS.add( new NodePropertyRecord(node, ElectromagnetPropertyAccessor.PROPERTY_FIELD ) );
+					double loggedValue = ( loggedData == null ) ? Double.NaN : loggedData.getLoggedField( (Electromagnet) node ); 
+					RECORDS.add( new NodePropertyRecord(node, ElectromagnetPropertyAccessor.PROPERTY_FIELD, loggedValue ) );
 				}
 				else if( node instanceof RfCavity ){
-					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_AMPLITUDE ) );
-					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_PHASE ) );
+					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_AMPLITUDE, Double.NaN ) );
+					RECORDS.add( new NodePropertyRecord(node, RfCavityPropertyAccessor.PROPERTY_PHASE, Double.NaN ) );
 				}
 			}
 

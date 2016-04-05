@@ -611,11 +611,11 @@ public class MachineSimulatorController implements MachineModelListener {
 	         
 	     //configure the sequence table model
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, 
-				  "designValue", "liveValue", "testValue", "scanStartValue", "scanEndValue" );
+				  "designValue", "liveValue", "loggedValue", "testValue", "scanStartValue", "scanEndValue" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "steps", Integer.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", 
-				  "propertyName", "designValue", "liveValue", "testValue", "checkState", "scanStartValue", "scanEndValue", "steps" );
+				  "propertyName", "designValue", "liveValue","loggedValue", "testValue", "checkState", "scanStartValue", "scanEndValue", "steps" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "checkState", true );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "scanStartValue", "checkState" );
@@ -903,6 +903,7 @@ public class MachineSimulatorController implements MachineModelListener {
         	_sequence = model.getSequence();
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
+			NEW_PARAMETERS_TABLE_MODEL.setColumnName( "loggedValue", "LoggedValue : "+model.getPVLoggerID() );
     		
     		DIAG_LIVE_TABLE_MODEL.setRecords( model.getDiagConfig().getDiagnosticAgents() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
@@ -924,6 +925,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		if( _sequence != null ){
 			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
 			NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
+			NEW_PARAMETERS_TABLE_MODEL.setColumnName( "loggedValue", "LoggedValue : "+model.getPVLoggerID() );
 			VALUE_SYNC_TIME.resume();
 		}
 		

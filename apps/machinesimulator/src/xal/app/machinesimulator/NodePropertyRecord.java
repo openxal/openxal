@@ -17,6 +17,8 @@ public class NodePropertyRecord {
 	final private ModelInput MODEL_INPUT;
 	/** channel monitor to monitor the value of the channel */
 	final private ChannelMonitor[] CHANNEL_MONITORS;
+	/**the logged value*/
+	final private double LOGGED_VALUE;
 	/**check-state of scanning*/
 	private boolean checkState;
 	/**the start value of scanning*/
@@ -27,9 +29,10 @@ public class NodePropertyRecord {
 	private int scanSteps;
 	
 	/**Constructor*/
-	public NodePropertyRecord( final AcceleratorNode node, final String propertyName ) {
+	public NodePropertyRecord( final AcceleratorNode node, final String propertyName, final double loggedValue ) {
 		NODE = node;
 		PROPERTY_NAME = propertyName;
+		LOGGED_VALUE = loggedValue;
 		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
 		CHANNEL_MONITORS = createMonitors(channels);		
 		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, Double.NaN );
@@ -61,7 +64,7 @@ public class NodePropertyRecord {
 	}
 	
 	/** get design value */
-	public double getDesignValue(){
+	public double getDesignValue() {
 		return NODE.getDesignPropertyValue( PROPERTY_NAME );
 	}
 	
@@ -73,6 +76,12 @@ public class NodePropertyRecord {
 		}
 		return NODE.getLivePropertyValue(PROPERTY_NAME, liveValueArray);
 	}
+	
+	/**get the logged value*/
+	public double getLoggedValue() {
+		return LOGGED_VALUE;
+	}
+	
 	
 	/**get the test value */
 	public double getTestValue(){
