@@ -82,7 +82,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
 		
-		PV_LOG_CHOOSER = new PVLogSnapshotChooser( mainWindow );
+		PV_LOG_CHOOSER = new PVLogSnapshotChooser( mainWindow, true );
 		
       // initialize the model here
       MODEL = new MachineModel();
@@ -158,24 +158,28 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
                 pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
-                if ( getSelectedSequence() != null && pvLoggerID !=0 ) {
+                if ( pvLoggerID !=0 ) {
     				pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
     				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
-    				MODEL.modelScenarioChanged();
-    				
-    				setHasChanges( true );
                 }
+                
+				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 
 			}
 		};
 		
-		//register enable_pvlogger button
+		//register select_pvlogger button
 		final AbstractAction selectPVLogger = new AbstractAction( "select-pvlogger" ) {
 			
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed( final ActionEvent event ) {
-				pvLogSelector = PV_LOG_CHOOSER.choosePVLogId();			
+				if ( pvLogSelector == null ) pvLogSelector = PV_LOG_CHOOSER.choosePVLogId();
+				else pvLogSelector.setVisible( true );
+				
+				CONFIG_PVLOGGER_DATA.actionPerformed( null );
 			
 				setHasChanges( true );
 			}
@@ -228,10 +232,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_SET.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( false );
-				CONFIG_PVLOGGER_DATA.actionPerformed( null );
-				MODEL.modelScenarioChanged();
 				
-				setHasChanges( true );
+				CONFIG_PVLOGGER_DATA.actionPerformed( null );
+
 			}
 		});
 		commander.registerModel( "fieldSet", USE_SET );
@@ -241,10 +244,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_READ_BACK.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( true );
-				CONFIG_PVLOGGER_DATA.actionPerformed( null );
-				MODEL.modelScenarioChanged();
 				
-				setHasChanges( true );
+				CONFIG_PVLOGGER_DATA.actionPerformed( null );
+				
 			}
 		});
 		commander.registerModel( "fieldReadback",USE_READ_BACK );

@@ -101,7 +101,7 @@ public class MachineModel implements DataListener {
     	SIMULATOR.setUseFieldReadback( useFieldReadback );
     }
     
-    /**Pass the pvlogger data to scenario if selected to use pvlogger*/
+    /**Configure the pvlogger data to the scenario(set or remove) if selected or unselected to use pvlogger*/
     public void configPVLoggerData( final PVLoggerDataSource pvLoggerData, final long pvLoggerID, final boolean checked  ) {
     	pvLoggerDataSource = pvLoggerData;
     	this.pvLoggerID = pvLoggerID;

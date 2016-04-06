@@ -305,16 +305,17 @@ public class MachineSimulator implements DataListener {
     	modelInputs = newInputs;
     }
     
-    /**Pass the pvlogger data to the scenario if selected to use pvlogger*/
+    /**Configure the pvlogger data to the scenario(set or remove) if selected or unselected to use pvlogger*/
     public void configPVloggerData( final PVLoggerDataSource pvLoggerData,final boolean checked ) {
-    	if ( checked ) {
-    		_scenario = pvLoggerData.setModelSource( _sequence, _scenario );
-    		System.out.println("PVLogger Data finished loading");
+    	if ( _sequence != null ) {
+    		if ( checked ) {
+    			_scenario = pvLoggerData.setModelSource( _sequence, _scenario );
+    			System.out.println("PVLogger Data finished loading");
+    		}
+    	    else {
+    		    pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
+    	    }
     	}
-    	else {
-    		pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
-    	}
-    	
     }
     
     /**Return the values record used for simulation*/
