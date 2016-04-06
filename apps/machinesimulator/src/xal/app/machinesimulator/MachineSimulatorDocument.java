@@ -157,10 +157,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		//the action to configure the pvlogger data
 	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-                pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
-                if ( pvLoggerID !=0 ) {
-    				pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
-    				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
+                if ( PV_LOG_CHOOSER.getPVLogId() !=0 ) {
+    				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) pvLoggerDataSource = new PVLoggerDataSource ( PV_LOG_CHOOSER.getPVLogId() );
+    				MODEL.configPVLoggerData( pvLoggerDataSource, PV_LOG_CHOOSER.getPVLogId(), USE_PVLOGGER.isSelected() );
+    				pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
                 }
                 
 				MODEL.modelScenarioChanged();
