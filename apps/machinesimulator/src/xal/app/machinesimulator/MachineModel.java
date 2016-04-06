@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import xal.model.ModelException;
 import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
@@ -86,7 +87,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
-        setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
+        setupWhatIfConfiguration( _sequence, pvLoggerDataSource, null );
 		  _diagnosticConfiguration = setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
@@ -115,7 +116,8 @@ public class MachineModel implements DataListener {
     
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
-    	setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
+    	List<ModelInput> modelInputs = SIMULATOR.getModelInputs();
+    	setupWhatIfConfiguration( _sequence, pvLoggerDataSource, modelInputs );
     	EVENT_PROXY.modelScenarioChanged(this);
     }
 
@@ -128,8 +130,8 @@ public class MachineModel implements DataListener {
     	return _whatIfConfiguration;
     }
     /** setup WhatIfConfiguration*/
-    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData ){
-    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData );
+    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData, final List<ModelInput> modelInputs ){
+    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData, modelInputs );
     }
     
     /**get the diagnostic records*/

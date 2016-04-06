@@ -157,15 +157,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		//the action to configure the pvlogger data
 	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-                if ( PV_LOG_CHOOSER.getPVLogId() !=0 ) {
-    				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) pvLoggerDataSource = new PVLoggerDataSource ( PV_LOG_CHOOSER.getPVLogId() );
+                if ( PV_LOG_CHOOSER.getPVLogId() != 0 ) {
     				MODEL.configPVLoggerData( pvLoggerDataSource, PV_LOG_CHOOSER.getPVLogId(), USE_PVLOGGER.isSelected() );
-    				pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
                 }
-                
-				MODEL.modelScenarioChanged();
-				
-				setHasChanges( true );
 
 			}
 		};
@@ -179,9 +173,14 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				if ( pvLogSelector == null ) pvLogSelector = PV_LOG_CHOOSER.choosePVLogId();
 				else pvLogSelector.setVisible( true );
 				
-				CONFIG_PVLOGGER_DATA.actionPerformed( null );
-			
-				setHasChanges( true );
+				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) {
+					pvLoggerDataSource = new PVLoggerDataSource ( PV_LOG_CHOOSER.getPVLogId() );
+					CONFIG_PVLOGGER_DATA.actionPerformed( null );
+					MODEL.modelScenarioChanged();
+					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
+				}
+				
+				
 			}
 		 };
 		commander.registerAction( selectPVLogger );
@@ -192,7 +191,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
@@ -204,7 +202,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_RF_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
@@ -215,7 +212,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_CHANNEL.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
@@ -224,7 +220,14 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		//register use_pvlogger button
 	    USE_PVLOGGER.setSelected( false );
-	    USE_PVLOGGER.addActionListener( CONFIG_PVLOGGER_DATA );				
+	    USE_PVLOGGER.addActionListener( new ActionListener() {
+	    	public void actionPerformed ( final ActionEvent event ) {
+	    		
+	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
+	    		
+	    		setHasChanges( true );
+	    	}
+	    });				
 	    commander.registerModel("use-pvlogger", USE_PVLOGGER);
 		
 		//register use_set button
@@ -234,6 +237,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				MODEL.setUseFieldReadback( false );
 				
 				CONFIG_PVLOGGER_DATA.actionPerformed( null );
+				
+				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 
 			}
 		});
@@ -246,6 +253,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				MODEL.setUseFieldReadback( true );
 				
 				CONFIG_PVLOGGER_DATA.actionPerformed( null );
+				
+				MODEL.modelScenarioChanged();
+				
+				setHasChanges( true );
 				
 			}
 		});

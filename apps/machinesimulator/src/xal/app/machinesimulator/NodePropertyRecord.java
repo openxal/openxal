@@ -29,13 +29,14 @@ public class NodePropertyRecord {
 	private int scanSteps;
 	
 	/**Constructor*/
-	public NodePropertyRecord( final AcceleratorNode node, final String propertyName, final double loggedValue ) {
+	public NodePropertyRecord( final AcceleratorNode node, final String propertyName,
+			final double loggedValue, final ModelInput modelInput ) {
 		NODE = node;
 		PROPERTY_NAME = propertyName;
 		LOGGED_VALUE = loggedValue;
 		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
 		CHANNEL_MONITORS = createMonitors(channels);		
-		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, Double.NaN );
+		MODEL_INPUT = ( modelInput != null ) ? modelInput : new ModelInput(node, PROPERTY_NAME, Double.NaN );
 		
 	}
 	

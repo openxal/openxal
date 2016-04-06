@@ -305,6 +305,11 @@ public class MachineSimulator implements DataListener {
     	modelInputs = newInputs;
     }
     
+    /**get the modelInputs from the test values*/
+    public List<ModelInput> getModelInputs() {
+    	return modelInputs;
+    }
+    
     /**Configure the pvlogger data to the scenario(set or remove) if selected or unselected to use pvlogger*/
     public void configPVloggerData( final PVLoggerDataSource pvLoggerData,final boolean checked ) {
     	if ( _sequence != null ) {
