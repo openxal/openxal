@@ -178,6 +178,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				
 				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) {
 					pvLoggerDataSource = new PVLoggerDataSource ( PV_LOG_CHOOSER.getPVLogId() );
+					if ( USE_LOGGEDBEND.isSelected() ) pvLoggerDataSource.setUsesLoggedBendFields( true );
 					CONFIG_PVLOGGER_DATA.actionPerformed( null );
 					MODEL.modelScenarioChanged();
 					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
@@ -242,10 +243,10 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    USE_LOGGEDBEND.addActionListener( new ActionListener() {
 	    	public void actionPerformed ( final ActionEvent event ) {
 	    		if ( USE_LOGGEDBEND.isSelected() ) {
-	    			pvLoggerDataSource.setUsesLoggedBendFields( true );
+	    			if ( pvLoggerDataSource != null ) pvLoggerDataSource.setUsesLoggedBendFields( true );
 	    		}
 	    		else {
-	    			pvLoggerDataSource.setUsesLoggedBendFields( false );
+	    			if ( pvLoggerDataSource != null ) pvLoggerDataSource.setUsesLoggedBendFields( false );
 	    		}
 	    		
 	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
