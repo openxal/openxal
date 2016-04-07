@@ -42,6 +42,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	final private ToggleButtonModel USE_CHANNEL;
 	/**the button to set using pv logger*/
 	final private ToggleButtonModel USE_PVLOGGER;
+	/**the button to set using logged bends when using pv logger*/
+	final private ToggleButtonModel USE_LOGGEDBEND;
 	/**the button to set using read back value*/
 	final private ToggleButtonModel USE_READ_BACK;
 	/**the button to set using set value*/
@@ -77,6 +79,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_RF_DESIGN = new ToggleButtonModel();
 		USE_CHANNEL= new ToggleButtonModel();
 		USE_PVLOGGER = new ToggleButtonModel();
+		USE_LOGGEDBEND = new ToggleButtonModel();
 		USE_READ_BACK= new ToggleButtonModel();
 		USE_SET= new ToggleButtonModel();
 		
@@ -223,12 +226,35 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    USE_PVLOGGER.addActionListener( new ActionListener() {
 	    	public void actionPerformed ( final ActionEvent event ) {
 	    		
+	    		if ( USE_PVLOGGER.isSelected() ) USE_LOGGEDBEND.setEnabled( true );
+	    		else USE_LOGGEDBEND.setEnabled( false );
+	    		
 	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
 	    		
 	    		setHasChanges( true );
 	    	}
 	    });				
-	    commander.registerModel("use-pvlogger", USE_PVLOGGER);
+	    commander.registerModel( "use-pvlogger", USE_PVLOGGER );
+	    
+		//register use_loggedbend button
+	    USE_LOGGEDBEND.setSelected( false );
+	    USE_LOGGEDBEND.setEnabled( false );
+	    USE_LOGGEDBEND.addActionListener( new ActionListener() {
+	    	public void actionPerformed ( final ActionEvent event ) {
+	    		if ( USE_LOGGEDBEND.isSelected() ) {
+	    			pvLoggerDataSource.setUsesLoggedBendFields( true );
+	    		}
+	    		else {
+	    			pvLoggerDataSource.setUsesLoggedBendFields( false );
+	    		}
+	    		
+	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
+	    		
+	    		setHasChanges( true );
+	    	}
+	    });				
+	    commander.registerModel( "use-loggedbend", USE_LOGGEDBEND );
+	    
 		
 		//register use_set button
 		USE_SET.setSelected( true );

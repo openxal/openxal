@@ -314,6 +314,12 @@ public class MachineSimulator implements DataListener {
     public void configPVloggerData( final PVLoggerDataSource pvLoggerData,final boolean checked ) {
     	if ( _sequence != null ) {
     		if ( checked ) {
+    			if ( !pvLoggerData.getUsesLoggedBendFields() ){
+    				pvLoggerData.setUsesLoggedBendFields( true );
+    				pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
+    				pvLoggerData.setUsesLoggedBendFields( false );
+    			}
+    			
     			_scenario = pvLoggerData.setModelSource( _sequence, _scenario );
     			System.out.println("PVLogger Data finished loading");
     		}
