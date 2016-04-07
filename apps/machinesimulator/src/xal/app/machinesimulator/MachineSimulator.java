@@ -267,7 +267,7 @@ public class MachineSimulator implements DataListener {
 	 */
     public void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
     	List<ModelInput> newModelInputs = new ArrayList<ModelInput>();
-    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
+    	
     	for( NodePropertyRecord record:nodePropertyRecords ){
     		if( !Double.isNaN( record.getTestValue() ) ){
     			newModelInputs.add( record.getModelInput() );
@@ -275,7 +275,12 @@ public class MachineSimulator implements DataListener {
     	}
 	
     	changeModelInputs( modelInputs, newModelInputs );	
-
+    }
+    
+    
+    /**save the values used for simulation*/
+    public void saveValuesForSimulation( final List<NodePropertyRecord> nodePropertyRecords ) {
+    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
     	for( NodePropertyRecord record : nodePropertyRecords){
     		try {
 				propertyValueForNode.put( record.getAcceleratorNode(), _scenario.propertiesForNode( record.getAcceleratorNode() ) );
@@ -285,7 +290,6 @@ public class MachineSimulator implements DataListener {
     	}
     	// record the values used for simulation
     	propertyValuesRecordForNodes = propertyValueForNode;
-
     }
     
     /**

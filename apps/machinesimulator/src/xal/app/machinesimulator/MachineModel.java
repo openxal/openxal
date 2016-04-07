@@ -116,6 +116,7 @@ public class MachineModel implements DataListener {
     
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
+        if ( _whatIfConfiguration != null ) SIMULATOR.configModelInputs( _whatIfConfiguration.getNodePropertyRecords() );
     	List<ModelInput> modelInputs = SIMULATOR.getModelInputs();
     	setupWhatIfConfiguration( _sequence, pvLoggerDataSource, modelInputs );
     	EVENT_PROXY.modelScenarioChanged(this);
@@ -265,6 +266,8 @@ public class MachineModel implements DataListener {
 		//configure
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
+		//save the values used for simulation
+		SIMULATOR.saveValuesForSimulation( nodePropertyRecords );
 		//run
 		_simulation = SIMULATOR.run();
 		//record
