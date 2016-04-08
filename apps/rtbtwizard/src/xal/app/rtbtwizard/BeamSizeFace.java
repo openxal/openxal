@@ -138,10 +138,12 @@ public class BeamSizeFace extends JPanel{
     double[] currenttwiss = new double[6];
     double windowratio = 0.0;
     double targetratio = 0.0;
+	double targetratioraw = 0.0;
     double harparea=0.0;
     int istart=0;
     DataTable fitsdatabase;
     HashMap<String, Double> beamarearatios = new HashMap<String, Double>();
+	HashMap<String, Double> beamarearatiosraw = new HashMap<String, Double>();
     HashMap<String, Double> beamwindowratios = new HashMap<String, Double>();
     
     public BeamSizeFace(GenDocument aDocument, JPanel mainpanel) {
@@ -825,8 +827,11 @@ public class BeamSizeFace extends JPanel{
 		double xwindowvalue = ((Double)tabledata[5][1]).doubleValue();
 		double ywindowvalue = ((Double)tabledata[5][2]).doubleValue();
 		double windowarea = xwindowvalue*ywindowvalue;
+		double xtargetvalueraw = ((Double)tabledata[6][1]).doubleValue();
+		double ytargetvalueraw = ((Double)tabledata[6][2]).doubleValue();
 		double xtargetvalue = ((Double)tabledata[7][1]).doubleValue();
 		double ytargetvalue = ((Double)tabledata[7][2]).doubleValue();
+		double targetarearaw = xtargetvalueraw*ytargetvalueraw;
 		double targetarea = xtargetvalue*ytargetvalue;
         
 		System.out.println("target area is " + targetarea);
@@ -836,6 +841,7 @@ public class BeamSizeFace extends JPanel{
 			double yvalue = ((Double)tabledata[i][2]).doubleValue();
 			double area = xvalue*yvalue;
 			double tratio = area/targetarea;
+			double tratioraw = area/targetarearaw;
 			double wratio = area/windowarea;
 			//System.out.println("for wire " + label);
 			//System.out.println("xvalue, yvalue, area " + xvalue + " " + yvalue + " " + area);
@@ -844,13 +850,16 @@ public class BeamSizeFace extends JPanel{
 			//System.out.println(" and window ratio is " + wratio);
 			//System.out.println(" and target ratio is " + tratio);
 			beamarearatios.put(new String(label), tratio);
+			beamarearatiosraw.put(new String(label), tratioraw);
 			beamwindowratios.put(new String(label), wratio);
 		}
 		targetratio = harparea/targetarea;
+		targetratioraw = harparea/targetarearaw;
 		windowratio = harparea/windowarea;
         
 		System.out.println("targetratio= " + targetratio + " windowratio= " + windowratio);
 		doc.beamarearatios=beamarearatios;
+		doc.beamarearatiosraw = beamarearatiosraw;
 		doc.windowarearatios=beamwindowratios;
 		doc.xsize = ((Double)tabledata[rows-1][1]).doubleValue();
 		doc.ysize = ((Double)tabledata[rows-1][2]).doubleValue();
