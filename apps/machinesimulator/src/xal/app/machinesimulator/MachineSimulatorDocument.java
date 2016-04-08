@@ -161,8 +161,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		//the action to configure the pvlogger data
 	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
-                if ( PV_LOG_CHOOSER.getPVLogId() != 0 ) {
-    				MODEL.configPVLoggerData( pvLoggerDataSource, PV_LOG_CHOOSER.getPVLogId(), USE_PVLOGGER.isSelected() );
+                if ( pvLoggerID != 0 ) {
+    				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
                 }
 
 			}
@@ -178,11 +178,11 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				else pvLogSelector.setVisible( true );
 				
 				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) {
-					pvLoggerDataSource = new PVLoggerDataSource ( PV_LOG_CHOOSER.getPVLogId() );
-					if ( USE_LOGGEDBEND.isSelected() ) pvLoggerDataSource.setUsesLoggedBendFields( true );
+					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
+					pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
+					pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
 					CONFIG_PVLOGGER_DATA.actionPerformed( null );
 					MODEL.modelScenarioChanged();
-					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
 				}
 				
 				
@@ -370,9 +370,17 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             final String synchMode = MODEL.getSimulator().getScenario().getSynchronizationMode();
             if ( synchMode.equals( Scenario.SYNC_MODE_LIVE ) ) USE_CHANNEL.setSelected( true );
             else if ( synchMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) USE_RF_DESIGN.setSelected( true );
-            USE_PVLOGGER.setSelected( adaptor.booleanValue( "usepvlogger" ) );
-            USE_LOGGEDBEND.setEnabled( adaptor.booleanValue( "usepvlogger" ) );
-            USE_LOGGEDBEND.setSelected( adaptor.booleanValue( "usebendloggedfields" ) );
+            USE_PVLOGGER.setSelected( adaptor.hasAttribute( "usepvlogger" ) ? adaptor.booleanValue( "usepvlogger" ) : false );
+            USE_LOGGEDBEND.setEnabled( adaptor.hasAttribute( "usepvlogger" ) ? adaptor.booleanValue( "usepvlogger" ) : false );
+            USE_LOGGEDBEND.setSelected( adaptor.hasAttribute( "usebendloggedfields" ) ? adaptor.booleanValue( "usebendloggedfields" ) : false );
+            
+            pvLoggerID  = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : 0;
+            if ( pvLoggerID != 0 ) {
+				pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
+				pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
+				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
+            }
+            
             MODEL.modelScenarioChanged();
             }
         
@@ -396,6 +404,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				adaptor.setValue( "sequence", sequence.getId() );
 				adaptor.setValue( "usebendloggedfields", USE_LOGGEDBEND.isSelected() );
 				adaptor.setValue( "usepvlogger", USE_PVLOGGER.isSelected() );
+				adaptor.setValue( "pvLoggerID", pvLoggerID );
 			}
 		}
     }

@@ -16,6 +16,7 @@ import xal.smf.impl.RfCavity;
 import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.smf.proxy.PermanentMagnetPropertyAccessor;
 import xal.smf.proxy.RfCavityPropertyAccessor;
+import xal.tools.data.DataAdaptor;
 
 /**
  * @author luxiaohan
@@ -23,18 +24,31 @@ import xal.smf.proxy.RfCavityPropertyAccessor;
  */
 public class WhatIfConfiguration {
 	
+ 	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "WhatIfConfiguration";
+	
 	/**the list of AcceleratorNodeRecord*/
 	final private List<NodePropertyRecord> RECORDS;
+	/**the pvlogger data*/
+	final private PVLoggerDataSource PVLOGGER_DATA_SOURCE;
 	
 	/**Constructor*/
 	public WhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData, final List<ModelInput> modelInputs ){
 		RECORDS = new ArrayList<NodePropertyRecord>();
+		PVLOGGER_DATA_SOURCE = loggedData;
 		configRecords( sequence, loggedData, modelInputs );
+	}
+	
+	/**Constructor with adaptor*/
+	public WhatIfConfiguration( final DataAdaptor adaptor, final PVLoggerDataSource loggedData ) {
+		RECORDS = new ArrayList<NodePropertyRecord>();
+		PVLOGGER_DATA_SOURCE = loggedData;
+		update( adaptor );
 	}
 	
 	/**select the specified nodes from the sequence*/
 	private void configRecords( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData, final List<ModelInput> modelInputs ){
-		for( AcceleratorNode node:sequence.getAllNodes() ){
+		for( AcceleratorNode node : sequence.getAllNodes() ){
 			if ( node.getStatus() ){
 				ModelInput modelInputRecord = filterModelInputs( node, modelInputs );
 				if( node instanceof PermanentMagnet ){
@@ -83,6 +97,24 @@ public class WhatIfConfiguration {
 	 */
 	public List<NodePropertyRecord> getNodePropertyRecords(){
 		return RECORDS;
+	}
+	
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+	
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update( DataAdaptor adaptor ) {
+		final List<DataAdaptor> nodeProRecordAdaptors = adaptor.childAdaptors( "" );
+		for ( DataAdaptor nodeProRecordAdaptor : nodeProRecordAdaptors ) {
+			RECORDS.add( null );
+		}
+	}
+	
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write( DataAdaptor adaptor ) {
+		adaptor.writeNodes( RECORDS );
 	}
 
 }

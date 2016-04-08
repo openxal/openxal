@@ -436,11 +436,11 @@ public class MachineModel implements DataListener {
 		VALUES_SNAPSHOT = new ArrayList<NodePropertySnapshot>();
 		DIAG_SNAPSHOTS = new ArrayList<DiagnosticSnapshot>();
 		
-		SYNCH_MODE = adaptor.stringValue( "synchMode" );
-		USE_READBACK = adaptor.booleanValue( "useFieldReadBack" );
-		USE_PVLOGGER = adaptor.booleanValue( "usePVLogger" );
-		PVLOGGER_ID = adaptor.longValue( "pvLoggerID" );
-		USE_LOGGED_BEND_FIELDS = adaptor.booleanValue( "useLoggedBendFields" );
+		SYNCH_MODE = adaptor.hasAttribute( "synchMode" )  ? adaptor.stringValue( "synchMode" ) : "Save Failed";
+		USE_READBACK = adaptor.hasAttribute( "useFieldReadBack" ) ? adaptor.booleanValue( "useFieldReadBack" ) : null;
+		USE_PVLOGGER = adaptor.hasAttribute( "usePVLogger" ) ? adaptor.booleanValue( "usePVLogger" ) : null;
+		PVLOGGER_ID = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : null;
+		USE_LOGGED_BEND_FIELDS = adaptor.hasAttribute( "useLoggedBendFields" ) ? adaptor.booleanValue( "useLoggedBendFields" ) : null;
 
 		update( adaptor );
 	}

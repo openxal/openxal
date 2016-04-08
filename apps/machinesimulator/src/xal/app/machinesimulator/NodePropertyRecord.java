@@ -1,14 +1,21 @@
 package xal.app.machinesimulator;
 
+import java.util.List;
+
 import xal.ca.Channel;
 import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
+import xal.tools.data.DataAdaptor;
 /**
  * 
  * @author luxiaohan
  *get and set values of the specified property in an accelerator node
  */
 public class NodePropertyRecord {
+	
+ 	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "NodePropertyRecord";
+	
 	/**the accelerator node*/
 	final private AcceleratorNode NODE;
 	/**the name of specified property*/
@@ -38,6 +45,16 @@ public class NodePropertyRecord {
 		CHANNEL_MONITORS = createMonitors(channels);		
 		MODEL_INPUT = ( modelInput != null ) ? modelInput : new ModelInput(node, PROPERTY_NAME, Double.NaN );
 		
+	}
+	
+	/**Constructor with adaptor*/
+	public NodePropertyRecord( final DataAdaptor adaptor, final double loggedValue ) {
+		NODE = null;
+		PROPERTY_NAME = null;
+		LOGGED_VALUE = loggedValue;
+		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
+		CHANNEL_MONITORS = createMonitors( channels );
+		MODEL_INPUT = null;
 	}
 	
 	/**create monitors*/
@@ -133,5 +150,20 @@ public class NodePropertyRecord {
 	public void setSteps ( final int steps ) {
 		this.scanSteps = steps;
 	}
+	
+	/** provides the name used to identify the class in an external data source. */
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+	
+	/** Instructs the receiver to update its data based on the given adaptor. */
+	public void update( DataAdaptor adaptor ) {
+	}
+	
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+	public void write( DataAdaptor adaptor ) {
+	}
+	
+	
 
 }
