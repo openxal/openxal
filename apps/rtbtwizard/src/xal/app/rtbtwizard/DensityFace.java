@@ -233,7 +233,8 @@ public class DensityFace extends JPanel{
                         datatablemodel.setValueAt(new String(decfor.format(rho_wire)), i, 2);
                         datatablemodel.setValueAt(new String(decfor.format(rho_window)), i, 3);
                         datatablemodel.setValueAt(new String(decfor.format(rho_target)), i, 4);
-                        datatablemodel.setValueAt(new String(decfor.format(peakfac)), i, 5);
+						datatablemodel.setValueAt(new String(decfor.format(rho_target_raw)), i, 5);
+                        datatablemodel.setValueAt(new String(decfor.format(peakfac)), i, 6);
                         avg_rho_target += rho_target;
 						avg_rho_target_raw += rho_target_raw;
                         avg_rho_window += rho_window;
@@ -400,6 +401,7 @@ public class DensityFace extends JPanel{
                 tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
+				tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
                 datatablemodel.addTableData(new ArrayList<Object>(tabledata));
             }
@@ -426,7 +428,7 @@ public class DensityFace extends JPanel{
     
     public void makeDataTable(){
         
-        String[] colnames = {"Wire", "Use", "Wire Density (N/mm^2)", "Window Density (N/mm^2)", "Target Density (N/mm^2)", "Peaking Fac."};
+        String[] colnames = {"Wire", "Use", "Wire Density (N/mm^2)", "Window Density (N/mm^2)", "Target Density (N/mm^2)", "Raw Target Density (N/mm^2)", "Peaking Fac."};
         
         datatablemodel = new DataTableModel(colnames, 0);
         
@@ -436,7 +438,8 @@ public class DensityFace extends JPanel{
         datatable.getColumnModel().getColumn(2).setMinWidth(150);
         datatable.getColumnModel().getColumn(3).setMinWidth(160);
         datatable.getColumnModel().getColumn(4).setMinWidth(165);
-        datatable.getColumnModel().getColumn(5).setMinWidth(90);
+		datatable.getColumnModel().getColumn(5).setMinWidth(165);
+        datatable.getColumnModel().getColumn(6).setMinWidth(90);
         
         datatable.setRowSelectionAllowed(false);
         datatable.setColumnSelectionAllowed(false);
