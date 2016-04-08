@@ -500,6 +500,7 @@ public class MachineModel implements DataListener {
 	/**get the setting information of the simulation*/
 	public String getRunInformation( ) {
 		String runInformation = "Record Name : " + recordName + "\n" +
+	                            "sequence ID : " + SEQUENCE.getId() + "\n" +
 	                             "Synch Mode : " + SYNCH_MODE + "\n"  +
 	                             "Use ReadBack : " + USE_READBACK + "\n" +
 	                             "Use PVLogger : " + USE_PVLOGGER + "\n" +

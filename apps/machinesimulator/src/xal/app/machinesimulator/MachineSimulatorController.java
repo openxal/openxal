@@ -88,6 +88,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<String> keyPathsForDiagDiff;
      /**refresh action*/
      private ActionListener refresh;
+     /**text handler*/
+     private ActionListener textHandler;
      /**the selected nodeProperty records used for scan in new run parameters table*/
      private List<NodePropertyRecord> nodePropRecordsForScan;
 
@@ -148,6 +150,7 @@ public class MachineSimulatorController implements MachineModelListener {
            
            //change records for history record table
            changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
+           
               }
          else JOptionPane.showMessageDialog( window,
          		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);  
@@ -491,15 +494,14 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
         
-        final ActionListener textHandler = event -> {
-        	String displayText = "-";
+        textHandler = event -> {
+        	String displayText = "*";
         	List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-        	int[] selRows = historyRecordTable.getSelectedRows();
-System.out.println( selRows.length );        	
+        	int[] selRows = historyRecordTable.getSelectedRows();       	
         	for ( int index = 0; index < selRows.length; index++ ) {
-        		displayText = displayText + "******************\n" + records.get( index ).getRunInformation(); 
+        		displayText = displayText + "******************\n" + records.get( selRows[index] ).getRunInformation();     		
         	}
-        	if ( !displayText.equals( "-" ) ) textArea.setText( displayText );
+        	if ( !displayText.equals( "*" ) ) textArea.setText( displayText );
         	else textArea.setText( initialText );
         };
         
@@ -510,31 +512,14 @@ System.out.println( selRows.length );
 			public void mouseClicked(MouseEvent e) {
 				textHandler.actionPerformed( null );
 			}
-
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mousePressed(MouseEvent e) {}
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mouseReleased(MouseEvent e) {}
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mouseEntered(MouseEvent e) {}
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-        	
+			public void mouseExited(MouseEvent e) {}
         }
        		);
         
@@ -551,6 +536,7 @@ System.out.println( selRows.length );
 				removed++;
 			}
 			if ( records.size() == 0 ) PARAM_HISTORY_TABLE_MODEL.setRecords( null );
+			historyRecordTable.clearSelection();
 			textHandler.actionPerformed( null );
 			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
 		});
@@ -780,6 +766,7 @@ System.out.println( selRows.length );
 	/**change simulation history records*/
 	public void changeSimHistoryRecords ( final List<SimulationHistoryRecord> simHistoryRecords ) {
 		HISTORY_RECORD_TABLE_MODEL.setRecords( simHistoryRecords );
+        textHandler.actionPerformed( null );
 	}
 	
   /** get the selected parameters' data from the specified records
@@ -1026,7 +1013,7 @@ System.out.println( selRows.length );
 		
 		diagData = dRecords;
 
-		refresh.actionPerformed(null);
+		refresh.actionPerformed( null );
 		
 	}
 	
