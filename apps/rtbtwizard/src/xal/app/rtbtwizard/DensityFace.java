@@ -195,6 +195,7 @@ public class DensityFace extends JPanel{
                 double rho_window = 0.0;
                 double np = 0.0;
                 double avg_rho_target=0.0;
+				double avg_rho_target_raw = 0.0;
                 double avg_rho_window=0.0;
                 double count=0.0;
                 double peakfac = 0.0;
@@ -205,6 +206,7 @@ public class DensityFace extends JPanel{
                 System.out.println("Number of protons is " + np);
                 doc.charge=np;
                 avg_rho_target = 0.0;
+				avg_rho_target_raw = 0.0;
                 avg_rho_window = 0.0;
                 count = 0.0;
                 for(int i=0; i<nrows; i++){
@@ -233,6 +235,7 @@ public class DensityFace extends JPanel{
                         datatablemodel.setValueAt(new String(decfor.format(rho_target)), i, 4);
                         datatablemodel.setValueAt(new String(decfor.format(peakfac)), i, 5);
                         avg_rho_target += rho_target;
+						avg_rho_target_raw += rho_target_raw;
                         avg_rho_window += rho_window;
                         count += 1.0;
                     }
@@ -243,6 +246,7 @@ public class DensityFace extends JPanel{
                 avgdensity.setText(decfor.format(avedensity));
                 System.out.println("target ave is " + avg_rho_target);
                 doc.tdensity = avg_rho_target;
+				doc.tdensity_raw = avg_rho_target_raw;
                 doc.wdensity = avg_rho_window;
                 
                 datatablemodel.fireTableDataChanged();

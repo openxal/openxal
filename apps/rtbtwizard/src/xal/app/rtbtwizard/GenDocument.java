@@ -201,6 +201,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     public double xpos = 0;
     public double ypos = 0;
     public double tdensity = 0;
+	public double tdensity_raw = 0;
     public double wdensity = 0;
     public boolean lastfitSuperGauss = true;
     
