@@ -12,6 +12,7 @@ import java.net.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 import xal.extension.application.*;
@@ -226,13 +227,22 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    USE_PVLOGGER.setSelected( false );
 	    USE_PVLOGGER.addActionListener( new ActionListener() {
 	    	public void actionPerformed ( final ActionEvent event ) {
+	    		if ( pvLoggerID != 0 ) {
+	    			if ( USE_PVLOGGER.isSelected() ) USE_LOGGEDBEND.setEnabled( true );
+		    		else USE_LOGGEDBEND.setEnabled( false );
+	    			
+		    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
+		    		
+		    		setHasChanges( true );
+	    		}
+	    		else {
+	    			JOptionPane.showMessageDialog( mainWindow,
+	    	         		"You need to select pvLoggerData first","Warning!",JOptionPane.PLAIN_MESSAGE);
+	    			USE_PVLOGGER.setSelected( false );
+	    		}
 	    		
-	    		if ( USE_PVLOGGER.isSelected() ) USE_LOGGEDBEND.setEnabled( true );
-	    		else USE_LOGGEDBEND.setEnabled( false );
 	    		
-	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
-	    		
-	    		setHasChanges( true );
+
 	    	}
 	    });				
 	    commander.registerModel( "use-pvlogger", USE_PVLOGGER );
@@ -360,6 +370,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             final String synchMode = MODEL.getSimulator().getScenario().getSynchronizationMode();
             if ( synchMode.equals( Scenario.SYNC_MODE_LIVE ) ) USE_CHANNEL.setSelected( true );
             else if ( synchMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) USE_RF_DESIGN.setSelected( true );
+            USE_PVLOGGER.setSelected( adaptor.booleanValue( "usepvlogger" ) );
+            USE_LOGGEDBEND.setEnabled( adaptor.booleanValue( "usepvlogger" ) );
+            USE_LOGGEDBEND.setSelected( adaptor.booleanValue( "usebendloggedfields" ) );
             MODEL.modelScenarioChanged();
             }
         
@@ -381,6 +394,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			final AcceleratorSeq sequence = getSelectedSequence();
 			if ( sequence != null ) {
 				adaptor.setValue( "sequence", sequence.getId() );
+				adaptor.setValue( "usebendloggedfields", USE_LOGGEDBEND.isSelected() );
+				adaptor.setValue( "usepvlogger", USE_PVLOGGER.isSelected() );
 			}
 		}
     }

@@ -57,6 +57,8 @@ public class MachineModel implements DataListener {
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history data snapshot*/
    private List<NodePropertySnapshot> nodePropertySnapshots;
+   /**if using pvlogger*/
+   private boolean usePVLogger;
    /**the pvLogger data*/
    private PVLoggerDataSource pvLoggerDataSource;
    /**the pvLogger ID*/
@@ -106,6 +108,7 @@ public class MachineModel implements DataListener {
     public void configPVLoggerData( final PVLoggerDataSource pvLoggerData, final long pvLoggerID, final boolean checked  ) {
     	pvLoggerDataSource = pvLoggerData;
     	this.pvLoggerID = pvLoggerID;
+    	usePVLogger = checked;
     	SIMULATOR.configPVloggerData( pvLoggerData, checked);
     }
     
@@ -383,6 +386,16 @@ public class MachineModel implements DataListener {
 	final private AcceleratorSeq SEQUENCE;
 	/**the record of values assignment to simulation*/
 	final private List<NodePropertySnapshot> VALUES_SNAPSHOT;
+	/**the model senario*/
+	final private String SYNCH_MODE;
+	/**if using readback*/
+	final private boolean USE_READBACK;
+	/**if using pvlogger*/
+	final private boolean USE_PVLOGGER;
+	/**pvlogger ID*/
+	final private long PVLOGGER_ID;
+	/**if using logged bend fields*/
+	final private boolean USE_LOGGED_BEND_FIELDS;
 	/**the records of diagnostic data*/
 	final private List<DiagnosticSnapshot> DIAG_SNAPSHOTS;
 	/**the simulation result*/
@@ -401,6 +414,11 @@ public class MachineModel implements DataListener {
 		DIAG_SNAPSHOTS = _diagnosticConfiguration.snapshotValues();
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		this.recordName = ( recordName != null ) ? recordName : " Run "+SIMULATOR.getRunNumber();
+		SYNCH_MODE = SIMULATOR.getScenario().getSynchronizationMode();
+		USE_READBACK = SIMULATOR.getUseFieldReadback();
+		USE_PVLOGGER = usePVLogger;
+		PVLOGGER_ID = ( USE_PVLOGGER ) ? pvLoggerID : 0;
+		USE_LOGGED_BEND_FIELDS = ( USE_PVLOGGER && pvLoggerDataSource != null ) ? pvLoggerDataSource.getUsesLoggedBendFields() : false;
 		checkState = true;
 		COLUMN_NAME.get(SEQUENCE).put( TIME, this.recordName );
 	}
@@ -417,6 +435,12 @@ public class MachineModel implements DataListener {
 		SIMULATION = null;
 		VALUES_SNAPSHOT = new ArrayList<NodePropertySnapshot>();
 		DIAG_SNAPSHOTS = new ArrayList<DiagnosticSnapshot>();
+		
+		SYNCH_MODE = adaptor.stringValue( "synchMode" );
+		USE_READBACK = adaptor.booleanValue( "useFieldReadBack" );
+		USE_PVLOGGER = adaptor.booleanValue( "usePVLogger" );
+		PVLOGGER_ID = adaptor.longValue( "pvLoggerID" );
+		USE_LOGGED_BEND_FIELDS = adaptor.booleanValue( "useLoggedBendFields" );
 
 		update( adaptor );
 	}
@@ -472,6 +496,17 @@ public class MachineModel implements DataListener {
 	public String getRecordName(){
 		return recordName;
 	}
+	
+	/**get the setting information of the simulation*/
+	public String getRunInformation( ) {
+		String runInformation = "Record Name : " + recordName + "\n" +
+	                             "Synch Mode : " + SYNCH_MODE + "\n"  +
+	                             "Use ReadBack : " + USE_READBACK + "\n" +
+	                             "Use PVLogger : " + USE_PVLOGGER + "\n" +
+	                             "PVLogger ID : " + PVLOGGER_ID + "\n" +
+	                             "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n";
+		return runInformation;
+	}
 
 	/**set the record name*/
 	public void setRecordName( final String newName ){
@@ -518,6 +553,11 @@ public class MachineModel implements DataListener {
 		adaptor.setValue( "time", TIME.getTime() );
 		adaptor.setValue( "recordName", recordName );
 		adaptor.setValue( "sequence", SEQUENCE.getId() );
+		adaptor.setValue( "synchMode", SYNCH_MODE );
+		adaptor.setValue( "useFieldReadBack", USE_READBACK );
+		adaptor.setValue( "usePVLogger", USE_PVLOGGER );
+		adaptor.setValue( "pvLoggerID", PVLOGGER_ID );
+		adaptor.setValue( "useLoggedBendFields", USE_LOGGED_BEND_FIELDS );
 		adaptor.writeNodes( VALUES_SNAPSHOT );
 		adaptor.writeNodes( DIAG_SNAPSHOTS );
 		adaptor.writeNode( SIMULATION );

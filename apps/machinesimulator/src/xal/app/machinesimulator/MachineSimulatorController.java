@@ -6,6 +6,8 @@ package xal.app.machinesimulator;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -469,6 +471,11 @@ public class MachineSimulatorController implements MachineModelListener {
         clearButton.addActionListener( event -> {
         	filterField.setText( "" );
         });
+        
+		//configure the text area
+		final JTextArea textArea = (JTextArea)windowReference.getView( "Display Area" );
+		String initialText = "Display the Run Information";
+		textArea.setText( initialText );
   
         final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
         historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
@@ -484,6 +491,54 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
         
+        final ActionListener textHandler = event -> {
+        	String displayText = "-";
+        	List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+        	int[] selRows = historyRecordTable.getSelectedRows();
+System.out.println( selRows.length );        	
+        	for ( int index = 0; index < selRows.length; index++ ) {
+        		displayText = displayText + "******************\n" + records.get( index ).getRunInformation(); 
+        	}
+        	if ( !displayText.equals( "-" ) ) textArea.setText( displayText );
+        	else textArea.setText( initialText );
+        };
+        
+        
+        historyRecordTable.addMouseListener( new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textHandler.actionPerformed( null );
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        }
+       		);
+        
+        
 		//configure the remove button of the history record view
 		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
 		removeButton.addActionListener( event -> {		
@@ -496,6 +551,7 @@ public class MachineSimulatorController implements MachineModelListener {
 				removed++;
 			}
 			if ( records.size() == 0 ) PARAM_HISTORY_TABLE_MODEL.setRecords( null );
+			textHandler.actionPerformed( null );
 			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
 		});
 		
@@ -518,6 +574,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, rowCount );
 		});
+		
 	}
 	
 	/**make the table of new run parameters*/
