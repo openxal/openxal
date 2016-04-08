@@ -389,6 +389,7 @@ class PublishController extends AbstractTableModel {
 		PARAMETERS.put( "timestamp", new Date() );
 		
 		if(DOCUMENT.tdensity != 0.0) PARAMETERS.put( "peakTargetProtonDensity", DOCUMENT.tdensity);
+		if(DOCUMENT.tdensity_raw != 0.0) PARAMETERS.put( "rawPeakTargetProtonDensity", DOCUMENT.tdensity_raw);
 		if(DOCUMENT.wdensity != 0.0) PARAMETERS.put( "peakBeamWindowProtonDensity",DOCUMENT.wdensity);
 		if(DOCUMENT.xsize != 0.0) PARAMETERS.put( "widthTarget", DOCUMENT.xsize);
 		if(DOCUMENT.ysize != 0.0) PARAMETERS.put( "heightTarget", DOCUMENT.ysize);
