@@ -178,6 +178,7 @@ public class DensityFace extends JPanel{
         solvebutton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 HashMap<String,Double> beamarearatios = doc.beamarearatios;
+				HashMap<String,Double> beamarearatiosraw = doc.beamarearatiosraw;
                 HashMap<String,Double> windowarearatios = doc.windowarearatios;
                 DecimalFormat decfor =  new DecimalFormat("0.###E0");
                 int nrows = datatablemodel.getRowCount();
@@ -187,8 +188,10 @@ public class DensityFace extends JPanel{
                 double Gy = 0.0;
                 double rho_wire = 0.0;
                 double areafac = 1.0;
+				double areafacraw = 1.0;
                 double wareafac = 1.0;
                 double rho_target = 0.0;
+				double rho_target_raw = 0.0;
                 double rho_window = 0.0;
                 double np = 0.0;
                 double avg_rho_target=0.0;
@@ -215,8 +218,10 @@ public class DensityFace extends JPanel{
                         System.out.println("xroot is " + xroot + "; yroot is " + yroot);
                         System.out.println("Gx = " + Gx + " Gy = " + Gy + " Gx*Gy*np " + rho_wire);
 						areafac = beamarearatios.get(label);
+						areafacraw = beamarearatiosraw.get(label);
 						wareafac = windowarearatios.get(label);
                         rho_target=rho_wire*areafac * 0.96;
+						rho_target_raw = rho_wire*areafacraw;
                         rho_window=rho_wire*wareafac;
                         peakfac = rho_target/(1.25e-4)/np;
                         sumdensity += rho_target;
