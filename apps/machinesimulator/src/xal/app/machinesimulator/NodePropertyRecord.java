@@ -1,17 +1,16 @@
 package xal.app.machinesimulator;
 
-import java.util.List;
-
 import xal.ca.Channel;
 import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 /**
  * 
  * @author luxiaohan
  *get and set values of the specified property in an accelerator node
  */
-public class NodePropertyRecord {
+public class NodePropertyRecord implements DataListener {
 	
  	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "NodePropertyRecord";

@@ -550,7 +550,7 @@ public class MachineModel implements DataListener {
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
-	public void write(DataAdaptor adaptor) {
+	public void write( DataAdaptor adaptor ) {
 		adaptor.setValue( "time", TIME.getTime() );
 		adaptor.setValue( "recordName", recordName );
 		adaptor.setValue( "sequence", SEQUENCE.getId() );

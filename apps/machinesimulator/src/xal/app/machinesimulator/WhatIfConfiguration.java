@@ -17,12 +17,13 @@ import xal.smf.proxy.ElectromagnetPropertyAccessor;
 import xal.smf.proxy.PermanentMagnetPropertyAccessor;
 import xal.smf.proxy.RfCavityPropertyAccessor;
 import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 
 /**
  * @author luxiaohan
  *Select the specified nodes from the sequence
  */
-public class WhatIfConfiguration {
+public class WhatIfConfiguration implements DataListener {
 	
  	/** the data adaptor label used for reading and writing this document */
 	static public final String DATA_LABEL = "WhatIfConfiguration";
