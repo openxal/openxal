@@ -381,7 +381,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
             }
             
-            MODEL.modelScenarioChanged();
+            final DataAdaptor whAdaptor = modelAdaptor.childAdaptor( WhatIfConfiguration.DATA_LABEL );
+            MODEL.restoreModelScenario( whAdaptor );
             }
         
         MACHINE_SIMULATOR_CONTROLLER.changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );

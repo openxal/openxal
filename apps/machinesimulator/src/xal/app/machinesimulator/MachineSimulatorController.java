@@ -6,6 +6,8 @@ package xal.app.machinesimulator;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -427,25 +429,23 @@ public class MachineSimulatorController implements MachineModelListener {
 
         // configure the Clear All button
         final JButton ClearButton = (JButton)windowReference.getView( "Clear All" );
-        final ActionListener CLEAR_BUTTON=new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {
-            	kineticEnergyCheckbox.setSelected(false);
-            	bpmCheckbox.setSelected(false);
-            	orbitCheckbox.setSelected(false);
-                xSelectionCheckbox.setSelected(false);
-                ySelectionCheckbox.setSelected(false);
-                zSelectionCheckbox.setSelected(false);
-                betaCheckbox.setSelected(false);
-                alphaCheckbox.setSelected(false);
-                gammaCheckbox.setSelected(false);
-                emittanceCheckbox.setSelected(false);
-                beamSizeCheckbox.setSelected(false);
-                betatronPhaseCheckbox.setSelected(false);
-
-                PARAMETER_HANDLER.actionPerformed( null );
-            }
-        };
-      ClearButton.addActionListener(CLEAR_BUTTON);
+        final ActionListener CLEAR_BUTTON = (final ActionEvent event) -> {
+            kineticEnergyCheckbox.setSelected(false);
+            bpmCheckbox.setSelected(false);
+            orbitCheckbox.setSelected(false);
+            xSelectionCheckbox.setSelected(false);
+            ySelectionCheckbox.setSelected(false);
+            zSelectionCheckbox.setSelected(false);
+            betaCheckbox.setSelected(false);
+            alphaCheckbox.setSelected(false);
+            gammaCheckbox.setSelected(false);
+            emittanceCheckbox.setSelected(false);
+            beamSizeCheckbox.setSelected(false);
+            betatronPhaseCheckbox.setSelected(false);
+            
+            PARAMETER_HANDLER.actionPerformed( null );
+            };
+      ClearButton.addActionListener( CLEAR_BUTTON );
 				
 		//configure the refresh action
 		refresh = event -> {		
@@ -522,6 +522,17 @@ public class MachineSimulatorController implements MachineModelListener {
 			public void mouseExited(MouseEvent e) {}
         }
        		);
+        
+        historyRecordTable.addKeyListener( new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {
+                textHandler.actionPerformed( null );
+            }
+        });
         
         
 		//configure the remove button of the history record view

@@ -89,7 +89,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
-        setupWhatIfConfiguration( _sequence, pvLoggerDataSource, null );
+        setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
 		  _diagnosticConfiguration = setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
@@ -119,10 +119,14 @@ public class MachineModel implements DataListener {
     
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
-        if ( _whatIfConfiguration != null ) SIMULATOR.configModelInputs( _whatIfConfiguration.getNodePropertyRecords() );
-    	List<ModelInput> modelInputs = SIMULATOR.getModelInputs();
-    	setupWhatIfConfiguration( _sequence, pvLoggerDataSource, modelInputs );
+        if ( _whatIfConfiguration != null ) _whatIfConfiguration.refresh( pvLoggerDataSource );
     	EVENT_PROXY.modelScenarioChanged(this);
+    }
+    
+    /**restore the model scenario*/
+    public void restoreModelScenario( final DataAdaptor adaptor){
+        restoreWhatIfConfiguration( _sequence, pvLoggerDataSource, adaptor );
+        EVENT_PROXY.modelScenarioChanged(this);
     }
 
     /** get the accelerator sequence */
@@ -134,8 +138,13 @@ public class MachineModel implements DataListener {
     	return _whatIfConfiguration;
     }
     /** setup WhatIfConfiguration*/
-    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData, final List<ModelInput> modelInputs ){
-    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData, modelInputs );
+    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData ){
+    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData );
+    }
+    
+    /**restore WhatIfConfiguration*/
+    private void restoreWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData, final DataAdaptor adaptor ) {
+        if ( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData, adaptor);
     }
     
     /**get the diagnostic records*/
@@ -346,13 +355,14 @@ public class MachineModel implements DataListener {
         
         final List<DataAdaptor> historyRecordAdaptors = adaptor.childAdaptors( SimulationHistoryRecord.DATA_LABEL );
         for ( final DataAdaptor recordAdaptor : historyRecordAdaptors ) {
-        	SIMULATION_HISTORY_RECORDS.add( new SimulationHistoryRecord( recordAdaptor ) );
+        	if ( recordAdaptor.hasAttribute( "sequence" ) ) SIMULATION_HISTORY_RECORDS.add( new SimulationHistoryRecord( recordAdaptor ) );
         }
     }
     
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
     public void write( final DataAdaptor adaptor ) {
+        adaptor.writeNode( _whatIfConfiguration );
     	adaptor.writeNode( SIMULATOR );
     	adaptor.writeNodes( SIMULATION_HISTORY_RECORDS );
     }
@@ -420,7 +430,7 @@ public class MachineModel implements DataListener {
 		PVLOGGER_ID = ( USE_PVLOGGER ) ? pvLoggerID : 0;
 		USE_LOGGED_BEND_FIELDS = ( USE_PVLOGGER && pvLoggerDataSource != null ) ? pvLoggerDataSource.getUsesLoggedBendFields() : false;
 		checkState = true;
-		COLUMN_NAME.get(SEQUENCE).put( TIME, this.recordName );
+		COLUMN_NAME.get( SEQUENCE ).put( TIME, this.recordName );
 	}
 	
 	/**Constructor with dataAdaptor*/
