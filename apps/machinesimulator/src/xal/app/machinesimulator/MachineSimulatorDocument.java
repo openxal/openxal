@@ -183,6 +183,8 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 					pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
 					CONFIG_PVLOGGER_DATA.actionPerformed( null );
 					MODEL.modelScenarioChanged();
+
+                    setHasChanges( true );
 				}
 				
 				
