@@ -122,11 +122,22 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		//initialize the pvLoggerID
 		pvLoggerID = 0;
 		
+		//the action to configure the pvlogger data
+	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+                if ( pvLoggerID != 0 ) {
+    				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
+                }
+
+			}
+		};
+		
 		//run model action
 		final AbstractAction runModelAction = new AbstractAction( "run-model" ) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				CONFIG_PVLOGGER_DATA.actionPerformed( null );
 				MACHINE_SIMULATOR_CONTROLLER.runModel( mainWindow, null );
 				setHasChanges( true );
 			}
@@ -158,15 +169,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		commander.registerAction( probeEditor );
 		
-		//the action to configure the pvlogger data
-	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
-			public void actionPerformed( final ActionEvent event ) {
-                if ( pvLoggerID != 0 ) {
-    				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
-                }
 
-			}
-		};
 		
 		//register select_pvlogger button
 		final AbstractAction selectPVLogger = new AbstractAction( "select-pvlogger" ) {
@@ -232,8 +235,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    		if ( pvLoggerID != 0 ) {
 	    			if ( USE_PVLOGGER.isSelected() ) USE_LOGGEDBEND.setEnabled( true );
 		    		else USE_LOGGEDBEND.setEnabled( false );
-	    			
-		    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
 		    		
 		    		setHasChanges( true );
 	    		}
@@ -261,8 +262,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	    			if ( pvLoggerDataSource != null ) pvLoggerDataSource.setUsesLoggedBendFields( false );
 	    		}
 	    		
-	    		CONFIG_PVLOGGER_DATA.actionPerformed( null );
-	    		
 	    		setHasChanges( true );
 	    	}
 	    });				
@@ -274,8 +273,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_SET.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( false );
-				
-				CONFIG_PVLOGGER_DATA.actionPerformed( null );
 				
 				MODEL.modelScenarioChanged();
 				
@@ -290,8 +287,6 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_READ_BACK.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( true );
-				
-				CONFIG_PVLOGGER_DATA.actionPerformed( null );
 				
 				MODEL.modelScenarioChanged();
 				

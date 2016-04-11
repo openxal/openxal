@@ -274,7 +274,7 @@ public class MachineSimulator implements DataListener {
     		}
     	}
 	
-    	changeModelInputs( modelInputs, newModelInputs );	
+    	setModelInputs( newModelInputs );	
     }
     
     
@@ -293,20 +293,24 @@ public class MachineSimulator implements DataListener {
     }
     
     /**
-     * change the modelInput
+     * remove the modelInputs
      * @param oldInputs The old modelInputs which we set last time
-     * @param newInputs The new modelInputs which we are going to set
      */
-    private void changeModelInputs( final List<ModelInput> oldInputs, final List<ModelInput> newInputs ){
+    public void removeModelInputs( final List<ModelInput> oldInputs ){
     	for( final ModelInput oldInput : oldInputs ){
     		_scenario.removeModelInput( oldInput.getAcceleratorNode(), oldInput.getProperty() );
     	}
-    	
-    	for( final ModelInput newInput : newInputs ){
-    		_scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
-    	}
-    	
-    	modelInputs = newInputs;
+    }
+    /**
+     * set the modelInputs
+     * @param newInputs The new modelInputs which will set to scenario
+     */
+    private void setModelInputs ( final List<ModelInput> newInputs ) {
+        for( final ModelInput newInput : newInputs ){
+            _scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );
+        }
+
+        modelInputs = newInputs;
     }
     
     /**get the modelInputs from the test values*/

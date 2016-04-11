@@ -277,14 +277,18 @@ public class MachineModel implements DataListener {
     }
 	/** Run the simulation and record the result and the values used for simulation */
 	public void runSimulation( final String name ) {
+		
 		//configure
+		
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
-		modelInputs = SIMULATOR.getModelInputs();
 		//save the values used for simulation
 		SIMULATOR.saveValuesForSimulation( nodePropertyRecords );
 		//run
 		_simulation = SIMULATOR.run();
+		modelInputs = SIMULATOR.getModelInputs();
+		//remove the model inputs after a running
+		SIMULATOR.removeModelInputs( modelInputs );
 		//record
 		if(_simulation != null ) {
 			Date time = new Date();		
