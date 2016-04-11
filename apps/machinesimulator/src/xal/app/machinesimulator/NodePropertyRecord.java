@@ -54,12 +54,12 @@ public class NodePropertyRecord implements DataListener {
 		this.loggedValue = loggedValue;
 		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
 		channelMonitors = createMonitors( channels );
-                double testValue = ( adaptor.hasAttribute( "testValue" ) ) ? adaptor.doubleValue( "testValue" ) : Double.NaN;
+        double testValue = ( adaptor.hasAttribute( "testValue" ) ) ? adaptor.doubleValue( "testValue" ) : Double.NaN;
 		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, testValue );
-                if ( adaptor.hasAttribute( "checkState" ) ) checkState = adaptor.booleanValue( "checkState" );
-                if ( adaptor.hasAttribute( "scanStartValue" ) ) scanStartValue = adaptor.doubleValue( "scanStartValue" );
-                if ( adaptor.hasAttribute( "scanEndValue" ) ) scanEndValue = adaptor.doubleValue( "scanEndValue" );
-                if ( adaptor.hasAttribute( "scanSteps" ) ) scanSteps = adaptor.intValue( "scanSteps" );
+        if ( adaptor.hasAttribute( "checkState" ) ) checkState = adaptor.booleanValue( "checkState" );
+        if ( adaptor.hasAttribute( "scanStartValue" ) ) scanStartValue = adaptor.doubleValue( "scanStartValue" );
+        if ( adaptor.hasAttribute( "scanEndValue" ) ) scanEndValue = adaptor.doubleValue( "scanEndValue" );
+        if ( adaptor.hasAttribute( "scanSteps" ) ) scanSteps = adaptor.intValue( "scanSteps" );
 	}
 	
 	/**create monitors*/
@@ -105,11 +105,11 @@ public class NodePropertyRecord implements DataListener {
 		return loggedValue;
 	}
         
-        public void refresh( final double loggedValue ) {
-           Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
-	   channelMonitors = createMonitors( channels );
-           this.loggedValue = loggedValue;
-        }
+    public void refresh( final double loggedValue ) {
+       Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
+       channelMonitors = createMonitors( channels );
+       this.loggedValue = loggedValue;
+    }
 	
 	
 	/**get the test value */
@@ -176,13 +176,13 @@ public class NodePropertyRecord implements DataListener {
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
         @Override
 	public void write( DataAdaptor adaptor ) {
-            adaptor.setValue( "nodeId", NODE.getId() );
-            adaptor.setValue( "propertyName", PROPERTY_NAME );
-            adaptor.setValue( "testValue", MODEL_INPUT.getDoubleValue() );
-            adaptor.setValue( "checkState", checkState );
-            adaptor.setValue( "scanStartValue", scanStartValue );
-            adaptor.setValue( "scanEndValue", scanEndValue );
-            adaptor.setValue( "scanSteps", scanSteps );
+        adaptor.setValue( "nodeId", NODE.getId() );
+        adaptor.setValue( "propertyName", PROPERTY_NAME );
+        adaptor.setValue( "testValue", MODEL_INPUT.getDoubleValue() );
+        adaptor.setValue( "checkState", checkState );
+        adaptor.setValue( "scanStartValue", scanStartValue );
+        adaptor.setValue( "scanEndValue", scanEndValue );
+        adaptor.setValue( "scanSteps", scanSteps );
 	}
 	
 	

@@ -57,6 +57,8 @@ public class MachineModel implements DataListener {
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history data snapshot*/
    private List<NodePropertySnapshot> nodePropertySnapshots;
+   /**the ModelInputs*/
+   private List<ModelInput> modelInputs;
    /**if using pvlogger*/
    private boolean usePVLogger;
    /**the pvLogger data*/
@@ -278,6 +280,7 @@ public class MachineModel implements DataListener {
 		//configure
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
+		modelInputs = SIMULATOR.getModelInputs();
 		//save the values used for simulation
 		SIMULATOR.saveValuesForSimulation( nodePropertyRecords );
 		//run
@@ -399,17 +402,19 @@ public class MachineModel implements DataListener {
 	/**the model senario*/
 	final private String SYNCH_MODE;
 	/**if using readback*/
-	final private boolean USE_READBACK;
+	final private Boolean USE_READBACK;
 	/**if using pvlogger*/
-	final private boolean USE_PVLOGGER;
+	final private Boolean USE_PVLOGGER;
 	/**pvlogger ID*/
 	final private long PVLOGGER_ID;
 	/**if using logged bend fields*/
-	final private boolean USE_LOGGED_BEND_FIELDS;
+	final private Boolean USE_LOGGED_BEND_FIELDS;
 	/**the records of diagnostic data*/
 	final private List<DiagnosticSnapshot> DIAG_SNAPSHOTS;
 	/**the simulation result*/
 	private MachineSimulation SIMULATION;
+	/**test values information*/
+	private String testValueInfos;
 	/**record name*/
 	private String recordName;
 	/**checked state*/
@@ -429,6 +434,7 @@ public class MachineModel implements DataListener {
 		USE_PVLOGGER = usePVLogger;
 		PVLOGGER_ID = ( USE_PVLOGGER ) ? pvLoggerID : 0;
 		USE_LOGGED_BEND_FIELDS = ( USE_PVLOGGER && pvLoggerDataSource != null ) ? pvLoggerDataSource.getUsesLoggedBendFields() : false;
+        testValueInfos = configTestValueInfo( modelInputs );
 		checkState = true;
 		COLUMN_NAME.get( SEQUENCE ).put( TIME, this.recordName );
 	}
@@ -446,11 +452,12 @@ public class MachineModel implements DataListener {
 		VALUES_SNAPSHOT = new ArrayList<NodePropertySnapshot>();
 		DIAG_SNAPSHOTS = new ArrayList<DiagnosticSnapshot>();
 		
-		SYNCH_MODE = adaptor.hasAttribute( "synchMode" )  ? adaptor.stringValue( "synchMode" ) : "Save Failed";
+		SYNCH_MODE = adaptor.hasAttribute( "synchMode" )  ? adaptor.stringValue( "synchMode" ) : null;
 		USE_READBACK = adaptor.hasAttribute( "useFieldReadBack" ) ? adaptor.booleanValue( "useFieldReadBack" ) : null;
 		USE_PVLOGGER = adaptor.hasAttribute( "usePVLogger" ) ? adaptor.booleanValue( "usePVLogger" ) : null;
-		PVLOGGER_ID = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : null;
+		PVLOGGER_ID = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : 0;
 		USE_LOGGED_BEND_FIELDS = adaptor.hasAttribute( "useLoggedBendFields" ) ? adaptor.booleanValue( "useLoggedBendFields" ) : null;
+        testValueInfos = adaptor.hasAttribute( "testValueInfos" ) ? adaptor.stringValue( "testValueInfos" ) : "";
 
 		update( adaptor );
 	}
@@ -507,6 +514,14 @@ public class MachineModel implements DataListener {
 		return recordName;
 	}
 	
+	private String configTestValueInfo( final List<ModelInput> modelInputs ) {
+		String infos = "";
+		for ( final ModelInput modelInput : modelInputs ) {
+			infos = infos + modelInput.getAcceleratorNode().getId() + "." + modelInput.getProperty() + " | ";
+		}
+		return infos;
+	}
+	
 	/**get the setting information of the simulation*/
 	public String getRunInformation( ) {
 		String runInformation = "Record Name : " + recordName + "\n" +
@@ -515,7 +530,8 @@ public class MachineModel implements DataListener {
 	                             "Use ReadBack : " + USE_READBACK + "\n" +
 	                             "Use PVLogger : " + USE_PVLOGGER + "\n" +
 	                             "PVLogger ID : " + PVLOGGER_ID + "\n" +
-	                             "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n";
+	                             "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n" +
+                                 "Test/Scan Value Infos : " + testValueInfos + "\n" ;
 		return runInformation;
 	}
 
@@ -569,6 +585,7 @@ public class MachineModel implements DataListener {
 		adaptor.setValue( "usePVLogger", USE_PVLOGGER );
 		adaptor.setValue( "pvLoggerID", PVLOGGER_ID );
 		adaptor.setValue( "useLoggedBendFields", USE_LOGGED_BEND_FIELDS );
+        adaptor.setValue( "testValueInfos", testValueInfos );
 		adaptor.writeNodes( VALUES_SNAPSHOT );
 		adaptor.writeNodes( DIAG_SNAPSHOTS );
 		adaptor.writeNode( SIMULATION );

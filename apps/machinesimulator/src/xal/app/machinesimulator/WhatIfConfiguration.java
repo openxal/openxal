@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xal.service.pvlogger.sim.PVLoggerDataSource;
-import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Electromagnet;
@@ -29,14 +28,14 @@ public class WhatIfConfiguration implements DataListener {
 	static public final String DATA_LABEL = "WhatIfConfiguration";	
 	/**the list of AcceleratorNodeRecord*/
 	final private List<NodePropertyRecord> RECORDS;
-        /**the sequence*/
-        private AcceleratorSeq sequence;
+    /**the sequence*/
+    private AcceleratorSeq sequence;
 	/**the pvlogger data*/
 	private PVLoggerDataSource pvLoggerDataSource;
 	
 	/**Constructor*/
 	public WhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData ){
-            this.sequence = sequence;
+        this.sequence = sequence;
 		RECORDS = new ArrayList<>();
 		pvLoggerDataSource = loggedData;
 		configRecords( sequence, loggedData );
@@ -44,10 +43,10 @@ public class WhatIfConfiguration implements DataListener {
 	
 	/**Constructor with adaptor*/
 	public WhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData, final DataAdaptor adaptor ){
-            this.sequence = sequence;
+        this.sequence = sequence;
 		RECORDS = new ArrayList<>();
 		pvLoggerDataSource = loggedData;
-                update( adaptor );
+        update( adaptor );
 	}
 	
 	/**select the specified nodes from the sequence*/
@@ -72,10 +71,10 @@ public class WhatIfConfiguration implements DataListener {
         /**restore the nodePropertyRecord from adaptor*/
 	private void configRecords( final AcceleratorSeq sequence, final PVLoggerDataSource loggedData, final List<DataAdaptor> adaptors ){
 		for( final DataAdaptor adaptor : adaptors ){
-                    AcceleratorNode node = sequence.getNodeWithId( adaptor.stringValue( "nodeId" ) );
-                    double loggedValue = ( loggedData != null && node instanceof Electromagnet ) ? loggedData.getLoggedField( (Electromagnet) node ) : Double.NaN ;
-                    if ( node != null ) RECORDS.add( new NodePropertyRecord( node, adaptor.stringValue( "propertyName" ), loggedValue, adaptor ) );
-		}		
+            AcceleratorNode node = sequence.getNodeWithId( adaptor.stringValue( "nodeId" ) );
+            double loggedValue = ( loggedData != null && node instanceof Electromagnet ) ? loggedData.getLoggedField( (Electromagnet) node ) : Double.NaN ;
+            if ( node != null ) RECORDS.add( new NodePropertyRecord( node, adaptor.stringValue( "propertyName" ), loggedValue, adaptor ) );
+		}
 	}
 	
 	/**
@@ -86,15 +85,15 @@ public class WhatIfConfiguration implements DataListener {
 		return RECORDS;
 	}
         
-        /**refresh the nodePropertyRecord when the model scenario changed*/
-        public void refresh( final PVLoggerDataSource loggedDataSource ) {
-            pvLoggerDataSource = loggedDataSource;
-            for ( final NodePropertyRecord record : RECORDS ) {
-                boolean state = pvLoggerDataSource != null && record.getAcceleratorNode() instanceof Electromagnet;
-               double loggedValue = ( state ) ? pvLoggerDataSource.getLoggedField( (Electromagnet) record.getAcceleratorNode() ) : Double.NaN;
-               record.refresh( loggedValue );
-            }
+    /**refresh the nodePropertyRecord when the model scenario changed*/
+    public void refresh( final PVLoggerDataSource loggedDataSource ) {
+        pvLoggerDataSource = loggedDataSource;
+        for ( final NodePropertyRecord record : RECORDS ) {
+            boolean state = pvLoggerDataSource != null && record.getAcceleratorNode() instanceof Electromagnet;
+           double loggedValue = ( state ) ? pvLoggerDataSource.getLoggedField( (Electromagnet) record.getAcceleratorNode() ) : Double.NaN;
+           record.refresh( loggedValue );
         }
+    }
 	
 	/** provides the name used to identify the class in an external data source. */
         @Override
@@ -105,17 +104,17 @@ public class WhatIfConfiguration implements DataListener {
 	/** Instructs the receiver to update its data based on the given adaptor. */
         @Override
 	public void update( DataAdaptor adaptor ) {
-            if ( adaptor.hasAttribute( "sequenceId" ) && adaptor.stringValue( "sequenceId" ).equals( sequence.getId() ) ) {
-                final List<DataAdaptor> nodeProRecordAdaptors = adaptor.childAdaptors( NodePropertyRecord.DATA_LABEL );
-                configRecords( sequence, pvLoggerDataSource, nodeProRecordAdaptors );
-            }
-            else configRecords( sequence, pvLoggerDataSource );
+        if ( adaptor != null && adaptor.hasAttribute( "sequenceId" ) && adaptor.stringValue( "sequenceId" ).equals( sequence.getId() ) ) {
+            final List<DataAdaptor> nodeProRecordAdaptors = adaptor.childAdaptors( NodePropertyRecord.DATA_LABEL );
+            configRecords( sequence, pvLoggerDataSource, nodeProRecordAdaptors );
+        }
+        else configRecords( sequence, pvLoggerDataSource );
 	}
 	
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
         @Override
 	public void write( DataAdaptor adaptor ) {
-            adaptor.setValue( "sequenceId", sequence.getId() );
+        adaptor.setValue( "sequenceId", sequence.getId() );
 	    adaptor.writeNodes( RECORDS );
 	}
 
