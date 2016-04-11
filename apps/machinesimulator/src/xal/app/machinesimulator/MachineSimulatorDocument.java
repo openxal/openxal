@@ -177,7 +177,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 				if ( pvLogSelector == null ) pvLogSelector = PV_LOG_CHOOSER.choosePVLogId();
 				else pvLogSelector.setVisible( true );
 				
-				if (pvLoggerID != PV_LOG_CHOOSER.getPVLogId() ) {
+				if ( pvLoggerID != PV_LOG_CHOOSER.getPVLogId() && PV_LOG_CHOOSER.getPVLogId() != 0 ) {
 					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
 					pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
 					pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
