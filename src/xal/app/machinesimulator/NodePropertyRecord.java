@@ -3,20 +3,28 @@ package xal.app.machinesimulator;
 import xal.ca.Channel;
 import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
+import xal.tools.data.DataAdaptor;
+import xal.tools.data.DataListener;
 /**
  * 
  * @author luxiaohan
  *get and set values of the specified property in an accelerator node
  */
-public class NodePropertyRecord {
+public class NodePropertyRecord implements DataListener {
+	
+ 	/** the data adaptor label used for reading and writing this document */
+	static public final String DATA_LABEL = "NodePropertyRecord";
+	
 	/**the accelerator node*/
 	final private AcceleratorNode NODE;
 	/**the name of specified property*/
 	final private String PROPERTY_NAME;
-	/**modelinput variable to set test value to scenario*/
+	/**model Input variable to set test value to scenario*/
 	final private ModelInput MODEL_INPUT;
 	/** channel monitor to monitor the value of the channel */
-	final private ChannelMonitor[] CHANNEL_MONITORS;
+	private ChannelMonitor[] channelMonitors;
+	/**the logged value*/
+	private double loggedValue;
 	/**check-state of scanning*/
 	private boolean checkState;
 	/**the start value of scanning*/
@@ -27,13 +35,31 @@ public class NodePropertyRecord {
 	private int scanSteps;
 	
 	/**Constructor*/
-	public NodePropertyRecord( final AcceleratorNode node, final String propertyName ) {
+	public NodePropertyRecord( final AcceleratorNode node, final String propertyName,
+			final double loggedValue ) {
 		NODE = node;
 		PROPERTY_NAME = propertyName;
+		this.loggedValue = loggedValue;
 		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
-		CHANNEL_MONITORS = createMonitors(channels);		
+		channelMonitors = createMonitors(channels);		
 		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, Double.NaN );
 		
+	}
+	
+	/**Constructor with adaptor*/
+	public NodePropertyRecord( final AcceleratorNode node, final String propertyName,
+			final double loggedValue, final DataAdaptor adaptor ) {
+		NODE = node;
+		PROPERTY_NAME = propertyName;
+		this.loggedValue = loggedValue;
+		Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
+		channelMonitors = createMonitors( channels );
+        double testValue = ( adaptor.hasAttribute( "testValue" ) ) ? adaptor.doubleValue( "testValue" ) : Double.NaN;
+		MODEL_INPUT = new ModelInput(node, PROPERTY_NAME, testValue );
+        if ( adaptor.hasAttribute( "checkState" ) ) checkState = adaptor.booleanValue( "checkState" );
+        if ( adaptor.hasAttribute( "scanStartValue" ) ) scanStartValue = adaptor.doubleValue( "scanStartValue" );
+        if ( adaptor.hasAttribute( "scanEndValue" ) ) scanEndValue = adaptor.doubleValue( "scanEndValue" );
+        if ( adaptor.hasAttribute( "scanSteps" ) ) scanSteps = adaptor.intValue( "scanSteps" );
 	}
 	
 	/**create monitors*/
@@ -61,18 +87,30 @@ public class NodePropertyRecord {
 	}
 	
 	/** get design value */
-	public double getDesignValue(){
+	public double getDesignValue() {
 		return NODE.getDesignPropertyValue( PROPERTY_NAME );
 	}
 	
 	/**get the live value if use live model and there is one*/
 	public double getLiveValue() {
-		double[] liveValueArray = new double[CHANNEL_MONITORS.length];
-		for( int monitorIndex = 0; monitorIndex<CHANNEL_MONITORS.length; monitorIndex++ ){
-			liveValueArray[monitorIndex] = CHANNEL_MONITORS[monitorIndex].getLatestValue();
+		double[] liveValueArray = new double[channelMonitors.length];
+		for( int monitorIndex = 0; monitorIndex<channelMonitors.length; monitorIndex++ ){
+			liveValueArray[monitorIndex] = channelMonitors[monitorIndex].getLatestValue();
 		}
 		return NODE.getLivePropertyValue(PROPERTY_NAME, liveValueArray);
 	}
+	
+	/**get the logged value*/
+	public double getLoggedValue() {
+		return loggedValue;
+	}
+        
+    public void refresh( final double loggedValue ) {
+       Channel[] channels = NODE.getLivePropertyChannels( PROPERTY_NAME );
+       channelMonitors = createMonitors( channels );
+       this.loggedValue = loggedValue;
+    }
+	
 	
 	/**get the test value */
 	public double getTestValue(){
@@ -123,5 +161,30 @@ public class NodePropertyRecord {
 	public void setSteps ( final int steps ) {
 		this.scanSteps = steps;
 	}
+	
+	/** provides the name used to identify the class in an external data source. */
+        @Override
+	public String dataLabel() {
+		return DATA_LABEL;
+	}
+	
+	/** Instructs the receiver to update its data based on the given adaptor. */
+        @Override
+	public void update( DataAdaptor adaptor ) {
+	}
+	
+	/** Instructs the receiver to write its data to the adaptor for external storage. */
+        @Override
+	public void write( DataAdaptor adaptor ) {
+        adaptor.setValue( "nodeId", NODE.getId() );
+        adaptor.setValue( "propertyName", PROPERTY_NAME );
+        adaptor.setValue( "testValue", MODEL_INPUT.getDoubleValue() );
+        adaptor.setValue( "checkState", checkState );
+        adaptor.setValue( "scanStartValue", scanStartValue );
+        adaptor.setValue( "scanEndValue", scanEndValue );
+        adaptor.setValue( "scanSteps", scanSteps );
+	}
+	
+	
 
 }
