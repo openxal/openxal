@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<BricksDocument date="Tue Jan 26 13:29:04 EST 2016" version="1.0.0">
+<BricksDocument date="Mon Apr 11 11:58:10 EDT 2016" version="1.0.0">
     <RootBrick>
         <ViewNode customBeanClass="xal.extension.application.smf.DefaultAcceleratorWindow" height="900" tag="MainWindow" width="1600">
             <ViewProxy type="javax.swing.JFrame"/>
@@ -187,10 +187,32 @@
                                     <BeanProperty height="38" name="minimumSize" width="1000"/>
                                 </ViewNode>
                             </ViewNode>
-                            <ViewNode tag="History Record Pane">
-                                <ViewProxy type="javax.swing.JScrollPane"/>
-                                <ViewNode tag="History Record Table">
-                                    <ViewProxy type="javax.swing.JTable"/>
+                            <ViewNode tag="Display Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewNode tag="Split Pane">
+                                    <ViewProxy type="javax.swing.JSplitPane"/>
+                                    <BeanProperty name="orientation" value="0"/>
+                                    <ViewNode tag="History Record Pane">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <BeanProperty name="autoscrolls" value="true"/>
+                                        <ViewNode tag="History Record Table">
+                                            <ViewProxy type="javax.swing.JTable"/>
+                                        </ViewNode>
+                                    </ViewNode>
+                                    <ViewNode tag="Display Pane">
+                                        <ViewProxy type="javax.swing.JScrollPane"/>
+                                        <BeanProperty name="visible" value="true"/>
+                                        <BeanProperty name="autoscrolls" value="false"/>
+                                        <BeanProperty name="inheritsPopupMenu" value="false"/>
+                                        <ViewNode tag="Display Area">
+                                            <ViewProxy type="javax.swing.JTextArea"/>
+                                            <BeanProperty height="32767" name="maximumSize" width="32767"/>
+                                            <BeanProperty name="visible" value="true"/>
+                                            <BeanProperty name="autoscrolls" value="false"/>
+                                            <BeanProperty name="editable" value="false"/>
+                                            <BeanProperty name="enabled" value="true"/>
+                                        </ViewNode>
+                                    </ViewNode>
                                 </ViewNode>
                             </ViewNode>
                         </ViewNode>
