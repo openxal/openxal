@@ -33,6 +33,7 @@ public class XmlWriter {
 	static final Pattern LEFT_ANGLE_BRACKET_PATTERN;
 	static final Pattern QUOTE_PATTERN;
 	static final Pattern APOSTROPHE_PATTERN;
+	static final Pattern LINEBREAK_PATTERN;
 	
     Document document;
     Writer writer;	
@@ -43,6 +44,7 @@ public class XmlWriter {
 		LEFT_ANGLE_BRACKET_PATTERN = Pattern.compile("<");
 		QUOTE_PATTERN = Pattern.compile("\"");
 		APOSTROPHE_PATTERN = Pattern.compile("\'");
+		LINEBREAK_PATTERN = Pattern.compile("\n");
 	}
 	
     
@@ -208,6 +210,7 @@ public class XmlWriter {
 			escapedValue = LEFT_ANGLE_BRACKET_PATTERN.matcher(escapedValue).replaceAll("&lt;");
 			escapedValue = QUOTE_PATTERN.matcher(escapedValue).replaceAll("&quot;");
 			escapedValue = APOSTROPHE_PATTERN.matcher(escapedValue).replaceAll("&apos;");
+			escapedValue = LINEBREAK_PATTERN.matcher(escapedValue).replaceAll("&#x0A;");
 			return escapedValue;
 		}
         
