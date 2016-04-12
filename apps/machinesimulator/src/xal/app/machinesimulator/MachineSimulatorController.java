@@ -496,11 +496,14 @@ public class MachineSimulatorController implements MachineModelListener {
         
         textHandler = event -> {
         	String displayText = "*";
+        	StringBuilder displayTextBuilder = new StringBuilder( displayText );
         	List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
-        	int[] selRows = historyRecordTable.getSelectedRows();       	
+        	int[] selRows = historyRecordTable.getSelectedRows();      	
         	for ( int index = 0; index < selRows.length; index++ ) {
-        		displayText = displayText + "******************\n" + records.get( selRows[index] ).getRunInformation();     		
+        		displayTextBuilder.append( "******************\n" );
+        		displayTextBuilder.append( records.get( selRows[index] ).getRunInformation() );    		
         	}
+        	displayText = displayTextBuilder.toString();
         	if ( !displayText.equals( "*" ) ) textArea.setText( displayText );
         	else textArea.setText( initialText );
         };

@@ -519,23 +519,49 @@ public class MachineModel implements DataListener {
 	
 	/**configure the testValue properties*/
 	private String configTestValueInfo( final List<ModelInput> modelInputs ) {
-		String info = "";		
+		String info = "";
+		StringBuilder infoBuilder = new StringBuilder( info );
 		for ( final ModelInput modelInput : modelInputs ) {
-			info = info + "  - " + modelInput.getAcceleratorNode().getId() + "." + modelInput.getProperty() + "\n";
+			infoBuilder.append( " - " );
+			infoBuilder.append( modelInput.getAcceleratorNode().getId() );
+			infoBuilder.append( "." );
+			infoBuilder.append( modelInput.getProperty() );
+			infoBuilder.append( "\n" );
 		}
+		info = infoBuilder.toString();
 		return info;
 	}
 	
 	/**get the setting information of the simulation*/
 	public String getRunInformation( ) {
-		String runInformation = "Record Name : " + recordName + "\n" +
-                                        "sequence ID : " + SEQUENCE.getId() + "\n" +
-                                        "Synch Mode : " + SYNCH_MODE + "\n"  +
-                                        "Use ReadBack : " + USE_READBACK + "\n" +
-                                        "Use PVLogger : " + USE_PVLOGGER + "\n" +
-                                        "PVLogger ID : " + PVLOGGER_ID + "\n" +
-                                        "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n" +
-                                        "Test/Scan Properties : " +"\n" + testProperties + "\n" ;
+		String runInformation = "";
+		StringBuilder runInfoBuilder = new StringBuilder( runInformation );
+		runInfoBuilder.append( "Record Name : " );
+		runInfoBuilder.append( recordName );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "sequence ID : " );
+		runInfoBuilder.append( SEQUENCE.getId() );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Synch Mode : " );
+		runInfoBuilder.append( SYNCH_MODE );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use ReadBack : " );
+		runInfoBuilder.append( USE_READBACK );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use PVLogger : " );
+		runInfoBuilder.append( USE_PVLOGGER );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "PVLogger ID : " );
+		runInfoBuilder.append( PVLOGGER_ID );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use Logged Bend Fields : " );
+		runInfoBuilder.append( USE_LOGGED_BEND_FIELDS );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Test/Scan Properties : "  );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append(  testProperties  );
+		runInfoBuilder.append( "\n" );
+		runInformation = runInfoBuilder.toString();
 		return runInformation;
 	}
 
