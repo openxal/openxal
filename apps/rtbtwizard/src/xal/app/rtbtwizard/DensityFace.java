@@ -178,6 +178,7 @@ public class DensityFace extends JPanel{
         solvebutton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 HashMap<String,Double> beamarearatios = doc.beamarearatios;
+				HashMap<String,Double> beamarearatiosraw = doc.beamarearatiosraw;
                 HashMap<String,Double> windowarearatios = doc.windowarearatios;
                 DecimalFormat decfor =  new DecimalFormat("0.###E0");
                 int nrows = datatablemodel.getRowCount();
@@ -187,11 +188,14 @@ public class DensityFace extends JPanel{
                 double Gy = 0.0;
                 double rho_wire = 0.0;
                 double areafac = 1.0;
+				double areafacraw = 1.0;
                 double wareafac = 1.0;
                 double rho_target = 0.0;
+				double rho_target_raw = 0.0;
                 double rho_window = 0.0;
                 double np = 0.0;
                 double avg_rho_target=0.0;
+				double avg_rho_target_raw = 0.0;
                 double avg_rho_window=0.0;
                 double count=0.0;
                 double peakfac = 0.0;
@@ -202,6 +206,7 @@ public class DensityFace extends JPanel{
                 System.out.println("Number of protons is " + np);
                 doc.charge=np;
                 avg_rho_target = 0.0;
+				avg_rho_target_raw = 0.0;
                 avg_rho_window = 0.0;
                 count = 0.0;
                 for(int i=0; i<nrows; i++){
@@ -215,8 +220,10 @@ public class DensityFace extends JPanel{
                         System.out.println("xroot is " + xroot + "; yroot is " + yroot);
                         System.out.println("Gx = " + Gx + " Gy = " + Gy + " Gx*Gy*np " + rho_wire);
 						areafac = beamarearatios.get(label);
+						areafacraw = beamarearatiosraw.get(label);
 						wareafac = windowarearatios.get(label);
                         rho_target=rho_wire*areafac * 0.96;
+						rho_target_raw = rho_wire*areafacraw;
                         rho_window=rho_wire*wareafac;
                         peakfac = rho_target/(1.25e-4)/np;
                         sumdensity += rho_target;
@@ -226,8 +233,10 @@ public class DensityFace extends JPanel{
                         datatablemodel.setValueAt(new String(decfor.format(rho_wire)), i, 2);
                         datatablemodel.setValueAt(new String(decfor.format(rho_window)), i, 3);
                         datatablemodel.setValueAt(new String(decfor.format(rho_target)), i, 4);
-                        datatablemodel.setValueAt(new String(decfor.format(peakfac)), i, 5);
+						datatablemodel.setValueAt(new String(decfor.format(rho_target_raw)), i, 5);
+                        datatablemodel.setValueAt(new String(decfor.format(peakfac)), i, 6);
                         avg_rho_target += rho_target;
+						avg_rho_target_raw += rho_target_raw;
                         avg_rho_window += rho_window;
                         count += 1.0;
                     }
@@ -238,6 +247,7 @@ public class DensityFace extends JPanel{
                 avgdensity.setText(decfor.format(avedensity));
                 System.out.println("target ave is " + avg_rho_target);
                 doc.tdensity = avg_rho_target;
+				doc.tdensity_raw = avg_rho_target_raw;
                 doc.wdensity = avg_rho_window;
                 
                 datatablemodel.fireTableDataChanged();
@@ -391,6 +401,7 @@ public class DensityFace extends JPanel{
                 tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
+				tabledata.add(new Double(0.0));
                 tabledata.add(new Double(0.0));
                 datatablemodel.addTableData(new ArrayList<Object>(tabledata));
             }
@@ -417,7 +428,7 @@ public class DensityFace extends JPanel{
     
     public void makeDataTable(){
         
-        String[] colnames = {"Wire", "Use", "Wire Density (N/mm^2)", "Window Density (N/mm^2)", "Target Density (N/mm^2)", "Peaking Fac."};
+        String[] colnames = {"Wire", "Use", "Wire Density (N/mm^2)", "Window Density (N/mm^2)", "Target Density (N/mm^2)", "Raw Target Density (N/mm^2)", "Peaking Fac."};
         
         datatablemodel = new DataTableModel(colnames, 0);
         
@@ -427,7 +438,8 @@ public class DensityFace extends JPanel{
         datatable.getColumnModel().getColumn(2).setMinWidth(150);
         datatable.getColumnModel().getColumn(3).setMinWidth(160);
         datatable.getColumnModel().getColumn(4).setMinWidth(165);
-        datatable.getColumnModel().getColumn(5).setMinWidth(90);
+		datatable.getColumnModel().getColumn(5).setMinWidth(165);
+        datatable.getColumnModel().getColumn(6).setMinWidth(90);
         
         datatable.setRowSelectionAllowed(false);
         datatable.setColumnSelectionAllowed(false);

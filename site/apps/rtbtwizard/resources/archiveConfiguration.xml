@@ -8,6 +8,7 @@
 			<column attribute="protonsPerPulse" type="double" column="PROTON_PULSE" description="Protons Per Pulse" units="protons/pulse" format="0.00E0" />
 			<column attribute="repRate" type="double" column="REP_RATE" description="Rep Rate" units="Hz" format="0.0" />
 			<column attribute="peakTargetProtonDensity" type="double" column="PEAK_P_DEN_TGT" description="Peak Target Proton Density" units="protons/mm^2/pulse" format="0.00E0" />
+			<column attribute="rawPeakTargetProtonDensity" type="double" column="RAW_PEAK_DENS" description="Raw Peak Target Proton Density" units="protons/mm^2/pulse" format="0.00E0" />
 			<column attribute="peakBeamWindowProtonDensity" type="double" column="PEAK_P_DEN_BEAM_WIN" description="Peak Beam Window Proton Density" units="protons/mm^2/pulse" format="0.00E0" />
 			<column attribute="normTargetPeakingFactor" type="double" column="PEAK_FACTOR_TGT" description="Normalized Peaking Factor on Target" format="0.00" readonly="true" />
 			<column attribute="widthHarp" column="RMS_WD_HARP" type="double" description="RMS Width on Harp" units="mm" format="0.0" />

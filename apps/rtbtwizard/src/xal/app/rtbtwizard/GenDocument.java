@@ -173,6 +173,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     public DataTable wiredatabase;
     public DataTable wireresultsdatabase;
     public HashMap<String, Double> beamarearatios;
+	public HashMap<String, Double> beamarearatiosraw;
     public HashMap<String, Double> windowarearatios;
     private Accelerator accl = new Accelerator();
     
@@ -193,7 +194,6 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     Channel harpych;
     Channel repratech;
     Channel energych;
-	
     
     public double charge = 0.;
     public double xsize = 0;
@@ -201,6 +201,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
     public double xpos = 0;
     public double ypos = 0;
     public double tdensity = 0;
+	public double tdensity_raw = 0;
     public double wdensity = 0;
     public boolean lastfitSuperGauss = true;
     
@@ -278,6 +279,7 @@ public class GenDocument extends AcceleratorDocument implements DataListener{
      return bpmagents;
      }
      */
+	
     public void initBCM(String bcmchoice){
 		bcmName=bcmchoice;
     	modeCh = ChannelFactory.defaultFactory().getChannel("ICS_Tim:MPS_Mode:MachMode");
