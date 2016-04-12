@@ -438,7 +438,7 @@ public class MachineModel implements DataListener {
 		USE_PVLOGGER = usePVLogger;
 		PVLOGGER_ID = ( USE_PVLOGGER ) ? pvLoggerID : 0;
 		USE_LOGGED_BEND_FIELDS = ( USE_PVLOGGER && pvLoggerDataSource != null ) ? pvLoggerDataSource.getUsesLoggedBendFields() : false;
-        testProperties = configTestValueInfo( modelInputs );
+                testProperties = configTestValueInfo( modelInputs );
 		checkState = true;
 		COLUMN_NAME.get( SEQUENCE ).put( TIME, this.recordName );
 	}
@@ -461,8 +461,7 @@ public class MachineModel implements DataListener {
 		USE_PVLOGGER = adaptor.hasAttribute( "usePVLogger" ) ? adaptor.booleanValue( "usePVLogger" ) : null;
 		PVLOGGER_ID = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : 0;
 		USE_LOGGED_BEND_FIELDS = adaptor.hasAttribute( "useLoggedBendFields" ) ? adaptor.booleanValue( "useLoggedBendFields" ) : null;
-        testProperties = adaptor.hasAttribute( "testProperties" ) ? adaptor.stringValue( "testProperties" ) : "";
-        testProperties = testProperties.replace( '|', '\n' );
+                testProperties = adaptor.hasAttribute( "testProperties" ) ? adaptor.stringValue( "testProperties" ) : "";
 		update( adaptor );
 	}
 	
@@ -522,7 +521,7 @@ public class MachineModel implements DataListener {
 	private String configTestValueInfo( final List<ModelInput> modelInputs ) {
 		String info = "";		
 		for ( final ModelInput modelInput : modelInputs ) {
-			info = info + "  - " + modelInput.getAcceleratorNode().getId() + "." + modelInput.getProperty() + "|\n";
+			info = info + "  - " + modelInput.getAcceleratorNode().getId() + "." + modelInput.getProperty() + "\n";
 		}
 		return info;
 	}
@@ -530,13 +529,13 @@ public class MachineModel implements DataListener {
 	/**get the setting information of the simulation*/
 	public String getRunInformation( ) {
 		String runInformation = "Record Name : " + recordName + "\n" +
-	                            "sequence ID : " + SEQUENCE.getId() + "\n" +
-	                             "Synch Mode : " + SYNCH_MODE + "\n"  +
-	                             "Use ReadBack : " + USE_READBACK + "\n" +
-	                             "Use PVLogger : " + USE_PVLOGGER + "\n" +
-	                             "PVLogger ID : " + PVLOGGER_ID + "\n" +
-	                             "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n" +
-                                 "Test/Scan Properties : " +"\n" + testProperties + "\n" ;
+                                        "sequence ID : " + SEQUENCE.getId() + "\n" +
+                                        "Synch Mode : " + SYNCH_MODE + "\n"  +
+                                        "Use ReadBack : " + USE_READBACK + "\n" +
+                                        "Use PVLogger : " + USE_PVLOGGER + "\n" +
+                                        "PVLogger ID : " + PVLOGGER_ID + "\n" +
+                                        "Use Logged Bend Fields : " + USE_LOGGED_BEND_FIELDS + "\n" +
+                                        "Test/Scan Properties : " +"\n" + testProperties + "\n" ;
 		return runInformation;
 	}
 
