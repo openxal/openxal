@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.net.*;
 
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 import xal.extension.application.*;
@@ -21,6 +23,8 @@ import xal.tools.data.*;
 import xal.extension.bricks.WindowReference;
 import xal.extension.widgets.apputils.SimpleProbeEditor;
 import xal.model.probe.Probe;
+import xal.service.pvlogger.apputils.browser.PVLogSnapshotChooser;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.sim.scenario.Scenario;
 
 
@@ -37,16 +41,28 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	final private ToggleButtonModel USE_RF_DESIGN;
 	/**the button to set using live mode*/
 	final private ToggleButtonModel USE_CHANNEL;
+	/**the button to set using pv logger*/
+	final private ToggleButtonModel USE_PVLOGGER;
+	/**the button to set using logged bends when using pv logger*/
+	final private ToggleButtonModel USE_LOGGEDBEND;
 	/**the button to set using read back value*/
 	final private ToggleButtonModel USE_READ_BACK;
 	/**the button to set using set value*/
 	final private ToggleButtonModel USE_SET;
+	/**the pvlogger chooser*/
+	final private PVLogSnapshotChooser PV_LOG_CHOOSER;
+	/**pvlogger chooser Dialog*/
+	private JDialog pvLogSelector;
+	/**the pvlogger data source*/
+	private PVLoggerDataSource pvLoggerDataSource;
+	/**pvlogger ID*/
+	private long pvLoggerID;
 	/** main window reference */
 	final WindowReference WINDOW_REFERENCE;
-   /** main model */
-   final MachineModel MODEL;
-   /** controller*/
-   final MachineSimulatorController MACHINE_SIMULATOR_CONTROLLER;
+    /** main model */
+    final MachineModel MODEL;
+    /** controller*/
+    final MachineSimulatorController MACHINE_SIMULATOR_CONTROLLER;
    
     /** Empty Constructor */
     public MachineSimulatorDocument() {
@@ -63,10 +79,15 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_DESIGN = new ToggleButtonModel();
 		USE_RF_DESIGN = new ToggleButtonModel();
 		USE_CHANNEL= new ToggleButtonModel();
+		USE_PVLOGGER = new ToggleButtonModel();
+		USE_LOGGEDBEND = new ToggleButtonModel();
 		USE_READ_BACK= new ToggleButtonModel();
 		USE_SET= new ToggleButtonModel();
 		
 		WINDOW_REFERENCE = getDefaultWindowReference( "MainWindow", this );
+		
+		PV_LOG_CHOOSER = new PVLogSnapshotChooser( mainWindow, true );
+		
       // initialize the model here
       MODEL = new MachineModel();
 		MACHINE_SIMULATOR_CONTROLLER = new MachineSimulatorController( this,WINDOW_REFERENCE );
@@ -97,12 +118,26 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 	 * Register custom actions for the commands of this application
 	 * @param commander  The commander with which to register the custom commands.
 	 */
-	public void customizeCommands( Commander commander ) {		
+	public void customizeCommands( Commander commander ) {
+		//initialize the pvLoggerID
+		pvLoggerID = 0;
+		
+		//the action to configure the pvlogger data
+	    final ActionListener CONFIG_PVLOGGER_DATA = new ActionListener() {
+			public void actionPerformed( final ActionEvent event ) {
+                if ( pvLoggerID != 0 ) {
+    				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
+                }
+
+			}
+		};
+		
 		//run model action
 		final AbstractAction runModelAction = new AbstractAction( "run-model" ) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				CONFIG_PVLOGGER_DATA.actionPerformed( null );
 				MACHINE_SIMULATOR_CONTROLLER.runModel( mainWindow, null );
 				setHasChanges( true );
 			}
@@ -134,23 +169,49 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		
 		commander.registerAction( probeEditor );
 		
+
+		
+		//register select_pvlogger button
+		final AbstractAction selectPVLogger = new AbstractAction( "select-pvlogger" ) {
+			
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed( final ActionEvent event ) {
+				if ( pvLogSelector == null ) pvLogSelector = PV_LOG_CHOOSER.choosePVLogId();
+				else pvLogSelector.setVisible( true );
+				
+				if ( pvLoggerID != PV_LOG_CHOOSER.getPVLogId() && PV_LOG_CHOOSER.getPVLogId() != 0 ) {
+					pvLoggerID = PV_LOG_CHOOSER.getPVLogId();
+					pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
+					pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
+					CONFIG_PVLOGGER_DATA.actionPerformed( null );
+					MODEL.modelScenarioChanged();
+
+                    setHasChanges( true );
+				}
+				
+				
+			}
+		 };
+		commander.registerAction( selectPVLogger );
+		
+		
 		// register use_design button
 		USE_DESIGN.setSelected(true);
 		USE_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_DESIGN );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "use-design",USE_DESIGN );
 		
+		
 		//register use_rf_design button 
 		USE_RF_DESIGN.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
@@ -161,32 +222,76 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 		USE_CHANNEL.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
-				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
 			}
 		});
 		commander.registerModel( "use-channel",USE_CHANNEL );
 		
+		//register use_pvlogger button
+	    USE_PVLOGGER.setSelected( false );
+	    USE_PVLOGGER.addActionListener( new ActionListener() {
+	    	public void actionPerformed ( final ActionEvent event ) {
+	    		if ( pvLoggerID != 0 ) {
+	    			if ( USE_PVLOGGER.isSelected() ) USE_LOGGEDBEND.setEnabled( true );
+		    		else USE_LOGGEDBEND.setEnabled( false );
+		    		
+		    		setHasChanges( true );
+	    		}
+	    		else {
+	    			JOptionPane.showMessageDialog( mainWindow,
+	    	         		"You need to select pvLoggerData first","Warning!",JOptionPane.PLAIN_MESSAGE);
+	    			USE_PVLOGGER.setSelected( false );
+	    		}
+	    		
+	    		
+
+	    	}
+	    });				
+	    commander.registerModel( "use-pvlogger", USE_PVLOGGER );
+	    
+		//register use_loggedbend button
+	    USE_LOGGEDBEND.setSelected( false );
+	    USE_LOGGEDBEND.setEnabled( false );
+	    USE_LOGGEDBEND.addActionListener( new ActionListener() {
+	    	public void actionPerformed ( final ActionEvent event ) {
+	    		if ( USE_LOGGEDBEND.isSelected() ) {
+	    			if ( pvLoggerDataSource != null ) pvLoggerDataSource.setUsesLoggedBendFields( true );
+	    		}
+	    		else {
+	    			if ( pvLoggerDataSource != null ) pvLoggerDataSource.setUsesLoggedBendFields( false );
+	    		}
+	    		
+	    		setHasChanges( true );
+	    	}
+	    });				
+	    commander.registerModel( "use-loggedbend", USE_LOGGEDBEND );
+	    
+		
 		//register use_set button
 		USE_SET.setSelected( true );
 		USE_SET.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( false );
+				
 				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
+
 			}
 		});
-		commander.registerModel( "fieldSet",USE_SET );
+		commander.registerModel( "fieldSet", USE_SET );
 		
+
 		//register use_read_back button
 		USE_READ_BACK.addActionListener( new ActionListener() {
 			public void actionPerformed( final ActionEvent event ) {
 				MODEL.setUseFieldReadback( true );
+				
 				MODEL.modelScenarioChanged();
 				
 				setHasChanges( true );
+				
 			}
 		});
 		commander.registerModel( "fieldReadback",USE_READ_BACK );
@@ -223,6 +328,7 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             MODEL.setSequence( getSelectedSequence() );
             if( USE_RF_DESIGN.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_RF_DESIGN );
             if( USE_CHANNEL.isSelected() ) MODEL.setSynchronizationMode( Scenario.SYNC_MODE_LIVE );
+            if( USE_PVLOGGER.isSelected() && pvLoggerID != 0 ) MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, true );
             if( USE_READ_BACK.isSelected() ) MODEL.setUseFieldReadback( true );
             if( USE_SET.isSelected() ) MODEL.setUseFieldReadback( false );
             setHasChanges( true );
@@ -261,7 +367,19 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
             final String synchMode = MODEL.getSimulator().getScenario().getSynchronizationMode();
             if ( synchMode.equals( Scenario.SYNC_MODE_LIVE ) ) USE_CHANNEL.setSelected( true );
             else if ( synchMode.equals( Scenario.SYNC_MODE_RF_DESIGN ) ) USE_RF_DESIGN.setSelected( true );
-            MODEL.modelScenarioChanged();
+            USE_PVLOGGER.setSelected( adaptor.hasAttribute( "usepvlogger" ) ? adaptor.booleanValue( "usepvlogger" ) : false );
+            USE_LOGGEDBEND.setEnabled( adaptor.hasAttribute( "usepvlogger" ) ? adaptor.booleanValue( "usepvlogger" ) : false );
+            USE_LOGGEDBEND.setSelected( adaptor.hasAttribute( "usebendloggedfields" ) ? adaptor.booleanValue( "usebendloggedfields" ) : false );
+            
+            pvLoggerID  = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : 0;
+            if ( pvLoggerID != 0 ) {
+				pvLoggerDataSource = new PVLoggerDataSource ( pvLoggerID );
+				pvLoggerDataSource.setUsesLoggedBendFields( USE_LOGGEDBEND.isSelected() );
+				MODEL.configPVLoggerData( pvLoggerDataSource, pvLoggerID, USE_PVLOGGER.isSelected() );
+            }
+            
+            final DataAdaptor whAdaptor = modelAdaptor.childAdaptor( WhatIfConfiguration.DATA_LABEL );
+            MODEL.restoreModelScenario( whAdaptor );
             }
         
         MACHINE_SIMULATOR_CONTROLLER.changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
@@ -282,6 +400,9 @@ public class MachineSimulatorDocument extends AcceleratorDocument implements Dat
 			final AcceleratorSeq sequence = getSelectedSequence();
 			if ( sequence != null ) {
 				adaptor.setValue( "sequence", sequence.getId() );
+				adaptor.setValue( "usebendloggedfields", USE_LOGGEDBEND.isSelected() );
+				adaptor.setValue( "usepvlogger", USE_PVLOGGER.isSelected() );
+				adaptor.setValue( "pvLoggerID", pvLoggerID );
 			}
 		}
     }

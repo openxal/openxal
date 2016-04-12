@@ -13,6 +13,7 @@ import xal.model.*;
 import xal.model.alg.*;
 import xal.model.probe.*;
 import xal.model.probe.traj.ProbeState;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
 import xal.sim.scenario.*;
 import xal.sim.sync.SynchronizationException;
 import xal.smf.*;
@@ -108,6 +109,8 @@ public class MachineSimulator implements DataListener {
             _scenario = null;
         }
     }
+    
+
     
     /**Get the scenario*/
     public Scenario getScenario() {
@@ -264,15 +267,20 @@ public class MachineSimulator implements DataListener {
 	 */
     public void configModelInputs( final List<NodePropertyRecord> nodePropertyRecords ){
     	List<ModelInput> newModelInputs = new ArrayList<ModelInput>();
-    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
+    	
     	for( NodePropertyRecord record:nodePropertyRecords ){
     		if( !Double.isNaN( record.getTestValue() ) ){
     			newModelInputs.add( record.getModelInput() );
     		}
     	}
 	
-    	changeModelInputs( modelInputs, newModelInputs );	
-
+    	setModelInputs( newModelInputs );	
+    }
+    
+    
+    /**save the values used for simulation*/
+    public void saveValuesForSimulation( final List<NodePropertyRecord> nodePropertyRecords ) {
+    	Map<AcceleratorNode, Map<String, Double>> propertyValueForNode = new HashMap<AcceleratorNode, Map<String,Double>>();
     	for( NodePropertyRecord record : nodePropertyRecords){
     		try {
 				propertyValueForNode.put( record.getAcceleratorNode(), _scenario.propertiesForNode( record.getAcceleratorNode() ) );
@@ -282,24 +290,51 @@ public class MachineSimulator implements DataListener {
     	}
     	// record the values used for simulation
     	propertyValuesRecordForNodes = propertyValueForNode;
-
     }
     
     /**
-     * change the modelInput
+     * remove the modelInputs
      * @param oldInputs The old modelInputs which we set last time
-     * @param newInputs The new modelInputs which we are going to set
      */
-    private void changeModelInputs( final List<ModelInput> oldInputs, final List<ModelInput> newInputs ){
+    public void removeModelInputs( final List<ModelInput> oldInputs ){
     	for( final ModelInput oldInput : oldInputs ){
     		_scenario.removeModelInput( oldInput.getAcceleratorNode(), oldInput.getProperty() );
     	}
-    	
-    	for( final ModelInput newInput : newInputs ){
-    		_scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );    		
+    }
+    /**
+     * set the modelInputs
+     * @param newInputs The new modelInputs which will set to scenario
+     */
+    private void setModelInputs ( final List<ModelInput> newInputs ) {
+        for( final ModelInput newInput : newInputs ){
+            _scenario.setModelInput( newInput.getAcceleratorNode(), newInput.getProperty(), newInput.getDoubleValue() );
+        }
+
+        modelInputs = newInputs;
+    }
+    
+    /**get the modelInputs from the test values*/
+    public List<ModelInput> getModelInputs() {
+    	return modelInputs;
+    }
+    
+    /**Configure the pvlogger data to the scenario(set or remove) if selected or unselected to use pvlogger*/
+    public void configPVloggerData( final PVLoggerDataSource pvLoggerData,final boolean checked ) {
+    	if ( _sequence != null ) {
+    		if ( checked ) {
+    			if ( !pvLoggerData.getUsesLoggedBendFields() ){
+    				pvLoggerData.setUsesLoggedBendFields( true );
+    				pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
+    				pvLoggerData.setUsesLoggedBendFields( false );
+    			}
+    			
+    			_scenario = pvLoggerData.setModelSource( _sequence, _scenario );
+    			System.out.println("PVLogger Data finished loading");
+    		}
+    	    else {
+    		    pvLoggerData.removeModelSourceFromScenario( _sequence, _scenario );
+    	    }
     	}
-    	
-    	modelInputs = newInputs;
     }
     
     /**Return the values record used for simulation*/

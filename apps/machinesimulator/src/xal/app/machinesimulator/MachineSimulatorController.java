@@ -6,6 +6,10 @@ package xal.app.machinesimulator;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -86,6 +90,8 @@ public class MachineSimulatorController implements MachineModelListener {
      private List<String> keyPathsForDiagDiff;
      /**refresh action*/
      private ActionListener refresh;
+     /**text handler*/
+     private ActionListener textHandler;
      /**the selected nodeProperty records used for scan in new run parameters table*/
      private List<NodePropertyRecord> nodePropRecordsForScan;
 
@@ -146,6 +152,7 @@ public class MachineSimulatorController implements MachineModelListener {
            
            //change records for history record table
            changeSimHistoryRecords( MODEL.getSimulationHistoryRecords() );
+           
               }
          else JOptionPane.showMessageDialog( window,
          		"You need to select sequence(s) first","Warning!",JOptionPane.PLAIN_MESSAGE);  
@@ -422,25 +429,23 @@ public class MachineSimulatorController implements MachineModelListener {
 
         // configure the Clear All button
         final JButton ClearButton = (JButton)windowReference.getView( "Clear All" );
-        final ActionListener CLEAR_BUTTON=new ActionListener() {
-            public void actionPerformed( final ActionEvent event ) {
-            	kineticEnergyCheckbox.setSelected(false);
-            	bpmCheckbox.setSelected(false);
-            	orbitCheckbox.setSelected(false);
-                xSelectionCheckbox.setSelected(false);
-                ySelectionCheckbox.setSelected(false);
-                zSelectionCheckbox.setSelected(false);
-                betaCheckbox.setSelected(false);
-                alphaCheckbox.setSelected(false);
-                gammaCheckbox.setSelected(false);
-                emittanceCheckbox.setSelected(false);
-                beamSizeCheckbox.setSelected(false);
-                betatronPhaseCheckbox.setSelected(false);
-
-                PARAMETER_HANDLER.actionPerformed( null );
-            }
-        };
-      ClearButton.addActionListener(CLEAR_BUTTON);
+        final ActionListener CLEAR_BUTTON = (final ActionEvent event) -> {
+            kineticEnergyCheckbox.setSelected(false);
+            bpmCheckbox.setSelected(false);
+            orbitCheckbox.setSelected(false);
+            xSelectionCheckbox.setSelected(false);
+            ySelectionCheckbox.setSelected(false);
+            zSelectionCheckbox.setSelected(false);
+            betaCheckbox.setSelected(false);
+            alphaCheckbox.setSelected(false);
+            gammaCheckbox.setSelected(false);
+            emittanceCheckbox.setSelected(false);
+            beamSizeCheckbox.setSelected(false);
+            betatronPhaseCheckbox.setSelected(false);
+            
+            PARAMETER_HANDLER.actionPerformed( null );
+            };
+      ClearButton.addActionListener( CLEAR_BUTTON );
 				
 		//configure the refresh action
 		refresh = event -> {		
@@ -469,6 +474,11 @@ public class MachineSimulatorController implements MachineModelListener {
         clearButton.addActionListener( event -> {
         	filterField.setText( "" );
         });
+        
+		//configure the text area
+		final JTextArea textArea = (JTextArea)windowReference.getView( "Display Area" );
+		String initialText = "Display the Run Information";
+		textArea.setText( initialText );
   
         final JTable historyRecordTable = (JTable)windowReference.getView( "History Record Table" );
         historyRecordTable.setModel( HISTORY_RECORD_TABLE_MODEL );
@@ -484,6 +494,50 @@ public class MachineSimulatorController implements MachineModelListener {
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "recordName", true );
         HISTORY_RECORD_TABLE_MODEL.setColumnEditable( "checkState", true );
         
+        textHandler = event -> {
+        	String displayText = "*";
+        	StringBuilder displayTextBuilder = new StringBuilder( displayText );
+        	List<SimulationHistoryRecord> records = MODEL.getSimulationHistoryRecords();
+        	int[] selRows = historyRecordTable.getSelectedRows();      	
+        	for ( int index = 0; index < selRows.length; index++ ) {
+        		displayTextBuilder.append( "******************\n" );
+        		displayTextBuilder.append( records.get( selRows[index] ).getRunInformation() );    		
+        	}
+        	displayText = displayTextBuilder.toString();
+        	if ( !displayText.equals( "*" ) ) textArea.setText( displayText );
+        	else textArea.setText( initialText );
+        };
+        
+        
+        historyRecordTable.addMouseListener( new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textHandler.actionPerformed( null );
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+        }
+       		);
+        
+        historyRecordTable.addKeyListener( new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {
+                textHandler.actionPerformed( null );
+            }
+        });
+        
+        
 		//configure the remove button of the history record view
 		final JButton removeButton = (JButton)windowReference.getView( "Remove Button" );
 		removeButton.addActionListener( event -> {		
@@ -496,6 +550,8 @@ public class MachineSimulatorController implements MachineModelListener {
 				removed++;
 			}
 			if ( records.size() == 0 ) PARAM_HISTORY_TABLE_MODEL.setRecords( null );
+			historyRecordTable.clearSelection();
+			textHandler.actionPerformed( null );
 			HISTORY_RECORD_TABLE_MODEL.setRecords( records );
 		});
 		
@@ -518,6 +574,7 @@ public class MachineSimulatorController implements MachineModelListener {
 			}
 			HISTORY_RECORD_TABLE_MODEL.fireTableRowsUpdated(0, rowCount );
 		});
+		
 	}
 	
 	/**make the table of new run parameters*/
@@ -611,11 +668,11 @@ public class MachineSimulatorController implements MachineModelListener {
 	         
 	     //configure the sequence table model
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClassForKeyPaths( Double.class, 
-				  "designValue", "liveValue", "testValue", "scanStartValue", "scanEndValue" );
+				  "designValue", "liveValue", "loggedValue", "testValue", "scanStartValue", "scanEndValue" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "checkState", Boolean.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnClass( "steps", Integer.class );
 		  NEW_PARAMETERS_TABLE_MODEL.setKeyPaths( "acceleratorNode.id", 
-				  "propertyName", "designValue", "liveValue", "testValue", "checkState", "scanStartValue", "scanEndValue", "steps" );
+				  "propertyName", "designValue", "liveValue","loggedValue", "testValue", "checkState", "scanStartValue", "scanEndValue", "steps" );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "testValue", true );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditable( "checkState", true );
 		  NEW_PARAMETERS_TABLE_MODEL.setColumnEditKeyPath( "scanStartValue", "checkState" );
@@ -723,6 +780,7 @@ public class MachineSimulatorController implements MachineModelListener {
 	/**change simulation history records*/
 	public void changeSimHistoryRecords ( final List<SimulationHistoryRecord> simHistoryRecords ) {
 		HISTORY_RECORD_TABLE_MODEL.setRecords( simHistoryRecords );
+        textHandler.actionPerformed( null );
 	}
 	
   /** get the selected parameters' data from the specified records
@@ -903,6 +961,7 @@ public class MachineSimulatorController implements MachineModelListener {
         	_sequence = model.getSequence();
     		nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
     		NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
+			NEW_PARAMETERS_TABLE_MODEL.setColumnName( "loggedValue", "LoggedValue : "+model.getPVLoggerID() );
     		
     		DIAG_LIVE_TABLE_MODEL.setRecords( model.getDiagConfig().getDiagnosticAgents() );
    		VALUE_SYNC_TIME.startNowWithInterval( _syncPeriod, 0 );
@@ -924,6 +983,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		if( _sequence != null ){
 			nodePropertyRecords = model.getWhatIfConfiguration().getNodePropertyRecords();
 			NEW_PARAMETERS_TABLE_MODEL.setRecords( nodePropertyRecords );
+			NEW_PARAMETERS_TABLE_MODEL.setColumnName( "loggedValue", "LoggedValue : "+model.getPVLoggerID() );
 			VALUE_SYNC_TIME.resume();
 		}
 		
@@ -967,7 +1027,7 @@ public class MachineSimulatorController implements MachineModelListener {
 		
 		diagData = dRecords;
 
-		refresh.actionPerformed(null);
+		refresh.actionPerformed( null );
 		
 	}
 	

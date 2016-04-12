@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import xal.model.ModelException;
+import xal.service.pvlogger.sim.PVLoggerDataSource;
+import xal.sim.scenario.ModelInput;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
 import xal.tools.data.DataAdaptor;
@@ -55,6 +57,14 @@ public class MachineModel implements DataListener {
    private List<NodePropertyRecord> nodePropertyRecords;
    /**history data snapshot*/
    private List<NodePropertySnapshot> nodePropertySnapshots;
+   /**the ModelInputs*/
+   private List<ModelInput> modelInputs;
+   /**if using pvlogger*/
+   private boolean usePVLogger;
+   /**the pvLogger data*/
+   private PVLoggerDataSource pvLoggerDataSource;
+   /**the pvLogger ID*/
+   private long pvLoggerID;
    
 
     
@@ -81,7 +91,7 @@ public class MachineModel implements DataListener {
     public void setSequence( final AcceleratorSeq sequence ) throws ModelException {
         SIMULATOR.setSequence( sequence );
         _sequence = sequence;
-        setupWhatIfConfiguration( _sequence );
+        setupWhatIfConfiguration( _sequence, pvLoggerDataSource );
 		  _diagnosticConfiguration = setupDiagConfig( _sequence );
         EVENT_PROXY.modelSequenceChanged(this);
     }
@@ -96,10 +106,29 @@ public class MachineModel implements DataListener {
     	SIMULATOR.setUseFieldReadback( useFieldReadback );
     }
     
+    /**Configure the pvlogger data to the scenario(set or remove) if selected or unselected to use pvlogger*/
+    public void configPVLoggerData( final PVLoggerDataSource pvLoggerData, final long pvLoggerID, final boolean checked  ) {
+    	pvLoggerDataSource = pvLoggerData;
+    	this.pvLoggerID = pvLoggerID;
+    	usePVLogger = checked;
+    	SIMULATOR.configPVloggerData( pvLoggerData, checked);
+    }
+    
+    /**get the pvLogger id*/
+    public long getPVLoggerID() {
+    	return pvLoggerID;
+    }
+    
     /**post the event that the scenario has changed*/
     public void modelScenarioChanged(){
-    	setupWhatIfConfiguration( _sequence );
+        if ( _whatIfConfiguration != null ) _whatIfConfiguration.refresh( pvLoggerDataSource );
     	EVENT_PROXY.modelScenarioChanged(this);
+    }
+    
+    /**restore the model scenario*/
+    public void restoreModelScenario( final DataAdaptor adaptor){
+        restoreWhatIfConfiguration( _sequence, pvLoggerDataSource, adaptor );
+        EVENT_PROXY.modelScenarioChanged(this);
     }
 
     /** get the accelerator sequence */
@@ -111,8 +140,13 @@ public class MachineModel implements DataListener {
     	return _whatIfConfiguration;
     }
     /** setup WhatIfConfiguration*/
-    private void setupWhatIfConfiguration( final AcceleratorSeq sequence ){
-    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence );
+    private void setupWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData ){
+    	if( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData );
+    }
+    
+    /**restore WhatIfConfiguration*/
+    private void restoreWhatIfConfiguration( final AcceleratorSeq sequence, final PVLoggerDataSource pvLoggerData, final DataAdaptor adaptor ) {
+        if ( sequence != null ) _whatIfConfiguration = new WhatIfConfiguration( sequence, pvLoggerData, adaptor);
     }
     
     /**get the diagnostic records*/
@@ -243,11 +277,18 @@ public class MachineModel implements DataListener {
     }
 	/** Run the simulation and record the result and the values used for simulation */
 	public void runSimulation( final String name ) {
+		
 		//configure
+		
 		nodePropertyRecords = this.getWhatIfConfiguration().getNodePropertyRecords();
 		configModelInputs( nodePropertyRecords );
+		//save the values used for simulation
+		SIMULATOR.saveValuesForSimulation( nodePropertyRecords );
 		//run
 		_simulation = SIMULATOR.run();
+		modelInputs = SIMULATOR.getModelInputs();
+		//remove the model inputs after a running
+		SIMULATOR.removeModelInputs( modelInputs );
 		//record
 		if(_simulation != null ) {
 			Date time = new Date();		
@@ -321,13 +362,14 @@ public class MachineModel implements DataListener {
         
         final List<DataAdaptor> historyRecordAdaptors = adaptor.childAdaptors( SimulationHistoryRecord.DATA_LABEL );
         for ( final DataAdaptor recordAdaptor : historyRecordAdaptors ) {
-        	SIMULATION_HISTORY_RECORDS.add( new SimulationHistoryRecord( recordAdaptor ) );
+        	if ( recordAdaptor.hasAttribute( "sequence" ) ) SIMULATION_HISTORY_RECORDS.add( new SimulationHistoryRecord( recordAdaptor ) );
         }
     }
     
     
     /** Instructs the receiver to write its data to the adaptor for external storage. */
     public void write( final DataAdaptor adaptor ) {
+        adaptor.writeNode( _whatIfConfiguration );
     	adaptor.writeNode( SIMULATOR );
     	adaptor.writeNodes( SIMULATION_HISTORY_RECORDS );
     }
@@ -361,10 +403,22 @@ public class MachineModel implements DataListener {
 	final private AcceleratorSeq SEQUENCE;
 	/**the record of values assignment to simulation*/
 	final private List<NodePropertySnapshot> VALUES_SNAPSHOT;
+	/**the model senario*/
+	final private String SYNCH_MODE;
+	/**if using readback*/
+	final private Boolean USE_READBACK;
+	/**if using pvlogger*/
+	final private Boolean USE_PVLOGGER;
+	/**pvlogger ID*/
+	final private long PVLOGGER_ID;
+	/**if using logged bend fields*/
+	final private Boolean USE_LOGGED_BEND_FIELDS;
 	/**the records of diagnostic data*/
 	final private List<DiagnosticSnapshot> DIAG_SNAPSHOTS;
 	/**the simulation result*/
 	private MachineSimulation SIMULATION;
+	/**test values information*/
+	private String testProperties;
 	/**record name*/
 	private String recordName;
 	/**checked state*/
@@ -379,8 +433,14 @@ public class MachineModel implements DataListener {
 		DIAG_SNAPSHOTS = _diagnosticConfiguration.snapshotValues();
 		DATE_FORMAT = DateFormat.getDateTimeInstance();
 		this.recordName = ( recordName != null ) ? recordName : " Run "+SIMULATOR.getRunNumber();
+		SYNCH_MODE = SIMULATOR.getScenario().getSynchronizationMode();
+		USE_READBACK = SIMULATOR.getUseFieldReadback();
+		USE_PVLOGGER = usePVLogger;
+		PVLOGGER_ID = ( USE_PVLOGGER ) ? pvLoggerID : 0;
+		USE_LOGGED_BEND_FIELDS = ( USE_PVLOGGER && pvLoggerDataSource != null ) ? pvLoggerDataSource.getUsesLoggedBendFields() : false;
+                testProperties = configTestValueInfo( modelInputs );
 		checkState = true;
-		COLUMN_NAME.get(SEQUENCE).put( TIME, this.recordName );
+		COLUMN_NAME.get( SEQUENCE ).put( TIME, this.recordName );
 	}
 	
 	/**Constructor with dataAdaptor*/
@@ -395,7 +455,13 @@ public class MachineModel implements DataListener {
 		SIMULATION = null;
 		VALUES_SNAPSHOT = new ArrayList<NodePropertySnapshot>();
 		DIAG_SNAPSHOTS = new ArrayList<DiagnosticSnapshot>();
-
+		
+		SYNCH_MODE = adaptor.hasAttribute( "synchMode" )  ? adaptor.stringValue( "synchMode" ) : null;
+		USE_READBACK = adaptor.hasAttribute( "useFieldReadBack" ) ? adaptor.booleanValue( "useFieldReadBack" ) : null;
+		USE_PVLOGGER = adaptor.hasAttribute( "usePVLogger" ) ? adaptor.booleanValue( "usePVLogger" ) : null;
+		PVLOGGER_ID = adaptor.hasAttribute( "pvLoggerID" ) ? adaptor.longValue( "pvLoggerID" ) : 0;
+		USE_LOGGED_BEND_FIELDS = adaptor.hasAttribute( "useLoggedBendFields" ) ? adaptor.booleanValue( "useLoggedBendFields" ) : null;
+                testProperties = adaptor.hasAttribute( "testProperties" ) ? adaptor.stringValue( "testProperties" ) : "";
 		update( adaptor );
 	}
 	
@@ -450,6 +516,54 @@ public class MachineModel implements DataListener {
 	public String getRecordName(){
 		return recordName;
 	}
+	
+	/**configure the testValue properties*/
+	private String configTestValueInfo( final List<ModelInput> modelInputs ) {
+		String info = "";
+		StringBuilder infoBuilder = new StringBuilder( info );
+		for ( final ModelInput modelInput : modelInputs ) {
+			infoBuilder.append( " - " );
+			infoBuilder.append( modelInput.getAcceleratorNode().getId() );
+			infoBuilder.append( "." );
+			infoBuilder.append( modelInput.getProperty() );
+			infoBuilder.append( "\n" );
+		}
+		info = infoBuilder.toString();
+		return info;
+	}
+	
+	/**get the setting information of the simulation*/
+	public String getRunInformation( ) {
+		String runInformation = "";
+		StringBuilder runInfoBuilder = new StringBuilder( runInformation );
+		runInfoBuilder.append( "Record Name : " );
+		runInfoBuilder.append( recordName );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "sequence ID : " );
+		runInfoBuilder.append( SEQUENCE.getId() );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Synch Mode : " );
+		runInfoBuilder.append( SYNCH_MODE );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use ReadBack : " );
+		runInfoBuilder.append( USE_READBACK );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use PVLogger : " );
+		runInfoBuilder.append( USE_PVLOGGER );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "PVLogger ID : " );
+		runInfoBuilder.append( PVLOGGER_ID );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Use Logged Bend Fields : " );
+		runInfoBuilder.append( USE_LOGGED_BEND_FIELDS );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append( "Test/Scan Properties : "  );
+		runInfoBuilder.append( "\n" );
+		runInfoBuilder.append(  testProperties  );
+		runInfoBuilder.append( "\n" );
+		runInformation = runInfoBuilder.toString();
+		return runInformation;
+	}
 
 	/**set the record name*/
 	public void setRecordName( final String newName ){
@@ -492,10 +606,16 @@ public class MachineModel implements DataListener {
 	}
 
 	/** Instructs the receiver to write its data to the adaptor for external storage. */
-	public void write(DataAdaptor adaptor) {
+	public void write( DataAdaptor adaptor ) {
 		adaptor.setValue( "time", TIME.getTime() );
 		adaptor.setValue( "recordName", recordName );
 		adaptor.setValue( "sequence", SEQUENCE.getId() );
+		adaptor.setValue( "synchMode", SYNCH_MODE );
+		adaptor.setValue( "useFieldReadBack", USE_READBACK );
+		adaptor.setValue( "usePVLogger", USE_PVLOGGER );
+		adaptor.setValue( "pvLoggerID", PVLOGGER_ID );
+		adaptor.setValue( "useLoggedBendFields", USE_LOGGED_BEND_FIELDS );
+        adaptor.setValue( "testProperties", testProperties );
 		adaptor.writeNodes( VALUES_SNAPSHOT );
 		adaptor.writeNodes( DIAG_SNAPSHOTS );
 		adaptor.writeNode( SIMULATION );
