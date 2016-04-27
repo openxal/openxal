@@ -1,0 +1,42 @@
+.Graph {
+	position: relative;
+}
+
+
+.Graph .LeftAxis {
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	left: 0;
+}
+
+
+.Graph .BottomAxis {
+	position: absolute;
+	overflow: hidden;
+	bottom: 0;
+	right: 0;
+}
+
+
+.Graph .PlotArea {
+	position: absolute;
+	top: 0;
+}
+
+
+.Graph .PlotArea canvas.Plot { 
+	background-color: rgba(0, 0, 0, 0.0);
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+
+.Graph .PlotArea canvas.Grid { 
+	background-color: rgb(225, 225, 225);
+	border: thin solid black;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
