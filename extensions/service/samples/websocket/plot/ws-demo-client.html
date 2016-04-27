@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<html>
+	<head>
+		<title>WebSocket Simple Demo</title>
+
+		<style>
+			input.numeric { text-align: right; }
+			.output { font-weight: bold; }
+			.output .index { font-weight: normal; }
+			.output .index + .value { margin-left: 1em; }
+			.trial { margin: 1em 0; padding: 0.5em; border-top: solid thin gray; }
+			.trial .title { margin: 0.5em 0; font-size: large; font-weight: bold; color: gray; }
+		</style>
+
+		<script src="shared/xal-websocket-lib.js"></script>
+		<script src="shared/plot.js"></script>
+		<script src="ws-demo-client.js"></script>
+
+		<link rel="stylesheet" href="shared/plot.css" type="text/css" charset="utf-8">
+	</head>
+
+	<body onload="init();">
+
+		<h2 style="color: green;">Open XAL Websocket - Simple Demo</h2>
+
+		<div class="trial">
+			<div class="title">Greeting</div>
+			<input id="recipient" type="text" placeholder="Your Name" value="Someone"></input>
+			<button onclick="sendGreetingRequest();">Say Hello</button>
+			<span id="greeting" class="output"></span>
+		</div>
+
+		<div class="trial">
+			<div class="title">Launch Time</div>
+			<button onclick="sendLaunchTimeRequest();">Service Launch Time</button>
+			<span>Launch Time: </span>
+			<span id="launchtime" class="output"> ? </span>
+		</div>
+
+		<div class="trial">
+			<div class="title">Addition</div>
+			<input id="summand" class="numeric" type="text" placeholder="summand" value="3.14159"></input>
+			<button onclick="sendAddRequest();"> + </button>
+			<input id="addend" class="numeric" type="text" placeholder="addend" value="-2.71828"></input>
+			<span> = </span>
+			<span id="binarysum" class="output"> ? </span>
+		</div>
+
+		<div class="trial">
+			<div class="title">Sum Random Integers</div>
+			<button onclick="sendSumIntArrayRequest();">Sum Integers</button>
+			<span> Sum </span>
+			<span id="summandarray"> [] </span>
+			<span> = </span>
+			<span id="arraysum" class="output"> ? </span>
+		</div>
+
+		<div class="trial">
+			<div class="title">Generate Sinusoid</div>
+			<input id="amplitude" class="numeric" type="text" placeholder="Amplitude" title="Amplitude" value="10.0"></input>
+			<input id="frequency" class="numeric" type="text" placeholder="Frequency" title="Frequency" value="4.0"></input>
+			<input id="phase" class="numeric" type="text" placeholder="Phase" title="Phase" value="0.0"></input>
+			<input id="numpoints" class="numeric" type="text" placeholder="Num Points" title="Num Points" value="1000"></input>
+			<button onclick="sendSinusoidGenerateRequest();">Generate</button>
+			<button onclick="live_update = false;">Stop</button>
+			<div id="sinusoid" class="output"></div>
+		</div>
+
+	</body>
+
+</html>
