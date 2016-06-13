@@ -40,6 +40,7 @@ public class MagnetBucket extends AttributeBucket {
                                                     "dipoleEntrRotAngle",  // dipole rotation angle for entrance pole face
                                                     "dipoleExitRotAngle",  // dipole rotation angle for exit pole face
 						    "dipoleQuadComponent" // quadrupole component for bend dipole
+                                                    ,"frngIntgrl"//fringe field integral
                                     };
     
     
@@ -64,6 +65,8 @@ public class MagnetBucket extends AttributeBucket {
         m_attDipoleEntrRotAngle = new Attribute(0.0 );
         m_attDipoleExitRotAngle = new Attribute(0.0 );
         m_attDipoleQuadComponent = new Attribute(0.0 );
+        m_attFrngIntgrl = new Attribute(0.0);
+        
 	
         super.registerAttribute(c_arrNames[0], m_attLenEff);
         super.registerAttribute(c_arrNames[1], m_attFldDflt);
@@ -75,6 +78,7 @@ public class MagnetBucket extends AttributeBucket {
         super.registerAttribute(c_arrNames[7], m_attDipoleEntrRotAngle);
         super.registerAttribute(c_arrNames[8], m_attDipoleExitRotAngle);
 	super.registerAttribute(c_arrNames[9], m_attDipoleQuadComponent);
+	super.registerAttribute(c_arrNames[10], m_attFrngIntgrl);
     }
     
      
@@ -96,6 +100,10 @@ public class MagnetBucket extends AttributeBucket {
     public double   getDipoleExitRotAngle() { return m_attDipoleExitRotAngle.getDouble(); };
     /** return the quadrupole component for bend dipole */
     public double   getDipoleQuadComponent() { return m_attDipoleQuadComponent.getDouble(); };
+    /**return the fringe field integral*/
+    public double   getFrngIntgrl() {
+    	return m_attFrngIntgrl.getDouble();
+    }
     
     /** set the magnetic length (in m) 
      * @param dblVal magnetic length in meters
@@ -127,7 +135,11 @@ public class MagnetBucket extends AttributeBucket {
     /** set the quadrupole component for bend dipole
      * @param dblVal quadrupole component for bend dipole
      */
-    public void setDipoleQuadComponent(double dblVal)    { m_attDipoleQuadComponent.set(dblVal); };    
+    public void setDipoleQuadComponent(double dblVal)    { m_attDipoleQuadComponent.set(dblVal); };
+    /**set fringe filed integral*/
+    public void setFrngIntgrl( double dblVal ) {
+    	m_attFrngIntgrl.set( dblVal );
+    }
     
     /*
      *  Local Attributes
@@ -153,4 +165,6 @@ public class MagnetBucket extends AttributeBucket {
     private Attribute       m_attDipoleExitRotAngle;
     /** quadrupole component for bend dipole */
     private Attribute       m_attDipoleQuadComponent;
+    /**fringe field Integral*/
+    private Attribute      m_attFrngIntgrl;
 }

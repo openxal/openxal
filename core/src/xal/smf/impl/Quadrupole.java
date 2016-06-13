@@ -4,7 +4,6 @@
  */
 package xal.smf.impl;
 
-import xal.smf.*;
 import xal.smf.impl.qualify.*;
 import xal.ca.*;
 import xal.tools.data.*;
@@ -120,6 +119,11 @@ public class Quadrupole extends Electromagnet {
     		return NO_ORIENTATION;
     	else
     		return _type.equalsIgnoreCase( HORIZONTAL_TYPE ) ? HORIZONTAL : VERTICAL;
+    }
+    
+    /**get fringe field integral*/
+    public double getFringeFieldIntegral() {
+    	return m_bucMagnet.getFrngIntgrl();
     }
         
     
