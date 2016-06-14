@@ -7,7 +7,6 @@
 package xal.model.elem;
 
 import xal.sim.scenario.LatticeElement;
-import xal.smf.impl.Bend;
 import xal.smf.impl.Quadrupole;
 import xal.tools.math.r3.R3;
 
@@ -63,7 +62,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      */
 
     /**
-     * Default constructor - creates a new unitialized instance of 
+     * Default constructor - creates a new uninitialized instance of 
      * <code>IdealMagFringeQuad</code>.
      */
     public IdealMagFringeQuad() {
@@ -209,38 +208,44 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
         this.getMagBody().setLength( dblLen );
     }
     
-    /**
-     * Set the K value of quadrupole
-     * 
-     * @param   K1     the K value of quadrupole
-     * 
-     */
-    public void setK1(double k1)  {
-    	this.getFaceEntr().setK1( k1 );
-        this.getMagBody().setK1( k1 );
-        this.getFaceExit().setK1( k1 );
-    }
     
-    /**
-     * Set the Nominal Kinetic Energy.
-     * 
-     * @param   nomKinEn     Nominal Kinetic Energy
-     */
-    public void setNominalKineEnergy(double nomKinEn)   {
-    	this.getFaceEntr().setNominalKineEnergy( nomKinEn );
-        this.getMagBody().setNominalKineEnergy( nomKinEn );
-        this.getFaceExit().setNominalKineEnergy( nomKinEn );
-    }
-
-
-    /**
-     * sako use design field if fieldPathFlag = 1, and use bfield if 0
-     */
-    public void setFieldPathFlag(double dblFlag) {
-    	this.getFaceEntr().setFieldPathFlag(dblFlag);
-    	this.getMagBody().setFieldPathFlag(dblFlag);
-    	this.getFaceExit().setFieldPathFlag(dblFlag);
-    }
+    //
+    // CKA - None of this will work correctly for synchronization
+    //  They are not part of IElectromagnet
+    //
+    
+//    /**
+//     * Set the K value of quadrupole
+//     * 
+//     * @param   K1     the K value of quadrupole
+//     * 
+//     */
+//    public void setK1(double k1)  {
+//    	this.getFaceEntr().setK1( k1 );
+//        this.getMagBody().setK1( k1 );
+//        this.getFaceExit().setK1( k1 );
+//    }
+//    
+//    /**
+//     * Set the Nominal Kinetic Energy.
+//     * 
+//     * @param   nomKinEn     Nominal Kinetic Energy
+//     */
+//    public void setNominalKineEnergy(double nomKinEn)   {
+//    	this.getFaceEntr().setNominalKineEnergy( nomKinEn );
+//        this.getMagBody().setNominalKineEnergy( nomKinEn );
+//        this.getFaceExit().setNominalKineEnergy( nomKinEn );
+//    }
+//
+//
+//    /**
+//     * sako use design field if fieldPathFlag = 1, and use bfield if 0
+//     */
+//    public void setFieldPathFlag(double dblFlag) {
+//    	this.getFaceEntr().setFieldPathFlag(dblFlag);
+//    	this.getMagBody().setFieldPathFlag(dblFlag);
+//    	this.getFaceExit().setFieldPathFlag(dblFlag);
+//    }
 
     /**
      * set align x
