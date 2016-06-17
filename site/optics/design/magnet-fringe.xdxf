@@ -1,0 +1,51 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<!—- Optics Extra File for Testing the Quadrupole Fringe Field Mechanism —->  
+
+<xdxf date="06.16.2016” system="sns" ver="2.0.0">
+  <sequence id="Ring1" len="14.266019">
+    <node type="QVF” id="Ring_Mag:QTV_A12" >
+       <attributes>
+          <magnet frFldIntK0=“1.0” />
+       </attributes>
+    </node>
+    <node type="QHF” id="Ring_Mag:QTH_A13" pos="8.015851" len="0.0" status="true">
+       <attributes>
+          <magnet frFldIntK0=“1.0” />
+       </attributes>
+    </node>
+  </sequence>
+
+  <sequence id="Ring2" len="97.6526">
+    <node type="QSC" id="Ring_Mag:QSC_B01">
+       <attributes>
+          <magnet len=".449" polarity="-1" dfltMagFld="0.0"/>
+       </attributes>
+    </node>
+    <node type="QV" id="Ring_Mag:QTV_B01" pos="1.2" len="0.0" status="true">
+       <attributes>
+          <magnet len=".5" polarity="-1" dfltMagFld="-3.023838"/>
+       </attributes>
+    </node>
+    <node type="QSC" id="Ring_Mag:QSC_B02" pos="4.647" len="0.0" status="true">
+       <attributes>
+          <magnet len=".449" polarity="-1" dfltMagFld="0.0"/>
+       </attributes>
+    </node>
+    <node type="QH" id="Ring_Mag:QTH_B02" pos="5.2002" len="0.0" status="true">
+       <attributes>
+          <magnet len=".5" polarity="+1" dfltMagFld="3.90979"/>
+       </attributes>
+    </node>
+    <node type="QSC" id="Ring_Mag:QSC_B03" pos="8.6472" len="0.0" status="true">
+       <attributes>
+          <magnet len=".449" polarity="-1" dfltMagFld="0.0"/>
+       </attributes>
+    </node>
+    <node type="QV" id="Ring_Mag:QTV_B03" pos="9.2004" len="0.0" status="true">
+       <attributes>
+          <magnet len=".5" polarity="-1" dfltMagFld="-4.250372"/>
+       </attributes>
+    </node>
+  </sequence>
+</xdxf>

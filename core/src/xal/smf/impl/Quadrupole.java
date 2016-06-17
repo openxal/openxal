@@ -53,7 +53,7 @@ public class Quadrupole extends Electromagnet {
 	 * @see #isKindOf
 	 */
 	private static void registerType() {
-		ElementTypeManager.defaultManager().registerTypes( Quadrupole.class, s_strType, "emquad", "quad", "quadrupole", MagnetType.QUADRUPOLE );
+		ElementTypeManager.defaultManager().registerTypes( Quadrupole.class, s_strType, "emquad", "quad", "quadrupole", "qt", MagnetType.QUADRUPOLE );
 	}
 
 
@@ -122,8 +122,8 @@ public class Quadrupole extends Electromagnet {
     }
     
     /**get fringe field integral*/
-    public double getFringeFieldIntegral() {
-    	return m_bucMagnet.getFrngIntgrl();
+    public double getFringeFieldIntegralK0() {
+    	return m_bucMagnet.getFringeFieldIntegralK0();
     }
         
     

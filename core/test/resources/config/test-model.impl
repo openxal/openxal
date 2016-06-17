@@ -14,14 +14,18 @@
 
 		<map smf="dh" model="xal.model.elem.IdealMagWedgeDipole2"/>
 		<map smf="EDipole" model="xal.model.elem.IdealEDipole"/>
-		<map smf="QSC" model="xal.model.elem.IdealMagSkewQuad3"/>		
+		
 		<map smf="q" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="qt" model="xal.model.elem.IdealMagQuad"/>
+        <map smf="QFH" model="xal.model.elem.IdealMagFringeQuad"/>
+        <map smf="QFV" model="xal.model.elem.IdealMagFringeQuad"/>
 		<map smf="EQuad" model="xal.model.elem.IdealEQuad"/>
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
-		<map smf="S" model="xal.model.elem.IdealMagSextupole"/>
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
 		
+        <map smf="QSC" model="xal.model.elem.IdealMagSkewQuad3"/>       
+        <map smf="S" model="xal.model.elem.IdealMagSextupole"/>
+
 		<map smf="rfgap" model="xal.model.elem.SpectrumMapRfGap" />
 		<!-- map smf="rfgap" model="xal.model.elem.IdealRfGap"/ -->
 

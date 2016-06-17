@@ -89,7 +89,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
      * <code>ElementSeq</code> objects so we can set the identifier
      * strings of each composite element.
      * 
-     * @param   strId       identifier string of this compsite.
+     * @param   strId       identifier string of this composite.
      * @see xal.model.elem.ElementSeq#setId(java.lang.String)
      */
     @Override
@@ -465,7 +465,7 @@ public class IdealMagFringeQuad extends ElectromagnetSeq {
 		setPosition(element.getCenterPosition(), element.getLength());
 			
 		double len_sect = element.getLength();
-		double frng_intg = magnet.getFringeFieldIntegral();
+		double frng_intg = magnet.getFringeFieldIntegralK0();
 		
         if (element.isFirstSlice()) // first piece
             setEntrFringeIntegral1( frng_intg );

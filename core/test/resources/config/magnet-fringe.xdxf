@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<!-- Optics Extra File for Testing the Quadrupole Fringe Field Mechanism -->
+
+<xdxf date="06.16.2016" system="sns" ver="2.0.0">
+
+  <sequence id="Ring1">
+    <node type="QFV" id="Ring_Mag:QTV_A12" >
+       <attributes>
+          <magnet frFldIntK0="1.0"/>
+       </attributes>
+    </node>
+    <node type="QFH" id="Ring_Mag:QTH_A13">
+       <attributes>
+          <magnet frFldIntK0="1.0"/>
+       </attributes>
+    </node>
+  </sequence>
+
+  <sequence id="Ring2">
+    <node type="QFV" id="Ring_Mag:QTV_B01">
+       <attributes>
+          <magnet frFldIntK0="2.0" />
+       </attributes>
+    </node>
+    <node type="QFH" id="Ring_Mag:QTH_B02">
+       <attributes>
+          <magnet frFldIntK0="2.0" />
+       </attributes>
+    </node>
+  </sequence>
+
+</xdxf>

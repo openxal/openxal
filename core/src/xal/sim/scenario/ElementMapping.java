@@ -140,7 +140,12 @@ public abstract class ElementMapping {
 	 */
 	public Class<? extends IComponent> getModelElementType(AcceleratorNode node) {
 		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
-			if (node.isKindOf(tc.getKey()))
+		    String    strKey  = tc.getKey();
+		    String    strType = node.getType();
+		    if (strType.equalsIgnoreCase(strKey))
+		        return tc.getValue();
+		    
+			if (node.isKindOf(strKey))
 				return tc.getValue();
 		}
 		

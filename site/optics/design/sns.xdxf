@@ -444,7 +444,7 @@
           <channel handle="StatMps0Rb" signal="MEBT_Diag:WS01:MPS0" settable="false"/>
           <channel handle="StatMps1Rb" signal="MEBT_Diag:WS01:MPS1" settable="false"/>
           <channel handle="StatWirePosRb" signal="MEBT_Diag:WS01:Position" settable="false"/>
-          <channel handle="StatPowerSupplyRb" signal="MEBT_Diag:WS01:Power" settable="false"/>
+          <channel handleQ="StatPowerSupplyRb" signal="MEBT_Diag:WS01:Power" settable="false"/>
           <channel handle="StatWireSpeedRb" signal="MEBT_Diag:WS01:Speed" settable="false"/>
           <channel handle="StatScanErrorRb" signal="MEBT_Diag:WS01:ScanErr" settable="false"/>
           <channel handle="StatMotionRb" signal="MEBT_Diag:WS01:MotionStat" settable="false"/>

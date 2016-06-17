@@ -31,114 +31,146 @@ public class MagnetBucket extends AttributeBucket {
     private final static String     c_strType = "magnet"; 
 
     private final static String[]   c_arrNames = {  "len",      // effective length
-                                                    "dfltMagFld", // default field value
-                                                    "polarity", // default polarity value
-                                                    "bendAngle", // bend angle
-                                                    "multFieldNorm",      // normal field components
-                                                    "multFieldSkew",       // skew field components
-                                                    "pathLength",   // path length
-                                                    "dipoleEntrRotAngle",  // dipole rotation angle for entrance pole face
-                                                    "dipoleExitRotAngle",  // dipole rotation angle for exit pole face
-						    "dipoleQuadComponent" // quadrupole component for bend dipole
-                                                    ,"frngIntgrl"//fringe field integral
-                                    };
+            "dfltMagFld", // default field value
+            "polarity", // default polarity value
+            "bendAngle", // bend angle
+            "multFieldNorm",      // normal field components
+            "multFieldSkew",       // skew field components
+            "pathLength",   // path length
+            "dipoleEntrRotAngle",   // dipole rotation angle for entrance pole face
+            "dipoleExitRotAngle",   // dipole rotation angle for exit pole face
+            "dipoleQuadComponent",   // quadrupole component for bend dipole
+            "frFldIntK0"           // zero-order fringe field integral
+    };
     
-    
-     
-    
+
+
+
     /** Override virtual to provide type signature */
     public String getType()         { return c_strType; };
-    
+
     public String[] getAttrNames()  { return c_arrNames; };
-    
-    
+
+
     public MagnetBucket() {
         super();
-        
-        m_attLenEff  = new Attribute(0.0);
-        m_attFldDflt = new Attribute(0.0 );
-        m_attBendAngle = new Attribute(0.0 );
-        m_attPolarity = new Attribute(1.0 );
-        m_attFldNorm = new Attribute(new double[] {} );
-        m_attFldTang = new Attribute(new double[] {} );
-        m_attPathLength = new Attribute(0.0 );
-        m_attDipoleEntrRotAngle = new Attribute(0.0 );
-        m_attDipoleExitRotAngle = new Attribute(0.0 );
-        m_attDipoleQuadComponent = new Attribute(0.0 );
-        m_attFrngIntgrl = new Attribute(0.0);
-        
-	
-        super.registerAttribute(c_arrNames[0], m_attLenEff);
-        super.registerAttribute(c_arrNames[1], m_attFldDflt);
-        super.registerAttribute(c_arrNames[2], m_attPolarity);
-        super.registerAttribute(c_arrNames[3], m_attBendAngle);
-        super.registerAttribute(c_arrNames[4], m_attFldNorm);
-        super.registerAttribute(c_arrNames[5], m_attFldTang);
-        super.registerAttribute(c_arrNames[6], m_attPathLength);
-        super.registerAttribute(c_arrNames[7], m_attDipoleEntrRotAngle);
-        super.registerAttribute(c_arrNames[8], m_attDipoleExitRotAngle);
-	super.registerAttribute(c_arrNames[9], m_attDipoleQuadComponent);
-	super.registerAttribute(c_arrNames[10], m_attFrngIntgrl);
+
+        this.attLenEff  = new Attribute(0.0);
+        this.attFldDflt = new Attribute(0.0 );
+        this.attBendAngle = new Attribute(0.0 );
+        this.attPolarity = new Attribute(1.0 );
+        this.attFldNorm = new Attribute(new double[] {} );
+        this.attFldTang = new Attribute(new double[] {} );
+        this.attPathLength = new Attribute(0.0 );
+        this.attDipoleEntrRotAngle = new Attribute(0.0 );
+        this.attDipoleExitRotAngle = new Attribute(0.0 );
+        this.attDipoleQuadComponent = new Attribute(0.0 );
+        this.attFrFldIntK0 = new Attribute(0.0);
+
+
+        super.registerAttribute(c_arrNames[0], attLenEff);
+        super.registerAttribute(c_arrNames[1], attFldDflt);
+        super.registerAttribute(c_arrNames[2], attPolarity);
+        super.registerAttribute(c_arrNames[3], attBendAngle);
+        super.registerAttribute(c_arrNames[4], attFldNorm);
+        super.registerAttribute(c_arrNames[5], attFldTang);
+        super.registerAttribute(c_arrNames[6], attPathLength);
+        super.registerAttribute(c_arrNames[7], attDipoleEntrRotAngle);
+        super.registerAttribute(c_arrNames[8], attDipoleExitRotAngle);
+        super.registerAttribute(c_arrNames[9], attDipoleQuadComponent);
+        super.registerAttribute(c_arrNames[10], attFrFldIntK0);
     }
-    
+
      
     /** return the magnetic length (in m) */
-    public double   getEffLength()  { return m_attLenEff.getDouble(); };
+    public double   getEffLength()  { return attLenEff.getDouble(); };
     /** return the design magnetic field strength (in Tesla) */
-    public double   getDfltField()  { return m_attFldDflt.getDouble(); };
+    public double   getDfltField()  { return attFldDflt.getDouble(); };
     /** return the magnet polarity ( 1 or -1) */
-    public double   getPolarity()   { return m_attPolarity.getDouble(); };
+    public double   getPolarity()   { return attPolarity.getDouble(); };
+    
     /** return the dipole bend angle (in degrees) */
-    public double   getBendAngle()   { return m_attBendAngle.getDouble(); };
-    public double[] getNormField()  { return m_attFldNorm.getArrDbl(); };
-    public double[] getTangField()  { return m_attFldTang.getArrDbl(); };
+    public double   getBendAngle()   { return attBendAngle.getDouble(); };
+    
+    /** 
+     * Return the field in the normal direction 
+     * 
+     * @return  field component in the direction of propagation,
+     *
+     * @since  Jun 15, 2016,   Christopher K. Allen
+     */
+    public double[] getNormField()  { return attFldNorm.getArrDbl(); };
+    
+    /** 
+     * Return the field in the tangential direction 
+     * 
+     * @return  field component in the orthogonal to the direction of propagation,
+     *
+     * @since  Jun 15, 2016,   Christopher K. Allen
+     */
+    public double[] getTangField()  { return attFldTang.getArrDbl(); };
+    
     /** return the design path length (in m) */
-    public double   getPathLength() { return m_attPathLength.getDouble(); };
+    public double   getPathLength() { return attPathLength.getDouble(); };
     /** return the dipole rotation angle for entrance pole face (in degrees) */
-    public double   getDipoleEntrRotAngle() { return m_attDipoleEntrRotAngle.getDouble(); };
+    public double   getDipoleEntrRotAngle() { return attDipoleEntrRotAngle.getDouble(); };
     /** return the dipole rotation angle for exit pole face (in degrees) */
-    public double   getDipoleExitRotAngle() { return m_attDipoleExitRotAngle.getDouble(); };
+    public double   getDipoleExitRotAngle() { return attDipoleExitRotAngle.getDouble(); };
     /** return the quadrupole component for bend dipole */
-    public double   getDipoleQuadComponent() { return m_attDipoleQuadComponent.getDouble(); };
-    /**return the fringe field integral*/
-    public double   getFrngIntgrl() {
-    	return m_attFrngIntgrl.getDouble();
+    public double   getDipoleQuadComponent() { return attDipoleQuadComponent.getDouble(); };
+    
+    /**
+     * Return the fringe field integral
+     * <br/>
+     * What are the units?
+     * <br/>
+     * How is the integral defined?
+     */
+    public double   getFringeFieldIntegralK0() {
+    	return attFrFldIntK0.getDouble();
     }
     
     /** set the magnetic length (in m) 
      * @param dblVal magnetic length in meters
      */
-    public void setEffLength(double dblVal)     { m_attLenEff.set(dblVal); };
+    public void setEffLength(double dblVal)     { attLenEff.set(dblVal); };
     /** set the magnet polarity 
      * @param dblVal magnet polarity (1 or -1)
      */
-    public void setPolarity(double dblVal)      { m_attPolarity.set(dblVal); };
+    public void setPolarity(double dblVal)      { attPolarity.set(dblVal); };
     /** set the dipole bend angle (in degrees)
      * @param dblVal dipole bend angle in degrees
      */
-    public void setBendAngle(double dblVal)      { m_attBendAngle.set(dblVal); };
-    public void setNormField(double[] arrVal)   { m_attFldNorm.set(arrVal); };
-    public void setTangField(double[] arrVal)   { m_attFldTang.set(arrVal); };
-    public void setDfltField(double dblVal)   { m_attFldDflt.set(dblVal); };   
+    public void setBendAngle(double dblVal)      { attBendAngle.set(dblVal); };
+    public void setNormField(double[] arrVal)   { attFldNorm.set(arrVal); };
+    public void setTangField(double[] arrVal)   { attFldTang.set(arrVal); };
+    public void setDfltField(double dblVal)   { attFldDflt.set(dblVal); };   
     /** set the dipole path length (in m) 
      * @param dblVal path length in meters
      */
-    public void setPathLength(double dblVal)    { m_attPathLength.set(dblVal); };
+    public void setPathLength(double dblVal)    { attPathLength.set(dblVal); };
     /** set the dipole rotation angle for entrance pole face (in degrees) 
      * @param dblVal dipole rotation angle for entrance pole face in degrees
      */
-    public void setDipoleEntrRotAngle(double dblVal)    { m_attDipoleEntrRotAngle.set(dblVal); };
+    public void setDipoleEntrRotAngle(double dblVal)    { attDipoleEntrRotAngle.set(dblVal); };
     /** set the dipole rotation angle for exit pole face (in degrees) 
      * @param dblVal dipole rotation angle for exit pole face in degrees
      */
-    public void setDipoleExitRotAngle(double dblVal)    { m_attDipoleExitRotAngle.set(dblVal); };
+    public void setDipoleExitRotAngle(double dblVal)    { attDipoleExitRotAngle.set(dblVal); };
     /** set the quadrupole component for bend dipole
      * @param dblVal quadrupole component for bend dipole
      */
-    public void setDipoleQuadComponent(double dblVal)    { m_attDipoleQuadComponent.set(dblVal); };
-    /**set fringe filed integral*/
-    public void setFrngIntgrl( double dblVal ) {
-    	m_attFrngIntgrl.set( dblVal );
+    public void setDipoleQuadComponent(double dblVal)    { attDipoleQuadComponent.set(dblVal); };
+    
+    /**
+     * set fringe filed integral
+     * <br/>
+     * What are the units?
+     * <br/>
+     * How is the integral defined?
+     */
+    public void setFringeFieldIntegralK0( double dblVal ) {
+    	attFrFldIntK0.set( dblVal );
     }
     
     /*
@@ -146,25 +178,35 @@ public class MagnetBucket extends AttributeBucket {
      */
     
     /** effective magnetic length (m) */
-    private Attribute       m_attLenEff;            
+    private Attribute       attLenEff;            
+    
     /**  design field strength (T/m^(n-1)), n=1 for dipole, 2 for quad,... */
-    private Attribute       m_attFldDflt;           
+    private Attribute       attFldDflt;           
+    
     /** polarity */
-    private Attribute       m_attPolarity;          
+    private Attribute       attPolarity;          
+    
     /** bend Angle for dipoles (deg)  */
-    private Attribute       m_attBendAngle;         
+    private Attribute       attBendAngle;         
+    
     /**  normal field multipole coefficients */
-    private Attribute       m_attFldNorm;           
+    private Attribute       attFldNorm;           
+    
     /** tangential field multipole coefficients */
-    private Attribute       m_attFldTang;
+    private Attribute       attFldTang;
+    
     /** path length  (m) */
-    private Attribute       m_attPathLength;
+    private Attribute       attPathLength;
+    
     /** dipole rotation angle for entrance pole face (degree) */
-    private Attribute       m_attDipoleEntrRotAngle;
+    private Attribute       attDipoleEntrRotAngle;
+    
     /** dipole rotation angle for exit pole face (degree) */
-    private Attribute       m_attDipoleExitRotAngle;
+    private Attribute       attDipoleExitRotAngle;
+    
     /** quadrupole component for bend dipole */
-    private Attribute       m_attDipoleQuadComponent;
-    /**fringe field Integral*/
-    private Attribute      m_attFrngIntgrl;
+    private Attribute       attDipoleQuadComponent;
+    
+    /** zero-order fringe field integral*/
+    private Attribute      attFrFldIntK0;
 }
