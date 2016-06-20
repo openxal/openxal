@@ -1058,8 +1058,17 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 IComponent mdlElemCurr = latElemCurr.createModelingElement();
                 mdlSeqRoot.addChild(mdlElemCurr);
 
+                // If the current modeling element is self-contained then synchronize it 
+                //  as such.
                 if (mdlElemCurr instanceof IElement) 
                     mgrSync.synchronize((IElement) mdlElemCurr, smfNodeCurr);
+                
+                // If the current modeling element is a composite structure go through
+                //  each component and synchronize them individually.
+                if (mdlElemCurr instanceof IComposite)
+                    for (IComponent cmp : (IComposite)mdlElemCurr) {
+                        mgrSync.synchronize((IElement) cmp, smfNodeCurr);
+                    }
                 
                 // Advance the position of the last processed element
                 dblPosLast = latElemCurr.getEndPosition();

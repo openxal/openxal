@@ -20,13 +20,14 @@
 	<device type="PMQV" class="xal.smf.impl.PermQuadrupole"/>
 	<device type="LStrp" class="xal.smf.impl.Marker"/>
 	<device type="LW" class="xal.smf.impl.Marker"/>
+    
+    <device type="QFH" class="xal.smf.impl.Quadrupole"/>
+    <device type="QFV" class="xal.smf.impl.Quadrupole"/>
+    
 	<device type="QH" class="xal.smf.impl.Quadrupole"/>
 	<device type="QV" class="xal.smf.impl.Quadrupole"/>
 	<device type="QSC" class="xal.smf.impl.Quadrupole"/>
 	
-    <device type="QFH" class="xal.smf.impl.Quadrupole"/>
-    <device type="QFV" class="xal.smf.impl.Quadrupole"/>
-    
 	<device type="Bnch" class="xal.smf.impl.ReBuncher"/>
 	<device type="RF" class="xal.smf.impl.RfCavity"/>
 	<device type="RG" class="xal.smf.impl.RfGap"/>

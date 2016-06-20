@@ -36,7 +36,7 @@ public class TestFringeQuadGeneration {
      */
     
     /** the string identifier for a ring test magnet  */
-    private static final String ID_TESTMAG2 = "Ring_Mag:QTV_B01";
+    private static final String STR_ID_TESTMAG2 = "Ring_Mag:QTV_B01";
 
     
     /*
@@ -75,7 +75,7 @@ public class TestFringeQuadGeneration {
         SEQ_RING1 = ACCL_TEST.getSequence("Ring1");
         SEQ_RING2 = ACCL_TEST.getSequence("Ring2");
         
-        SMF_TESTMAG2 = SEQ_RING2.getNodeWithId(ID_TESTMAG2);
+        SMF_TESTMAG2 = SEQ_RING2.getNodeWithId(STR_ID_TESTMAG2);
     }
 
     /**
@@ -101,11 +101,15 @@ public class TestFringeQuadGeneration {
     public final void testNodeWithId() throws ModelException {
         Scenario    modRing1 = Scenario.newScenarioFor(SEQ_RING1);
         Scenario    modRing2 = Scenario.newScenarioFor(SEQ_RING2);
+
+        
+        AcceleratorNode smfQuad = modRing2.nodeWithId("Ring_Mag:QSC_B01");
+        List<IElement>  lstQuads = modRing2.elementsMappedTo(smfQuad);
         
         String  strTypeMag2 = SMF_TESTMAG2.getType();
         
-        List<IElement>    lstElems = modRing2.elementsMappedTo(SMF_TESTMAG2);
-        IElement    elmQuad = lstElems.get(0);
+        List<IElement>  lstElems = modRing2.elementsMappedTo(SMF_TESTMAG2);
+        IElement        elmQuad = lstElems.get(0);
         Assert.assertEquals(elmQuad.getClass(), IdealMagFringeQuad.class);
     }
 
