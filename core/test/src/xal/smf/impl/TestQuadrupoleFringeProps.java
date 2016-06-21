@@ -1,10 +1,10 @@
 /**
- * TestQuadrupole.java
+ * TestQuadrupoleFringeProps.java
  *
  * Author  : Christopher K. Allen
  * Since   : Jun 16, 2016
  */
-package xal.smf;
+package xal.smf.impl;
 
 
 import org.junit.AfterClass;
@@ -14,6 +14,9 @@ import org.junit.Assert;
 
 import java.util.List;
 
+import xal.smf.Accelerator;
+import xal.smf.AcceleratorNode;
+import xal.smf.AcceleratorSeq;
 import xal.smf.impl.Quadrupole;
 import xal.test.ResourceManager;
 
@@ -25,7 +28,7 @@ import xal.test.ResourceManager;
  * @author Christopher K. Allen
  * @since  Jun 16, 2016
  */
-public class TestQuadrupole {
+public class TestQuadrupoleFringeProps {
 
     
     /*
@@ -144,9 +147,9 @@ public class TestQuadrupole {
     public final void testQuadrupoleTypeFringeOverride() {
         AcceleratorNode smfFrNode = SEQ_RING2.getNodeWithId(ID_TESTMAG2);
         String  strType = smfFrNode.getType();
-        Assert.assertTrue(strType.equalsIgnoreCase("qvf"));
+        Assert.assertTrue(strType.equalsIgnoreCase("qfv"));
         
-        List<Quadrupole> lstFrQuads = SEQ_RING2.getNodesOfType("QVF");
+        List<Quadrupole> lstFrQuads = SEQ_RING2.getNodesOfType("QFH");
         Assert.assertTrue(lstFrQuads.size() > 0);
     }
 

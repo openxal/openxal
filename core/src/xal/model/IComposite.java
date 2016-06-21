@@ -9,12 +9,23 @@ package xal.model;
 import java.util.Iterator;
 
 /**
+ * <p>
  * Represents a composite modeling structure.  Such a structure is typically
  * build from <code>IElement</code> objects and other composites exposing
  * the <code>IComposite</code> interface.  Both interfaces are derived from
  * the base interface <code>IComponent</code>.
+ * </p>
+ * <p>
+ * Currently an <code>IComposite</code> object is not an <code>IElement</code>
+ * since it does not necessary have the ability to compute the properties of
+ * that interface.  Or perhaps even <em>it should not be computing these values</em>
+ * if the propagating probe has its state modified during the process.
+ * </p>  
+ * 
  * 
  * @author Christopher K. Allen
+ * @since May 24, 2004
+ * @version circa 2010
  *
  */
 public interface IComposite extends IComponent, Iterable<IComponent> {

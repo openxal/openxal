@@ -16,6 +16,8 @@ import org.junit.Test;
 import xal.model.IElement;
 import xal.model.ModelException;
 import xal.model.elem.IdealMagFringeQuad;
+import xal.model.elem.IdealMagFringeQuadFace;
+import xal.model.elem.IdealMagQuad;
 import xal.smf.Accelerator;
 import xal.smf.AcceleratorNode;
 import xal.smf.AcceleratorSeq;
@@ -34,6 +36,9 @@ public class TestFringeQuadGeneration {
     /*
      * Global Constants
      */
+    
+    /** string identifier for ring test magnet */
+    private static final String STR_ID_TESTMAG1 = "Ring_Mag:QTV_A12";
     
     /** the string identifier for a ring test magnet  */
     private static final String STR_ID_TESTMAG2 = "Ring_Mag:QTV_B01";
@@ -98,26 +103,33 @@ public class TestFringeQuadGeneration {
      * @throws ModelException 
      */
     @Test
-    public final void testNodeWithId() throws ModelException {
-        Scenario    modRing1 = Scenario.newScenarioFor(SEQ_RING1);
-        Scenario    modRing2 = Scenario.newScenarioFor(SEQ_RING2);
-
+    public final void testElementCreation() throws ModelException {
+        Scenario        modRing1 = Scenario.newScenarioFor(SEQ_RING1);
+        AcceleratorNode smfNode  = modRing1.nodeWithId(STR_ID_TESTMAG1);
+        List<IElement>  lstElems = modRing1.elementsMappedTo(smfNode);
+        Assert.assertTrue(lstElems.size() > 0);
         
-        AcceleratorNode smfQuad = modRing2.nodeWithId("Ring_Mag:QSC_B01");
-        List<IElement>  lstQuads = modRing2.elementsMappedTo(smfQuad);
         
-        String  strTypeMag2 = SMF_TESTMAG2.getType();
-        
-        List<IElement>  lstElems = modRing2.elementsMappedTo(SMF_TESTMAG2);
-        IElement        elmQuad = lstElems.get(0);
-        Assert.assertEquals(elmQuad.getClass(), IdealMagFringeQuad.class);
+        Scenario   modRing2    = Scenario.newScenarioFor(SEQ_RING2);
+        smfNode  = modRing2.nodeWithId(STR_ID_TESTMAG2);
+        lstElems = modRing2.elementsMappedTo(smfNode);
+        Assert.assertTrue(lstElems.size() > 0);
     }
 
     /**
      * Test method for {@link xal.sim.scenario.Scenario#elementsMappedTo(xal.smf.AcceleratorNode)}.
+     * 
+     * @throws ModelException 
      */
     @Test
-    public final void testElementsMappedTo() {
+    public final void testElementsMappedTo() throws ModelException {
+        Scenario        modRing2 = Scenario.newScenarioFor(SEQ_RING2);
+        List<IElement>  lstElems = modRing2.elementsMappedTo(SMF_TESTMAG2);
+        for (IElement elem : lstElems) {
+            Assert.assertTrue(elem.getClass() == IdealMagQuad.class 
+                           || elem.getClass() == IdealMagFringeQuadFace.class
+                    );
+        }
     }
 
 }

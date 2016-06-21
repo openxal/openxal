@@ -14,6 +14,7 @@ import xal.tools.beam.PhaseMap;
  * These interactions between <code>IElement</code> objects and 
  * <code>IProbe</code> objects are defined by dynamics objects exposing
  * the <code>IAlgorithm</code> interface.  
+ * </p>
  *
  * @author  Christopher K. Allen
  * @version $Id: Element.java, ver 2.0

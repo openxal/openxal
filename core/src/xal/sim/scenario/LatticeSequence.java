@@ -1058,7 +1058,7 @@ public class LatticeSequence extends LatticeElement implements Iterable<LatticeE
                 IComponent mdlElemCurr = latElemCurr.createModelingElement();
                 mdlSeqRoot.addChild(mdlElemCurr);
 
-                // If the current modeling element is self-contained then synchronize it 
+                // If the current modeling element is an atomic component then synchronize it 
                 //  as such.
                 if (mdlElemCurr instanceof IElement) 
                     mgrSync.synchronize((IElement) mdlElemCurr, smfNodeCurr);

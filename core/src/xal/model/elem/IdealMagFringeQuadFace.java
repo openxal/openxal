@@ -33,7 +33,7 @@ import xal.model.ModelException;
  * in the region <i>z</i> &in; (-&infin;,0) we have
  * <br/>
  * <br/>
- * &nbsp; &nbsp; <i>K</i><sub>0</sub><sup>-</sup> &trie; <sub>-&infin;</sub> &int; <sup><small>0</small></sup>
+ * &nbsp; &nbsp; <i>K</i><sub>0</sub><sup>-</sup> &trie; <sub><sub>-&infin;</sub></sub> &int;<sup><sup>0</sup></sup>
  *                                    <i>k</i><sub><i>n</i></sub>(<i>z</i>) <i>dz</i> .
  * <br/>
  * <br/>
