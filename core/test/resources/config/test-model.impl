@@ -20,13 +20,16 @@
         <map smf="QSC" model="xal.model.elem.IdealMagSkewQuad3"/>       
         <map smf="EQuad" model="xal.model.elem.IdealEQuad"/>
 		
-        <map smf="QFH" model="xal.model.elem.IdealMagFringeQuad"/>
-        <map smf="QFV" model="xal.model.elem.IdealMagFringeQuad"/>
+
         
 		<map smf="pq" model="xal.model.elem.IdealMagQuad"/>
 		<map smf="SOL" model="xal.model.elem.IdealMagQuad"/>
         <map smf="qt" model="xal.model.elem.IdealMagQuad"/>
         <map smf="q" model="xal.model.elem.IdealMagQuad"/>
+		
+		<!--I put the "QFH" after "q", and the TestFringeQuadGeneration passed the test-->       
+	    <map smf="QFH" model="xal.model.elem.IdealMagFringeQuad"/>
+        <map smf="QFV" model="xal.model.elem.IdealMagFringeQuad"/>
 		
         <map smf="S" model="xal.model.elem.IdealMagSextupole"/>
 

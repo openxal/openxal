@@ -139,6 +139,7 @@ public abstract class ElementMapping {
 	 * @throws InstantiationException 
 	 */
 	public Class<? extends IComponent> getModelElementType(AcceleratorNode node) {
+		Class<? extends IComponent> classType = null;
 		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
 		    String    strKey  = tc.getKey();
 		    String    strType = node.getType();
@@ -146,8 +147,10 @@ public abstract class ElementMapping {
 		        return tc.getValue();
 		    
 			if (node.isKindOf(strKey))
-				return tc.getValue();
+				classType = tc.getValue();
 		}
+		
+		if (classType != null ) return classType;
 		
 		if (node instanceof AcceleratorSeq)
 		    return getDefaultSequenceType();

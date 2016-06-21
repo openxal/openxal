@@ -182,6 +182,10 @@ public class IdealMagFringeQuadFace extends ThinElectromagnet {
     /**
      * Compute and return the transfer map for this quadrupole magnet
      * pole face element.
+     * 
+     * The normalized fringe field integral is given by 
+     *  &nbsp; &nbsp; <i>f</i><sub>0</sub> = <sub><sub>-&infin;</sub></sub> &int;<sup><sup>0</sup></sup>
+     *                   <i>B</i><sub><i>n</i></sub>(<i>z</i>) /<i>B</i><sub>0</sub><i>dz</i> .
      * @param probe
      * @return
      * @throws ModelException
@@ -206,10 +210,14 @@ public class IdealMagFringeQuadFace extends ThinElectromagnet {
         double p = Math.sqrt(w*(w+2*Er));
         double q = probe.getSpeciesCharge();
         
-        double f1 = this.getFringeIntegral1();
+        //normalized fringeIntergral with B0 = 1
+        double f0 = this.getFringeIntegral1();
+        
+        //scaled fringeIntergral 
+        double fs = f0*getMagField();
         
         //focus length 1/(L*sqrt(k))
-        double focus = (q*f1*LightSpeed)/p;
+        double focus = (q*fs*LightSpeed)/p;
         
         PhaseMatrix matPhi = PhaseMatrix.identity();
         
