@@ -21,8 +21,8 @@
    <device type="LStrp" class="xal.smf.impl.Marker"/>
    <device type="LW" class="xal.smf.impl.Marker"/>
    
-   <device type="QHF" class="xal.smf.impl.Quadrupole"/>
-   <device type="QVF" class="xal.smf.impl.Quadrupole"/>
+   <device type="QFH" class="xal.smf.impl.Quadrupole"/>
+   <device type="QFH" class="xal.smf.impl.Quadrupole"/>
    
    <device type="QH" class="xal.smf.impl.Quadrupole"/>
    <device type="QV" class="xal.smf.impl.Quadrupole"/>

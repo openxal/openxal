@@ -53,7 +53,7 @@ public class Quadrupole extends Electromagnet {
 	 * @see #isKindOf
 	 */
 	private static void registerType() {
-		ElementTypeManager.defaultManager().registerTypes( Quadrupole.class, s_strType, "emquad", "quad", "quadrupole", "qt", MagnetType.QUADRUPOLE );
+		ElementTypeManager.defaultManager().registerTypes( Quadrupole.class, s_strType, "emquad", "quad", "quadrupole", MagnetType.QUADRUPOLE );
 	}
 
 
