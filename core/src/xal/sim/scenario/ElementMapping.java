@@ -140,20 +140,34 @@ public abstract class ElementMapping {
 	 */
 	public Class<? extends IComponent> getModelElementType(AcceleratorNode node) {
 		Class<? extends IComponent> classType = null;
+		
+		// Search through all the SMF type codes that we manage looking for
+		//    a match.  
 		for (Entry<String, Class<? extends IComponent>> tc : elementMapping) {
 		    String    strKey  = tc.getKey();
 		    String    strType = node.getType();
+		    
+		    // Look for an exact match of SMF node type to managed type code
+		    //    and return it immediately if found.
 		    if (strType.equalsIgnoreCase(strKey))
 		        return tc.getValue();
 		    
+		    // If no exact match then look for a general "kind of" match and
+		    //    store it in case no exact matches are found in subsequent iterates.
 			if (node.isKindOf(strKey))
 				classType = tc.getValue();
 		}
 		
-		if (classType != null ) return classType;
+		// Return any general match if it exists 
+		if (classType != null ) 
+		    return classType;
 		
+		// If still no match check for a sequence type 
 		if (node instanceof AcceleratorSeq)
 		    return getDefaultSequenceType();
+		
+		// No matches for this SMF node found in this mapping.
+		//    Return the default value
 		else
 		    return getDefaultElementType();
 		// throw new RuntimeException("No converter for class "+element.getNode().getClass()+", type "+element.getNode().getType());
