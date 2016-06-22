@@ -9,8 +9,6 @@
         <sequence type="xal.model.Sector"/>
     </elements>
 
-    <!-- This is an ordered list. The most exclusive typing is first. -->
-    <!-- (e.g. to to model a QFV quadrupole as a fringe quadrupole it must come before "q" type) -->
     <associations>
         <map smf="xal.smf.impl.Marker" model="xal.model.elem.Marker"/>          
 
