@@ -3,9 +3,15 @@ jdk:
     - oraclejdk8
 
 before_install:
-    - wget http://www.interior-dsgn.com/apache/ant/binaries/apache-ant-1.9.7-bin.tar.gz
+    - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.tar.gz
     - tar -xzvf apache-ant-1.9.7-bin.tar.gz
     - export PATH=`pwd`/apache-ant-1.9.7/bin:$PATH
+    - if [[ "$TRAVIS_BRANCH" =~ "site.ess" ]]; then
+        git clone https://bitbucket.org/europeanspallationsource/ess-java-config;
+        cd ess-java-config;
+        mvn install;
+        cd "$TRAVIS_BUILD_DIR";
+      fi
 
 sudo: false
 
