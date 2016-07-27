@@ -3,7 +3,7 @@ jdk:
     - oraclejdk8
 
 before_install:
-    - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.tar.gz
+    - wget --no-check-certificate https://www.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.tar.gz
     - tar -xzvf apache-ant-1.9.7-bin.tar.gz
     - export PATH=`pwd`/apache-ant-1.9.7/bin:$PATH
     - if [[ "$TRAVIS_BRANCH" =~ "site.ess" ]]; then
