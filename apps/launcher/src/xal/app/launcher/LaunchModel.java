@@ -190,6 +190,7 @@ public class LaunchModel implements DataListener {
 		RULES.add( new Rule( "*.py", "Jython", "jython", "%f" ) );
 				
 		LAUNCHER.preConfigure();
+		FILE_WATCHER.preConfigure();
 		
 		refreshApplications();
 	}
