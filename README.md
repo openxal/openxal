@@ -16,9 +16,8 @@ Open XAL is designed to be a flexible application framework for developing accel
 
 ## Build Results
 
-Branch | Travis | GitLab-CI | Jenkins
------- | ------ | --------- | -------
-Open XAL Master | [![Open XAL Master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=master)](https://travis-ci.org/openxal/openxal)| - | - |
-SNS Master | [![Open XAL sns.master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=site.sns.master)](https://travis-ci.org/openxal/openxal)| - | - |
-ESS Master | [![ESS Build Travis](https://travis-ci.org/EuropeanSpallationSource/openxal.svg?branch=site.ess.master)](https://travis-ci.org/EuropeanSpallationSource/openxal) | [![ESS Build GitLab-CI](https://gitlab01.esss.lu.se/ess-crs/openxal/badges/site.ess.master/build.svg)](https://gitlab01.esss.lu.se/ess-crs/openxal/) | [![ESS Build Jenkins](https://jenkins02.esss.lu.se/buildStatus/icon?job=openxal)](https://jenkins02.esss.lu.se/job/openxal/)
-
+Branch | Travis | GitLab-CI |
+------ | ------ | --------- |
+[Open XAL Master](https://github.com/openxal/openxal) | [![Open XAL Master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=master)](https://travis-ci.org/openxal/openxal)| - |
+SNS Master | [![Open XAL sns.master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=site.sns.master)](https://travis-ci.org/openxal/openxal)| - |
+[ESS Master](https://gitlab.esss.lu.se/ess-crs/openxal) | - | [![ESS Build GitLab-CI](https://gitlab01.esss.lu.se/ess-crs/openxal/badges/site.ess.master/build.svg)](https://gitlab01.esss.lu.se/ess-crs/openxal/) |
