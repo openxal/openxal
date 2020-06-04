@@ -20,4 +20,4 @@ Branch | Travis | GitLab-CI |
 ------ | ------ | --------- |
 [Open XAL Master](https://github.com/openxal/openxal) | [![Open XAL Master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=master)](https://travis-ci.org/openxal/openxal)| - |
 SNS Master | [![Open XAL sns.master Build Test](https://travis-ci.org/openxal/openxal.svg?branch=site.sns.master)](https://travis-ci.org/openxal/openxal)| - |
-[ESS Master](https://gitlab.esss.lu.se/ess-crs/openxal) | - | [![ESS Build GitLab-CI](https://gitlab01.esss.lu.se/ess-crs/openxal/badges/site.ess.master/build.svg)](https://gitlab01.esss.lu.se/ess-crs/openxal/) |
+[ESS Master](https://gitlab.esss.lu.se/ess-crs/openxal) | - | [![ESS Build GitLab-CI](https://gitlab.esss.lu.se/ess-crs/openxal/badges/site.ess.master/pipeline.svg)](https://gitlab.esss.lu.se/ess-crs/openxal/) |
