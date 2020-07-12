@@ -686,7 +686,7 @@ public double calcK(IProbe probe, double dblLen) {
                 matPhi.setSubMatrix(2, 3, 2, 3, arrF);
          }
         
-        matPhi = applyAlignError(matPhi);
+        matPhi = applyErrors(matPhi, probe, dblLen);
 
         return new PhaseMap(matPhi);
     }

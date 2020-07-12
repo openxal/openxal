@@ -557,63 +557,6 @@ public abstract class EnvelopeTrackerBase extends Tracker {
 
     }
 
-    /**
-     * <h2>Add Displacement Error to Transfer Matrix</h2>
-     * <p>
-     * Method to add the effects of a spatially displaced to the
-     * beamline element represented by the given 
-     * transfer matrix.  The returned matrix is the
-     * original transfer matrix conjugated by the displacement
-     * matrix representing the displacement vector <b>&Delta;r</b>
-     * <br>
-     * <br>
-     * &nbsp; <b>&Delta;r</b> &equiv; (<i>dx,dy,dz</i>).
-     * <br>
-     * </p>
-     * <p>
-     * <strong>NOTES</strong>: (H. SAKO)
-     * <br>
-     * &middot; added alignment error in sigma matrix
-     * </p>
-     * 
-     * @param dx    spatial displacement in <i>x</i> plane
-     * @param dy    spatial displacement in <i>y</i> plane
-     * @param dz    spatial displacement in <i>z</i> plane
-     * @param   matPhi      transfer matrix <b>&Phi;</b> to be processed
-     * 
-     * @return  transfer matrix <b>&Phi;</b> after applying displacement
-     * 
-     * @author  Hiroyuki Sako
-     * @author  Christopher K. Allen
-     * 
-     * @see PhaseMatrix
-     * @see PhaseMatrix#translation(PhaseVector)
-     * 
-     * @since Feb 20, 2009, version 2
-     */
-    protected PhaseMatrix modTransferMatrixForDisplError(double dx, double dy, double dz, PhaseMatrix matPhi) {
-        
-        if ((dx != 0)||(dy != 0)||(dz !=0)) {
-            PhaseMatrix T  = PhaseMatrix.identity();
-            PhaseMatrix Ti = PhaseMatrix.identity();
-            
-            T.setElem(IND.X,IND.HOM, -dx);
-            T.setElem(IND.Y,IND.HOM, -dy);
-            T.setElem(IND.Z,IND.HOM, -dz);
-            
-            Ti.setElem(IND.X,IND.HOM, dx);
-            Ti.setElem(IND.Y,IND.HOM, dy);
-            Ti.setElem(IND.Z,IND.HOM, dz);
-            
-            PhaseMatrix matPhiDspl = Ti.times(matPhi).times(T);
-            
-            return matPhiDspl;
-            
-        } 
-
-        return matPhi;
-
-    }
 
     /**
      * <p>

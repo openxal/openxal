@@ -19,6 +19,9 @@ import xal.model.IComposite;
 import xal.model.IElement;
 import xal.model.IProbe;
 import xal.model.ModelException;
+import xal.model.elem.SectionEndpoint.SectionEnd;
+import xal.model.elem.SectionEndpoint.SectionStart;
+import xal.model.probe.EnvelopeProbe;
 import xal.sim.scenario.LatticeElement;
 
 
@@ -78,6 +81,9 @@ public abstract class ElementSeq implements IComposite {
     /** the current position of this composite within its parent, on demand */
     private double      dblPos;
     
+    private SectionStart sectionStart;
+    
+    private SectionEnd sectionEnd;
     
     //
     //  Structure
@@ -459,6 +465,20 @@ public abstract class ElementSeq implements IComposite {
         setId( strElemId != null ? strElemId : strSmfId);
         setHardwareNodeId(strSmfId);
 //      setId(latticeElement.getNode().getId());
+        
+        if (latticeElement.isFirstSlice()) {
+	        sectionStart = new SectionEndpoint.SectionStart();
+	        sectionStart.setParent(this);
+	        sectionStart.setId(getId()+"_SECTION_START");
+	        sectionStart.initializeFrom(latticeElement);
+        }
+    	
+        if (latticeElement.isLastSlice()) {
+	    	sectionEnd = new SectionEndpoint.SectionEnd();
+	    	sectionEnd.setParent(this);
+	        sectionEnd.setId(getId()+"_SECTION_END");
+	    	sectionEnd.initializeFrom(latticeElement);
+        }
     }
     
     /**  
@@ -604,9 +624,11 @@ public abstract class ElementSeq implements IComposite {
      */
     @Override
     public void propagate(IProbe probe) throws ModelException {
+    	if (sectionStart != null) sectionStart.propagate(probe);;
         for(IComponent comp : getForwardCompList()) {
             comp.propagate(probe);
         }
+        if (sectionEnd != null) sectionEnd.propagate(probe);
     }
     
     /** 
