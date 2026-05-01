@@ -1,0 +1,26 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<EMITTANCE_ANALYSIS font_size="10" harp_slit_distance="94.615">
+    <RAW_DATA_PANEL raw_data_file_name="" typeIndex="3">
+        <READ_RAW_DATA_PANEL>
+            <PARAMS nChannels="16.0" nPositionsHarp="0.0" nPositionsSlit="0.0" nWires="16.0"/>
+        </READ_RAW_DATA_PANEL>
+        <PLOT_RAW_DATA_PANEL>
+            <PARAMS chStart="1" chStep="1" chStop="1" nChannels="500" nPositionsHarp="5" nPositionsSlit="500" noiseInd="100.0" posStartHarp="1" posStartSlit="1" posStepHarp="1" posStepSlit="1" posStopHarp="1" posStopSlit="1" sampleStart="130.0" sampleStop="150.0"/>
+        </PLOT_RAW_DATA_PANEL>
+        <FILTER_RAW_DATA_PANEL>
+            <PARAMS filterLevel="0.0" nAvg="1" useAvg="false"/>
+        </FILTER_RAW_DATA_PANEL>
+        <MAKE_RAW_TO_EMITT_PANEL>
+            <PARAMS distHS="94.615" distWW="1.0" emScrResX="200" emScrResY="200" emSizeX="200" emSizeY="200" energy="2.5" gaussAmp="0.0" gaussWidth="0.0" threshold="0.0" useFilter="false" useGraphData="false"/>
+            <WIRE_SIGNAL_DATA>
+                <DATA>
+                    <PARAMS nChannels="0" nPosHarp="0" nPosSlit="0"/>
+                    <POSITIONS>
+                        <SLIT_POSITIONS pos_mm=" "/>
+                        <HARP_POSITIONS pos_mm=" "/>
+                    </POSITIONS>
+                </DATA>
+            </WIRE_SIGNAL_DATA>
+        </MAKE_RAW_TO_EMITT_PANEL>
+    </RAW_DATA_PANEL>
+</EMITTANCE_ANALYSIS>

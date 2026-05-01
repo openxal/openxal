@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+	<xs:complexType name="configSpec">
+		<xs:attribute name="name" use="required" type="xs:string"/>			
+		<xs:attribute name="url" use="required" type="xs:string"/>		
+	</xs:complexType>
+	<xs:element name="sources">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">				
+					<!--  <xs:element name="modelConfig_source" type="configSpec"/> --> <!-- removed due to new element mapping -->
+					<xs:element name="modelElementConfig_source" type="configSpec"/>
+					<xs:element name="deviceMapping_source" type="configSpec"/>
+					<xs:element name="optics_source" type="configSpec">
+						<xs:annotation>
+							<xs:documentation>
+								The file defining the hardware configuration of the accelerator (in the xdxf format)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="optics_extra" type="configSpec" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="hardware_status" type="configSpec" minOccurs="0"/>
+					<xs:element name="timing_source" type="configSpec" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>								
+								Points to a file which lists all the general timing signals used by XAL.
+								Such signals are used by applications that trigger on certain events, like an RF pulse, or monitor certain aspects of the machine, such as the orbit.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="tablegroup_source" type="configSpec" maxOccurs="unbounded">
+						<xs:annotation>
+								<xs:documentation>
+									Table groups contain arbitrary user data, stored in a schema-based table format, which is not otherwise part of the XAL specification,
+									but available within the XAL framework.								
+								</xs:documentation>
+						</xs:annotation>
+					</xs:element>				
+			</xs:choice>
+			<xs:attribute name="version" type="xs:decimal"/>
+		</xs:complexType>
+		<xs:unique name="tablegroup_name">
+			<xs:selector xpath="tablegroup_source"/>
+			<xs:field xpath="@name"/>
+		</xs:unique>
+	</xs:element>
+</xs:schema>

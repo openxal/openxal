@@ -1,0 +1,20 @@
+SystemType = BTF
+# Samples = 1
+Slit = ITSF_Diag:Slit_HZ04
+Harp = ITSF_Diag:Slit_HZ06
+
+SlitRb = ITSF_Diag:Slit_HZ04:PositionSync
+HarpRb = ITSF_Diag:Slit_HZ06:PositionSync
+Signal = ITSF_Diag:BS06:WF
+
+SlitInitial = 0
+HarpInitial = 0
+SlitStepSize = 0.25
+HarpStepSlitSize = 0.25
+HarpSpan = 9
+HarpStepSize = 0.25
+RepRate = 5
+SlitSteps = 30
+Speed = 2.5
+StopTimeout = 120000
+

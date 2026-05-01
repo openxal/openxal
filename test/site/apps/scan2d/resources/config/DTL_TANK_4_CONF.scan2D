@@ -1,0 +1,47 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scan2D_Application title="DTL TANK 4 Phase Scan">
+    <app_params>
+        <font name="Monospaced" size="16" style="1"/>
+        <scan_panel_title title="DTL SCAN CONTROL PANEL"/>
+        <sc_panel_paramRB_label label="DTL Cav. Amp. RB :  "/>
+        <sc_panel_paramStep_label label="Amplitude step:  "/>
+        <sc_panel_scanRB_label label="Cav. Phase RB :  "/>
+        <sc_panel_scanStep_label label="SCAN with step:  "/>
+        <sc_panel_paramUnits_label label=" [a.u.]"/>
+        <sc_panel_scanUnits_label label=" [dgr]"/>
+        <parameterPV_tree_name name="DTL Cav. Amplitude"/>
+        <scanPV_tree_name name="DTL Cav. Phase"/>
+        <measuredPVs_tree_name name="DTL Transmission PV"/>
+        <validationPVs_tree_name name="Validation PVs"/>
+        <UseTimeStamp yes="true"/>
+        <limits_step_delay delay="0.2" low="-175.0" paramLow="0.17" paramStep="0.01" paramUpp="0.21" step="5.0" upp="175.0"/>
+        <beam_trigger delay="1.2" on="true"/>
+        <averaging N="1" delay="0.2" on="false"/>
+        <validation low="1.0" on="true" upp="100.0"/>
+    </app_params>
+    <param_PV on="true" panel_title="DTL CAV. AMP.  CONTROL">
+        <PV name="DTL_LLRF:FCM4:CtlAmpSet"/>
+    </param_PV>
+    <scan_PV>
+        <PV name="DTL_LLRF:FCM4:CtlPhaseSet" on="true"/>
+    </scan_PV>
+    <validation_PVs>
+        <Validation_PV name="MEBT_Diag:BCM02:currentAvg" on="true"/>
+    </validation_PVs>
+    <ANALYSIS_CONFIGURATIONS>
+        <MANAGEMENT>
+            <ANALYSIS_NAME name="MANAGEMENT"/>
+        </MANAGEMENT>
+        <DTL_PHASE_SCAN>
+            <ANALYSIS_NAME name="DTL PHASE SCAN"/>
+            <DESIGN_ENERGY_DELTA value="0.0"/>
+            <THEORY_SCAN_DATA>
+	        <DPHI_VS_AMP file_name="dtl_tank4_dphi_vs_amp.dat"/>
+	        <KSHIFT_VS_AMP file_name="dtl_tank4_kshift_vs_amp.dat"/>
+	    </THEORY_SCAN_DATA>
+        </DTL_PHASE_SCAN>
+    </ANALYSIS_CONFIGURATIONS>
+    <measure_PVs>
+        <MeasuredPV name="DTL_Diag:FC428:currentMax" on="true"/>
+    </measure_PVs>
+</Scan2D_Application>

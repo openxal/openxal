@@ -1,0 +1,48 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE deviceMapping SYSTEM "xdxf.dtd">
+<deviceMapping>
+	<device type="DH" class="xal.smf.impl.Bend"/>
+	<device type="BCM" class="xal.smf.impl.CurrentMonitor"/>
+	<device type="BLM" class="xal.smf.impl.BLM"/>
+	<device type="BPM" class="xal.smf.impl.BPM"/>
+	<device type="BSM" class="xal.smf.impl.BunchShapeMonitor"/>
+	<device type="RBPM" class="xal.smf.impl.RingBPM"/>
+	<device type="CCL" class="xal.smf.impl.CCL"/>
+	<device type="ChMPS" class="xal.smf.impl.Marker"/>
+	<device type="CVG" class="xal.smf.impl.CvgGauge"/>
+	<device type="DTLTank" class="xal.smf.impl.DTLTank"/>
+	<device type="EKick" class="xal.smf.impl.ExtractionKicker"/>
+	<device type="EMS" class="xal.smf.impl.Marker"/>
+	<device type="DCH" class="xal.smf.impl.HDipoleCorr"/>
+	<device type="IG" class="xal.smf.impl.IonGauge"/>
+	<device type="ND" class="xal.smf.impl.NeutronDetector"/>
+	<device type="PMQH" class="xal.smf.impl.PermQuadrupole"/>
+	<device type="PMQV" class="xal.smf.impl.PermQuadrupole"/>
+	<device type="LStrp" class="xal.smf.impl.Marker"/>
+	<device type="LW" class="xal.smf.impl.Marker"/>
+	<device type="QH" class="xal.smf.impl.Quadrupole"/>
+	<device type="QV" class="xal.smf.impl.Quadrupole"/>
+	<device type="QSC" class="xal.smf.impl.Quadrupole"/>
+	<device type="Bnch" class="xal.smf.impl.ReBuncher"/>
+	<device type="RF" class="xal.smf.impl.RfCavity"/>
+	<device type="RG" class="xal.smf.impl.RfGap"/>
+	<device type="SCLCavity" class="xal.smf.impl.SCLCavity"/>
+	<device type="Scrp" class="xal.smf.impl.Marker"/>
+	<device type="SH" class="xal.smf.impl.Sextupole"/>
+	<device type="SV" class="xal.smf.impl.Sextupole"/>
+	<device type="SSH" class="xal.smf.impl.Sextupole"/>
+	<device type="SSV" class="xal.smf.impl.Sextupole"/>
+	<device type="QTH" class="xal.smf.impl.TrimmedQuadrupole"/>
+	<device type="QTV" class="xal.smf.impl.TrimmedQuadrupole"/>
+	<device type="DCV" class="xal.smf.impl.VDipoleCorr"/>
+	<device type="marker" class="xal.smf.impl.Marker"/>
+	<device type="VIW" class="xal.smf.impl.Marker"/>
+	<device type="Foil" class="xal.smf.impl.Marker"/>
+	<device type="Tgt" class="xal.smf.impl.Marker"/>
+	<device type="Harp" class="xal.smf.impl.Marker"/>
+	<device type="Harp" softType="Version 1.0.0" class="xal.smf.impl.Marker" />
+	<device type="Harp" softType="Version 2.0.0" class="xal.smf.impl.WireHarp"/>
+	<device type="WS" class="xal.smf.impl.ProfileMonitor"/>
+	<device type="WS" softType="Version 1.0.0" class="xal.smf.impl.ProfileMonitor"/>
+	<device type="WS" softType="Version 2.0.0" class="xal.smf.impl.WireScanner"/>
+</deviceMapping>

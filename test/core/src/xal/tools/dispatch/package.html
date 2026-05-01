@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+	<HEAD>
+		<TITLE>dispatch package</TITLE>
+		<style>
+			.examples .snippet { color: #222; font-family: monospace; }
+			.examples .description { color: black; }
+			table.examples { background-color: #EEE; border-collapse: collapse; } 
+			th, td { margin: 5px; border-style: solid; border-width: 1.0px; border-color: black; padding: 1.0px; width: 50%; } 
+			th { padding-left: 2em; padding-right: 2em; background-color: #BBB; } 
+			</style>
+	</HEAD>
+	<BODY>
+		The dispatch package is an attempted Java port of some of the functionality of the open source <a href="http://libdispatch.macosforge.org/">libdispatch</a> library. Only some of the basic functions have been implemented. This implementation provides compatibility with the libdispatch library within the context of Java. Due to limitations of Java, there is no way to determine the optimal number of operations to schedule concurrently. Since Java has no equivalent of <a href="http://developer.apple.com/library/ios/#documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html">C Blocks</a>, there is additional overhead in dispatching operations.
+		<div>
+			<h2>Motivation</h2>
+			The motivation for this package is to provide a corresponding implementation for many functions in libdispatch to ease the portability of programs between C and Java. Furthermore, this package addresses several shortcomings of the java.util.concurrent package:
+			<ul>
+				<li>Consistent API which includes access to the Swing thread.</li>
+				<li>Support for barrier operations.</li>
+				<li>Groups for synchronizing operations.</li>
+				<li>Support for iteration operations evaluated concurrently.</li>
+				<li>Simple API for getting the value from a synchronous call without having to deal with a Future.</li>
+			</ul>
+		</div>
+		
+		<div>
+			<h2>Common Examples</h2>
+			<table class="examples">
+				<tr> <th>Snippet</th> <th>Description</th> </tr>
+				<tr> <td class="snippet">DispatchQueue queue = DispatchQueue.createConcurrentQueue( "Demo Concurrent" )</td> <td class="description">Create a new concurrent dispatch queue.</td> </tr>
+				<tr> <td class="snippet">DispatchQueue queue = DispatchQueue.createSerialQueue( "Demo Serial" )</td> <td class="description">Create a new serial dispatch queue.</td> </tr>
+				<tr> <td class="snippet">DispatchQueue queue = DispatchQueue.getGlobalDefaultPriorityQueue()</td> <td class="description">Get the global dispatch queue with default priority.</td> </tr>
+				<tr> <td class="snippet">DispatchQueue queue = DispatchQueue.getMainQueue()</td> <td class="description">Get the main dispatch queue (schedules on the Swing thread).</td> </tr>
+				<tr> <td class="snippet">queue.dispatchAsync( runnableOperation )</td> <td class="description">Submit the operation to the queue without waiting for it to complete.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchAfter( time, runnableOperation )</td> <td class="description">Submit the operation to the queue after the specified time without waiting for it to complete.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchSync( runnableOperation )</td> <td class="description">Submit the operation to the queue and wait for it to complete.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchSync( callableOperation )</td> <td class="description">Submit the operation to the queue, wait for it to complete and return the result.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchBarrierAsync( runnableOperation )</td> <td class="description">Submit the operation to the queue without waiting for it to complete. The barrier operation will not execute until all operations ahead of it in the queue complete. No other operation will execute concurrently with the barrier operation on the same queue. Operations after the barrier in the queue will execute after the barrier completes.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchBarrierSync( runnableOperation )</td> <td class="description">Submit the operation to the queue and wait for it to complete. The barrier operation will not execute until all operations ahead of it in the queue complete. No other operation will execute concurrently with the barrier operation on the same queue. Operations after the barrier in the queue will execute after the barrier completes.</td> </tr>
+				<tr> <td class="snippet">DispatchGroup group = new DispatchGroup()</td> <td class="description">Create a new dispatch group.</td> </tr>
+				<tr> <td class="snippet">group.enter()</td> <td class="description">Add any operations to the group which are subsequently dispatched.</td> </tr>
+				<tr> <td class="snippet">group.leave()</td> <td class="description">Stop adding operations to the group.</td> </tr>
+				<tr> <td class="snippet">queue.dispatchAsync( group, runnableOperation )</td> <td class="description">Convenience method to submit the operation to the queue without waiting for it to complete and add the operation to the group.</td> </tr>
+				<tr> <td class="snippet">group.waitForCompletion()</td> <td class="description">Wait until all operations associated with the group have completed.</td> </tr>
+			</table>					
+		</div>
+	</BODY>
+</HTML>

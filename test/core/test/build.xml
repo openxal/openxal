@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="run-tests" name="xal.core.test">
+	<import file="../../config/config.xml"/>
+    
+	<description>Test Open XAL Core</description>
+	
+    <target name="init">
+        <property name="srcroot" value="." />
+		<property name="build.intermediates.core.test" value="${build.intermediates.core}/test" />
+		<property name="build.compile.core.test.root" value="${build.intermediates.core.test}/compile" />
+
+        <mkdir dir="${build.root}" />
+        <mkdir dir="${build.intermediates.core.test}" />
+    </target>
+    
+    
+    <!-- run junit tests -->
+    <target name="run-tests" depends="all">
+        <mkdir dir="${build.tests.root}" />
+        <junit printsummary="yes" fork="yes" failureproperty="test.failure">
+			<jvmarg value="-Dxal.tests.root=${build.tests.root}"/>
+
+            <classpath>
+                <pathelement location="${build.intermediates.core.test}/xal-test.jar" />
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
+            </classpath>
+            
+            <formatter type="plain" usefile="false" />
+            
+            <batchtest todir="${build.tests.root}">
+                <fileset dir="${build.compile.core.test.root}"> 
+                    <include name="**/*Test*.class"/> 
+					<exclude name="**/*Test*$*.class"/>		<!-- exclude anonymous classes because they inherit the outer class name and would inadvertantly match -->
+                    <exclude name="xal/resources/**/*"/>
+                </fileset> 
+                
+                <formatter type="plain" usefile="true"/>
+            </batchtest>
+        </junit>
+        <fail message="Some JUnit tests failed" if="test.failure"/>
+    </target>
+	
+	
+	<!-- Macro to compile the core test XAL classes using the specified compiler flag -->
+	<target name="compile" depends="init">
+        <mkdir dir="${build.compile.core.test.root}" />
+        <javac debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" includeAntRuntime="no" deprecation="true" destdir="${build.compile.core.test.root}" srcdir="${srcroot}/${source.code.dir}" includes="**" sourcepath="">
+            <classpath>
+                <pathelement location="${build.products.lib}/xal-shared.jar" />
+
+				<!-- compile against external test libraries in the local test library if any -->
+				<fileset dir="${srcroot}">
+					<include name="lib/*.jar" />
+				</fileset>
+
+				<!-- compile against external test libraries in the common test library if any -->
+				<fileset dir="${common.test.root}">
+					<include name="lib/*.jar" />
+				</fileset>
+            </classpath>
+            <compilerarg value="-Xlint" />
+        </javac>
+        
+        <copy todir="${build.compile.core.test.root}/resources" quiet="true" failonerror="false" overwrite="true">
+            <fileset dir="resources" />
+            <fileset dir="${site.core.root}/test/resources" />
+        </copy>
+	</target>
+    
+	
+	<!-- Jar the core test XAL classes -->
+    <target  name="jar" depends="init, compile">
+        <jar compress="false" jarfile="${build.intermediates.core.test}/xal-test.jar" index="true">
+			<fileset dir="${build.compile.core.test.root}" includes="xal/**/*" />
+			<fileset dir="${build.compile.core.test.root}/resources" />
+			
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${srcroot}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
+
+			<!-- merge external test libraries if any -->
+			<zipgroupfileset dir="${common.test.root}">
+				<patternset>
+					<include name="lib/*.jar" />
+				</patternset>
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+
+	<!-- Jar the test resources -->
+    <target  name="jar-resources" depends="init, compile">
+        <mkdir dir="${build.intermediates.core}" />
+        <jar compress="true" jarfile="${build.intermediates.core.test}/resources.jar" index="true" >
+			<!-- test resources are rooted in the "resources" directory and this prefix must be preserved in the jar file -->
+			<fileset dir="${build.compile.core.test.root}">
+				<include name="resources/**/*" />
+			</fileset>
+        </jar>
+    </target>
+
+    
+	<!-- merge the external jars and build XAL test core -->
+    <target name="all" depends="init,compile,jar" description="Build everything." >
+        <echo message="Everything built. " />
+    </target>
+	
+	
+	<!-- clean compiled products -->
+    <target name="clean" depends="init" description="Clean all build products." >
+        <delete dir="${build.compile.core.test.root}" />
+        <delete dir="${build.tests.root}" />
+        <delete file="${build.intermediates.core.test}/xal-test.jar" quiet="true" />
+        
+        <echo message="Core test cleaned!" />
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Build the unit testing for XAL core" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Build and run the test cases." />
+		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    compile .................... Compile the XAL test classes reporting only mandated warnings." />
+		<echo message="    jar: ....................... Assemble the XAL test classes and resources." />
+		<echo message="    jar-resources: ............. Archive the test resources." />
+		<echo message="    run-tests .................. Build and run the test cases." />
+    </target>
+</project>
+

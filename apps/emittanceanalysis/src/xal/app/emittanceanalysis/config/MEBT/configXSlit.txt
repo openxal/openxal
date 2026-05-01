@@ -1,0 +1,19 @@
+Slit = MEBT_Diag:EMS_X
+Harp = MEBT_Diag:EMC_X
+
+SlitRb = MEBT_Diag:EMS_X:PosmmMon
+HarpRb = MEBT_Diag:EMC_X:PosmmMon
+Signal = DTL_Diag:FC428:Fast:currentTBT
+Signal2 = DTL_Diag:FC428:Fast:currentAvg
+
+SlitInitial = -40
+HarpInitial = 15
+SlitStepSize = 0.0
+HarpStepSlitSize = 0.0
+HarpSpan = 10
+HarpStepSize = 0.05
+RepRate = 2
+SlitSteps = 2
+Speed = 1
+StopTimeout = 120000
+

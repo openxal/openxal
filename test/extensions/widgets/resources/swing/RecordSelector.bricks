@@ -1,0 +1,52 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Mon Feb 09 16:28:39 EST 2009" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="474" tag="RecordSelectorDialog" width="654">
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="modal" value="true"/>
+            <ViewNode tag="MainContainer">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="HeaderBox">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="FilterLabel">
+                        <ViewProxy type="javax.swing.JLabel"/>
+                        <BeanProperty name="text" value="Filter: "/>
+                    </ViewNode>
+                    <ViewNode tag="FilterField">
+                        <ViewProxy type="javax.swing.JTextField"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty name="toolTipText" value="Filter the channels"/>
+                        <BeanProperty height="50" name="maximumSize" width="2147483647"/>
+                    </ViewNode>
+                    <ViewNode tag="ClearFilterButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value=""/>
+                        <BeanProperty group="custom" iconName="Clear16.gif" name="icon"/>
+                        <BeanProperty name="toolTipText" value="Clear the filter"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="RecordTableScrollPane">
+                    <ViewProxy type="javax.swing.JScrollPane"/>
+                    <ViewNode tag="RecordTable">
+                        <ViewProxy type="javax.swing.JTable"/>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="FooterBox">
+                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                    </ViewNode>
+                    <ViewNode tag="CancelButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Cancel"/>
+                    </ViewNode>
+                    <ViewNode tag="OkayButton">
+                        <ViewProxy type="javax.swing.JButton"/>
+                        <BeanProperty name="text" value="Okay"/>
+                        <BeanProperty name="toolTipText" value="Confirm the selected items"/>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

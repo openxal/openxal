@@ -1,0 +1,6 @@
+Actuator = MEBT_Diag:EMS_Y
+Start = -45.5
+End = 45.5
+Step = 0.25
+Samples = 10
+MeasureTime = 5000

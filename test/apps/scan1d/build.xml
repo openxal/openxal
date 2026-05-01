@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!-- Build the application whose name matches that of the project. -->
+<project name="scan1d" basedir="." default="all">	
+	<property name="mainclass.base" value="MainScan1D" />
+	<import file="../common.xml"/>
+</project>

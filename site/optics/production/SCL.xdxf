@@ -1,803 +1,943 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<xdxf date="02.12.2016" system="sns" version="2.0">
+<xdxf date="08.13.2025" system="sns" version="2.0">
     <sequence id="SCLMed">
         <node id="SCL_Mag:QH00">
             <attributes>
-                <magnet dfltMagFld="-18.8017106854"/>
+                <magnet dfltMagFld="-19.1580433865"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV00">
             <attributes>
-                <magnet dfltMagFld="17.6664568322"/>
+                <magnet dfltMagFld="17.4820583554"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH01">
             <attributes>
-                <magnet dfltMagFld="-4.30133630342"/>
+                <magnet dfltMagFld="-4.17367552961"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV01">
             <attributes>
-                <magnet dfltMagFld="4.30064028191"/>
+                <magnet dfltMagFld="4.17367552961"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH02">
             <attributes>
-                <magnet dfltMagFld="-4.38615406287"/>
+                <magnet dfltMagFld="-4.31214137294"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV02">
             <attributes>
-                <magnet dfltMagFld="4.38728861019"/>
+                <magnet dfltMagFld="4.31214137294"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH03">
             <attributes>
-                <magnet dfltMagFld="-4.60204600895"/>
+                <magnet dfltMagFld="-4.48133418272"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV03">
             <attributes>
-                <magnet dfltMagFld="4.60571156717"/>
+                <magnet dfltMagFld="4.48133418272"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH04">
             <attributes>
-                <magnet dfltMagFld="-3.97002309636"/>
+                <magnet dfltMagFld="-4.28137904388"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV04">
             <attributes>
-                <magnet dfltMagFld="3.97089126701"/>
+                <magnet dfltMagFld="4.28137904388"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH05">
             <attributes>
-                <magnet dfltMagFld="-3.79451421096"/>
+                <magnet dfltMagFld="-3.95817921422"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV05">
             <attributes>
-                <magnet dfltMagFld="3.7954292925"/>
+                <magnet dfltMagFld="3.95817921422"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH06">
             <attributes>
-                <magnet dfltMagFld="-4.1002441877"/>
+                <magnet dfltMagFld="-4.1428903417"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV06">
             <attributes>
-                <magnet dfltMagFld="4.09977661821"/>
+                <magnet dfltMagFld="4.1428903417"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH07">
             <attributes>
-                <magnet dfltMagFld="-3.88310041824"/>
+                <magnet dfltMagFld="-3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV07">
             <attributes>
-                <magnet dfltMagFld="3.88516089371"/>
+                <magnet dfltMagFld="3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH08">
             <attributes>
-                <magnet dfltMagFld="-4.05733708241"/>
+                <magnet dfltMagFld="-3.86580930522"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV08">
             <attributes>
-                <magnet dfltMagFld="4.05512897949"/>
+                <magnet dfltMagFld="3.86580930522"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH09">
             <attributes>
-                <magnet dfltMagFld="-3.29685599141"/>
+                <magnet dfltMagFld="-2.39432858007"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV09">
             <attributes>
-                <magnet dfltMagFld="3.29677898794"/>
+                <magnet dfltMagFld="2.39432858007"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH10">
             <attributes>
-                <magnet dfltMagFld="-3.55837709443"/>
+                <magnet dfltMagFld="-3.1375358712"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV10">
             <attributes>
-                <magnet dfltMagFld="3.55417724378"/>
+                <magnet dfltMagFld="3.15652737457"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH11">
             <attributes>
-                <magnet dfltMagFld="-3.97081610095"/>
+                <magnet dfltMagFld="-3.59371109333"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV11">
             <attributes>
-                <magnet dfltMagFld="3.90542821481"/>
+                <magnet dfltMagFld="3.52430960393"/>
             </attributes>
         </node>
         <sequence id="SCL_RF:Cav01a">
             <attributes>
-                <rfcavity amp="21.74429" phase="-82.416"/>
+                <rfcavity amp="15.88125" phase="-87.19"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav01b">
             <attributes>
-                <rfcavity amp="18.36125" phase="-76.305"/>
+                <rfcavity amp="16.36657" phase="-73.321"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav01c">
             <attributes>
-                <rfcavity amp="18.36501" phase="-70.31"/>
+                <rfcavity amp="13.64228" phase="-86.698"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav02a">
             <attributes>
-                <rfcavity amp="14.70082" phase="-67.985"/>
+                <rfcavity amp="14.98669" phase="-64.444"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav02b">
             <attributes>
-                <rfcavity amp="16.49852" phase="-65.533"/>
+                <rfcavity amp="17.75548" phase="-65.753"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav02c">
             <attributes>
-                <rfcavity amp="14.90011" phase="-59.399"/>
+                <rfcavity amp="15.82199" phase="-62.558"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav03a">
             <attributes>
-                <rfcavity amp="20.20612" phase="-50.382"/>
+                <rfcavity amp="20.67401" phase="-50.268"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav03b">
             <attributes>
-                <rfcavity amp="20.31422" phase="-44.437"/>
+                <rfcavity amp="13.43386" phase="-46.223"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav03c">
             <attributes>
-                <rfcavity amp="20.88362" phase="-36.603"/>
+                <rfcavity amp="20.78743" phase="-50.904"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav04a">
             <attributes>
-                <rfcavity amp="17.83942" phase="-31.248"/>
+                <rfcavity amp="18.43049" phase="-51.894"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav04b">
             <attributes>
-                <rfcavity amp="20.89663" phase="-25.441"/>
+                <rfcavity amp="18.81881" phase="-32.277"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav04c">
             <attributes>
-                <rfcavity amp="18.36508" phase="-20.316"/>
+                <rfcavity amp="19.81472" phase="-28.558"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav05a">
             <attributes>
-                <rfcavity amp="0.0" phase="0.0"/>
+                <rfcavity amp="17.67401" phase="-20.867"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav05b">
             <attributes>
-                <rfcavity amp="20.0937" phase="-14.339"/>
+                <rfcavity amp="19.86514" phase="-27.915"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav05c">
             <attributes>
-                <rfcavity amp="19.57942" phase="-8.008"/>
+                <rfcavity amp="15.64009" phase="-12.55"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav06a">
             <attributes>
-                <rfcavity amp="16.84616" phase="-8.32"/>
+                <rfcavity amp="17.16484" phase="-9.665"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav06b">
             <attributes>
-                <rfcavity amp="21.10244" phase="-4.568"/>
+                <rfcavity amp="22.14378" phase="-3.973"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav06c">
             <attributes>
-                <rfcavity amp="19.72707" phase="-0.311"/>
+                <rfcavity amp="16.38273" phase="1.964"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav07a">
             <attributes>
-                <rfcavity amp="20.19972" phase="1.613"/>
+                <rfcavity amp="17.88175" phase="4.975"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav07b">
             <attributes>
-                <rfcavity amp="19.82922" phase="5.605"/>
+                <rfcavity amp="19.1239" phase="4.865"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav07c">
             <attributes>
-                <rfcavity amp="18.53732" phase="7.258"/>
+                <rfcavity amp="18.04291" phase="14.822"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav08a">
             <attributes>
-                <rfcavity amp="16.22905" phase="9.801"/>
+                <rfcavity amp="13.49797" phase="14.105"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav08b">
             <attributes>
-                <rfcavity amp="19.435" phase="12.897"/>
+                <rfcavity amp="20.77605" phase="17.786"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav08c">
             <attributes>
-                <rfcavity amp="21.20603" phase="16.502"/>
+                <rfcavity amp="20.97317" phase="22.315"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav09a">
             <attributes>
-                <rfcavity amp="20.88929" phase="21.363"/>
+                <rfcavity amp="22.03346" phase="24.44"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav09b">
             <attributes>
-                <rfcavity amp="17.15199" phase="24.681"/>
+                <rfcavity amp="15.38549" phase="24.632"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav09c">
             <attributes>
-                <rfcavity amp="19.18157" phase="26.004"/>
+                <rfcavity amp="19.26022" phase="24.545"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav10a">
             <attributes>
-                <rfcavity amp="19.9891" phase="29.284"/>
+                <rfcavity amp="14.34439" phase="37.741"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav10b">
             <attributes>
-                <rfcavity amp="18.44543" phase="32.481"/>
+                <rfcavity amp="10.97476" phase="32.775"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav10c">
             <attributes>
-                <rfcavity amp="14.55958" phase="34.477"/>
+                <rfcavity amp="18.89889" phase="41.884"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav11a">
             <attributes>
-                <rfcavity amp="19.29677" phase="36.612"/>
+                <rfcavity amp="14.8792" phase="36.685"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav11b">
             <attributes>
-                <rfcavity amp="0.0" phase="0.0"/>
+                <rfcavity amp="15.29806" phase="37.871"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav11c">
             <attributes>
-                <rfcavity amp="20.23747" phase="39.083"/>
+                <rfcavity amp="14.99038" phase="39.195"/>
             </attributes>
         </sequence>
     </sequence>
     <sequence id="SCLHigh">
         <node id="SCL_Mag:QH12">
             <attributes>
-                <magnet dfltMagFld="-3.81741027594"/>
+                <magnet dfltMagFld="-3.37304491632"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV12">
             <attributes>
-                <magnet dfltMagFld="3.80929393522"/>
+                <magnet dfltMagFld="3.37304491632"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH13">
             <attributes>
-                <magnet dfltMagFld="-3.92850225044"/>
+                <magnet dfltMagFld="-3.8812069664"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV13">
             <attributes>
-                <magnet dfltMagFld="3.92856443747"/>
+                <magnet dfltMagFld="3.8812069664"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH14">
             <attributes>
-                <magnet dfltMagFld="-4.19289577156"/>
+                <magnet dfltMagFld="-3.77342333818"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV14">
             <attributes>
-                <magnet dfltMagFld="4.19273049102"/>
+                <magnet dfltMagFld="3.77342333818"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH15">
             <attributes>
-                <magnet dfltMagFld="-4.02934074753"/>
+                <magnet dfltMagFld="-3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV15">
             <attributes>
-                <magnet dfltMagFld="4.02934074753"/>
+                <magnet dfltMagFld="3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH16">
             <attributes>
-                <magnet dfltMagFld="-3.78220552463"/>
+                <magnet dfltMagFld="-4.035142184"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV16">
             <attributes>
-                <magnet dfltMagFld="3.78220552463"/>
+                <magnet dfltMagFld="4.035142184"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH17">
             <attributes>
-                <magnet dfltMagFld="-3.89490104357"/>
+                <magnet dfltMagFld="-3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV17">
             <attributes>
-                <magnet dfltMagFld="3.89490104357"/>
+                <magnet dfltMagFld="3.94278662027"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH18">
             <attributes>
-                <magnet dfltMagFld="-4.23721066033"/>
+                <magnet dfltMagFld="-4.38904719556"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV18">
             <attributes>
-                <magnet dfltMagFld="4.23721066033"/>
+                <magnet dfltMagFld="4.38904719556"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH19">
             <attributes>
-                <magnet dfltMagFld="-4.19514574811"/>
+                <magnet dfltMagFld="-4.47553548369"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV19">
             <attributes>
-                <magnet dfltMagFld="4.19514574811"/>
+                <magnet dfltMagFld="4.47553548369"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH20">
             <attributes>
-                <magnet dfltMagFld="-4.39681974325"/>
+                <magnet dfltMagFld="-4.35028666096"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV20">
             <attributes>
-                <magnet dfltMagFld="4.39681974325"/>
+                <magnet dfltMagFld="4.35028666096"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH21">
             <attributes>
-                <magnet dfltMagFld="-4.13150428155"/>
+                <magnet dfltMagFld="-3.97157077096"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV21">
             <attributes>
-                <magnet dfltMagFld="4.13150428155"/>
+                <magnet dfltMagFld="3.97157077096"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH22">
             <attributes>
-                <magnet dfltMagFld="-4.13771853188"/>
+                <magnet dfltMagFld="-3.84625427553"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV22">
             <attributes>
-                <magnet dfltMagFld="4.13771853188"/>
+                <magnet dfltMagFld="3.84625427553"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH23">
             <attributes>
-                <magnet dfltMagFld="-3.77239738112"/>
+                <magnet dfltMagFld="-3.52951212937"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV23">
             <attributes>
-                <magnet dfltMagFld="3.77239738112"/>
+                <magnet dfltMagFld="3.52951212937"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH24">
             <attributes>
-                <magnet dfltMagFld="-3.38766357028"/>
+                <magnet dfltMagFld="-3.89332492574"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV24">
             <attributes>
-                <magnet dfltMagFld="3.38766357028"/>
+                <magnet dfltMagFld="3.89332492574"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH25">
             <attributes>
-                <magnet dfltMagFld="-3.21841502359"/>
+                <magnet dfltMagFld="-3.18181392151"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV25">
             <attributes>
-                <magnet dfltMagFld="3.21841502359"/>
+                <magnet dfltMagFld="3.18181392151"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH26">
             <attributes>
-                <magnet dfltMagFld="-3.2785100033"/>
+                <magnet dfltMagFld="-3.45004649754"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV26">
             <attributes>
-                <magnet dfltMagFld="3.2785100033"/>
+                <magnet dfltMagFld="3.45004649754"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH27">
             <attributes>
-                <magnet dfltMagFld="-3.1275719663"/>
+                <magnet dfltMagFld="-3.91200143235"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV27">
             <attributes>
-                <magnet dfltMagFld="3.1275719663"/>
+                <magnet dfltMagFld="3.91200143235"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH28">
             <attributes>
-                <magnet dfltMagFld="-2.98729221087"/>
+                <magnet dfltMagFld="-4.1428903417"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV28">
             <attributes>
-                <magnet dfltMagFld="2.98729221087"/>
+                <magnet dfltMagFld="4.1428903417"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH29">
             <attributes>
-                <magnet dfltMagFld="-3.17207488097"/>
+                <magnet dfltMagFld="-4.41980952462"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV29">
             <attributes>
-                <magnet dfltMagFld="3.17207488097"/>
+                <magnet dfltMagFld="4.41980952462"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH30">
             <attributes>
-                <magnet dfltMagFld="-3.24372826416"/>
+                <magnet dfltMagFld="-4.10410100493"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV30">
             <attributes>
-                <magnet dfltMagFld="3.45085527782"/>
+                <magnet dfltMagFld="4.27676469453"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH31">
             <attributes>
-                <magnet dfltMagFld="-3.94830956863"/>
+                <magnet dfltMagFld="-5.12662950969"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV31">
             <attributes>
-                <magnet dfltMagFld="4.25767918476"/>
+                <magnet dfltMagFld="4.61831194374"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH32">
             <attributes>
-                <magnet dfltMagFld="-3.11581082289"/>
+                <magnet dfltMagFld="-3.45004649754"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QV32">
             <attributes>
-                <magnet dfltMagFld="4.14363128796"/>
+                <magnet dfltMagFld="5.12662950969"/>
             </attributes>
         </node>
         <node id="SCL_Mag:QH33">
             <attributes>
-                <magnet dfltMagFld="-3.11581082289"/>
+                <magnet dfltMagFld="-3.45004649754"/>
             </attributes>
         </node>
         <sequence id="SCL_RF:Cav12a">
             <attributes>
-                <rfcavity amp="22.22879" phase="-81.178"/>
+                <rfcavity amp="16.75644" phase="-81.873"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav12b">
             <attributes>
-                <rfcavity amp="22.45037" phase="-78.062"/>
+                <rfcavity amp="17.55141" phase="-73.689"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav12c">
             <attributes>
-                <rfcavity amp="21.97492" phase="-75.885"/>
+                <rfcavity amp="15.76767" phase="-70.902"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav12d">
             <attributes>
-                <rfcavity amp="19.01205" phase="-73.609"/>
+                <rfcavity amp="14.72389" phase="-70.096"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav13a">
             <attributes>
-                <rfcavity amp="22.31364" phase="-71.756"/>
+                <rfcavity amp="22.59678" phase="-73.427"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav13b">
             <attributes>
-                <rfcavity amp="18.89813" phase="-68.499"/>
+                <rfcavity amp="19.10296" phase="-65.603"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav13c">
             <attributes>
-                <rfcavity amp="20.46483" phase="-67.827"/>
+                <rfcavity amp="21.58569" phase="-61.315"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav13d">
             <attributes>
-                <rfcavity amp="14.24895" phase="-65.632"/>
+                <rfcavity amp="14.71603" phase="-60.013"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav14a">
             <attributes>
-                <rfcavity amp="21.33656" phase="-65.044"/>
+                <rfcavity amp="22.42784" phase="-56.286"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav14b">
             <attributes>
-                <rfcavity amp="18.07776" phase="-63.242"/>
+                <rfcavity amp="17.96123" phase="-56.333"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav14c">
             <attributes>
-                <rfcavity amp="21.16917" phase="-60.476"/>
+                <rfcavity amp="22.23158" phase="-51.719"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav14d">
             <attributes>
-                <rfcavity amp="21.25252" phase="-57.35"/>
+                <rfcavity amp="20.93887" phase="-49.709"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav15a">
             <attributes>
-                <rfcavity amp="19.96837" phase="-56.288"/>
+                <rfcavity amp="19.4401" phase="-51.051"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav15b">
             <attributes>
-                <rfcavity amp="18.07912" phase="-53.574"/>
+                <rfcavity amp="19.74366" phase="-52.206"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav15c">
             <attributes>
-                <rfcavity amp="18.14105" phase="-51.921"/>
+                <rfcavity amp="18.56631" phase="-44.562"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav15d">
             <attributes>
-                <rfcavity amp="20.87837" phase="-49.417"/>
+                <rfcavity amp="19.72101" phase="-43.025"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav16a">
             <attributes>
-                <rfcavity amp="20.53214" phase="-42.609"/>
+                <rfcavity amp="22.38582" phase="-36.094"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav16b">
             <attributes>
-                <rfcavity amp="18.62074" phase="-40.232"/>
+                <rfcavity amp="21.48998" phase="-30.88"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav16c">
             <attributes>
-                <rfcavity amp="20.02566" phase="-37.631"/>
+                <rfcavity amp="20.49257" phase="-32.665"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav16d">
             <attributes>
-                <rfcavity amp="19.17721" phase="-33.682"/>
+                <rfcavity amp="20.45709" phase="-28.898"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav17a">
             <attributes>
-                <rfcavity amp="17.92966" phase="-32.371"/>
+                <rfcavity amp="15.55592" phase="-32.632"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav17b">
             <attributes>
-                <rfcavity amp="17.75318" phase="-29.405"/>
+                <rfcavity amp="17.04399" phase="-30.237"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav17c">
             <attributes>
-                <rfcavity amp="19.29181" phase="-28.323"/>
+                <rfcavity amp="16.81335" phase="-27.615"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav17d">
             <attributes>
-                <rfcavity amp="17.83538" phase="-25.617"/>
+                <rfcavity amp="15.69218" phase="-29.769"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav18a">
             <attributes>
-                <rfcavity amp="20.84636" phase="-25.246"/>
+                <rfcavity amp="20.83615" phase="-28.855"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav18b">
             <attributes>
-                <rfcavity amp="15.71397" phase="-23.704"/>
+                <rfcavity amp="18.12901" phase="-26.45"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav18c">
             <attributes>
-                <rfcavity amp="21.55992" phase="-23.678"/>
+                <rfcavity amp="21.12075" phase="-23.508"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav18d">
             <attributes>
-                <rfcavity amp="14.75251" phase="-21.791"/>
+                <rfcavity amp="14.34849" phase="-20.927"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav19a">
             <attributes>
-                <rfcavity amp="15.40979" phase="-22.803"/>
+                <rfcavity amp="12.31128" phase="-12.565"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav19b">
             <attributes>
-                <rfcavity amp="20.96843" phase="-21.875"/>
+                <rfcavity amp="19.94646" phase="-11.015"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav19c">
             <attributes>
-                <rfcavity amp="20.69521" phase="-21.74"/>
+                <rfcavity amp="18.2191" phase="-10.585"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav19d">
             <attributes>
-                <rfcavity amp="19.29185" phase="-22.424"/>
+                <rfcavity amp="18.63963" phase="-12.75"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav20a">
             <attributes>
-                <rfcavity amp="22.44936" phase="-18.901"/>
+                <rfcavity amp="22.22631" phase="-13.955"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav20b">
             <attributes>
-                <rfcavity amp="22.75725" phase="-19.083"/>
+                <rfcavity amp="21.333" phase="-11.652"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav20c">
             <attributes>
-                <rfcavity amp="22.02522" phase="-17.297"/>
+                <rfcavity amp="21.11057" phase="-5.978"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav20d">
             <attributes>
-                <rfcavity amp="21.79112" phase="-15.73"/>
+                <rfcavity amp="13.2567" phase="-4.013"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav21a">
             <attributes>
-                <rfcavity amp="17.87451" phase="-21.166"/>
+                <rfcavity amp="18.78879" phase="-1.59"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav21b">
             <attributes>
-                <rfcavity amp="15.97517" phase="-21.087"/>
+                <rfcavity amp="17.82641" phase="8.528"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav21c">
             <attributes>
-                <rfcavity amp="15.71556" phase="-19.881"/>
+                <rfcavity amp="21.97368" phase="3.979"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav21d">
             <attributes>
-                <rfcavity amp="19.28937" phase="-17.85"/>
+                <rfcavity amp="22.64537" phase="5.061"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav22a">
             <attributes>
-                <rfcavity amp="22.10194" phase="-8.542"/>
+                <rfcavity amp="21.18489" phase="-4.071"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav22b">
             <attributes>
-                <rfcavity amp="22.31102" phase="-8.132"/>
+                <rfcavity amp="14.89696" phase="-2.558"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav22c">
             <attributes>
-                <rfcavity amp="11.66632" phase="-5.409"/>
+                <rfcavity amp="12.40155" phase="-1.346"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav22d">
             <attributes>
-                <rfcavity amp="19.16621" phase="-4.505"/>
+                <rfcavity amp="22.6553" phase="2.507"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav23a">
             <attributes>
-                <rfcavity amp="19.28567" phase="-4.59"/>
+                <rfcavity amp="21.76209" phase="2.485"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav23b">
             <attributes>
-                <rfcavity amp="16.01406" phase="4.082"/>
+                <rfcavity amp="19.615" phase="3.706"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav23c">
             <attributes>
-                <rfcavity amp="19.30828" phase="-1.938"/>
+                <rfcavity amp="22.75266" phase="11.227"/>
             </attributes>
         </sequence>
         <sequence id="SCL_RF:Cav23d">
             <attributes>
-                <rfcavity amp="17.95018" phase="-90.0"/>
+                <rfcavity amp="22.68742" phase="13.124"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav25a">
+            <attributes>
+                <rfcavity amp="20.30004" phase="-4.033"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav25b">
+            <attributes>
+                <rfcavity amp="20.03229" phase="-0.166"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav25c">
+            <attributes>
+                <rfcavity amp="19.98442" phase="-2.787"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav25d">
+            <attributes>
+                <rfcavity amp="19.65121" phase="-0.644"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav27a">
+            <attributes>
+                <rfcavity amp="21.53389" phase="-6.724"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav27b">
+            <attributes>
+                <rfcavity amp="20.46315" phase="-2.622"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav27c">
+            <attributes>
+                <rfcavity amp="20.70073" phase="-0.347"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav27d">
+            <attributes>
+                <rfcavity amp="20.68426" phase="2.356"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav28a">
+            <attributes>
+                <rfcavity amp="21.11568" phase="-0.775"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav28b">
+            <attributes>
+                <rfcavity amp="20.92692" phase="0.489"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav28c">
+            <attributes>
+                <rfcavity amp="22.66984" phase="1.202"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav28d">
+            <attributes>
+                <rfcavity amp="20.97748" phase="-0.516"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav29a">
+            <attributes>
+                <rfcavity amp="22.97374" phase="0.617"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav29b">
+            <attributes>
+                <rfcavity amp="22.01105" phase="0.621"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav29c">
+            <attributes>
+                <rfcavity amp="22.3619" phase="6.155"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav29d">
+            <attributes>
+                <rfcavity amp="21.78767" phase="9.34"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav30a">
+            <attributes>
+                <rfcavity amp="21.10222" phase="15.814"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav30b">
+            <attributes>
+                <rfcavity amp="20.29228" phase="18.847"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav30c">
+            <attributes>
+                <rfcavity amp="20.25004" phase="20.803"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav30d">
+            <attributes>
+                <rfcavity amp="21.52608" phase="25.081"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav31a">
+            <attributes>
+                <rfcavity amp="23.48158" phase="19.788"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav31b">
+            <attributes>
+                <rfcavity amp="17.69054" phase="26.167"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav31c">
+            <attributes>
+                <rfcavity amp="20.02563" phase="23.226"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav31d">
+            <attributes>
+                <rfcavity amp="0.0" phase="0.0"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav32a">
+            <attributes>
+                <rfcavity amp="18.73087" phase="14.228"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav32b">
+            <attributes>
+                <rfcavity amp="21.2876" phase="14.455"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav32c">
+            <attributes>
+                <rfcavity amp="21.54481" phase="119.394"/>
+            </attributes>
+        </sequence>
+        <sequence id="SCL_RF:Cav32d">
+            <attributes>
+                <rfcavity amp="21.49191" phase="-36.773"/>
             </attributes>
         </sequence>
     </sequence>
     <sequence id="HEBT1">
         <node id="HEBT_Mag:QV01">
             <attributes>
-                <magnet dfltMagFld="3.93716865049"/>
+                <magnet dfltMagFld="2.96677945216"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QH02">
             <attributes>
-                <magnet dfltMagFld="-3.7391486687"/>
+                <magnet dfltMagFld="-4.15333885771"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QV03">
             <attributes>
-                <magnet dfltMagFld="3.93862645191"/>
+                <magnet dfltMagFld="3.40855463178"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QH04">
             <attributes>
-                <magnet dfltMagFld="-3.84177733651"/>
+                <magnet dfltMagFld="-5.00127522709"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QV05">
             <attributes>
-                <magnet dfltMagFld="4.51576313933"/>
+                <magnet dfltMagFld="4.03420631412"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QH06">
             <attributes>
-                <magnet dfltMagFld="-3.84017291391"/>
+                <magnet dfltMagFld="-5.00127522709"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QV07">
             <attributes>
-                <magnet dfltMagFld="4.48159259354"/>
+                <magnet dfltMagFld="3.75385198732"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QH08">
             <attributes>
-                <magnet dfltMagFld="-2.99087759922"/>
+                <magnet dfltMagFld="-4.22422961613"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QV09">
             <attributes>
-                <magnet dfltMagFld="3.32009962261"/>
+                <magnet dfltMagFld="2.96899999085"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QH10">
             <attributes>
-                <magnet dfltMagFld="-3.08894072633"/>
+                <magnet dfltMagFld="-2.0415099523"/>
             </attributes>
         </node>
         <node id="HEBT_Mag:QV11">
             <attributes>
-                <magnet dfltMagFld="2.76086496006"/>
+                <magnet dfltMagFld="2.21171789453"/>
             </attributes>
         </node>
     </sequence>

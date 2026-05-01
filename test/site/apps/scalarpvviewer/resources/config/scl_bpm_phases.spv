@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scalar_PV_VIEWER title="SC Linac BPMs' Phases">
+    <font name="Monospaced" size="11" style="1"/>
+    <Panels_titles charts_panel_title="Phases vs. Time" values_panel_title="Phases of SCL BPMs"/>
+	<PARAMETERS lastMemorizingTime="NEVER"/>
+    <UpdateController updateTime="3.0"  ChartUpdateTime="15.0"  listenToEPICS="false" recordChartFromEPICS="false" />
+    <ScalarPV pvName="SCL_Diag:BPM00a:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM00b:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM01:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM02:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM03:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM04:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM05:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM06:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM07:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM08:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM09:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM10:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM11:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM12:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM13:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM14:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM15:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM16:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM17:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM18:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM19:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM20:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM21:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM22:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM23:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM24:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM25:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM26:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM27:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM28:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM29:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM30:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM31:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_Diag:BPM32:phaseAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+</Scalar_PV_VIEWER>
+
+%==================time chart data=================================
+

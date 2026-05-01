@@ -1,0 +1,39 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scan1D_Application title="CCL4 Delta-T Scan, SCL_BPM01 and SCL_BPM05">
+    <app_params>
+        <font name="Monospaced" size="10" style="1"/>
+        <scan_panel_title title="SCAN CONTROL PANEL"/>
+        <parameterPV_tree_name name="Parameter PV"/>
+        <scanPV_tree_name name="Scan PV"/>
+        <measuredPVs_tree_name name="Measured PVs"/>
+        <validationPVs_tree_name name="Validation PVs"/>
+        <UseTimeStamp yes="true"/>
+        <limits_step_delay delay="0.2" low="-180.0" step="2.0" upp="180.0"/>
+        <beam_trigger delay="1.0" on="true"/>
+        <averaging N="1" delay="0.0" on="false"/>
+        <validation low="3.0" on="true" upp="100.0"/>
+    </app_params>
+    <param_PV on="true" panel_title="PARAMETER PV CONTROL">
+        <PV name="CCL_LLRF:FCM4:CtlAmpSet"/>
+    </param_PV>
+    <scan_PV>
+        <PV name="CCL_LLRF:FCM4:CtlPhaseSet" on="true"/>
+    </scan_PV>
+    <validation_PVs>
+        <Validation_PV name="CCL_Diag:BCM102:currentMax" on="true"/>
+    </validation_PVs>
+    <ANALYSIS_CONFIGURATIONS>
+        <MANAGEMENT>
+            <ANALYSIS_NAME name="MANAGEMENT"/>
+        </MANAGEMENT>
+        <DT_PROCEDURE>
+            <ANALYSIS_NAME name="DELTA-T PROCEDURE ANALYSIS"/>
+            <CAVITY_INFO index="4" cavity_name="CCL MODULE 4" bpm1_name="SCL_BPM01" bpm2_name="SCL_BPM05" energy_step_kev="20.0" />
+	    <THEORETICAL_FILE  name="ccl_4_bpm01_bpm05.dat" />	
+        </DT_PROCEDURE>
+    </ANALYSIS_CONFIGURATIONS>
+    <measure_PVs>
+        <MeasuredPV name="SCL_Diag:BPM01:phaseAvg" on="true" unWrapped="true"/>
+        <MeasuredPV name="SCL_Diag:BPM05:phaseAvg" on="true" unWrapped="true"/>
+    </measure_PVs>
+</Scan1D_Application>

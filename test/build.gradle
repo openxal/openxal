@@ -1,0 +1,109 @@
+apply plugin: 'java'
+//apply plugin: 'application'
+buildDir 'build-gradle'
+ext.jarname='openxal-all'
+
+//mainClassName='xal.app.score.Main'
+
+//setup temporary directory for resources from non-standard locations
+ext.tmpResources = file(buildDir.absolutePath+'/../tmp/resources')
+tmpResources.deleteDir()
+tmpResources.mkdirs()
+
+//add common objects
+setupSrc file('core')
+setupResources file('core')
+addSrcAndLib 'plugins'
+addSrcAndLib ('extensions','extension')
+addSrcAndLib ('services','service',['extension/src'])
+
+ext.singleapp = false
+ext.singlename = ''
+
+setupApplicationType('applist','apps','app')
+setupApplicationType('servicelist','services','service')
+
+//setup the final jar name
+if(hasProperty('output')){
+    ext.jarname=property('output')
+}
+
+// add the temporary dir to resources
+sourceSets.main.resources.srcDir tmpResources
+
+jar {
+    baseName = jarname
+    from { 
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+    }
+    if(singleapp){
+        manifest.attributes ( 'Main-Class': singlename  )            
+    }
+}
+
+// End of scipt
+// Convenience methods below
+
+// setup list of services included
+def setupApplicationType(propertyname,dirname,type){
+    def applicationList=[]
+    if(hasProperty(propertyname)){
+        println propertyname+':'+getProperty(propertyname)
+        applicationList=getProperty(propertyname).tokenize()
+        if(applicationList.size()==1&&!singleapp){
+            ext.jarname=applicationList[0]+'-'+type
+            singleapp=true
+            singlename='xal.'+type+'.'+applicationList[0]+'.Main'
+        }
+    } else {
+        applicationList=lisSubDirs(dirname)
+    }
+    addSourcesFromList(applicationList,dirname,type)
+}
+
+def lisSubDirs(dir){
+    def dirs = []
+    file(dir).eachDir{ dirs << it.name}
+    dirs
+}
+
+def addSourcesFromList(list,dirname='apps', packagename='app'){            
+    println 'Adding sources from '+dirname+': '+list        
+    list.each { app->
+        setupSrc file(dirname+'/'+app)
+        setupResources (file(dirname+'/'+app),packagename)        
+    }    
+}
+
+def addSrcAndLib(dirname,packagename='',sources=['src','extension/src']) {
+    file(dirname).eachDir { sub ->        
+        sources.each { setupSrc(sub,it) }
+        setupResources(sub,packagename) 
+    }
+}
+
+def setupSrc(sub,src='src'){
+    sourceSets.main.java.srcDir sub.absolutePath+'/'+src
+    dependencies.compile fileTree(sub.absolutePath+'/lib').include('**/*.jar') 
+}
+
+def setupResources(sub, packagename=''){
+    if(packagename!=''){      
+        copyRes(sub.absolutePath+'/resources','/xal/'+packagename+'/'+sub.name+'/resources')
+        copyRes('site/'+sub.getParentFile().name+'/'+sub.name+'/extension/resources','/xal/'+packagename+'/'+sub.name+'/resources')
+        copyRes('site/'+sub.getParentFile().name+'/'+sub.name+'/resources','/xal/'+packagename+'/'+sub.name+'/resources')
+    }    
+    sourceSets.main.resources {
+        if(packagename==''){
+            srcDir sub.absolutePath+'/resources' 
+        }
+    }        
+}
+
+def copyRes(src,dest){
+    copy {
+        from src
+        into tmpResources.absolutePath+dest
+        include '**'
+    }
+}

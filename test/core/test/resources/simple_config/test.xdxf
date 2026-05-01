@@ -1,0 +1,94 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/xdxf.xsd?format=raw"
+	system="test" ver="1.0.0" date="Wed Jun 26 10:16:58 EST 2013">
+	<sequence id="LEBT" len=".3">
+		<attributes>
+			<sequence predecessors="null" />
+		</attributes>
+		<node type="marker" id="Begin_Of_LEBT" pos="0" len="0" />
+	</sequence>
+	<sequence id="RFQ" len="3.76">
+		<attributes>
+			<sequence predecessors="LEBT" />
+		</attributes>
+		<node type="marker" id="Begin_Of_RFQ" pos="0" len="0" />
+		<node type="RF" id="RFQ:RF" pos="1.88" />
+	</sequence>
+	<sequence id="MEBT" len="3.633">
+		<attributes>
+			<sequence predecessors="RFQ" />
+		</attributes>
+		<node type="marker" id="Begin_Of_MEBT" pos="0" len="0" />
+		<node type="QH" id="MEBT_Mag:QH01" pos=".128" len=".061" status="true">
+			<attributes>
+				<magnet len=".061" polarity="-1" dfltMagFld="-34.636" />
+				<align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0" />
+				<aperture shape="0" x=".016" />
+			</attributes>
+			<ps main="MEBT_Mag:PS_QH01" />
+			<channelsuite name="magnetsuite">
+				<channel handle="fieldRB" signal="MEBT_Mag:QH01:B" settable="false" />
+			</channelsuite>
+		</node>
+		<node type="DCH" id="MEBT_Mag:DCH01" pos=".128" len=".061"
+			status="true">
+			<attributes>
+				<magnet len=".061" polarity="+1" dfltMagFld="0" />
+				<align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0" />
+				<aperture shape="0" x=".016" />
+			</attributes>
+			<ps main="MEBT_Mag:PS_DCH01" />
+			<channelsuite name="magnetsuite">
+				<channel handle="fieldRB" signal="MEBT_Mag:DCH01:B"
+					settable="false" />
+			</channelsuite>
+		</node>
+		<node type="DCV" id="MEBT_Mag:DCV01" pos=".128" len=".061"
+			status="true">
+			<attributes>
+				<magnet len=".061" polarity="+1" dfltMagFld="0" />
+				<align x="0.0" y="0.0" z="0.0" pitch="0" yaw="0" roll="0" />
+				<aperture shape="0" x=".016" />
+			</attributes>
+			<ps main="MEBT_Mag:PS_DCV01" />
+			<channelsuite name="magnetsuite">
+				<channel handle="fieldRB" signal="MEBT_Mag:DCV01:B"
+					settable="false" />
+			</channelsuite>
+		</node>
+	</sequence>
+	<powersupplies>
+		<ps type="main" id="MEBT_Mag:PS_QH01">
+			<channelsuite name="pssuite">
+				<channel handle="I" signal="MEBT_Mag:PS_QH01:I" />
+				<channel handle="I_Set" signal="MEBT_Mag:PS_QH01:I_Set" />
+				<channel handle="fieldSet" signal="MEBT_Mag:PS_QH01:B_Set" />
+				<channel handle="psFieldRB" signal="MEBT_Mag:PS_QH01:B" />
+				<channel handle="cycleState" signal="MEBT_Mag:PS_QH01:cycleState" />
+				<channel handle="cycleEnable" signal="MEBT_Mag:PS_QH01:cycleEnable" />
+				<channel handle="B_Book" signal="MEBT_Mag:PS_QH01:B_Book" />
+			</channelsuite>
+		</ps>
+		<ps type="main" id="MEBT_Mag:PS_DCH01">
+			<channelsuite name="pssuite">
+				<channel handle="I" signal="MEBT_Mag:PS_DCH01:I" />
+				<channel handle="I_Set" signal="MEBT_Mag:PS_DCH01:I_Set" />
+				<channel handle="fieldSet" signal="MEBT_Mag:PS_DCH01:B_Set" />
+				<channel handle="psFieldRB" signal="MEBT_Mag:PS_DCH01:B" />
+				<channel handle="cycleState" signal="MEBT_Mag:PS_DCH01:cycleState" />
+				<channel handle="cycleEnable" signal="MEBT_Mag:PS_DCH01:cycleEnable" />
+			</channelsuite>
+		</ps>
+		<ps type="main" id="MEBT_Mag:PS_DCV01">
+			<channelsuite name="pssuite">
+				<channel handle="I" signal="MEBT_Mag:PS_DCV01:I" />
+				<channel handle="I_Set" signal="MEBT_Mag:PS_DCV01:I_Set" />
+				<channel handle="fieldSet" signal="MEBT_Mag:PS_DCV01:B_Set" />
+				<channel handle="psFieldRB" signal="MEBT_Mag:PS_DCV01:B" />
+				<channel handle="cycleState" signal="MEBT_Mag:PS_DCV01:cycleState" />
+				<channel handle="cycleEnable" signal="MEBT_Mag:PS_DCV01:cycleEnable" />
+			</channelsuite>
+		</ps>
+	</powersupplies>
+</xdxf>

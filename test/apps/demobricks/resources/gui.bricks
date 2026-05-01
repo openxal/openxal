@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Mon Jun 22 09:24:13 EDT 2009" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="80" tag="HelloDialog" width="355">
+            <ViewProxy type="javax.swing.JDialog"/>
+            <BeanProperty name="focusableWindowState" value="true"/>
+            <BeanProperty name="resizable" value="false"/>
+            <BeanProperty name="modal" value="true"/>
+            <BeanProperty fontName="Dialog" name="font" size="40" style="0"/>
+            <ViewNode tag="Horizontal Box">
+                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                <BorderNode tag="Etched Border">
+                    <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                </BorderNode>
+                <ViewNode tag="Label">
+                    <ViewProxy type="javax.swing.JLabel"/>
+                    <BeanProperty name="text" value="Hello, World!"/>
+                    <BeanProperty alpha="255" blue="255" green="51" name="foreground" red="0"/>
+                    <BeanProperty fontName="Dialog" name="font" size="32" style="0"/>
+                </ViewNode>
+                <ViewNode tag="Horizontal Glue">
+                    <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                </ViewNode>
+                <ViewNode tag="OkayButton">
+                    <ViewProxy type="javax.swing.JButton"/>
+                    <BeanProperty name="text" value="Okay"/>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="547" tag="MainWindow" width="772">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Demo"/>
+            <ViewNode tag="Main Tabs">
+                <ViewProxy type="javax.swing.JTabbedPane"/>
+                <ViewNode tag="Magnets Box">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="Magnets"/>
+                    <ViewNode tag="Magnets Scroller">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="MagnetList">
+                            <ViewProxy type="javax.swing.JList"/>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Box">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <BorderNode tag="Etched Border">
+                            <BorderProxy type="javax.swing.border.EtchedBorder"/>
+                        </BorderNode>
+                        <ViewNode tag="Horizontal Glue">
+                            <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                        </ViewNode>
+                        <ViewNode tag="StarButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty group="" iconName="star.gif" name="icon"/>
+                            <BeanProperty name="toolTipText" value="demonstrates how to load an icon from an application&apos;s resource bundle"/>
+                        </ViewNode>
+                        <ViewNode tag="RunButton">
+                            <ViewProxy type="javax.swing.JButton"/>
+                            <BeanProperty name="text" value=""/>
+                            <BeanProperty group="media" iconName="Play24.gif" name="icon"/>
+                            <BeanProperty name="toolTipText" value="Say Hello"/>
+                            <BeanProperty name="iconTextGap" value="4"/>
+                            <BeanProperty alpha="255" blue="0" green="153" name="foreground" red="0"/>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="SinePlot">
+                    <ViewProxy type="xal.extension.widgets.plot.FunctionGraphsJPanel"/>
+                    <BeanProperty name="name" value="Sine"/>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

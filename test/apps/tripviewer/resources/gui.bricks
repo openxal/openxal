@@ -1,0 +1,225 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Fri Aug 11 14:07:07 EDT 2006" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="698" tag="MainWindow" width="998">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <BeanProperty name="title" value="Trip Viewer"/>
+            <ViewNode tag="Tabbed Pane">
+                <ViewProxy type="javax.swing.JTabbedPane"/>
+                <ViewNode tag="History Tab">
+                    <ViewProxy type="javax.swing.Box_Vertical"/>
+                    <BeanProperty name="name" value="History"/>
+                    <ViewNode tag="Top Row">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="Database Row">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BeanProperty height="60" name="preferredSize" width="536"/>
+                            <BeanProperty height="50" name="minimumSize" width="536"/>
+                            <BeanProperty height="60" name="maximumSize" width="131271"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Persistent Store"/>
+                            </BorderNode>
+                            <ViewNode tag="tripMonitorTypeMenu">
+                                <ViewProxy type="javax.swing.JComboBox"/>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                            </ViewNode>
+                            <ViewNode tag="connectButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Connect"/>
+                                <BeanProperty name="label" value="Connect..."/>
+                                <BeanProperty name="toolTipText" value="Connect to the database"/>
+                            </ViewNode>
+                            <ViewNode tag="Label">
+                                <ViewProxy type="javax.swing.JLabel"/>
+                                <BeanProperty name="text" value="From"/>
+                            </ViewNode>
+                            <ViewNode tag="fromSpinner">
+                                <ViewProxy type="javax.swing.JSpinner"/>
+                                <BeanProperty height="24" name="maximumSize" width="32767"/>
+                            </ViewNode>
+                            <ViewNode tag="Label">
+                                <ViewProxy type="javax.swing.JLabel"/>
+                                <BeanProperty name="text" value="To"/>
+                            </ViewNode>
+                            <ViewNode tag="toSpinner">
+                                <ViewProxy type="javax.swing.JSpinner"/>
+                                <BeanProperty height="24" name="maximumSize" width="32767"/>
+                            </ViewNode>
+                            <ViewNode tag="fetchButton">
+                                <ViewProxy type="javax.swing.JButton"/>
+                                <BeanProperty name="text" value="Fetch"/>
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Persistent Store"/>
+                            </BorderNode>
+                        </ViewNode>
+                        <ViewNode tag="Sort Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Sort"/>
+                            </BorderNode>
+                            <ViewNode tag="timeSortButton">
+                                <ViewProxy type="javax.swing.JRadioButton"/>
+                                <BeanProperty name="text" value="Time"/>
+                                <BeanProperty name="selected" value="true"/>
+                                <BeanProperty name="toolTipText" value="Sort trip records by time stamp"/>
+                            </ViewNode>
+                            <ViewNode tag="PVSortButton">
+                                <ViewProxy type="javax.swing.JRadioButton"/>
+                                <BeanProperty name="text" value="PV"/>
+                                <BeanProperty name="toolTipText" value="Sort trip records by PV"/>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Sort"/>
+                            </BorderNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Data Row">
+                        <ViewProxy type="javax.swing.Box_Horizontal"/>
+                        <ViewNode tag="Split Pane">
+                            <ViewProxy type="javax.swing.JSplitPane"/>
+                            <BeanProperty name="oneTouchExpandable" value="true"/>
+                            <BeanProperty name="resizeWeight" value="0.0"/>
+                            <BeanProperty name="orientation" value="1"/>
+                            <BeanProperty name="dividerSize" value="7"/>
+                            <BeanProperty name="dividerLocation" value="300"/>
+                            <ViewNode tag="PV Selector">
+                                <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                <ViewNode tag="PV List Scroller">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Trip Counters"/>
+                                    </BorderNode>
+                                    <ViewNode tag="tripCounterPVList">
+                                        <ViewProxy type="javax.swing.JList"/>
+                                    </ViewNode>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Trip Counters"/>
+                                    </BorderNode>
+                                </ViewNode>
+                                <ViewNode tag="Node Scroller">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <BorderNode tag="Node Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Nodes"/>
+                                    </BorderNode>
+                                    <ViewNode tag="nodeList">
+                                        <ViewProxy type="javax.swing.JList"/>
+                                    </ViewNode>
+                                    <BorderNode tag="Node Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                        <BeanProperty name="title" value="Nodes"/>
+                                    </BorderNode>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Trip Record Scroller">
+                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Trip Records"/>
+                                </BorderNode>
+                                <ViewNode tag="tripRecordTable">
+                                    <ViewProxy type="javax.swing.JTable"/>
+                                </ViewNode>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                    <BeanProperty name="title" value="Trip Records"/>
+                                </BorderNode>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="Services Tab">
+                    <ViewProxy type="javax.swing.JSplitPane"/>
+                    <BeanProperty name="orientation" value="0"/>
+                    <BeanProperty name="name" value="Services"/>
+                    <BeanProperty name="dividerLocation" value="100"/>
+                    <ViewNode tag="Services Scroller">
+                        <ViewProxy type="javax.swing.JScrollPane"/>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Services"/>
+                        </BorderNode>
+                        <ViewNode tag="ServicesTable">
+                            <ViewProxy type="javax.swing.JTable"/>
+                        </ViewNode>
+                        <BorderNode tag="Titled Border">
+                            <BorderProxy type="javax.swing.border.TitledBorder"/>
+                            <BeanProperty name="title" value="Services"/>
+                        </BorderNode>
+                    </ViewNode>
+                    <ViewNode tag="Service Details">
+                        <ViewProxy type="javax.swing.JSplitPane"/>
+                        <BeanProperty name="dividerLocation" value="99"/>
+                        <ViewNode tag="Monitor Scroller">
+                            <ViewProxy type="javax.swing.JScrollPane"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Monitors"/>
+                            </BorderNode>
+                            <ViewNode tag="MonitorList">
+                                <ViewProxy type="javax.swing.JList"/>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Monitors"/>
+                            </BorderNode>
+                        </ViewNode>
+                        <ViewNode tag="Monitor Details">
+                            <ViewProxy type="javax.swing.JTabbedPane"/>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Monitor Details"/>
+                            </BorderNode>
+                            <ViewNode tag="Trip Records Buffer Tab">
+                                <ViewProxy type="javax.swing.Box_Vertical"/>
+                                <BeanProperty name="name" value="Trip Records Buffer"/>
+                                <ViewNode tag="Trip Records Scroller">
+                                    <ViewProxy type="javax.swing.JScrollPane"/>
+                                    <ViewNode tag="TripRecordsBufferTable">
+                                        <ViewProxy type="javax.swing.JTable"/>
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Button Bar">
+                                    <ViewProxy type="javax.swing.Box_Horizontal"/>
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue"/>
+                                    </ViewNode>
+                                    <ViewNode tag="PublishButton">
+                                        <ViewProxy type="javax.swing.JButton"/>
+                                        <BeanProperty name="text" value="Publish"/>
+                                        <BeanProperty name="enabled" value="false"/>
+                                        <BeanProperty name="toolTipText" value="Publish records to database and clear buffer"/>
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="ChannelScroller">
+                                <ViewProxy type="javax.swing.JScrollPane"/>
+                                <BeanProperty name="name" value="Channels"/>
+                                <ViewNode tag="ChannelList">
+                                    <ViewProxy type="javax.swing.JList"/>
+                                    <BeanProperty name="name" value="Channels"/>
+                                </ViewNode>
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder"/>
+                                <BeanProperty name="title" value="Monitor Details"/>
+                            </BorderNode>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

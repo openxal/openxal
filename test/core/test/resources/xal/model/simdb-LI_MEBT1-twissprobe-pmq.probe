@@ -1,0 +1,27 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<probe time="2006/12/01 22:21:05" type="xal.model.probe.TwissProbe">
+    <comment text="XAL model probe representing envelope state"/>
+    <algorithm type="xal.model.alg.TwissTrackerPmq">
+        <tracker debug="false" update="2" calcRfGapPhase="false"/>
+        <options emitgrowth="true" stepsize="0.004" scheff="true"/>
+    </algorithm>
+    <state id="" type="gov.sns.xal.model.probe.traj.TwissProbeState">
+        <species Er="9.393014E8" q="-1.0"/>
+        <location W="3000000.0" elem="" s="0.0" t="0.0"/>
+        <beam I="0.025" phase="(0.0,0.0,0.0)" f="3.24E8" />
+        <twissprobe>
+            <resp values="{ { 1 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 }
+                           { 0.00000000E00 1 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 }
+                           { 0.00000000E00 0.00000000E00 1 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 }
+                           { 0.00000000E00 0.00000000E00 0.00000000E00 1 0.00000000E00 0.00000000E00 0.00000000E00 }
+                           { 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 1 0.00000000E00 0.00000000E00 }
+                           { 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 1 0.00000000E00 }
+                           { 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 0.00000000E00 1 }
+                         }" />
+            <centroid values="(0,0,0,0,0,0)"/>
+            <twiss ax="-1.2187" bx="0.13174"            ex="3.1309642E-6" 
+                   ay="2.1885"  by="0.22344"            ey="2.5075842000000002E-6"
+                   az="0.08"    bz="0.7819530229746938" ez="3.106895634426948E-6" />
+        </twissprobe>
+    </state>
+</probe>

@@ -6,8 +6,8 @@ import types
 import time
 import random
 
-from java.lang import *
-from javax.swing import *
+from xjava.lang import *
+from xjava.swing import *
 from java.text import SimpleDateFormat
 from java.util import Date
 

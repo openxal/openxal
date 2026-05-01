@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Knobs Help</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="824.33">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 15.0px Times}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Times; min-height: 16.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Times}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande}
+    span.s1 {text-decoration: underline}
+    span.s2 {color: #ff0000}
+    span.s3 {color: #00ff00}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">Knobs Application Guide</span></p>
+<p class="p2"><br></p>
+<p class="p3">The knobs application allows users to define custom knobs and to use those knobs to control PVs simultaneously in weighted combinations. The knobs may also be grouped for convenient organization.<span class="Apple-converted-space">  </span>Note that you can save the knob definitions to a file and open the document at a later time.</p>
+<p class="p2"><br></p>
+<p class="p3"><b>Create a new Group</b>:</p>
+<ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Press the "+" button at the bottom of the "<b>Groups</b>" list</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Enter a name for the Group in the dialog box and press the "<b>OK</b>" button</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">To delete a group, simply select it and press the back space delete key</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">The "All" group is special.<span class="Apple-converted-space">  </span>You cannot delete it.<span class="Apple-converted-space">  </span>It contains the list of all knobs defined in the document.</li>
+</ul>
+<p class="p2"><br></p>
+<p class="p3"><b>Create a new Knob</b>:</p>
+<ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Optionally select an accelerator (typically the default accelerator) from the "<b>Accelerator</b>" menu for conveniently selecting channels</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select the group into which you want to add the new knob</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Press the "+" button at the bottom of the "<b>Knobs</b>" list</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select the new knob in the knobs list</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Press the edit button on the knob view</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">To manually enter a PV, press the knob element add button at the below the element table:</li>
+  <ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Double click inside the PV cell and type (or drag and drop) a PV name</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Double click inside the coefficient cell and enter a coefficient for weighting this element (amount to change PV value for one unit of knob)</li>
+  </ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">To add a channel from the optics file definition:</li>
+  <ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">You must have selected an accelerator from the "<b>Accelerator</b>" menu (typically the default accelerator)</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">From the "<b>Accelerator Sequences</b>" menu on the left of the dialog box, select one or more sequences</li>
+    <ul>
+      <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">You may double click to select one sequence or single click on multiple sequences and press the "Select" button</li>
+    </ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select one or more accelerator node types</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select one or more accelerator nodes</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select one or more PV handles</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select one or more Process Variables (really a reference to a Process Variable given by a node and a channel handle)</li>
+    <ul>
+      <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Note that channels selected in this way include any transforms defined in the optics file</li>
+    </ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Double click inside the coefficient cell and enter a coefficient for weighting this element (amount to change PV value for one unit of knob)</li>
+  </ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Close the dialog box when you are done</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">To delete a knob, simply select it and press the back space delete key</li>
+  <ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">deleting a knob from a group other than "All" will only delete them from that group</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">deleting a knob from the "All" group will delete the knob from every group</li>
+  </ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">You can drag and drop knobs onto another group to add them to that group</li>
+</ul>
+<p class="p2"><br></p>
+<p class="p3"><b>Generating bump knobs</b>:</p>
+<p class="p3">You can have the application automatically generate bump knobs for a particular accelerator sequence.</p>
+<ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select an accelerator from the "<b>Accelerator</b>" menu</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select a sequence from the "<b>Accelerator-&gt;Sequences</b>" menu</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select the group into which you want the bumps to be added</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select either "Make Horizontal Bumps" or "Make Vertical Bumps" from the "<b>Generate</b>" menu</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">In the dialog box</li>
+  <ul>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">specify whether to use the design optics or synchronize with the current machine conditions</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">pick either an offset bump or an angle bump</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">specify the number of correctors to use for the bump</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">press the "<b>Generate</b>" button to generate the bump</li>
+    <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">press the "<b>Cancel</b>" button if you need to cancel the operation</li>
+  </ul>
+</ul>
+<p class="p2"><br></p>
+<p class="p3"><b>Using the knobs</b>:</p>
+<ul>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Select one or more knobs from the knobs list to display their controls in the right view</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">Each knob element of a knob must have all its PVs (including set point and limits) connected in order to use the knob</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">If a warning appears in red stating "<span class="s2">Waiting for connections...</span>" then move the mouse pointer over the warning to view the reason in a floating tool tip</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">A knob is ready for use when it is enabled and indicated by a green "<span class="s3">Ready</span>" message</li>
+  <li style="margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Lucida Grande">When a knob is ready, simply select the digit to vary and hit the up/down arrows to advance/retreat the digit</li>
+</ul>
+</body>
+</html>

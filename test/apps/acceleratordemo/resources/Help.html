@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+<HEAD>
+<style type="text/css">
+P.warning {font-size: large; font-weight: bold;}        
+</style>
+<TITLE>Demo Application Help</TITLE>
+</HEAD>
+<BODY>
+
+<center><u>Demo Application Help</u></center>
+
+<p align=center>
+<a href="#intro_ref" TARGET="_self">Introduction</a> - 
+<a href="#release_notes" TARGET="_self">Release Notes</a> - 
+<a href="#features" TARGET="_self">Features</a> - 
+<a href="#startup_ref" TARGET="_self">Startup</a> - 
+<a href="#acknowledgements_ref" TARGET="_self">Acknowledgements</a>
+</p>
+
+<p class=warning>Note: The contents of this help document are bogus.  It is intended only as a sample 
+help file.</p>
+
+<hr><br>
+<a name="intro_ref" <b>Introduction:</b></a>
+<p>
+The Orbit Correction application is intended to correct the measured orbit of 
+the beam in an accelerator sequence (e.g. MEBT).  To compute the corrector
+strengths necessary to flatten the orbit, one must measure the 
+detector-corrector response matrix.  This matrix is measured directly on the 
+machine rather than computed from the lattice.  A correction algorithm uses
+the response matrix to search for a combination of correctors to flatten the
+orbit.
+</p>
+
+<hr><br>
+<a name="release_notes" <b>Release Notes:</b></a>
+<p>
+The present version number of the Orbit Correction application is version 1.0. 
+It has been developed specifically to provide some basic orbit correction 
+capability during the MEBT commissioning.  A more full featured, advanced 
+version of the application is expected sometime in the future.
+</p>
+<p>
+Note that as of this writing, the application has only been tested with
+the virtual accelerator and appears to work just fine.  It has not been 
+tested on a real accelerator.  Efforts have been made to anticipate and handle 
+experiences with the real machine.  The application has only been tested by
+the developer and hence has not been subjected to extensive quality control.
+</p>
+<p>
+The Orbit Correction Application was developed and tested on Linux using 
+version 1.4.1 of the Java runtime environment from 
+<a href="http://java.sun.com/"> Sun Microsystems, Inc</a>.  Thus, it is
+recommended to use this version or later of the Java runtime environment
+on the system where this application will be running.
+</p>
+
+<hr><br>
+<a name="features" <b>Features and Tips:</b></a>
+<p>
+Before using the application it may prove helpful to familiarize yourself
+with some of the features of the Orbit Correction application.
+</p>
+<p>
+This application can be used to view the orbit live and to flatten the orbit.
+The application focusses on a single accelerator sequence and monitors its 
+horizontal and vertical orbit.  You can also flatten the orbits.  To flatten 
+an orbit, you need to load a calibration file.  Once loaded, flattening will 
+occur in the background as needed.
+</p>
+<p>
+Many operations initiated in the application run in their own threads.  This 
+allows users to do multiple consistent operations simultaneously.  Attempts 
+have been made to block inconsistent operations and to alert users of such
+problems without interrupting execution.  A button in the lower left hand 
+corner of the main window serves to display the number of threads running. 
+If threads are running the button will become enabled and the user may click 
+the button to view the progress of the running threads.  The thread window 
+is always accessible via the <em>Thread Window</em> item under the 
+<em>Window</em> menu.
+</p>
+<p>
+The application requires an accelerator sequence to be selected (e.g. MEBT). 
+When a sequence has been selected, several buttons and menu items will become 
+enabled.  You can view and edit the field values of the correctors by opening 
+their windows under the <em>Window</em> menu.  The values will automatically 
+update when changes are made internal to the application.  To view fields 
+that may have been modified external to the application, you must hit 
+the refresh button.
+</p>
+<p>
+Operations initiated on the main window are targeted to the plane(s), 
+horizontal or vertical, checked.  For example, if a plane is checked it can 
+be flattened or calibrated otherwise it cannot.
+</p>
+<p>
+Please note that when editing values in a text field, you must hit the return 
+key for the values to be set.
+</p>
+
+<hr><br>
+<a name="startup_ref" <b>Start the Application:</b></a>
+<p>
+The basic steps for starting the application:
+<ol>
+<li> Make sure the latest version of xal.jar is in your Java classpath
+<li> Launch the application: <code> java -server gov.sns.apps.basicorbitcorrection.ControlApp </code>
+<li> The following Java properties may optionally be set:
+<table border=1>
+<tr> <th> Property </th> <th> Default </th> <th>Definition</th> </tr>
+<tr> <td> bpmAmplitudeMin </td> <td align=right> 10.0 </td> <td> Minimum BPM amplitude signal to accept the BPM reading </td> </tr>
+<tr> <td> orbitBufferSize </td> <td align=right> 25 </td> <td>number of orbit measurements over which to average </td> </tr>
+<tr> <td> OrbitBinTimeSpan </td> <td align=right> 0.1 </td> <td> width in seconds of the correlation window among BPM readings </td> </tr>
+<tr> <td> sampleDelay </td> <td align=right> 1000 </td> <td> milliseconds to wait between samples of corrector readings </td> </tr>
+<tr> <td> flushDelay </td> <td align=right> 2000 </td> <td> milliseconds to wait after changing correctors for readings to settle </td> </tr>
+<tr> <td> minSecondsBetweenCorrections </td> <td align=right> 30 </td> <td> seconds to wait between background corrections </td> </tr>
+<tr> <td> calibrationFieldExcursion </td> <td align=right> 0.001 </td> <td> calibration excursion in Tesla </td> </tr>
+<tr> <td> errorToleranceFactor </td> <td align=right> 2.0 </td> <td> threshold ratio of error to noise which triggers correction </td> </tr>
+</table>
+<li> Load the accelerator description file
+<ul>
+<li> Under the <em>File</em> menu, select <em>Open</em>.
+<li> Navigate to the optics file (probably named "main_source.xml"), select it and click <em>Open</em>.
+</ul>
+<li> Select an accelerator sequence (e.g. MEBT, DTL1, ...)
+<ul>
+<li> Under the <em>Sequence</em> menu, select the accelerator sequence by name
+</ul>
+</ol>
+</p>
+
+<hr><br>
+<a name="acknowledgements_ref" <b>Acknowledgements:</b></a>
+<p>
+Other third party libraries may have been used either directly or indirectly in 
+development of this application or the XAL framework upon which it relies.
+</p>
+<p>
+
+</p>
+
+</BODY>
+</HTML>

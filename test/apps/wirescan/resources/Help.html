@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Linux)">
+	<META NAME="CREATED" CONTENT="20040715;11445100">
+	<META NAME="CHANGED" CONTENT="20040715;12413600">
+	<STYLE>
+	<!--
+		@page { size: 8.5in 11in; margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in }
+		H6 { margin-bottom: 0.08in }
+		H6.western { font-family: "Luxi Sans", sans-serif; font-size: 10pt }
+		H6.cjk { font-family: "Mincho"; font-size: 10pt }
+		H6.ctl { font-size: 10pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><U>Wirescan Help</U></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><A HREF="#Introduction|outline"><SPAN STYLE="text-decoration: none">Introduction</SPAN></A></P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><A HREF="#Starting a scan|outline"><SPAN STYLE="text-decoration: none">Starting
+a scan</SPAN></A></P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><A HREF="#Scanning Operation|outline"><SPAN STYLE="text-decoration: none">Scanning
+Operation</SPAN></A></P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><A HREF="#Saving a scan setup &amp; scan data|outline"><SPAN STYLE="text-decoration: none">Saving
+a scan setup &amp; scan data</SPAN></A></P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><A HREF="#Acknowledgements|outline"><SPAN STYLE="text-decoration: none">Acknowledgements</SPAN></A></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<HR>
+<P><BR><BR>
+</P>
+<H6 CLASS="western"><A NAME="Introduction|outline"></A>Introduction</H6>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in">The wirescan application was
+created to automate the task of running a wirescanner and collecting
+data from it.  This application allows for a user to run any number
+of wirescanners in either a series or parallel fashion, view the
+results on plots and data tables, save the setup of the scan, and
+export the data to a standard ASCII text file.</P>
+<H6 CLASS="western"><A NAME="Starting a scan|outline"></A>Starting a
+scan</H6>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in">To begin a scan the
+accelerator must be chosen, in most cases this would be the default
+accelerator option.  Once the accelerator file has loaded, select the
+sequence you want to access wirescanners in.  A single sequence can
+be chosen or multiple, however if multiple sequences are chosen, they
+must be adjacent to one another.</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in"><BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in">A table will appear with a
+list of selectible wirescanners once the sequence(s) have been
+chosen.  The table will list the wirescanner's name, a checkbox to
+toggle whether or not to perform a scan with the wirescanner, and a
+progress bar to show the current progress of the scan.  A select all
+button has been provided for convienence.  A typical progress of a
+wirescanner will move the progress bar to the end and then retract
+the bar back to it's original position, thus emulating the
+wirescanner's physical progress.</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in"><BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in">Once the selection(s) have
+been made for the wirescanners to run, next choose the type of scan
+to perform.  The options are series, which will run each wirescanner
+in sequential order with one finishing and then the next starting, or
+parallel, which will run all selected wirescanners together at the
+same time.  The Start Scan button will being the scanning process.</P>
+<H6 CLASS="western"><A NAME="Scanning Operation|outline"></A>Scanning
+Operation</H6>
+<P>Each wirescanner's scan data will be displayed on individual tabs.
+ The tabbed windows include a chart displaying the current data and
+will plot fitted data once the scan is complete, a table with all
+post scan data, the current status, the current position, a button to
+view the chart in logarithmic scale, and an abort button to abort the
+individual scan.  On the main page there is an Abort All button which
+will abort the entire scanning process.  The table on the main window
+will show the wirescanner's progress in the last column.  After each
+individual wirescanner is complete, the data table will update with
+the post data and the chart will plot the fitted data.</P>
+<H6 CLASS="western"><A NAME="Saving a scan setup &amp; scan data|outline"></A>
+Saving a scan setup &amp; scan data</H6>
+<P>To save the setup, which includes the accelerator file selected,
+sequence(s), wirescanner(s), and type of scan, open the File menu and
+chose the Save As option.  Type in the desired file name and include
+the .wss extension on the end.  To restore the setup, start the
+application and from the File menu choose Open or the Open Recent
+option and chose the desired file and the setup will be restored.</P>
+<P>Once all wirescanners are complete, the Export Data button can be
+used on the main page to export data from all wirescanners to a
+standard ASCII text file for post scan viewing.</P>
+<H6 CLASS="western"><A NAME="Acknowledgements|outline"></A>Acknowledgements</H6>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in">This application was written
+primarily by Steven C. Bunch with contributions from John Galambos,
+Tom Pelaia, Paul Chu, and lots of good feedback from the accelerator
+operators.</P>
+</BODY>
+</HTML>

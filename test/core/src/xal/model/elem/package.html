@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Modeling Elements Package</title>
+</head>
+<body>
+<h1>Modeling Elements Package Library</h1>
+<p>
+This package provides classes for modeling hardware aspects of accelerator systems.
+</p>
+<h2>Element Descriptions</h2>
+
+<h3>IdealMagQuad</h3>
+<p>
+Focusing magnetic quadrupole element.  
+<br>- Uni-polar power supply
+<br>- Can be oriented as horizontally focusing (<code>IElectromagnet.ORIENT_HOR</code>) or 
+vertically focusing (<code>IElectromagnet.ORIENT_VER</code>).  
+</p>
+
+<h3>IdealMagSkewQuad2</h3>
+<p>
+Corrective magnetic quadrupole element.
+<br>- Bi-polar power supply
+<br>- <b>Cannot</b> be oriented (see <code>Javadoc</code>)
+<br>- Handles space charge correctly
+</p>
+
+<h3>IdealRolledMagQuad</h3>
+<p>
+This is the usual focusing quadrupole, with the additional property
+that it has been rolled with respect to the beam axis.  Presumeabley,
+this additional property is done <b>intentionally</b> in hardware.   It is
+<b>not</b> a misalignment.
+</p>
+
+
+
+<h4><br>NOTES</h4>
+<p>
+I think we need a convention for quadrupoles.  Some examples,
+<br>- I  orient <code>IdealMagSkewQuad2</code> to focus in quadrants 2 and 4
+for positive drive current and to focus in quadrants 1 and 3 for negative
+drive current.
+</p>
+<p>
+<br>- I think we need a better design for the 
+<code>IElectromagnet</code> interface, and magnets
+in general.  For example,
+I don't think <code>getOrientation()</code> makes
+sense, since this value is not dynamic.
+<br>- On the SMF side, <code>Magnet</code> has parameters
+that do not make sense for all its children 
+(i.e., the hierarchy is questionable).  For example,
+<code>isHorizontal()</code> and <code>isVertical</code>
+methods do not make sense for a skew quadrupole.
+</p>
+
+<p>
+<br>Christopher K. Allen
+<br><a href="mailto:allenck@ornl.gov">allenck@ornl.gov</a>
+<br>Created: January, 2008
+<br>Modified:
+</p>
+</body>
+</html>

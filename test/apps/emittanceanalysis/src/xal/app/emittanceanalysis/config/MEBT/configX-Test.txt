@@ -1,0 +1,34 @@
+DEBUG = true
+ADJUST = false
+
+Slit = MEBT_Diag:EMS_X
+Harp = MEBT_Diag:EMC_X
+
+SlitRb = DTL_Diag:BLM130:Slow1PulseBeamOnTotalLoss
+HarpRb = DTL_Diag:BLM334:Slow1PulseBeamOnTotalLoss
+Signal2 = Test_Diag:BPM01:Left:TBT
+Signal3 = Test_Diag:BPM01:Right:TBT
+Signal4 = Test_Diag:BPM01:Left:TBT2
+Signal5 = Test_Diag:BPM01:Right:TBT2
+
+Signal6 = Test_Diag:BPM01:Up:TBT
+Signal7 = Test_Diag:BPM01:Down:TBT
+Signal8 = Test_Diag:BPM01:Up:TBT2
+Signal9 = Test_Diag:BPM01:Down:TBT2
+# CorrectorX = PV_Name, x_coefficient, xp_coefficient, Min, Max, x_center, xp_center, forward_factor
+Corrector1 = MEBT_Mag:PS_DCH01:I_Set, 0.113, -1.084,-10,10, 27.0, 28.0, 0.5
+Corrector2 = MEBT_Mag:PS_DCH04:I_Set, -1.032, 0.591,-10,10, 27.0, 28.0, 0.5
+Corrector3 = MEBT_Mag:PS_DCH05:I_Set, 2.732, 0.472,-10,10, 27.0, 28.0, 0.5
+Corrector4 = MEBT_Mag:PS_DCH10:I_Set, 1.845,1.060,-10,10, 27.0, 28.0, 0.5
+
+SlitInitial = 19.0
+HarpInitial = 33.0
+SlitStepSize = 0.125
+HarpStepSlitSize = 0.125
+HarpSpan = 1
+HarpStepSize = 0.125
+RepRate = 4
+SlitSteps = 2
+Speed = 1
+StopTimeout = 120000
+

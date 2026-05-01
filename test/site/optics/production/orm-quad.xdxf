@@ -1,0 +1,382 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<!-- t6p: scale quadrupole fields based on Orbit Response Matrix measurements by Zhengzheng -->
+<xdxf date="11.25.2008" system="sns" ver="1.0.0">
+    <sequence id="Ring1">
+        <node id="Ring_Mag:QTV_A12">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_A13">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+    </sequence>
+    
+    <sequence id="Ring2">
+        <node id="Ring_Mag:QTV_B01">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B02">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B03">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B04">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B05">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B06">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B07">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B08">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B09">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B10">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B11">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_B12">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_B13">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C01">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_C02">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C03">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_C04">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C05">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_C06">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C07">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_C08">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C09">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+    </sequence>
+    
+    <sequence id="Ring3">
+        <node id="Ring_Mag:QTH_C10">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C11">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+    </sequence>
+
+    <sequence id="Ring4">
+        <node id="Ring_Mag:QTV_A01">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_A02">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_A03">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_A04">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_A05">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_A06">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_A07">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_A08">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_A09">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_C12">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_C13">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D01">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D02">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D03">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D04">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D05">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D06">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.979499" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D07">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9808977" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D08">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.985394" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D09">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9836519" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D10">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D11">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_D12">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTH_D13">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+    </sequence>
+    
+    <sequence id="Ring5">
+        <node id="Ring_Mag:QTH_A10">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.971403" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+        <node id="Ring_Mag:QTV_A11">
+            <channelsuite name="magnetsuite">
+                <transform name="orm" type="doubleScale" scale="0.9723891" />
+                <channel handle="fieldRB" transform="orm" />
+            </channelsuite>
+        </node>
+    </sequence>
+
+	<powersupplies>
+		<ps id="Ring_Mag:PS_QV01a09" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.9836519" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+		<ps id="Ring_Mag:PS_QH02a08" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.985394" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+		<ps id="Ring_Mag:PS_QV03a05a07" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.9808977" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+		<ps id="Ring_Mag:PS_QH04a06" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.979499" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+		<ps id="Ring_Mag:PS_QH10a13" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.971403" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+		<ps id="Ring_Mag:PS_QV11a12" type="main">
+		   <channelsuite name="pssuite">
+			  <transform name="orm" type="doubleScale" scale="0.9723891" />
+			  <channel handle="fieldSet" transform="orm" />
+			  <channel handle="psFieldRB" transform="orm" />
+			  <channel handle="B_Book" transform="orm" />
+		   </channelsuite>
+		</ps>
+	</powersupplies>
+</xdxf>

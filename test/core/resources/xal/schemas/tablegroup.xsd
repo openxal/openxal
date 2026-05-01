@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+	<xs:element name="tablegroup">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="table" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="schema">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="attribute" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="name" type="xs:string" use="required"/>												
+												<xs:attribute name="type" use="required">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:enumeration value="java.lang.String"/>
+															<xs:enumeration value="java.lang.Boolean"/>
+															<xs:enumeration value="java.lang.Integer"/>
+															<xs:enumeration value="java.lang.Double"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												
+												<xs:attribute name="isPrimaryKey" type="xs:boolean" use="required"/>
+												<xs:attribute name="defaultValue" type="xs:string"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+								<xs:unique name="table-attribute-name">
+									<xs:selector xpath="attribute"/>
+									<xs:field xpath="@name"/>
+								</xs:unique>								
+							</xs:element>
+							<xs:element name="record" maxOccurs="unbounded">								
+								<xs:complexType>
+									<xs:anyAttribute processContents="lax"/>
+								</xs:complexType>
+							</xs:element>							
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required"/>						
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	<xs:unique name="table-name">
+		<xs:selector xpath="table"></xs:selector>
+		<xs:field xpath="@name"></xs:field>
+	</xs:unique>
+	</xs:element>
+</xs:schema>

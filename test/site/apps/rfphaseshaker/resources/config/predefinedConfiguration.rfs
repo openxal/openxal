@@ -1,0 +1,6 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined RF Phase Shaker configurations">
+    <TEST tree_name = "ALL" text="Predefined RF Phase Shaker configurations">
+           <conf tree_name = "Test RF Phase Shaker config." url="rfs_test.rfs" text="The RF Phase Shakertest configuration with data."/>
+    </TEST>
+</CONFIGURATIONS>

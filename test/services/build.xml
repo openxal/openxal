@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Process all the services. -->
+<project name="services" basedir="." default="all">
+    <import file="../config/config.xml"/>
+    
+    <property name="build.path.pattern" value="*/build.xml" />
+
+    <!-- Build all the services which allow batch building. -->
+    <target name="all">
+        <subant target="build">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+
+	<!-- Build all the services which allow batch building and archive them relative to the shared library. -->
+	<target name="all-relative">
+		<subant target="build-relative">
+			<property name="batch.service.build" value="true" />
+			<fileset dir="." includes="${build.path.pattern}" />
+		</subant>
+	</target>
+
+    <!-- Build all the services which allow batch building and archive them standalone. -->
+    <target name="all-standalone">
+        <subant target="build-standalone">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    <!-- Compile all the services with only recommended warnings. -->
+    <target name="compile-warn">
+        <subant target="compile-warn">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    <!-- Compile all the services with all warnings. -->
+    <target name="compile-warn-all">
+        <subant target="compile-warn-all">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    
+    <!-- Build all the services including those excluded from batch building. -->
+    <target name="force-all">
+        <subant target="all">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+
+
+    <!-- jar-resources for all services which allow batch building. -->
+    <target name="jar-resources">
+        <subant target="jar-resources">
+            <property name="batch.service.build" value="true" />
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+
+    
+    <!-- Install all the services which allow installation. -->
+    <target name="install">
+        <subant target="install">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+    </target>
+    
+    
+    <!-- Clean all the services. -->
+    <target name="clean">
+        <subant target="clean">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+        
+        <delete dir="${services.build.jar.root}" />
+    </target>
+
+
+	<!-- purge the services build intermediates -->
+    <target name="purge-intermediates" description="Purge services build intermediates." >
+        <delete dir="${build.intermediates.services}" />
+        <echo message="Purged the services build intermediates directory!" />
+    </target>
+
+    
+    <!-- Purge the services install root. -->
+    <target name="purge-install">
+        <subant target="purge-install">
+            <fileset dir="." includes="${build.path.pattern}" />
+        </subant>
+        
+        <delete dir="${services.install.root}" />
+        
+        <echo message="Purged service installation!" />
+    </target>
+	
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help">
+		<echo message="Help for building services" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    all ........................ Compile the services which allow batch building and assemble the jar products according to the service.build.standalone property which is set to ${service.build.standalone}." />
+		<echo message="    all-relative ............... Compile the services which allow batch building and assemble the jar products with dependence on the common libraries." />
+		<echo message="    all-standalone ............. Compile the services which allow batch building and assemble the jar products as standalone services." />
+		<echo message="    clean ...................... Clean compiled classes and build products" />
+		<echo message="    force-all .................. Compile all services (regardless of whether they allow batch building) and assemble the jar products." />
+		<echo message="    install .................... Install all build products intended for distribution." />
+		<echo message="    jar-resources .............. Archive resources for all services supporting batch build." />
+		<echo message="    purge-install .............. Purge installed services." />
+		<echo message="    purge-intermediates ........ Purge the build intermediates directory for all services." />
+    </target>
+    
+</project>

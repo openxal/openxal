@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <style type="text/css">
+P.warning {font-size: large; font-weight: bold;}        
+  </style>
+  <title>Demo Application Help</title>
+</head>
+<body>
+<center><u>SaveCOmpare REstore (SCORE) Help</u></center>
+<p align="center"> 
+	<a href="#intro_ref" target="_self">Introduction</a>
+	<br>
+	<a href="#Database_Connection">Connection to the database - choose a group</a><br>
+	<a href="#Open">Opening a save set </a><br>
+	<a href="#View">Viewing Data from a save set</a><br>
+	<a href="#CreateSaveSet">Taking a snapshot (or save set)</a><br>
+	<a href="#CompareRestore_tag">Compare/Restore to Previously Saved Set</a>
+</p>
+<hr><br>
+<a name="intro_ref"><b>Introduction:</b></a>
+<p> The score application provides capability to: 1) save machine settings, 2) compare these settings to the live machine values, and 3) restore the machine to a set of saved values. The application is designed to work with the following heirarchy :</p>
+<ul>
+  <li>System (e.g. Front End, DTL, ...)</li>
+  <ul>
+    <li>Device Type (e.g., magnets,  dianostic, timing, ...)</li>
+  </ul>
+  <ul>
+    <ul>
+      <li>Sets of PV setpoints + readbacks (either setpoint or readback can be null)</li>
+    </ul>
+  </ul>
+</ul>
+<span style="text-decoration: underline; font-style: italic;">Window
+Components</span><br>
+The main window has the usual xal application file menu items on top, on the Left Hand Side are panels for selecting systems and device types to work with, and in the middle of the main widow is a tabbed panel with a seperate tab containing a table for each selected system. Finally, at the bottom of the window is a text field for abbreviated error and warning messages to the user.<br>
+<br style="font-style: italic; text-decoration: underline;">
+<br>
+<a name="Database_Connection"></a><span style="font-weight: bold;">Database connection - selecting a group to work with</span><br>
+<br>
+Click the "Open" tab if it is not already selected.<br>
+<br>
+By default, the applcation will try and conect you to the database with a generic account that has access to tables used by operations and physics. If you want to connect to the database a a different user (e.g. you need to snapshot to a specialized group table that has protection, such as RF or diagnostics) hit the connect button, and use your UCAMS account. If this does not work - conrtact Jeff Patton.<br>
+<br>
+Then select the group pulldown list (second from left on top)  to select the group you are onterested in.<br>
+<br>
+<span style="font-style: italic; text-decoration: underline;"><br>
+<a name="Open"></a></span><span style="font-weight: bold;">Opening a
+Save Set</span><br>
+<br>
+Once a group is selected - you can browse all the save sets for a given time range. Select the time range using the two two date selecttors at the top (you  can edit  any of the year- month-date- .. fields in these). Then click  the "fetch snapshots in Range" button. A list of avaiable  save sets will appear below - sorted by date, and also displaying the comment for each set. Click on the row you are interested in and then click"fetch selected snapshot" button.<br>
+<br>
+Note - if you just want an empty template of the save set (i.e. you just want to create a new save set and do not care at all about previous data), skip the "Fetch snapshots in Range" step above. Simply click the "fetch selected snapshot" button right after you have selected the group. This is useful  for creating the first save set.<br>
+<br>
+<br>
+<a name="View"></a><span style="font-weight: bold;">Viewing data from a Save Set </span><br>
+<br>
+Once a save set is selected you need to select the portion of it you wish to view. If you want to see everything, click the select all button near the bottom left corner.  Or you can select only the systems and subsystems in which you are interested. Select the "Score" tab to view the results if it isn't already selected.<br>
+<br>
+<span style="font-style: italic; text-decoration: underline;">Table display of Values</span><br>
+Within the Score table, device types are initially sorted alphbetically. For a given device type, the associated setpoint and readback PVs are sorted alphabetically by the PV names. Note that PVs for setpoints and for readback are treated differently (i.e. you can only "resore" setpoint values). It is not necessary to have both a setpoint and readback PV on the same table row.<br>
+<br>
+Also - there is a tab in the table panel labeled "comment". This is an editable text area for you to enter a description of the saved set.<br>
+<br>
+<i><u>Table layout:</u></i><br>
+<br>
+For each table row, there is a column for:<br>
+<ul>
+  <li>System (e.g. CCL, HEBT, Ring)</li>
+  <li>Signal Type (e.g. Magnet, BLM, RF)</li>
+  <li>Setpoint PV name</li>
+  <li>Setpoint saved value</li>
+  <li>Setpoint live value</li>
+  <li>Readback PV name</li>
+  <li>Readback saved value</li>
+  <li>Readback live value.</li>
+  <li>Setpoint relative error (absolute difference between live set point and saved set point relative to both values and summed)</li>
+  <li>Readback relative error (maximum of relative error between live readback and live setpoint and live readback and saved readback)</li>
+</ul>
+Generally, associated setpoint and readback PVs will be associated on the same row, but it is possible to have table rows with setpoint only or readback only treatments. You may sort rows by column by clicking on the column header. It may be particularly useful to sort rows by relative error or PV name. You may also filter rows by typing matching text into the filter field at the top of the table.<br>
+<br>
+<u><i>Table display behavior</i></u><br>
+<br>
+If a readback value is more than a user settable fractional different from the saved value, it is displayed in red. The live value displays are updated at 0.5 Hz.<br>
+<br>
+<u><i>Error reporting</i></u><br>
+<br>
+When you request an action such as updating the present saved values, or restoring the machine to the present saved values some error
+checking is done. When one of these actions is requested, a check is done on each PV action for a specified timeOut period (currently = 3 seconds). Any failed readback or setpoint actions are reported to the console (in red). The console output can be viewed by;cliking the "view" menu item on the top menu bar and then selecting console. An abbreviated message is shown in the lower error text field.<br>
+<p></p>
+<hr><span style="font-weight: bold;"><a name="CreateSaveSet"></a>Create a save set of the machine.</span><br>
+<br>
+If you want to take a snapshot of machine settings, first open a save set following the database connection and "opening a save set" instructions above. Please edit the comment tab appropriately. Then click the "Snap n save" button on the toolbar. The timestamp for this save set is done automatically (even if you try a "save as" operation). Also, when you do a snapshot, if there are any errors in the operation, you will be notified by a message in thetect error field at tthe bottom,  and pointed to the "view -&gt; console" to see details.<br>
+<br>
+Note: when you create a save-set there is an automatic entry into the e-log. Be sure you have made a reasonable entry into the "comment" tab.<br>
+<br>
+<a name="CompareRestore_tag"></a> <b>Compare / Restore to an existing File</b><br>
+<br>
+<span style="font-style: italic; text-decoration: underline;">Compare</span><br>
+<br>
+If someone already saved the machine state to a file and want to comapre to it, first open a save set following the database connection and "opening a save set" instructions above. Then folow the "viewing instructions above to compare live values with the saved ones.<br>
+<br>
+<span style="text-decoration: underline; font-style: italic;">Restore\</span><br>
+<br>
+If you want to update the present machine setpoints to those in the tables, click the "restore" button. <br>
+<br>
+Note - only selected rows of the table you are looking at are restored. You can select rows by clicking on them (the usual multiple-selection features of drag, click with control, and click with shift work). <br>
+<br>
+When you click restore, you will be prompted to see if you want to proceed. Also, a check is done to see if any of the resore PVs did not succeed (within 3 seconds). All setpoint failures are reported to the console window, which is viewable by cliking the "view" menu item on the top menu bar and selecting console.<br>
+</body>
+</html>

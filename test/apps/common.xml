@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="common.apps.config" basedir="." default="build">
+    <import file="../config/config.xml" />
+
+    <!-- the value for these properties are overriden if specified in the beginning of the app's build file before any tasks are defined -->
+	<property name="classpath.ref" value="default.classpath" />
+	<property name="manifest.classpath" value="../lib/xal-shared.jar" />
+    <property name="mainclass.base" value="Main" />
+
+	<!-- determine the correct target for building an app using the "build" target -->
+	<condition property="build.target" value="build-standalone" else="build-relative">
+		<istrue value="${app.build.standalone}" />
+	</condition>
+
+
+    <!-- Initialization for the application build -->
+    <target name="init">
+        <dirname property="apps.src.root" file="${ant.file.common.apps.config}" />
+        
+        <property environment="env" />
+
+		<!-- The application name is synonymous with the directory within which the application's build file resides (i.e. ${basedir}).-->
+		<basename property="appname" file="${basedir}"/>
+
+		<property name="app.package.prefix" value="xal.app" />
+		<property name="mainclass" value="${app.package.prefix}.${appname}.${mainclass.base}" />
+        <property name="app.ref" value="${appname}" />
+        <property name="app.src.root" value="${apps.src.root}/${app.ref}" />
+        <property name="app.build.jar" value="${apps.build.jar.root}/${appname}.jar" />
+        <property name="app.relative.path" value="xal/app/${appname}" />
+        <property name="app.install.jar" value="${apps.install.root}/${appname}.jar" />
+
+        <property name="app.intermediates.root" value="${build.intermediates.apps}/${appname}" />
+        <property name="app.compile.root" value="${app.intermediates.root}/compile" />
+        <property name="app.intermediates.lib.root" value="${app.intermediates.root}" />
+        <property name="app.intermediates.resources" value="${app.compile.root}/${app.relative.path}/resources" />
+
+		<property name="site.app.root" value="${site.apps.root}/${app.ref}" />
+		<property name="site.app.resources" value="${site.app.root}/resources" />
+
+        <!-- determine whether building should be allowed -->
+        <!-- don't build if the build is a batch build and this project explicitly excludes batch building -->
+        <condition property="allows.build">
+            <not>
+                <and>
+                    <isset property="batch.app.build" />
+                    <isset property="exclude.batch.build" />
+                </and>
+            </not>
+        </condition>
+        
+        <!-- determine whether deployment should be allowed -->
+        <!-- don't deploy if this project explicitly excludes batch building -->
+        <condition property="allows.install">
+            <not>
+                <isset property="exclude.install" />
+            </not>
+        </condition>
+
+		<!-- define a patternset and enable reference by ID -->
+		<patternset id="pattern.app.lib">
+			<include name="lib/*.jar" />
+		</patternset>
+
+		<!-- fileset for the application's libraries -->
+		<fileset id="fileset.app.lib" dir="${app.src.root}">
+			<patternset refid="pattern.app.lib" />
+		</fileset>
+
+		<!-- sets the property if there are any libraries to process -->
+		<pathconvert refid="fileset.app.lib" property="app.has.libs" setonempty="false"/>
+
+        <mkdir dir="${build.root}" />
+        
+        <echo message="Conditionally processing ${appname}" />
+    </target>
+    
+    
+    <!-- classpath to be referenced -->
+	<path id="default.classpath">
+		<pathelement location="${build.jar.lib.root}/xal-shared.jar" />
+	</path>
+
+	
+	<!-- Macro to compile the core XAL classes using the specified compiler flag -->
+	<macrodef name="compile-flagged">
+		<attribute name="flag" default="-Xlint:none" />
+		<sequential>
+			<!-- Verify that the main class file exists for the app, otherwise it is an error. -->
+			<available file="${app.src.root}/${source.code.dir}/${app.relative.path}/${mainclass.base}.java" property="has.main.class" />
+			<fail message="${appname} is missing main class, ${mainclass.base}. You may need to specify the &quot;mainclass.base&quot; property in the app's build file to identify the correct main class." unless="has.main.class" />
+
+            <mkdir dir="${app.compile.root}" />
+            <javac srcdir="${app.src.root}/${source.code.dir}" includes="**" destdir="${app.compile.root}" debug="true" source="${build.compile.java.source}" target="${build.compile.java.target}" bootclasspath="${xal.bootclasspath}" includeAntRuntime="no" deprecation="true">
+                <compilerarg value="@{flag}" />
+                
+                <!-- compile against the common libraries (e.g. xal-shared.jar) -->
+                <classpath refid="${classpath.ref}" />
+                
+                <!-- compile against any app specific jars in the app's lib directory -->
+				<classpath>
+					<pathelement location="${app.intermediates.lib.root}/lib.jar" />
+				</classpath>
+            </javac>
+
+			<!-- Copy the application's resources (including site specific) into the compile directory -->
+			<mkdir dir="${app.intermediates.resources}" />
+			<copy todir="${app.intermediates.resources}" quiet="true" failonerror="false" overwrite="true">
+				<fileset dir="${app.src.root}/resources" />
+				<fileset dir="${site.app.resources}" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+	
+	<!-- Compile the core XAL classes using the lint flag to show some recommended warnings -->
+    <target name="compile-warn-mandatory" depends="init, jar-lib" if="allows.build">
+		<compile-flagged />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes using the lint flag to show all recommended warnings -->
+    <target name="compile-warn-all" depends="init, jar-lib" if="allows.build">
+		<compile-flagged flag="-Xlint" />
+    </target>
+	
+	
+	<!-- Compile the core XAL classes reporting only mandated warnings -->
+    <target name="compile" depends="init, jar-lib" if="allows.build">
+		<compile-flagged flag="-Xlint" />
+    </target>
+
+
+	<!-- Join the third party jars into a common external jar file -->
+    <target name="jar-lib" depends="init" if="app.has.libs">
+        <mkdir dir="${app.intermediates.lib.root}" />
+        <jar compress="true" jarfile="${app.intermediates.lib.root}/lib.jar" duplicate="preserve">
+			<zipgroupfileset id="app.lib.group" dir="${app.src.root}">
+				<patternset refid="pattern.app.lib" />
+			</zipgroupfileset>
+        </jar>
+    </target>
+
+
+	<!-- Jar the application's resources as a convenience if one wants to use it. It isn't referenced elsewhere. -->
+	<target  name="jar-resources" depends="compile">
+		<jar compress="true" jarfile="${app.intermediates.root}/resources.jar">
+			<fileset dir="${app.compile.root}">
+				<exclude name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+
+    
+    <!-- Archive the application either referencing the common libraries or as standalone with the common libraries embedded -->
+    <macrodef name="archive">
+        <element name="embed-other" optional="yes" />
+        <sequential>
+            <mkdir dir="${build.jar.root}" />
+            <mkdir dir="${apps.build.jar.root}" />
+			<mkdir dir="${app.intermediates.lib.root}" />
+            <jar jarfile="${app.build.jar}" compress="true" basedir="${app.compile.root}" includes="${app.relative.path}/**/*">
+                <manifest>
+                    <attribute name="Manifest-Version" value="1.0" />
+                    <attribute name="Main-Class" value="${mainclass}" />
+                    <attribute name="Class-Path" value="${manifest.classpath}" />
+                </manifest>
+                
+                <!-- merge any app specific libraries in the app's lib directory into the app's jar -->
+                <zipgroupfileset dir="${app.intermediates.lib.root}">
+                    <patternset>
+                        <include name="lib.jar" />
+                    </patternset>
+                </zipgroupfileset>
+                
+                <!-- optionally embed other items into the archive -->
+                <embed-other />
+            </jar>
+        </sequential>
+    </macrodef>
+
+    
+    <!-- Archive the application and any of its app specific libraries into a jar file with relative dependency on the common libraries -->
+    <target name="jar" depends="init, compile" if="allows.build">
+		<mkdir dir="${app.intermediates.lib.root}" />
+		<archive />
+    </target>
+    
+    
+    <!-- Archive the application, any of its app specific libraries and the common libraries into a standalone jar file -->
+    <target name="jar-standalone" depends="init, compile" if="allows.build">
+		<mkdir dir="${app.intermediates.lib.root}" />
+        <archive>
+            <embed-other>
+                <!-- embed the core and external libraries into the application's archive -->
+                <zipgroupfileset dir="${build.jar.lib.root}">
+                    <include name="xal-shared.jar" />
+                </zipgroupfileset>
+            </embed-other>
+        </archive>
+    </target>
+    
+    
+    <!-- Install the application in the apps directory under the install directory -->
+    <target name="install" depends="build" if="allows.install">
+        <copy file="${app.build.jar}" todir="${apps.install.root}" />
+        <echo message="${appname} installed!"/>
+    </target>
+    
+    
+    <!-- Purge the application from the install root. -->
+    <target name="purge-install" depends="init">
+        <delete file="${app.install.jar}" quiet="true" />
+        <echo message="Purged: ${app.install.jar}" />
+    </target>
+    
+    
+    <!-- Run the application -->
+    <target name="run" depends="init,jar" description="Run application.">
+    	<java jar="${app.build.jar}" fork="true" />
+    </target>
+
+
+    <!-- Synonym for the "build" target -->
+    <target name="all" depends="build" description="Build everything." if="allows.build" />
+	
+    
+    <!-- Build the application and place it in the apps directory under the build directory -->
+    <target name="build" depends="init" description="Build everything." if="allows.build">
+		<antcall target="${build.target}" />
+    </target>
+
+
+	<!-- Build the application relative to the shared library and place it in the apps directory under the build directory -->
+	<target name="build-relative" depends="init, jar" description="Build everything." if="allows.build">
+		<echo message="${appname} built!" />
+	</target>
+
+
+    <!-- Build the application standalone and place it in the apps directory under the build directory -->
+    <target name="build-standalone" depends="init, jar-standalone" description="Build everything." if="allows.build">
+        <echo message="${appname} built standalone!" />
+    </target>
+
+    
+    <!-- Clean the application build files -->
+    <target name="clean" depends="init" description="Clean all build products.">
+        <delete dir="${app.intermediates.root}" quiet="true" />
+        <delete file="${app.build.jar}"/>
+        <delete dir="${build.root}/javadoc/apps/${appname}" />
+    </target>
+
+
+	<!-- purge the application's build intermediates -->
+    <target name="purge-intermediates" depends="init" description="Purge the application's build intermediates." >
+        <delete dir="${app.intermediates.root}" />
+        <echo message="Purged the build intermediates directory for ${appname}!" />
+    </target>
+
+	
+	<!-- provide guidance on the various targets -->
+    <target name="help" depends="init">
+		<echo message="Help for building the ${appname} application!" />
+		<echo message="Usage: ant [ant options] target1 [target2 | target3 | ... ]" />
+		<echo message="" />
+		<echo message="  where target(s) can be:" />
+		<echo message="    help ....................... Print this message." />
+		<echo message="    build ...................... Compile the application and assemble the jar product according to the app.build.standalone property which is set to ${app.build.standalone}." />
+		<echo message="    build-relative ............. Compile the application and assemble the jar product relative to the shared library." />
+		<echo message="    build-standalone ........... Compile the application and assemble the jar product as standalone application." />
+		<echo message="    clean ...................... Clean compiled classes and build product" />
+		<echo message="    compile .................... Compile the application reporting all recommended warnings." />
+		<echo message="    compile-warn-all ........... Compile the application reporting all recommended warnings." />
+		<echo message="    compile-warn-mandatory ..... Compile the application reporting only mandated warnings." />
+		<echo message="    install .................... Install the application for distribution." />
+		<echo message="    purge-install .............. Purge the installed application." />
+		<echo message="    purge-intermediates ........ Purge the application's build intermediates directory." />
+    </target>
+
+</project>

@@ -1,0 +1,321 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Wed Aug 22 10:14:00 EDT 2012" version="1.0.0">
+    <RootBrick>
+        <ViewNode height="400" tag="ScreenCaptureDialog" width="500">
+            <ViewProxy type="javax.swing.JDialog" />
+            <ViewNode tag="Vertical Box">
+                <ViewProxy type="javax.swing.Box_Vertical" />
+                <ViewNode tag="Vertical Glue">
+                    <ViewProxy type="javax.swing.Box_VerticalGlue" />
+                </ViewNode>
+                <ViewNode tag="Horizontal Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                    </ViewNode>
+                    <ViewNode tag="ScreenCaptureCancelButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="Cancel" />
+                    </ViewNode>
+                    <ViewNode tag="ScreenCaptureRegionButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="Capture Region" />
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                    </ViewNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="863" tag="MainWindow" width="1175">
+            <ViewProxy type="javax.swing.JFrame" />
+            <BeanProperty name="title" value="Lab Book" />
+            <ViewNode tag="Main View">
+                <ViewProxy type="javax.swing.Box_Vertical" />
+                <ViewNode tag="Main Tabbed Pane">
+                    <ViewProxy type="javax.swing.JTabbedPane" />
+                    <ViewNode tag="Summary Box">
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Summary" />
+                        <ViewNode tag="Header Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
+                            <ViewNode tag="Title Box">
+                                <ViewProxy type="javax.swing.Box_Horizontal" />
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder" />
+                                    <BeanProperty name="title" value="Entry Title" />
+                                </BorderNode>
+                                <ViewNode tag="TitleField">
+                                    <ViewProxy type="javax.swing.JTextField" />
+                                    <BeanProperty name="text" value="Physics Shift Summary" />
+                                    <BeanProperty height="22" name="minimumSize" width="8" />
+                                    <BeanProperty height="22" name="preferredSize" width="100" />
+                                    <BeanProperty height="22" name="maximumSize" width="250000" />
+                                    <BeanProperty name="toolTipText" value="Entry Title" />
+                                    <BeanProperty name="verifyInputWhenFocusTarget" value="false" />
+                                </ViewNode>
+                                <BorderNode tag="Titled Border">
+                                    <BorderProxy type="javax.swing.border.TitledBorder" />
+                                    <BeanProperty name="title" value="Entry Title" />
+                                </BorderNode>
+                            </ViewNode>
+                            <ViewNode tag="ShiftSummaryCheckBox">
+                                <ViewProxy type="javax.swing.JCheckBox" />
+                                <BeanProperty name="selected" value="true" />
+                                <BeanProperty name="text" value="Summary" />
+                                <BeanProperty name="label" value="Shift Summary" />
+                                <BeanProperty name="toolTipText" value="Check to mark entry as a shift summary" />
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="Summary Scroll Pane">
+                            <ViewProxy type="javax.swing.JScrollPane" />
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Summary" />
+                            </BorderNode>
+                            <ViewNode tag="SummaryTextArea">
+                                <ViewProxy type="javax.swing.JTextArea" />
+                                <BeanProperty fontName="Courier" name="font" size="13" style="0" />
+                            </ViewNode>
+                            <BorderNode tag="Titled Border">
+                                <BorderProxy type="javax.swing.border.TitledBorder" />
+                                <BeanProperty name="title" value="Summary" />
+                            </BorderNode>
+                        </ViewNode>
+                        <ViewNode tag="Summary Button Box">
+                            <ViewProxy type="javax.swing.Box_Horizontal" />
+                            <BeanProperty name="name" value="Button Box" />
+                            <ViewNode tag="MachineSummarizeButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="Machine Summary" />
+                                <BeanProperty name="toolTipText" value="Insert Machine Summary" />
+                            </ViewNode>
+                            <ViewNode tag="PVLoggerSnapshotButton">
+                                <ViewProxy type="javax.swing.JButton" />
+                                <BeanProperty name="text" value="PV Logger Snapshot" />
+                                <BeanProperty name="toolTipText" value="Take a PV Logger snapshot for the default group" />
+                            </ViewNode>
+                            <ViewNode tag="Horizontal Glue">
+                                <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="Details Box">
+                        <ViewProxy type="javax.swing.Box_Vertical" />
+                        <BeanProperty name="name" value="Details" />
+                        <ViewNode tag="Details Scroll Pane">
+                            <ViewProxy type="javax.swing.JScrollPane" />
+                            <ViewNode tag="DetailsEditorPane">
+                                <ViewProxy type="javax.swing.JEditorPane" />
+                                <BeanProperty name="contentType" value="text/html" />
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="ImagesSplitPane">
+                        <ViewProxy type="javax.swing.JSplitPane" />
+                        <BeanProperty name="dividerLocation" value="256" />
+                        <BeanProperty name="name" value="Images" />
+                        <ViewNode tag="File Tabs">
+                            <ViewProxy type="javax.swing.JTabbedPane" />
+                            <ViewNode tag="Image File Box">
+                                <ViewProxy type="javax.swing.Box_Vertical" />
+                                <BeanProperty name="name" value="Files" />
+                                <ViewNode tag="Image Files Scroll Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane" />
+                                    <BeanProperty name="name" value="Images" />
+                                    <ViewNode tag="ImageFilesTable">
+                                        <ViewProxy type="javax.swing.JTable" />
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Image Files Button Box">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <ViewNode tag="ImageFilesRefreshButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Refresh24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Refresh file list" />
+                                    </ViewNode>
+                                    <ViewNode tag="ImageBrowseButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Open24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Open other file" />
+                                    </ViewNode>
+                                    <ViewNode tag="ScreenImageCaptureButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="custom" iconName="snapshot24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Capture an image of the selected region of the screen" />
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Image Folders">
+                                <ViewProxy type="javax.swing.Box_Vertical" />
+                                <BeanProperty name="name" value="Watch" />
+                                <ViewNode tag="Image Folder Scroll Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane" />
+                                    <ViewNode tag="ImageFolderList">
+                                        <ViewProxy type="javax.swing.JList" />
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Image Folders Button Box">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <ViewNode tag="ImageFolderDeleteButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Delete24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Remove selected folders from the watch list" />
+                                    </ViewNode>
+                                    <ViewNode tag="ImageFolderAddButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Add24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Add a folder to watch" />
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="ImageListSplitPane">
+                            <ViewProxy type="javax.swing.JSplitPane" />
+                            <BeanProperty name="orientation" value="0" />
+                            <BeanProperty name="dividerLocation" value="200" />
+                            <ViewNode tag="ImageTableScrollPane">
+                                <ViewProxy type="javax.swing.JScrollPane" />
+                                <ViewNode tag="ImageTable">
+                                    <ViewProxy type="javax.swing.JTable" />
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Image Preview Pane">
+                                <ViewProxy type="javax.swing.JTabbedPane" />
+                                <ViewNode customBeanClass="xal.app.labbook.ImagePanel" tag="ImagePreviewPanel">
+                                    <ViewProxy type="javax.swing.JPanel" />
+                                    <BeanProperty name="name" value="Preview" />
+                                    <BorderNode tag="Raised Bevel">
+                                        <BorderProxy type="javax.swing.border.BevelBorder_Raised" />
+                                    </BorderNode>
+                                    <BorderNode tag="Raised Bevel">
+                                        <BorderProxy type="javax.swing.border.BevelBorder_Raised" />
+                                    </BorderNode>
+                                </ViewNode>
+                                <ViewNode tag="ImageTextScrollPane">
+                                    <ViewProxy type="javax.swing.JScrollPane" />
+                                    <BeanProperty name="name" value="Comment" />
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Comment" />
+                                    </BorderNode>
+                                    <ViewNode tag="ImageTextArea">
+                                        <ViewProxy type="javax.swing.JTextArea" />
+                                        <BeanProperty name="text" value="" />
+                                    </ViewNode>
+                                    <BorderNode tag="Titled Border">
+                                        <BorderProxy type="javax.swing.border.TitledBorder" />
+                                        <BeanProperty name="title" value="Comment" />
+                                    </BorderNode>
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                    <ViewNode tag="AttachmentsSplitPane">
+                        <ViewProxy type="javax.swing.JSplitPane" />
+                        <BeanProperty name="dividerLocation" value="256" />
+                        <BeanProperty name="name" value="Attachments" />
+                        <ViewNode tag="File Tabs">
+                            <ViewProxy type="javax.swing.JTabbedPane" />
+                            <ViewNode tag="Attachment File Box">
+                                <ViewProxy type="javax.swing.Box_Vertical" />
+                                <BeanProperty name="name" value="Files" />
+                                <ViewNode tag="Attachment Files Scroll Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane" />
+                                    <BeanProperty name="name" value="Images" />
+                                    <ViewNode tag="AttachmentFilesTable">
+                                        <ViewProxy type="javax.swing.JTable" />
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Attachment Files Button Box">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <ViewNode tag="AttachmentFilesRefreshButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Refresh24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Refresh file list" />
+                                    </ViewNode>
+                                    <ViewNode tag="AttachmentBrowseButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Open24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Open other file" />
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                            <ViewNode tag="Attachment Folders">
+                                <ViewProxy type="javax.swing.Box_Vertical" />
+                                <BeanProperty name="name" value="Watch" />
+                                <ViewNode tag="Attachment Folder Scroll Pane">
+                                    <ViewProxy type="javax.swing.JScrollPane" />
+                                    <ViewNode tag="AttachmentFolderList">
+                                        <ViewProxy type="javax.swing.JList" />
+                                    </ViewNode>
+                                </ViewNode>
+                                <ViewNode tag="Attachment Folders Button Box">
+                                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                                    <ViewNode tag="Horizontal Glue">
+                                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                                    </ViewNode>
+                                    <ViewNode tag="AttachmentFolderDeleteButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Delete24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Remove selected folders from the watch list" />
+                                    </ViewNode>
+                                    <ViewNode tag="AttachmentFolderAddButton">
+                                        <ViewProxy type="javax.swing.JButton" />
+                                        <BeanProperty group="general" iconName="Add24.gif" name="icon" />
+                                        <BeanProperty name="text" value="" />
+                                        <BeanProperty name="toolTipText" value="Add a folder to watch" />
+                                    </ViewNode>
+                                </ViewNode>
+                            </ViewNode>
+                        </ViewNode>
+                        <ViewNode tag="AttachmentTableScrollPane">
+                            <ViewProxy type="javax.swing.JScrollPane" />
+                            <ViewNode tag="AttachmentTable">
+                                <ViewProxy type="javax.swing.JTable" />
+                            </ViewNode>
+                        </ViewNode>
+                    </ViewNode>
+                </ViewNode>
+                <ViewNode tag="Main Button Box">
+                    <ViewProxy type="javax.swing.Box_Horizontal" />
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder" />
+                    </BorderNode>
+                    <ViewNode tag="MainMessageLabel">
+                        <ViewProxy type="javax.swing.JLabel" />
+                        <BeanProperty name="text" value="" />
+                    </ViewNode>
+                    <ViewNode tag="Horizontal Glue">
+                        <ViewProxy type="javax.swing.Box_HorizontalGlue" />
+                    </ViewNode>
+                    <ViewNode tag="PublishButton">
+                        <ViewProxy type="javax.swing.JButton" />
+                        <BeanProperty name="text" value="Publish" />
+                        <BeanProperty name="toolTipText" value="Publish to the logbook" />
+                    </ViewNode>
+                    <BorderNode tag="Etched Border">
+                        <BorderProxy type="javax.swing.border.EtchedBorder" />
+                    </BorderNode>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>

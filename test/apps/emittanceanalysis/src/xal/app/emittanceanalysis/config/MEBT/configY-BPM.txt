@@ -1,0 +1,27 @@
+Slit = MEBT_Diag:EMS_Y
+Harp = MEBT_Diag:EMC_Y
+
+SlitRb = MEBT_Diag:EMS_Y:PosmmMon
+HarpRb = MEBT_Diag:EMC_Y:PosmmMon
+
+Signal2 = Test_Diag:BPM01:Left:TBT
+Signal3 = Test_Diag:BPM01:Right:TBT
+Signal4 = Test_Diag:BPM01:Left:TBT2
+Signal5 = Test_Diag:BPM01:Right:TBT2
+
+Signal6 = Test_Diag:BPM01:Up:TBT
+Signal7 = Test_Diag:BPM01:Down:TBT
+Signal8 = Test_Diag:BPM01:Up:TBT2
+Signal9 = Test_Diag:BPM01:Down:TBT2
+
+SlitInitial = 21
+HarpInitial = 37
+SlitStepSize = 0.125
+HarpStepSlitSize = 0.125
+HarpSpan = 9
+HarpStepSize = 0.125
+RepRate = 8
+SlitSteps = 80
+Speed = 1
+StopTimeout = 120000
+

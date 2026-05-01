@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>Saddam Help</title>
+</head>
+<body>
+<div style="text-align: center;">&nbsp;<span style="font-weight: bold;">
+Saddam- </span><span
+ style="text-decoration: underline; font-weight: bold;">S</span><span
+ style="font-weight: bold;">et </span><span
+ style="text-decoration: underline; font-weight: bold;">A</span><span
+ style="font-weight: bold;">lot of </span><span
+ style="text-decoration: underline; font-weight: bold;">D</span><span
+ style="font-weight: bold;">ifferent </span><span
+ style="text-decoration: underline; font-weight: bold;">D</span><span
+ style="font-weight: bold;">evices </span><span
+ style="text-decoration: underline; font-weight: bold;">A</span><span
+ style="font-weight: bold;">ll </span><span
+ style="text-decoration: underline; font-weight: bold;">M</span><span
+ style="font-weight: bold;">utually</span><br>
+</div>
+<br>
+This is a "global lknob" application. It alows the user to select a
+portion of the accelerator to work with,&nbsp; and change a
+characteristic of all like devices withing the selected accelerator
+sequence.<br>
+<br>
+At present there is only a minimal set of "PV"s available for global
+knobing. If there is another one you are interested in having added,
+contact John Galambos (jdg@ornl.gov).<br>
+<br>
+<br>
+<a href="#Quick_Start">Quick Start</a><br>
+<br>
+<a name="Quick_Start"></a>Quick Start<br>
+<br>
+<ul>
+  <li>First select the part of the accelerator you want to work with
+using the Accelerator -&gt; sequence pull down menu on top. You can
+create a customized accelerator sequence using the&nbsp; "New Combo
+Sequence" option.&nbsp; You must select a contiguous set of accelerator
+porions though.
+  </li>
+</ul>
+<ul>
+  <li>A set of device types withing the selected sequence is then
+displayed in the "Device Type" list selection box.&nbsp; Pick the
+device type you are intterested in.</li>
+  <li>Then the set of PV types for the selected device type appears in
+the "PV Choice" list selection. Pick the PV you want to change.</li>
+  <li>If the PV you selected has only certain allowed set values (e.g.
+the trigger type for a diagnostic):</li>
+  <ul>
+    <li>these allowed values will appear in the Select Value list. Pick
+one.&nbsp; 
+    </li>
+  </ul>
+  <li>Otherwise pick an option from the "Action Choice" box:<br></li>
+  <ul>
+    <li>Set Value = set all the PVs to this value</li>
+    <li>Increment value = increment the present set point value of all
+the PVs by this amount (adds it)</li>
+    <li>Multiply Value = multiply the present setpoint value by this
+amount</li>
+  </ul>
+  <li>Fill in the value to use in the prescribed action above in the
+"Set Value" text field (be sure to hit return)</li>
+  <li>Hit "Confirm"&nbsp; to get a list of the PVs you are about to
+affect (see text box)
+  </li>
+  <li>If you are happy with everything, hit "Set'em".&nbsp; If some
+connections cannot be made, an error message apears in the text box. <br>
+  </li>
+</ul>
+<br>
+<br>
+To Do<br>
+<br>
+- At present there is no save/open capability.<br>
+- Add an "undo" button.<br>
+- List each unconnected PV in the text box - not just number of
+unconnected PVs.<br>
+<br>
+<br>
+</body>
+</html>

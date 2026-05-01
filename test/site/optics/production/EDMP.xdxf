@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE xdxf SYSTEM "xdxf.dtd">
+<xdxf date="02.23.2016" system="sns" ver="2.0.0">
+    <sequence id="EDmp">
+        <node id="EDmp_Mag:QH01">
+            <attributes>
+                <magnet dfltMagFld="2.5957017040087145"/>
+            </attributes>
+        </node>
+        <node id="EDmp_Mag:QV02">
+            <attributes>
+                <magnet dfltMagFld="-2.194894823242663"/>
+            </attributes>
+        </node>
+    </sequence>
+</xdxf>

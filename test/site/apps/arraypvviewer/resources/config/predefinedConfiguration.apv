@@ -1,0 +1,6 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined Array PVs Viewer configurations">
+    <TEST tree_name = "TEST" text="Predefined Viewer configuration as a test.">
+           <conf tree_name = "Test Array PVs Viewer config." url="test.apv" text="The test configuration with data."/>
+    </TEST>
+</CONFIGURATIONS>

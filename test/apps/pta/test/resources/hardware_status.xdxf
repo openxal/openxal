@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf date="Wed Aug 20 09:14:52 EDT 2008" version="1.0.0">
+    <sequence id="LDmp">
+        <node exclude="false" id="LDmp_Diag:BPM01" status="false"/>
+    </sequence>
+    <sequence id="SCLHigh">
+        <node exclude="false" id="SCL_Diag:BPM22" status="false"/>
+    </sequence>
+    <sequence id="Ring2">
+        <node exclude="true" id="Ring_Diag:BLM_B11d" status="true"/>
+        <node exclude="true" id="Ring_Diag:BLM_B13" status="true"/>
+        <node exclude="false" id="Ring_Diag:BPM_C04" mod-comment="Electrode broken. Can&apos;t be fixed until next shutdown." status="false"/>
+    </sequence>
+    <sequence id="HEBT1">
+        <node exclude="false" id="HEBT_Diag:BPM07" status="false"/>
+        <node exclude="false" id="HEBT_Diag:BPM09" status="false"/>
+    </sequence>
+</xdxf>

@@ -1,0 +1,10 @@
+Chrom_623_620.dat file is valid for wp (6.23, 6.20), with quad
+settings: -4.250587 3.909989 3.617235 -3.023992 -4.116582 3.766255 (in
+the ording required by tune portion of application)
+
+Also, file has been modified to reduce grid size from natural
+chromaticity for (6.23, 6.20) to zero chromaticity, because sextupole
+strengths are unipolar.  To prevent sign changes in strenghts, some
+strengths which were very close to zero on the edges of the grid (near
+the natural chromaticity) were set to zero.  Original grid that this
+file came from with all MAD results is named Chrom_623_620_original.

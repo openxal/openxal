@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>Open XAL Plugins</title>
+	<style>
+		table {background-color: #DDD; border-collapse: collapse; margin: 2em;}
+		table th, table td { margin: 5px; border-style: solid; border-width: 1.0px; border-color: black; padding-left: 10px; padding-right: 10px; }
+		table th { padding-left: 2em; padding-right: 2em; background-color: #BBB; }
+		table td.numeric { text-align: right; color: maroon; padding-left: 2em; }
+		table td.plain { margin: 0px; border-style: none; }
+	</style>
+  </head>
+  <body>
+    <h2>Open XAL Plugins</h2>
+    <p>Open XAL Plugins are identical to Extensions with the exception that the core requires at least (and in some cases exactly) one plugin of a specified type at runtime. The table below lists the required plugins and current options.</p>
+	<table class="data">
+		<caption>Open XAL Plugins</caption>
+		<tr> <th>Plugin Label</th> <th>Allows Multiple</th> <th>Core Accessor</th> <th>Plugin Provider</th> <th>Extend/Implement</th> <th>Implementations</th> <th>Comment</th> </tr>
+		<tr>
+			<td>Channel Access</td>
+			<td>No</td>
+			<td>xal.ca.ChannelFactory.newFactory()</td>
+			<td>xal.ca.ChannelFactoryPlugin.getChannelFactoryInstance()</td>
+			<td>xal.ca.ChannelFactory</td>
+			<td>jca</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Database Adaptor</td>
+			<td>Yes</td>
+			<td>xal.tools.database.DatabaseAdaptor.getInstance()</td>
+			<td>None</td>
+			<td>xal.tools.database.DatabaseAdaptor</td>
+			<td>mysql, oracle</td>
+			<td>The plugin implementation to load is specified in the user's database configuration file.</td>
+		</tr>
+	</table>
+
+	<table class="legend">
+		<caption>Open XAL Plugins Table Legend</caption>
+		<tr> <th>Column</th> <th>Description</th> </tr>
+		<tr>
+			<th>Plugin Label</th>
+			<td>Common name for the plugin.</td>
+		</tr>
+		<tr>
+			<th>Allows Multiple</th>
+			<td>Indicates whether multiple implementations of the same plugin may be present in a project.</td>
+		</tr>
+		<tr>
+			<th>Core Accessor</th>
+			<td>Class and method in the core that loads the plugin.</td>
+		</tr>
+		<tr>
+			<th>Plugin Provider</th>
+			<td>Class and method if any that will be called from the core to provide the plugin.</td>
+		</tr>
+		<tr>
+			<th>Extend/Implement</th>
+			<td>Class that must be implemented in the plugin module.</td>
+		</tr>
+		<tr>
+			<th>Implementations</th>
+			<td>Currently available implementations.</td>
+		</tr>
+		<tr>
+			<th>Comment</th>
+			<td>Optional notes about the plugin.</td>
+		</tr>
+	</table>
+  </body>
+</html>

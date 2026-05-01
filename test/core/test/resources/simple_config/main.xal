@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="http://sourceforge.net/p/xaldev/openxal/ci/master/tree/core/resources/xal/schemas/main.xsd?format=raw">
+	<modelElementConfig_source name="modelConfig" url="ModelConfig.xml"/>
+	<deviceMapping_source name="deviceMapping" url="test.impl"/>	
+	<optics_source name="optics" url="test.xdxf"/>
+	<tablegroup_source name="modelparams" url="model.params"/>	
+</sources>

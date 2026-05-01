@@ -1,0 +1,46 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xdxf date="Wed Dec 26 11:25:35 EST 2012" version="1.0.0">
+	<sequence id="LDmp">
+		<node exclude="false" id="LDmp_Diag:BPM01" status="false" />
+	</sequence>
+	<sequence id="HEBT1">
+		<node exclude="true" id="HEBT_Diag:BLM09" mod-comment="This device is being migrated to a new API and is currently unavailable." status="false" />
+	</sequence>
+	<sequence id="MDmp">
+		<node exclude="false" id="MDmp_Diag:WS01" mod-comment="Unsupported controller version 1.2" status="false" />
+	</sequence>
+	<sequence id="SCLMed">
+		<node exclude="true" id="SCL_Diag:ND02" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND07" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+	</sequence>
+	<sequence id="SCLHigh">
+		<node exclude="true" id="SCL_Diag:BLM17c" mod-comment="Noisy BLM with negative loss" status="false" />
+		<node exclude="false" id="SCL_Diag:BPM22" mod-comment="Awaiting repair" status="false" />
+		<node exclude="false" id="SCL_Diag:BPM28" mod-comment="Awaiting repair" status="false" />
+		<node exclude="true" id="SCL_Diag:ND12" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND13" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND14" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND15" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND16" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND17" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND18" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND19" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND20" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND21" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND22" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND23" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND24" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND25" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND26" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND27" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND28" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND29" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND30" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND31" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+		<node exclude="true" id="SCL_Diag:ND32" mod-comment="SCL NDs will be unavailable for some time as per Sasha Zhukov." status="false" />
+	</sequence>
+	<sequence id="Ring4">
+		<node exclude="false" id="Ring_Diag:WS_D13a" status="false" />
+		<node exclude="false" id="Ring_Diag:WS_D13b" status="false" />
+	</sequence>
+</xdxf>

@@ -1,0 +1,59 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CONFIGURATIONS tree_name = "ROOT" text="ROOT for predefined scan configurations">
+    <TEST tree_name = "TEST" text="Predefined scan configuration as a test.">
+           <conf tree_name = "Test scan config." url="test1.scan1D" text="The test configuration with data."/>
+           <conf tree_name = "Test dT procedure." url="dT_test.scan1D" text="The test configuration for exporting scan data to ASCII file for dT procedure."/>
+    </TEST>
+    <MEBT tree_name = "MEBT" text="Predefined scan configurations for MEBT">
+       <Phase tree_name = "Phase Scan" text="Predefined phase scan configurations for MEBT">
+       </Phase>
+    </MEBT>
+    <DTL tree_name = "DTL ACCEPTANCE SCAN" text="Predefined scan configurations for DTL tanks.">
+        <conf tree_name = "TANK #1 ACCEPTANCE SCAN" url="DTL_TANK_1_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #1 in DTL."/>
+        <conf tree_name = "TANK #2 ACCEPTANCE SCAN" url="DTL_TANK_2_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #2 in DTL."/>
+        <conf tree_name = "TANK #3 ACCEPTANCE SCAN" url="DTL_TANK_3_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #3 in DTL."/>
+        <conf tree_name = "TANK #4 ACCEPTANCE SCAN" url="DTL_TANK_4_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #4 in DTL."/>
+        <conf tree_name = "TANK #5 ACCEPTANCE SCAN" url="DTL_TANK_5_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #5 in DTL."/>
+        <conf tree_name = "TANK #6 ACCEPTANCE SCAN" url="DTL_TANK_6_CONF.scan1D" text="Configuration for the acceptance scan of the Tank #6 in DTL."/>
+    </DTL>
+    <DTL5_dT tree_name = "DTL 5 Delta T Procedure" text="Predefined scan configurations for DTL #5 tank delta-T procedure and for two BPMs.">
+		<conf tree_name = "DTL Tank  #5 Delta-T scan, DTL's BPM603 and BPM609 " url="dtl_5_bpm603_bpm609_dT.scan1D" text="The dT procedure scan of the Tank #5 in DTL."/>
+	</DTL5_dT>			
+    <DTL6_dT tree_name = "DTL 6 Delta T Procedure" text="Predefined scan configurations for DTL #6 tank delta-T procedure and for different BPMs.">
+		<conf tree_name = "DTL Tank  #6 Delta-T scan, CCL's BPM101 and BPM112 " url="dtl_6_bpm101_bpm112_dT.scan1D" text="The dT procedure scan of the Tank #6 in DTL."/>
+		<conf tree_name = "DTL Tank  #6 Delta-T scan, CCL's BPM101 and BPM202 " url="dtl_6_bpm101_bpm202_dT.scan1D" text="The dT procedure scan of the Tank #6 in DTL."/>
+		<conf tree_name = "DTL Tank  #6 Delta-T scan, CCL's BPM103 and BPM112 " url="dtl_6_bpm103_bpm112_dT.scan1D" text="The dT procedure scan of the Tank #6 in DTL."/>
+		<conf tree_name = "DTL Tank  #6 Delta-T scan, CCL's BPM103 and BPM202 " url="dtl_6_bpm103_bpm202_dT.scan1D" text="The dT procedure scan of the Tank #6 in DTL."/>			
+	</DTL6_dT>		
+    <CCL tree_name = "CCL" text="Predefined scan configurations for CCL tanks.">
+        <DELTA_T tree_name = "Delta-T" text="Delta-T scans for CCL tanks.">
+        	<CCL1 tree_name = "CCL1" text="Predefined scan configurations for CCL #1 tank and for different BPMs.">
+			<conf tree_name = "CCL Cavity #1 Delta-T scan, BPM112 and BPM212 " url="ccl_1_bpm112_bpm212_dT.scan1D" text="The dT procedure scan of the Cavity #1 in CCL."/>
+			<conf tree_name = "CCL Cavity #1 Delta-T scan, BPM112 and BPM302 " url="ccl_1_bpm112_bpm302_dT.scan1D" text="The dT procedure scan of the Cavity #1 in CCL."/>
+			<conf tree_name = "CCL Cavity #1 Delta-T scan, BPM202 and BPM212 " url="ccl_1_bpm202_bpm212_dT.scan1D" text="The dT procedure scan of the Cavity #1 in CCL."/>
+			<conf tree_name = "CCL Cavity #1 Delta-T scan, BPM202 and BPM302 " url="ccl_1_bpm202_bpm302_dT.scan1D" text="The dT procedure scan of the Cavity #1 in CCL."/>			
+		</CCL1>
+        	<CCL2 tree_name = "CCL2" text="Predefined scan configurations for CCL #2 tank and for different BPMs.">
+			<conf tree_name = "CCL Cavity #2 Delta-T scan, BPM212 and BPM312 " url="ccl_2_bpm212_bpm312_dT.scan1D" text="The dT procedure scan of the Cavity #2 in CCL."/>
+			<conf tree_name = "CCL Cavity #2 Delta-T scan, BPM212 and BPM402 " url="ccl_2_bpm212_bpm402_dT.scan1D" text="The dT procedure scan of the Cavity #2 in CCL."/>
+			<conf tree_name = "CCL Cavity #2 Delta-T scan, BPM302 and BPM312 " url="ccl_2_bpm302_bpm312_dT.scan1D" text="The dT procedure scan of the Cavity #2 in CCL."/>
+			<conf tree_name = "CCL Cavity #2 Delta-T scan, BPM302 and BPM402 " url="ccl_2_bpm302_bpm402_dT.scan1D" text="The dT procedure scan of the Cavity #2 in CCL."/>			
+		</CCL2>
+        	<CCL3 tree_name = "CCL3" text="Predefined scan configurations for CCL #3 tank and for different BPMs.">
+			<conf tree_name = "CCL Cavity #3 Delta-T scan, BPM312 and BPM409 " url="ccl_3_bpm312_bpm409_dT.scan1D" text="The dT procedure scan of the Cavity #3 in CCL."/>
+			<conf tree_name = "CCL Cavity #3 Delta-T scan, BPM312 and BPM411 " url="ccl_3_bpm312_bpm411_dT.scan1D" text="The dT procedure scan of the Cavity #3 in CCL."/>
+			<conf tree_name = "CCL Cavity #3 Delta-T scan, BPM402 and BPM409 " url="ccl_3_bpm402_bpm409_dT.scan1D" text="The dT procedure scan of the Cavity #3 in CCL."/>
+			<conf tree_name = "CCL Cavity #3 Delta-T scan, BPM402 and BPM411 " url="ccl_3_bpm402_bpm411_dT.scan1D" text="The dT procedure scan of the Cavity #3 in CCL."/>			
+		</CCL3>		
+        	<CCL4 tree_name = "CCL4" text="Predefined scan configurations for CCL #4 tank and for different BPMs.">
+			<conf tree_name = "CCL Cavity #4 Delta-T scan, SCL's BPM00b and BPM03 " url="ccl_4_bpm00b_bpm03_dT.scan1D" text="The dT procedure scan of the Cavity #4 in CCL."/>
+			<conf tree_name = "CCL Cavity #4 Delta-T scan, SCL's BPM00b and BPM04 " url="ccl_4_bpm00b_bpm04_dT.scan1D" text="The dT procedure scan of the Cavity #4 in CCL."/>
+			<conf tree_name = "CCL Cavity #4 Delta-T scan, SCL's BPM01 and BPM04 " url="ccl_4_bpm01_bpm04_dT.scan1D" text="The dT procedure scan of the Cavity #4 in CCL."/>
+			<conf tree_name = "CCL Cavity #4 Delta-T scan, SCL's BPM01 and BPM05 " url="ccl_4_bpm01_bpm05_dT.scan1D" text="The dT procedure scan of the Cavity #4 in CCL."/>			
+		</CCL4>		
+	</DELTA_T>
+    </CCL>
+</CONFIGURATIONS>
+
+
+

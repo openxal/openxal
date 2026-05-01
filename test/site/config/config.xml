@@ -1,0 +1,4 @@
+<project name="sns.config">
+	<!-- Build services standalone to avoid problems of services loading shared resources while running but after the shared archive has been updated -->
+	<property name="service.build.standalone" value="true" />
+</project>

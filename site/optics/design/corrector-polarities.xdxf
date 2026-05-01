@@ -35,6 +35,44 @@
 	</node> 
     </sequence>
 
+    <sequence id="SCLMed">
+        <node id="SCL_Mag:DCV01">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+    </sequence>
+
+    <sequence id="SCLHigh">
+
+        <node id="SCL_Mag:DCH17">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+        <node id="SCL_Mag:DCV29">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+        <node id="SCL_Mag:DCH29">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+        <node id="SCL_Mag:DCV30">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+        <node id="SCL_Mag:DCH30">
+                <attributes>
+                        <magnet polarity="-1" />
+                </attributes>
+        </node>
+    </sequence>
+
+
 
     <sequence id="Ring1">
         <node id="Ring_Mag:DCH_A13">

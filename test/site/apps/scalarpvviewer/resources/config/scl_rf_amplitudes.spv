@@ -1,0 +1,92 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Scalar_PV_VIEWER title="SC Linac RF Cavities' Amplitudes">
+    <font name="Monospaced" size="12" style="1"/>
+    <Panels_titles charts_panel_title="Amplitudes vs. Time" values_panel_title="Amplitudes of SCL Cavities"/>
+	<PARAMETERS lastMemorizingTime="NEVER"/>
+    <UpdateController updateTime="3.0"  ChartUpdateTime="15.0"  listenToEPICS="false" recordChartFromEPICS="true" />
+    <ScalarPV pvName="SCL_LLRF:FCM01a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM01b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM01c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM02c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM03c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM04c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM05c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM06c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM07c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM08c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM09c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM10c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM11c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM12d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM13d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM14d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM15d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM16d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM17d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM18d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM19d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM20d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM21d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM22d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23a:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23b:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23c:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+    <ScalarPV pvName="SCL_LLRF:FCM23d:cavAmpAvg" referenceValue="0.0" showDif="true" showDifChart="true" showRef="false" showRefChart="false" showValue="false" showValueChart="false"/>
+</Scalar_PV_VIEWER>
+
+%==================time chart data=================================
+
+

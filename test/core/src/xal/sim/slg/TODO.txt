@@ -1,0 +1,5 @@
+
+*) length & effLength
+*)	C.Allens synch implementation?
+*)	Diag:BLMxx elements
+*) Documentation

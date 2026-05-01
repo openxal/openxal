@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build the application whose name matches that of the project. -->
+<project name="pta" basedir="." default="all">
+    <property name="mainclass.base" value="MainApplication" />
+	<import file="../common.xml"/>		
+</project>

@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BricksDocument date="Thu Oct 15 10:04:11 EDT 2015" version="1.0.0">
+    <RootBrick>
+        <ViewNode customBeanClass="xal.extension.application.DefaultXalWindow" height="265" tag="MainWindow" width="758">
+            <ViewProxy type="javax.swing.JFrame"/>
+            <ViewNode tag="EditorContainer">
+                <ViewProxy type="javax.swing.Box_Vertical"/>
+                <ViewNode tag="Text Area">
+                    <ViewProxy type="javax.swing.JTextArea"/>
+                    <BeanProperty name="lineWrap" value="true"/>
+                    <BeanProperty name="editable" value="false"/>
+                    <BeanProperty name="wrapStyleWord" value="true"/>
+                    <BeanProperty alpha="255" blue="0" green="0" name="foreground" red="246"/>
+                    <BeanProperty name="text" value="Warning! This application is for admin use only.  DO NOT EDIT these settings without permission from software management!"/>
+                    <BeanProperty fontName="Lucida Grande" name="font" size="32" style="0"/>
+                </ViewNode>
+            </ViewNode>
+        </ViewNode>
+    </RootBrick>
+</BricksDocument>
